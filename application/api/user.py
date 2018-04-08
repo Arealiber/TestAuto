@@ -1,5 +1,5 @@
 from application import session_scope
-from application.model.models import User
+from application.model.user import User
 
 
 def add_user(**kwargs):
