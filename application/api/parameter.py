@@ -10,7 +10,7 @@ def add_parameter(**kwargs):
 
 def get_parameter(**kwargs):
     with session_scope() as session:
-        parameter_list = session.query(Parameter).filter_by(**kwargs)
+        parameter_list = session.query(Parameter).filter_by(**kwargs).filter_by(status=1)
         session.expunge_all()
     return parameter_list
 
