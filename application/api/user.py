@@ -20,11 +20,13 @@ def modify_user(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
         session.query(User).filter_by(id=id).update(kwargs)
-    return session.query(User).filter_by(id=id).first().username
+        username = session.query(User).filter_by(id=id).first().username
+    return username
 
 
 def del_user(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
         session.query(User).filter_by(id=id).update({'status': 0})
-    return session.query(User).filter_by(id=id).first().username
+        username = session.query(User).filter_by(id=id).first().username
+    return username
