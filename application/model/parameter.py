@@ -31,7 +31,7 @@ class Parameter(Base):
     value = Column(String(255), nullable=False)
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.now())
-    udpate_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
+    update_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
     status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):
@@ -40,7 +40,9 @@ class Parameter(Base):
             'parameter_name': self.parameter_name,
             'parameter_type': self.parameter_type,
             'value': self.value,
-            'create_by': self.create_by
+            'create_by': self.create_by,
+            'create_time': self.create_time,
+            'update_time': self.update_time
         }
 
 

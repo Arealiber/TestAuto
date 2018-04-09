@@ -46,7 +46,7 @@ class Interface(Base):
     eval_string = Column(String(1024))
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.now())
-    udpate_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
+    update_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
     status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):
@@ -59,7 +59,9 @@ class Interface(Base):
             'interface_header': self.interface_header,
             'interface_json_payload': self.interface_json_payload,
             'eval_string': self.eval_string,
-            'create_by': self.create_by
+            'create_by': self.create_by,
+            'create_time': self.create_time,
+            'update_time': self.update_time
         }
 
 
