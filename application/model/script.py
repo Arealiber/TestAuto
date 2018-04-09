@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
@@ -8,7 +9,7 @@ Base = declarative_base()
 
 
 class Script(Base):
-    __tablename__ = 'script'
+    __table_name__ = 'script'
     __table_args__ = {
         "mysql_engine": "InnoDB",
         "mysql_charset": "utf8"

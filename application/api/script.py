@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 from sqlalchemy import desc
-
 from application import session_scope
 from application.model.script import Script, ScriptInterfaceRelation
 

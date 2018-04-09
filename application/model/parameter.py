@@ -1,8 +1,8 @@
+# -*- coding:utf-8 -*-
 from datetime import datetime
 from enum import Enum
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-
 from application import engine
 
 Base = declarative_base()

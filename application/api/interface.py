@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from application import session_scope
 from application.model.interface import Interface
 

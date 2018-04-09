@@ -1,5 +1,6 @@
-from flask import request, jsonify
+# -*- coding:utf-8 -*-
 
+from flask import request, jsonify
 from application import app
 from application.api import user as UserAPI
 
