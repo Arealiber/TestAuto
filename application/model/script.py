@@ -28,7 +28,7 @@ class Script(Base):
             'script_name': self.script_name,
             'create_by': self.create_by,
             'create_time': self.create_time,
-            'udpate_time': self.update_time
+            'update_time': self.update_time
         }
 
 
