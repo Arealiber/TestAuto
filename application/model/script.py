@@ -19,7 +19,7 @@ class Script(Base):
     script_name = Column(String(100), nullable=False, unique=True)
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.now())
-    udpate_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
+    update_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
     status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):
@@ -28,7 +28,7 @@ class Script(Base):
             'script_name': self.script_name,
             'create_by': self.create_by,
             'create_time': self.create_time,
-            'udpate_time': self.udpate_time
+            'udpate_time': self.update_time
         }
 
 
