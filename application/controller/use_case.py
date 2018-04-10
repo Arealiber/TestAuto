@@ -11,7 +11,6 @@ def add_use_case():
         result = UseCaseAPI.add_use_case(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-
     return jsonify({'success': True, 'res': result})
 
 
@@ -24,7 +23,7 @@ def get_use_case():
     case_list = []
     for use_case in result:
         case_list.append(use_case.to_dict())
-    return jsonify({'success': False, 'res': case_list})
+    return jsonify({'success': True, 'res': case_list})
 
 
 @app.route('/case/update', methods=['POST'])
