@@ -21,15 +21,15 @@ def modify_use_case(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
         use_case = session.query(UseCase).filter_by(id=id)
-        use_case.filter_by(id=id).update(kwargs)
-        return use_case.filter_by(id=id).first().use_case_name
+        use_case.update(kwargs)
+        return use_case.first().use_case_name
 
 
 def del_use_case(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
-        use_case = session.query(UseCase)
-        use_case.filter_by(id=id).update({'status': 0})
-        return use_case.filter_by(id=id).first().use_case_name
+        use_case = session.query(UseCase).filter_by(id=id)
+        use_case.update({'status': 0})
+        return use_case.first().use_case_name
 
 
