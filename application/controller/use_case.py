@@ -54,10 +54,10 @@ def use_case_detail():
         result = Case_API.get_use_case(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    use_case_list = []
+    use_case_lst = []
     for use_case in result:
-        use_case_list.append(use_case.to_dict())
-    use_case_info = use_case_list[0]
+        use_case_lst.append(use_case.to_dict())
+    use_case_info = use_case_lst[0]
     use_case_info.update({'interface_list':[]})
     try:
         relation_interface_list = Case_API.get_relation(use_case_info.get('id'))
@@ -66,8 +66,11 @@ def use_case_detail():
     for relation_interface in relation_interface_list:
         relation_interface.pop('use_case_id')
         interface_id = relation_interface.pop('interface_id')
+        interface_name = InterfaceAPI.get_interface(id=interface_id)[0].get('interface_name')
+        relation_interface.update({'interface_name': interface_name})
+        para_list = Case_API.get_case_parameter_relation(relation_id=interface_id)
+        relation_interface.update({'para_list': para_list})
         use_case_info['interface_list'].append(relation_interface)
-
     return jsonify({'success': True, 'res':use_case_info})
 
 
@@ -111,7 +114,16 @@ def add_relation():
     1. 关联use_case与interface
     2. 查找interface内parameter信息, 用空值为每个参数在relation下生成记录
     """
-    pass
+    try:
+        Case_API.add_relation(**request.get_json())
+    except Exception as e:
+        return jsonify({'success': False, 'res': str(e)})
+    relation_id = request.get_json().get('interface_id')
+    parameter_list = Case_API.get_case_parameter_relation(relation_id=relation_id)
+    for _ in parameter_list:
+        Case_API.modify_case_parameter_relation(parameter_value=None)
+    return jsonify({'success':True})
+
 
 
 @app.route('/use_case/relation/delete', methods=['POST'])
