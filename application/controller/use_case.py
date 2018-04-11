@@ -34,10 +34,10 @@ def use_case_list():
         result = Case_API.get_use_case(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    use_case_list = []
+    case_list = []
     for case_info in result:
-        use_case_list.append(case_info.to_dict())
-    return jsonify(use_case_list)
+        case_list.append(case_info.to_dict())
+    return jsonify(case_list)
 
 
 @app.route('/use_case/detail', methods=['POST'])
@@ -58,7 +58,7 @@ def use_case_detail():
     for use_case in result:
         use_case_lst.append(use_case.to_dict())
     use_case_info = use_case_lst[0]
-    use_case_info.update({'interface_list':[]})
+    use_case_info.update({'interface_list': []})
     try:
         relation_interface_info = Case_API.get_relation(use_case_info.get('id'))
     except Exception as e:
@@ -132,7 +132,7 @@ def add_relation():
     # TODO 增加可变参数底层处理代码
     for _ in parameter_list:
         Case_API.add_case_parameter_relation(parameter_value="")
-    return jsonify({'success':True})
+    return jsonify({'success': True})
 
 
 @app.route('/use_case/relation/delete', methods=['POST'])
@@ -143,7 +143,7 @@ def del_relation():
     try:
         Case_API.del_relation(**request.get_json())
     except Exception as e:
-        return jsonify({'success':False, 'res':str(e)})
+        return jsonify({'success': False, 'res':str(e)})
     return jsonify({'success': True})
 
 
