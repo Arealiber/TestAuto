@@ -27,7 +27,7 @@ class UseCase(Base):
     def to_dict(self):
         return {
             'id': self.id,
-            'script_name': self.use_case_name,
+            'use_case_name': self.use_case_name,
             'auto_run': self.auto_run,
             'desc': self.desc,
             'create_by': self.create_by,
