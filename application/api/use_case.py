@@ -74,6 +74,8 @@ def add_relation(use_case_id, interface_id, order=None):
                 .update({'order': UseCaseInterfaceRelation.order + 1})
         relation = UseCaseInterfaceRelation(use_case_id=use_case_id, interface_id=interface_id, order=order)
         session.add(relation)
+        session.flush()
+        return relation.id
 
 
 def get_relation(use_case_id):
