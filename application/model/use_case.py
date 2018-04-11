@@ -64,7 +64,7 @@ class UseCaseInterfaceRelation(Base):
         }
 
 
-class ScriptParameterRelation(Base):
+class UseCaseParameterRelation(Base):
     __tablename__ = 'script_parameter_relation'
     __table_args__ = {
         "mysql_engine": "InnoDB",
