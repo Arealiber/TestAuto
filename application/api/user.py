@@ -12,7 +12,6 @@ def add_user(**kwargs):
 def get_user(**kwargs):
     with session_scope() as session:
         user_list = session.query(User).filter_by(**kwargs).filter_by(status=1)
-        session.expunge_all()
     return user_list
 
 

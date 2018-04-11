@@ -13,7 +13,6 @@ def add_use_case(**kwargs):
 def get_use_case(**kwargs):
     with session_scope() as session:
         script_list = session.query(UseCase).filter_by(**kwargs).filter_by(status=1)
-        session.expunge_all()
     return script_list
 
 
