@@ -143,7 +143,7 @@ def del_relation():
     try:
         Case_API.del_relation(**request.get_json())
     except Exception as e:
-        return jsonify({'success': False, 'res':str(e)})
+        return jsonify({'success': False, 'res': str(e)})
     return jsonify({'success': True})
 
 
