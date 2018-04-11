@@ -5,6 +5,7 @@ from application import app
 from application.api import interface as InterfaceAPI
 from application.api import use_case as Case_API
 from application.schema import schema
+from application.util.parameter import *
 
 
 """
@@ -74,7 +75,7 @@ def use_case_detail():
         for interface in interface_info:
             interface_list.append(interface.to_dict())
         relation_interface.update({'interface_name': interface_list[0].get('interface_name')})
-        para_info = Case_API.get_case_parameter_relation(relation_id=interface_id)
+        para_info = Case_API.get_case_parameter_relation(relation_id=relation_interface['id'])
         para_list = []
         for para in para_info:
             para_list.append(para.to_dict())
@@ -124,14 +125,20 @@ def add_relation():
     2. 查找interface内parameter信息, 用空值为每个参数在relation下生成记录
     """
     try:
-        Case_API.add_relation(**request.get_json())
+        relation_id = Case_API.add_relation(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
-    relation_id = request.get_json().get('interface_id')
-    parameter_list = Case_API.get_case_parameter_relation(relation_id=relation_id)
-    # TODO 增加可变参数底层处理代码
-    for _ in parameter_list:
-        Case_API.add_case_parameter_relation(parameter_value="")
+    interface_id = request.get_json().get('interface_id')
+    interface_info = InterfaceAPI.get_interface(id=interface_id)
+    interface_list = []
+    for s_interface in interface_info:
+        interface_list.append(s_interface.to_dict())
+    the_interface = interface_list[0]
+    analysis_str = ''.join([the_interface.get('interface_header'), the_interface.get('interface_json_payload'),
+                            the_interface.get('interface_url')])
+    param_list = search_parameter(analysis_str)
+    for para in param_list:
+        Case_API.add_case_parameter_relation(relation_id = relation_id, parameter_name = para, parameter_value = '')
     return jsonify({'success': True})
 
 
