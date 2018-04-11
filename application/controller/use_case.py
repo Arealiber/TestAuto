@@ -60,18 +60,27 @@ def use_case_detail():
     use_case_info = use_case_lst[0]
     use_case_info.update({'interface_list':[]})
     try:
-        relation_interface_list = Case_API.get_relation(use_case_info.get('id'))
+        relation_interface_info = Case_API.get_relation(use_case_info.get('id'))
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+    relation_interface_list = []
+    for relation_interface in relation_interface_info:
+        relation_interface_list.append(relation_interface.to_dict())
     for relation_interface in relation_interface_list:
         relation_interface.pop('use_case_id')
         interface_id = relation_interface.pop('interface_id')
-        interface_name = InterfaceAPI.get_interface(id=interface_id)[0].get('interface_name')
-        relation_interface.update({'interface_name': interface_name})
-        para_list = Case_API.get_case_parameter_relation(relation_id=interface_id)
+        interface_info = InterfaceAPI.get_interface(id=interface_id)
+        interface_list = []
+        for interface in interface_info:
+            interface_list.append(interface.to_dict())
+        relation_interface.update({'interface_name': interface_list[0].get('interface_name')})
+        para_info = Case_API.get_case_parameter_relation(relation_id=interface_id)
+        para_list = []
+        for para in para_info:
+            para_list.append(para.to_dict())
         relation_interface.update({'para_list': para_list})
         use_case_info['interface_list'].append(relation_interface)
-    return jsonify({'success': True, 'res':use_case_info})
+    return jsonify({'success': True, 'res': use_case_info})
 
 
 @app.route('/use_case/update', methods=['POST'])
@@ -120,10 +129,10 @@ def add_relation():
         return jsonify({'success': False, 'res': str(e)})
     relation_id = request.get_json().get('interface_id')
     parameter_list = Case_API.get_case_parameter_relation(relation_id=relation_id)
+    # TODO 增加可变参数底层处理代码
     for _ in parameter_list:
-        Case_API.modify_case_parameter_relation(parameter_value=None)
+        Case_API.add_case_parameter_relation(parameter_value="")
     return jsonify({'success':True})
-
 
 
 @app.route('/use_case/relation/delete', methods=['POST'])
