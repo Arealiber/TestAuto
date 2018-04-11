@@ -8,3 +8,6 @@ user_schema = Schema({
     Required('full_name'): str,
     Required('email'): str
 })
+use_case_schema = Schema({
+    Required('id'): int
+},extra=True)
