@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
@@ -8,15 +7,15 @@ from application import engine
 Base = declarative_base()
 
 
-class Script(Base):
-    __tablename__ = 'script'
+class Batch(Base):
+    __tablename__ = 'batch'
     __table_args__ = {
         "mysql_engine": "InnoDB",
         "mysql_charset": "utf8"
     }
 
     id = Column(Integer, primary_key=True)
-    script_name = Column(String(100), nullable=False, unique=True)
+    batch_name = Column(String(100), nullable=False, unique=True)
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.now())
     update_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
@@ -25,24 +24,23 @@ class Script(Base):
     def to_dict(self):
         return {
             'id': self.id,
-            'script_name': self.script_name,
+            'batch_name': self.batch_name,
             'create_by': self.create_by,
             'create_time': self.create_time,
             'update_time': self.update_time
         }
 
 
-class ScriptInterfaceRelation(Base):
-    __tablename__ = 'script_interface_relation'
+class BatchUseCaseRelation(Base):
+    __tablename__ = 'batch_use_case_relation'
     __table_args__ = {
         "mysql_engine": "InnoDB",
         "mysql_charset": "utf8"
     }
 
     id = Column(Integer, primary_key=True)
-    script_id = Column(Integer, nullable=False)
-    interface_id = Column(Integer, nullable=False)
-    order = Column(Integer, nullable=False)
+    batch_id = Column(Integer, nullable=False)
+    use_case_id = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.now())
     update_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
     status = Column(Integer, default=1, nullable=False)
@@ -50,9 +48,8 @@ class ScriptInterfaceRelation(Base):
     def to_dict(self):
         return {
             'id': self.id,
-            'script_id': self.script_id,
-            'interface_id': self.interface_id,
-            'order': self.order,
+            'batch_id': self.batch_id,
+            'use_case_id': self.use_case_id,
             'create_time': self.create_time,
             'update_time': self.update_time
         }

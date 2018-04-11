@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 
 from flask import request, jsonify
+
 from application import app
 from application.api import user as UserAPI
 
@@ -20,7 +21,7 @@ def user_info():
     user_list = []
     for user in result:
         user_list.append(user.to_dict())
-    return jsonify({'success': True, 'res':user_list})
+    return jsonify({'success': True, 'res': user_list})
 
 
 @app.route('/user/update', methods=['POST'])
