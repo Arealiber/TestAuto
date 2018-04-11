@@ -119,7 +119,11 @@ def del_relation():
     """
     解除某个interface与use_case的关联
     """
-    pass
+    try:
+        Case_API.del_relation(**request.get_json())
+    except Exception as e:
+        return jsonify({'success':False, 'res':str(e)})
+    return jsonify({'success': True})
 
 
 @app.route('/use_case/relation/reorder', methods=['POST'])
@@ -127,7 +131,11 @@ def reorder_relation():
     """
     重新排序某个interface在use_case中的顺序
     """
-    pass
+    try:
+        Case_API.reorder_relation(**request.get_json())
+    except Exception as e:
+        return jsonify({'success':False, 'res':str(e)})
+    return jsonify({'success': True})
 
 
 @app.route('/use_case/relation/parameter/modify', methods=['POST'])
