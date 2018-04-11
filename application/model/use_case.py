@@ -65,7 +65,7 @@ class UseCaseInterfaceRelation(Base):
 
 
 class UseCaseParameterRelation(Base):
-    __tablename__ = 'script_parameter_relation'
+    __tablename__ = 'use_case_parameter_relation'
     __table_args__ = {
         "mysql_engine": "InnoDB",
         "mysql_charset": "utf8"
