@@ -4,11 +4,13 @@ from flask import request, jsonify
 
 from application import app
 from application.api import user as UserAPI
+from application.schema.schema import *
 
 
 @app.route('/user/add', methods=['POST'])
 def add_user():
     try:
+        user_schema(request.json)
         result = UserAPI.add_user(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
