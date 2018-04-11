@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy import desc
 from application import session_scope
-from application.model.use_case import UseCase, UseCaseInterfaceRelation
+from application.model.use_case import UseCase, UseCaseInterfaceRelation, UseCaseParameterRelation
 
 
 def add_use_case(**kwargs):
@@ -141,3 +141,52 @@ def reorder_relation(relation_id, new_order):
             .query(UseCaseInterfaceRelation)\
             .filter_by(id=relation_id)\
             .update({'order': new_order})
+
+
+def add_case_parameter_relation(**kwargs):
+    """
+    添加用例关联参数信息
+    :param kwargs:
+    :return:
+    """
+    with session_scope() as session:
+        use_case_parameter = UseCaseParameterRelation(**kwargs)
+        session.add(use_case_parameter)
+
+
+def get_case_parameter_relation(**kwargs):
+    """
+    查询用例关联参数信息
+    :param kwargs:
+    :return:
+    """
+    with session_scope() as session:
+        parameter_list = session.query(UseCaseParameterRelation).filter_by(**kwargs).filter_by(status=1)
+        session.expunge_all()
+    return parameter_list
+
+
+def modify_case_parameter_relation(**kwargs):
+    """
+    更新用例关联参数信息
+    :param kwargs:
+    :return:
+    """
+    with session_scope() as session:
+        id = kwargs.pop('id')
+        session.query(UseCaseParameterRelation).filter_by(id=id).update(kwargs)
+
+
+def del_case_parameter_relation(**kwargs):
+    """
+    更新用例关联参数信息
+    :param kwargs:
+    :return:
+    """
+    with session_scope() as session:
+        id = kwargs.pop('id')
+        session.query(UseCaseParameterRelation).filter_by(id=id).update({'status':0})
+
+
+
+
