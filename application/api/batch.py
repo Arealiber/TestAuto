@@ -10,7 +10,8 @@ def add_batch(**kwargs):
 
 def get_batch(**kwargs):
     with session_scope() as session:
-        batch_list = session.query(Batch).filter_by(**kwargs).filter_by(status=1)
+        query = session.query(Batch).filter_by(**kwargs).filter_by(status=1)
+    batch_list = [s_batch for s_batch in query]
     return batch_list
 
 
@@ -35,8 +36,9 @@ def add_batch_use_case_relation(batch_id, use_case_id):
 
 def get_batch_use_case_relation(**kwargs):
     with session_scope() as session:
-        batchUseCaseRelation_list = session.query(BatchUseCaseRelation).filter_by(**kwargs).filter_by(status=1)
-    return batchUseCaseRelation_list
+        query = session.query(BatchUseCaseRelation).filter_by(**kwargs).filter_by(status=1)
+    batch_use_case_relation_list = [b_use_case.to_dict() for b_use_case in query]
+    return batch_use_case_relation_list
 
 
 def del_batch_use_case_relation(batch_id, use_case_id):

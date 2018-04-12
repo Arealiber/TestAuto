@@ -12,8 +12,9 @@ def add_use_case(**kwargs):
 
 def get_use_case(**kwargs):
     with session_scope() as session:
-        script_list = session.query(UseCase).filter_by(**kwargs).filter_by(status=1)
-    return script_list
+        query = session.query(UseCase).filter_by(**kwargs).filter_by(status=1)
+    use_case_list = [use_case.to_dict() for use_case in query]
+    return use_case_list
 
 
 def modify_use_case(**kwargs):
@@ -87,11 +88,12 @@ def get_relation(**kwargs):
     :return:
     """
     with session_scope() as session:
-        relation_list = session\
+        query = session\
             .query(UseCaseInterfaceRelation)\
             .filter_by(**kwargs)\
             .filter_by(status=1)
         session.expunge_all()
+    relation_list = [s_relation.to_dict() for s_relation in query]
     return relation_list
 
 
@@ -164,8 +166,9 @@ def get_case_parameter_relation(**kwargs):
     :return:
     """
     with session_scope() as session:
-        parameter_list = session.query(UseCaseParameterRelation).filter_by(**kwargs).filter_by(status=1)
+        query = session.query(UseCaseParameterRelation).filter_by(**kwargs).filter_by(status=1)
         session.expunge_all()
+    parameter_list = [s_param.to_dict() for s_param in query]
     return parameter_list
 
 

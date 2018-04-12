@@ -28,10 +28,7 @@ def get_interface():
         results = InterfaceAPI.get_interface(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    interface_list = []
-    for interface in results:
-        interface_list.append(interface.to_dict())
-    return jsonify(interface_list)
+    return jsonify(results)
 
 
 @app.route('/interface/update', methods=['POST'])
@@ -45,13 +42,10 @@ def modify_interface():
     """
     interface_id = request.get_json().get('id')
     try:
-        interface_old = InterfaceAPI.get_interface(id=interface_id)
-        interface_old_info = [s_interface.to_dict() for s_interface in interface_old][0]
+        interface_old_info = InterfaceAPI.get_interface(id=interface_id)[0]
         InterfaceAPI.modify_interface(**request.get_json())
-        interface_new = InterfaceAPI.get_interface(id=interface_id)
-        interface_new_info = [s_interface.to_dict() for s_interface in interface_new][0]
-        relation = UseCaseAPI.get_relation(interface_id=interface_id)
-        relation_list = [s_relation.to_dict() for s_relation in relation]
+        interface_new_info = InterfaceAPI.get_interface(id=interface_id)[0]
+        relation_list = UseCaseAPI.get_relation(interface_id=interface_id)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
     old_analysis_str = ''.join([interface_old_info.get('interface_header'),
@@ -70,7 +64,6 @@ def modify_interface():
             if param in old_param_list:
                 for p_relation in relation_list:
                     try:
-                        print(param, p_relation['id'])
                         UseCaseAPI.del_case_parameter_relation(parameter_name=param, relation_id=p_relation['id'])
                     except Exception as e:
                         return jsonify({'success': False, 'err': 'del case relative param fail{0}'.format(str(e))})
@@ -96,14 +89,12 @@ def delete_interface():
     """
     interface_id = request.get_json().get('id')
     try:
-        relation = UseCaseAPI.get_relation(interface_id=interface_id)
+        relation_list = UseCaseAPI.get_relation(interface_id=interface_id)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    relation_list = [s_relation.to_dict() for s_relation in relation]
     for interface_relation in relation_list:
         try:
-            parameter_relation = UseCaseAPI.get_case_parameter_relation(id=interface_relation['id'])
-            parameter_info = [p_relation.to_dict() for p_relation in parameter_relation]
+            parameter_info = UseCaseAPI.get_case_parameter_relation(id=interface_relation['id'])
             for s_prama_relation in parameter_info:
                 UseCaseAPI.del_case_parameter_relation(id=s_prama_relation['id'])
             UseCaseAPI.del_relation(interface_relation['id'])
