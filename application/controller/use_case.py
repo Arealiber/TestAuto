@@ -169,6 +169,6 @@ def reorder_relation():
 @app.route('/use_case/relation/parameter/modify', methods=['POST'])
 def relation_update_parameter():
     """
-    更新某个
+    更新某个use_case传给interface的参数的信息
     """
     pass
