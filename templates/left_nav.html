@@ -1,0 +1,55 @@
+{% extends 'top_layout.html' %}
+
+{% block css %}
+    <link href="/static/css/left_nav.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <div id="wrapper">
+
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+
+                <li class="sidebar-brand">
+                    <a href="#">
+                        自动巡检测试系统
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">导航项目1</a>
+                </li>
+
+                <li>
+                    <a href="#">导航项目2</a>
+                </li>
+
+                <li>
+                    <a href="#">导航项目3</a>
+                </li>
+
+                <li>
+                    <a href="#">导航项目4</a>
+                </li>
+
+                <li>
+                    <a href="#">导航项目5</a>
+                </li>
+
+                <li>
+                    <a href="#">导航项目6</a>
+                </li>
+
+                <li>
+                    <a href="#">登出</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="page-content-wrapper">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </div>
+{% endblock %}
