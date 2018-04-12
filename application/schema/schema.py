@@ -8,6 +8,12 @@ user_schema = Schema({
     Required('full_name'): str,
     Required('email'): str
 })
+
 use_case_schema = Schema({
     Required('id'): int
-},extra=True)
+}, extra=True)
+
+add_batch_schema = Schema({
+    Required('batch_name'): str,
+    Required('create_by'): int
+})

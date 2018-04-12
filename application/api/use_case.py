@@ -78,16 +78,18 @@ def add_relation(use_case_id, interface_id, order=None):
         return relation.id
 
 
-def get_relation(use_case_id):
+def get_relation(**kwargs):
     """
-    获取某个use_case包含的interface
+    根据传入参数不同获取不同信息：
+        use_case_id：获取某个use_case包含的interface
+        interface_id：获取某个interface关联的use_case
     :param use_case_id:
     :return:
     """
     with session_scope() as session:
         relation_list = session\
             .query(UseCaseInterfaceRelation)\
-            .filter_by(use_case_id=use_case_id)\
+            .filter_by(**kwargs)\
             .filter_by(status=1)
         session.expunge_all()
     return relation_list

@@ -18,7 +18,9 @@ def get_interface(**kwargs):
 def modify_interface(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
-        session.query(Interface).filter_by(id=id).update(kwargs)
+        session.query(Interface).filter_by(id=id).update(kwargs).filter()
+        session.flush()
+        return id
 
 
 def del_interface(**kwargs):
