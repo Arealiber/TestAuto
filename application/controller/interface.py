@@ -62,31 +62,27 @@ def modify_interface():
                                 interface_new_info.get('interface_url')])
     old_param_list = search_parameter(old_analysis_str)
     new_param_list = search_parameter(new_analysis_str)
-    update_param_list = list(set(old_param_list)^set(new_param_list))
+    update_param_list = list(set(old_param_list) ^ set(new_param_list))
     if len(update_param_list) == 0:
         return jsonify({'success': True})
     else:
         for param in update_param_list:
             if param in old_param_list:
-                try:
-                    param_info = UseCaseAPI.get_case_parameter_relation(parameter_name=param)
-                except Exception as e:
-                    return jsonify({'success': False, 'err': str(e)})
-                param_id = [s_param.to_dict()for s_param in param_info][0].get('id')
-                try:
-                    UseCaseAPI.del_case_parameter_relation(id=param_id)
-                except Exception as e:
-                    return jsonify({'success': False, 'err': str(e)})
-            else: # 新增参数添加到各个用例中去
+                for p_relation in relation_list:
+                    try:
+                        print(param, p_relation['id'])
+                        UseCaseAPI.del_case_parameter_relation(parameter_name=param, relation_id=p_relation['id'])
+                    except Exception as e:
+                        return jsonify({'success': False, 'err': 'del case relative param fail{0}'.format(str(e))})
+            else:  # 新增参数添加到各个用例中去
                 for relation in relation_list:
-                    kwargs={}
-                    kwargs.update({'relation_id': relation['id'],
-                                  'parameter_name': param,
-                                  'parameter_value': ''})
+                    kwargs = {'relation_id': relation['id'],
+                              'parameter_name': param,
+                              'parameter_value': ''}
                     try:
                         UseCaseAPI.add_case_parameter_relation(**kwargs)
                     except Exception as e:
-                        return jsonify({'success': False, 'err': str(e)})
+                        return jsonify({'success': False, 'err': 'add case para relation failure %s'% str(e)})
     return jsonify({'success': True})
 
 
@@ -103,7 +99,7 @@ def delete_interface():
         relation = UseCaseAPI.get_relation(interface_id=interface_id)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    relation_list = [s_relation.to_dict()for s_relation in relation]
+    relation_list = [s_relation.to_dict() for s_relation in relation]
     for interface_relation in relation_list:
         try:
             parameter_relation = UseCaseAPI.get_case_parameter_relation(id=interface_relation['id'])

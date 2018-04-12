@@ -71,7 +71,7 @@ def use_case_detail():
         relation_interface.pop('use_case_id')
         relation_interface.pop('create_time')
         relation_interface.pop('update_time')
-        interface_id = relation_interface.pop('interface_id')
+        interface_id = relation_interface.get('interface_id')
         interface_info = InterfaceAPI.get_interface(id=interface_id)
         interface_list = []
         for interface in interface_info:

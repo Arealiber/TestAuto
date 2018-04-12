@@ -187,8 +187,7 @@ def del_case_parameter_relation(**kwargs):
     :return:
     """
     with session_scope() as session:
-        id = kwargs.pop('id')
-        session.query(UseCaseParameterRelation).filter_by(id=id).update({'status':0})
+        session.query(UseCaseParameterRelation).filter_by(**kwargs).update({'status':0})
 
 
 
