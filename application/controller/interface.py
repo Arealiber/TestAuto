@@ -28,7 +28,7 @@ def get_interface():
         results = InterfaceAPI.get_interface(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify(results)
+    return jsonify({'success': True, 'res': results})
 
 
 @app.route('/interface/update', methods=['POST'])

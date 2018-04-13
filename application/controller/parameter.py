@@ -26,7 +26,7 @@ def parameter_info():
         result = ParameterAPI.get_parameter(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify(result)
+    return jsonify({'success': True, 'res': result})
 
 
 @app.route('/parameter/update', methods=['POST'])

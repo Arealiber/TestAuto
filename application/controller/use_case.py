@@ -37,7 +37,7 @@ def use_case_list():
         result = Case_API.get_use_case(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify(result)
+    return jsonify({'success': True, 'res': result})
 
 
 @app.route('/use_case/detail', methods=['POST'])
