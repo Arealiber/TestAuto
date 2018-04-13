@@ -27,7 +27,6 @@ class Parameter(Base):
 
     id = Column(Integer, primary_key=True)
     parameter_name = Column(String(20), nullable=False, unique=True)
-    parameter_type = Column(Integer, nullable=False)
     value = Column(String(255), nullable=False)
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.now())
