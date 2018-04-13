@@ -30,10 +30,7 @@ def get_batch():
         result = BatchAPI.get_batch(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    batch_list = []
-    for batch in result:
-        batch_list.append(batch.to_dict())
-    return jsonify({'success': True, 'res': batch_list})
+    return jsonify({'success': True, 'res': result})
 
 
 @app.route('/batch/update', methods=['POST'])
@@ -85,10 +82,7 @@ def get_batch_use_case_relation():
         result = BatchAPI.get_batch_use_case_relation(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    relation_use_case_list = []
-    for use_case in result:
-        relation_use_case_list.append(use_case.to_dict())
-    return jsonify({'success': True, 'res': relation_use_case_list})
+    return jsonify({'success': True, 'res': result})
 
 
 @app.route('/batch/relation/delete', methods=['POST'])

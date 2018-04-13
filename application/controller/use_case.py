@@ -37,10 +37,7 @@ def use_case_list():
         result = Case_API.get_use_case(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    case_list = []
-    for case_info in result:
-        case_list.append(case_info.to_dict())
-    return jsonify(case_list)
+    return jsonify(result)
 
 
 @app.route('/use_case/detail', methods=['POST'])
@@ -55,30 +52,22 @@ def use_case_detail():
     """
     try:
         schema.use_case_schema(request.get_json())
-        result = Case_API.get_use_case(**request.get_json())
+        use_case_info = Case_API.get_use_case(**request.get_json())[0]
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    use_case_info = [s_use_case.to_dict()for s_use_case in result]  [0]
     use_case_info.update({'interface_list': []})
     try:
-        relation_interface_info = Case_API.get_relation(use_case_id=use_case_info.get('id'))
+        relation_interface_list = Case_API.get_relation(use_case_id=use_case_info.get('id'))
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    relation_interface_list = []
-    for relation_interface in relation_interface_info:
-        relation_interface_list.append(relation_interface.to_dict())
     for relation_interface in relation_interface_list:
         relation_interface.pop('use_case_id')
         relation_interface.pop('create_time')
         relation_interface.pop('update_time')
         interface_id = relation_interface.get('interface_id')
-        interface_info = InterfaceAPI.get_interface(id=interface_id)
-        interface_list = []
-        for interface in interface_info:
-            interface_list.append(interface.to_dict())
+        interface_list = InterfaceAPI.get_interface(id=interface_id)
         relation_interface.update({'interface_name': interface_list[0].get('interface_name')})
-        para_info = Case_API.get_case_parameter_relation(relation_id=relation_interface['id'])
-        para_list = [para.to_dict()for para in para_info]
+        para_list = Case_API.get_case_parameter_relation(relation_id=relation_interface['id'])
         relation_interface.update({'para_list': para_list})
         use_case_info['interface_list'].append(relation_interface)
     return jsonify({'success': True, 'res': use_case_info})
@@ -128,17 +117,15 @@ def add_relation():
     2. 查找interface内parameter信息, 用空值为每个参数在relation下生成记录
     :return:
     """
+    interface_id = request.get_json().get('interface_id')
     try:
         relation_id = Case_API.add_relation(**request.get_json())
+        interface_list = InterfaceAPI.get_interface(id=interface_id)
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
-    interface_id = request.get_json().get('interface_id')
-    interface_info = InterfaceAPI.get_interface(id=interface_id)
-    interface_list = []
-    for s_interface in interface_info:
-        interface_list.append(s_interface.to_dict())
     the_interface = interface_list[0]
-    analysis_str = ''.join([the_interface.get('interface_header'), the_interface.get('interface_json_payload'),
+    analysis_str = ''.join([the_interface.get('interface_header'),
+                            the_interface.get('interface_json_payload'),
                             the_interface.get('interface_url')])
     param_list = search_parameter(analysis_str)
     for para in param_list:
