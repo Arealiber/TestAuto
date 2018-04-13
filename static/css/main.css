@@ -103,3 +103,7 @@ body {
 .table {
     display: none;
 }
+
+#fetch_fail_alert {
+    display: none;
+}

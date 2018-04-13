@@ -37,7 +37,7 @@
         <HR>
 
         <div id="loader"></div>
-        <div class="alert alert-danger" role="alert">获取数据失败</div>
+        <div id="fetch_fail_alert" class="alert alert-danger" role="alert">获取数据失败</div>
 
         <table class="table" id="parameter_table">
             <thead>
@@ -70,7 +70,7 @@
             success: function (response) {
                 $("#loader").hide();
                 if (!response.success) {
-                    $("#error").show();
+                    $("#fetch_fail_alert").show();
                 } else {
                     $("#parameter_table").show();
                     var parameter_list = response.res;
