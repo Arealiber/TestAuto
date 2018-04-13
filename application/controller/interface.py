@@ -13,7 +13,9 @@ def add_interface():
     添加interface
     """
     try:
-        InterfaceAPI.add_interface(**request.get_json())
+        # TODO 接入权限系统后移除写死创建人
+        interface_json = {**request.json, **{'create_by': 1}}
+        InterfaceAPI.add_interface(**interface_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
     return jsonify({'success': True})
@@ -25,9 +27,8 @@ def get_interface():
     根据过滤规则获取interface列表, 无规则则返回所有interface
     """
     try:
-        # TODO 接入权限系统后移除写死创建人
-        interface_json = {**request.json, **{'create_by': 1}}
-        results = InterfaceAPI.get_interface(**interface_json)
+
+        results = InterfaceAPI.get_interface(**request.json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
     return jsonify({'success': True, 'res': results})
