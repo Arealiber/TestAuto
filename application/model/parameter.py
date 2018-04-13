@@ -37,7 +37,6 @@ class Parameter(Base):
         return {
             'id': self.id,
             'parameter_name': self.parameter_name,
-            'parameter_type': self.parameter_type,
             'value': self.value,
             'create_by': self.create_by,
             'create_time': self.create_time,
