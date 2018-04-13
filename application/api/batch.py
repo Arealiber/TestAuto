@@ -11,7 +11,7 @@ def add_batch(**kwargs):
 def get_batch(**kwargs):
     with session_scope() as session:
         query = session.query(Batch).filter_by(**kwargs).filter_by(status=1)
-    batch_list = [s_batch for s_batch in query]
+    batch_list = [s_batch.to_dict() for s_batch in query]
     return batch_list
 
 
