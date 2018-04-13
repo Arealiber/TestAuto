@@ -12,12 +12,12 @@ def add_parameter():
     """
     try:
         # TODO 接入权限系统后移除写死创建人
-        parameter_json = request.json
+        parameter_json = request.get_json()
         parameter_json['create_by'] = 1
-        ParameterAPI.add_parameter(**parameter_json)
+        parameter_id = ParameterAPI.add_parameter(**parameter_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'res': parameter_id})
 
 
 @app.route('/parameter/info', methods=['POST'])
@@ -38,10 +38,10 @@ def update_parameter():
     修改parameter
     """
     try:
-        ParameterAPI.modify_parameter(**request.get_json())
+        parameter_id = ParameterAPI.modify_parameter(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'res': parameter_id})
 
 
 @app.route('/parameter/delete', methods=['POST'])

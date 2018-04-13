@@ -1,7 +1,4 @@
-from flask import render_template
-
 from application import app
-from application.api import interface as InterfaceAPI
 
 
 @app.route('/')
@@ -12,6 +9,11 @@ def index():
 @app.route('/parameter')
 def parameter_index():
     return app.send_static_file('parameter.html')
+
+
+@app.route('/parameter_detail/<parameter_id>')
+def parameter_detail(parameter_id):
+    return app.send_static_file('parameter_detail.html')
 
 
 @app.route('/interface')

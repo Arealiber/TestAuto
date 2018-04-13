@@ -107,3 +107,15 @@ body {
 #fetch_fail_alert {
     display: none;
 }
+
+#error_alert {
+    display: none;
+}
+
+#parameter_form {
+    display: none;
+}
+
+#submit_parameter {
+    display: none;
+}

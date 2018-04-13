@@ -40,7 +40,7 @@
         </nav>
 
         <div id="loader"></div>
-        <div id="fetch_fail_alert" class="alert alert-danger" role="alert">获取数据失败</div>
+        <div id="error_alert" class="alert alert-danger" role="alert"></div>
 
         <table class="table" id="batch_table">
             <thead>
@@ -71,7 +71,8 @@
             success: function (response) {
                 $("#loader").hide();
                 if (!response.success) {
-                    $("#fetch_fail_alert").show();
+                    $("#error_alert").text("获取数据失败");
+                    $("#error_alert").show();
                 } else {
                     $("#batch_table").show();
                     var batch_list = response.res;

@@ -39,15 +39,16 @@
             </ol>
         </nav>
 
+        <a class="btn btn-dark" href="/parameter_detail/new" role="button">添加新参数</a>
+
         <div id="loader"></div>
-        <div id="fetch_fail_alert" class="alert alert-danger" role="alert">获取数据失败</div>
+        <div id="error_alert" class="alert alert-danger" role="alert"></div>
 
         <table class="table" id="parameter_table">
             <thead>
             <tr>
                 <th scope="col">id</th>
                 <th scope="col">参数名称</th>
-                <th scope="col">参数类型</th>
                 <th scope="col">参数值</th>
                 <th scope="col">创建人</th>
             </tr>
@@ -73,16 +74,16 @@
             success: function (response) {
                 $("#loader").hide();
                 if (!response.success) {
-                    $("#fetch_fail_alert").show();
+                    $("#error_alert").text("获取数据失败");
+                    $("#error_alert").show();
                 } else {
                     $("#parameter_table").show();
                     var parameter_list = response.res;
                     $.each(parameter_list, function (i, parameter) {
-                        $("#interface_table").find('tbody')
+                        $("#parameter_table").find('tbody')
                             .append('<tr>' +
                                 '<th scope="row">' + parameter.id + '</th>' +
                                 '<td>' + parameter.parameter_name + '</td>' +
-                                '<td>' + parameter.parameter_type + '</td>' +
                                 '<td>' + parameter.value + '</td>' +
                                 '<td>' + parameter.create_by + '</td></tr>')
                     })
