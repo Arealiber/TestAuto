@@ -4,9 +4,9 @@
 <head>
     <title></title>
 
-    <link href="/static/component/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/css/left_nav.css" rel="stylesheet">
-    <link href="/static/css/loader.css" rel="stylesheet">
+    <link href="/component/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/loader.css" rel="stylesheet">
 
 </head>
 
@@ -38,6 +38,7 @@
         <HR>
 
         <div id="loader"></div>
+        <div id="error"><h1>获取数据失败</h1></div>
 
         <table class="table" id="interface_table">
             <thead>
@@ -54,9 +55,9 @@
     </div>
 </div>
 
-<script src="/static/component/js/jquery-3.3.1.min.js"></script>
-<script src="/static/component/js/popper.min.js"></script>
-<script src="/static/component/js/bootstrap.min.js"></script>
+<script src="/component/js/jquery-3.3.1.min.js"></script>
+<script src="/component/js/popper.min.js"></script>
+<script src="/component/js/bootstrap.min.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -67,15 +68,21 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                $("#loader").css('display', 'none');
-                $.each(response, function (i, interface) {
-                    $("#interface_table").find('tbody')
-                        .append('<tr>' +
-                            '<th scope="row">' + interface.id + '</th>' +
-                            '<td>' + interface.interface_name + '</td>' +
-                            '<td>' + interface.interface_entry + '</td>' +
-                            '<td>' + interface.create_by + '</td></tr>')
-                })
+                $("#loader").hide();
+                if (!response.success) {
+                    $("#error").show();
+                } else {
+                    $("#interface_table").show();
+                    var interface_list = response.res;
+                    $.each(interface_list, function (i, interface) {
+                        $("#interface_table").find('tbody')
+                            .append('<tr>' +
+                                '<th scope="row">' + interface.id + '</th>' +
+                                '<td>' + interface.interface_name + '</td>' +
+                                '<td>' + interface.interface_entry + '</td>' +
+                                '<td>' + interface.create_by + '</td></tr>')
+                    })
+                }
             }
         })
     })

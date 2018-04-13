@@ -4,42 +4,86 @@
 <head>
     <title></title>
 
-    <link href="/static/component/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/css/left_nav.css" rel="stylesheet">
+    <link href="/component/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/loader.css" rel="stylesheet">
 
 </head>
 
 <body>
-    <div id="wrapper">
-        <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                <li class="sidebar-brand"><a href="/">自动巡检测试系统</a></li>
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand"><a href="/">自动巡检测试系统</a></li>
 
-                <li><a href="/parameter">参数</a></li>
+            <li><a href="/parameter">参数</a></li>
 
-                <li><a href="/interface">接口</a></li>
+            <li><a href="/interface">接口</a></li>
 
-                <li><a href="/use_case">用例</a></li>
+            <li><a href="/use_case">用例</a></li>
 
-                <li><a href="/batch">批次</a></li>
+            <li><a href="/batch">批次</a></li>
 
-                <li><a href="/run_log">运行日志</a></li>
+            <li><a href="/run_log">运行日志</a></li>
 
-                <li><a href="#">报表</a></li>
+            <li><a href="#">报表</a></li>
 
-                <li><a href="#">登出</a></li>
-            </ul>
-        </div>
-
-        <div id="page-content-wrapper">
-            <h4>批次管理</h4>
-            <HR>
-        </div>
+            <li><a href="#">登出</a></li>
+        </ul>
     </div>
 
-    <script src="/static/component/js/jquery-3.3.1.min.js"></script>
-    <script src="/static/component/js/popper.min.js"></script>
-    <script src="/static/component/js/bootstrap.min.js"></script>
+    <div id="page-content-wrapper">
+        <h4>批次管理</h4>
+        <HR>
+
+        <div id="loader"></div>
+        <div id="error"><h1>获取数据失败</h1></div>
+
+        <table class="table" id="batch_table">
+            <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">批次名称</th>
+                <th scope="col">创建人</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="/component/js/jquery-3.3.1.min.js"></script>
+<script src="/component/js/popper.min.js"></script>
+<script src="/component/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: 'post',
+            url: '/batch/info',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#loader").hide();
+                if (!response.success) {
+                    $("#error").show();
+                } else {
+                    $("#batch_table").show();
+                    var batch_list = response.res;
+                    $.each(batch_list, function (i, batch) {
+                        $("#batch_table").find('tbody')
+                            .append('<tr>' +
+                                '<th scope="row">' + batch.id + '</th>' +
+                                '<td>' + batch.batch_name + '</td>' +
+                                '<td>' + batch.create_by + '</td></tr>')
+                    })
+                }
+            }
+        })
+    })
+</script>
 
 </body>
 </html>

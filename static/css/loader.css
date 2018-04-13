@@ -30,3 +30,10 @@
         transform: rotate(360deg);
     }
 }
+
+#error {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: none;
+}
