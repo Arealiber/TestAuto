@@ -14,7 +14,8 @@ def add_interface():
     """
     try:
         # TODO 接入权限系统后移除写死创建人
-        interface_json = {**request.json(), **{'create_by': 1}}
+        interface_json = request.json
+        interface_json['create_by'] = 1
         InterfaceAPI.add_interface(**interface_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})

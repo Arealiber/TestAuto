@@ -12,7 +12,8 @@ def add_parameter():
     """
     try:
         # TODO 接入权限系统后移除写死创建人
-        parameter_json = {**request.json(), **{'create_by': 1}}
+        parameter_json = request.json
+        parameter_json['create_by'] = 1
         ParameterAPI.add_parameter(**parameter_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
