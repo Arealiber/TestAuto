@@ -34,6 +34,7 @@ body {
     position: absolute;
     padding: 15px;
     margin-right: -250px;
+    height: 100vh;
 }
 
 /* Sidebar Styles */
@@ -95,5 +96,6 @@ body {
         padding: 20px;
         position: relative;
         margin-right: 0;
+        height: 100vh;
     }
 }
