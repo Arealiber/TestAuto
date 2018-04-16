@@ -6,8 +6,8 @@ def index():
     return app.send_static_file('index.html')
 
 
-@app.route('/parameter')
-def parameter_index():
+@app.route('/parameter/<page_num>')
+def parameter_page(page_num):
     return app.send_static_file('parameter.html')
 
 

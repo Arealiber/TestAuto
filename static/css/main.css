@@ -119,3 +119,7 @@ body {
 #submit_parameter {
     display: none;
 }
+
+#pagination {
+    display: none;
+}

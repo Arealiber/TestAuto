@@ -16,7 +16,7 @@
         <ul class="sidebar-nav">
             <li class="sidebar-brand"><a href="/">自动巡检测试系统</a></li>
 
-            <li><a href="/parameter">参数</a></li>
+            <li><a href="/parameter/1">参数</a></li>
 
             <li><a href="/interface">接口</a></li>
 
@@ -39,7 +39,7 @@
             </ol>
         </nav>
 
-        <a class="btn btn-dark" href="/parameter_detail/new" role="button">添加新参数</a>
+        <a class="btn btn-dark" href="/parameter_detail/new" role="button" style="margin-bottom: 20px;">添加新参数</a>
 
         <div id="loader"></div>
         <div id="error_alert" class="alert alert-danger" role="alert"></div>
@@ -57,6 +57,13 @@
             <tbody>
             </tbody>
         </table>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item" id="previous_page"><a class="page-link" href="#">上一页</a></li>
+                <li class="page-item" id="next_page"><a class="page-link" href="#">下一页</a></li>
+            </ul>
+        </nav>
 
         <div class="modal fade" id="delete_confirm" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -88,31 +95,72 @@
 <script>
     $(document).ready(function () {
         $.ajax({
-            type: 'post',
-            url: '/parameter/info',
-            data: JSON.stringify({}),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
+            type: 'get',
+            url: '/parameter/count',
             success: function (response) {
-                $("#loader").hide();
                 if (!response.success) {
-                    $("#error_alert").text("获取数据失败");
+                    $("#loader").hide();
+                    $("#error_alert").text("获取参数失败");
                     $("#error_alert").show();
                 } else {
-                    $("#parameter_table").show();
-                    var parameter_list = response.res;
-                    $.each(parameter_list, function (i, parameter) {
-                        var button_col = '<div class="btn-group btn-group-sm" role="group">' +
-                            '<a class="btn btn-dark" href="/parameter_detail/' + parameter.id + '" role="button">详情</a>' +
-                            '<button type="button" class="btn btn-dark btn-secondary delete-button" value="' + parameter.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
-                        $("#parameter_table").find('tbody')
-                            .append('<tr>' +
-                                '<th scope="row">' + (i + 1) + '</th>' +
-                                '<td>' + parameter.parameter_name + '</td>' +
-                                '<td>' + parameter.value + '</td>' +
-                                '<td>' + parameter.create_by + '</td>' +
-                                '<td>' + button_col + '</td></tr>')
-                    })
+                    var total_param = response.res;
+                    var page_num = window.location.pathname.split("/").pop();
+                    if (page_num * 10 > total_param + 10 || page_num <= 0 || isNaN(page_num)) {
+                        $("#loader").hide();
+                        $("#error_alert").text("无此页数据");
+                        $("#error_alert").show();
+                    } else {
+                        var previous_page = $('li[id="previous_page"]');
+                        console.log(previous_page)
+                        if (page_num == 1) {
+                            previous_page.addClass('disabled')
+                        } else if (page_num * 10 > total_param - 10) {
+                            $('li[id="next_page"]').addClass('disabled')
+                        }
+                        var total_page = total_param % 10 + 1;
+                        var page_item_string = '';
+                        for (var i = 1; i <= total_page; i++) {
+                            if (i == page_num) {
+                                page_item_string += '<li class="page-item active"><a class="page-link" href="/parameter/' + i + '">' + i + '</a></li>'
+                            } else {
+                                page_item_string += '<li class="page-item"><a class="page-link" href="/parameter/' + i + '">' + i + '</a></li>'
+                            }
+                        }
+                        previous_page.after(page_item_string);
+                        $("#pagination").show();
+                        $.ajax({
+                            type: 'post',
+                            url: '/parameter/info',
+                            data: JSON.stringify({
+                                'pageSize': 10,
+                                'pageIndex': page_num
+                            }),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (response) {
+                                $("#loader").hide();
+                                if (!response.success) {
+                                    $("#error_alert").text("获取数据失败");
+                                    $("#error_alert").show();
+                                } else {
+                                    $("#parameter_table").show();
+                                    var parameter_list = response.res;
+                                    $.each(parameter_list, function (i, parameter) {
+                                        var button_col = '<div class="btn-group btn-group-sm" role="group">' +
+                                            '<a class="btn btn-dark" href="/parameter_detail/' + parameter.id + '" role="button">详情</a>' +
+                                            '<button type="button" class="btn btn-dark btn-secondary delete-button" value="' + parameter.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
+                                        $("#parameter_table").find('tbody')
+                                            .append('<tr>' +
+                                                '<th scope="row">' + (i + 1) + '</th>' +
+                                                '<td>' + parameter.parameter_name + '</td>' +
+                                                '<td>' + parameter.value + '</td>' +
+                                                '<td>' + parameter.create_by + '</td>' +
+                                                '<td>' + button_col + '</td></tr>')
+                                    });
+                                }
+                            }
+                        });
+                    }
                 }
             }
         })
