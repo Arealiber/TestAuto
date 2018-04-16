@@ -115,11 +115,13 @@
                         $("#error_alert").show();
                     } else {
                         var previous_page = $('li[id="previous_page"]');
-                        console.log(previous_page)
+                        var next_page = $('li[id="next_page"]');
                         if (page_num == 1) {
-                            previous_page.addClass('disabled')
+                            previous_page.addClass('disabled');
+                            next_page.find('.page-link').attr('href', '/parameter/' + (Number(page_num) + 1))
                         } else if (page_num * 10 > total_param - 10) {
-                            $('li[id="next_page"]').addClass('disabled')
+                            next_page.addClass('disabled');
+                            previous_page.find('.page-link').attr('href', '/parameter/' + (Number(page_num) - 1))
                         }
                         var total_page = total_param % 10 + 1;
                         var page_item_string = '';
