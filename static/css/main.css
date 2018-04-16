@@ -1,5 +1,5 @@
 body, button, input, select, textarea, h1, h2, h3, h4, h5, h6 {
-    font-family: "Segoe UI","Lucida Grande",Helvetica,Arial,"Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,sans-serif;
+    font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontAwesome, sans-serif;
 }
 
 body {
@@ -120,6 +120,13 @@ body {
     display: none;
 }
 
-#pagination {
-    display: none;
+.page-link {
+    color: #343a40;
+}
+
+.page-item.active .page-link {
+    z-index: 1;
+    color: #fff;
+    background-color: #343a40;
+    border-color: #343a40;
 }
