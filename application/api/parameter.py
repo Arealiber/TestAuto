@@ -13,14 +13,14 @@ def add_parameter(**kwargs):
 
 def get_parameter(**kwargs):
     with session_scope() as session:
-        query = session.query(Parameter).filter_by(**kwargs).filter_by(status=1)
+        query = session.query(Parameter).filter_by(**kwargs)
     parameter_list = [param.to_dict() for param in query]
     return parameter_list
 
 
 def query_parameter_count():
     with session_scope() as session:
-        parameter_count = session.query(Parameter).filter_by(status=1).count()
+        parameter_count = session.query(Parameter).count()
     return parameter_count
 
 

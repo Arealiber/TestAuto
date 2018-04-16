@@ -31,7 +31,6 @@ class Parameter(Base):
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.now())
     update_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
-    status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):
         return {
