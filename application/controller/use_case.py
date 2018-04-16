@@ -37,7 +37,7 @@ def use_case_list():
     pageIndex = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
     pageSize = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
     try:
-        result = Case_API.get_use_case(**request.get_json())
+        result = Case_API.get_use_case(**param_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
     return jsonify({'success': True, 'res': result[(pageIndex-1)*pageSize:pageIndex*pageSize]})
