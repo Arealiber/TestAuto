@@ -24,12 +24,19 @@ def add_parameter():
 def parameter_info():
     """
     获取parameter列表
+    :param
+        pageIndex, 需要第几页
+        pageSize, 页面显示个数
+    :return
     """
+    param_json = request.get_json()
+    pageIndex =  param_json.pop('pageIndex') if 'pageIndex' in param_json else 1
+    pageSize = param_json.pop('pageSize') if 'pageSize' in param_json else 10
     try:
-        result = ParameterAPI.get_parameter(**request.get_json())
+        result = ParameterAPI.get_parameter(**param_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True, 'res': result})
+    return jsonify({'success': True, 'res': result[int(pageIndex-1)*int(pageSize):int(pageIndex)*int(pageSize)]})
 
 
 @app.route('/parameter/count', methods=['GET'])
