@@ -47,6 +47,7 @@
         <table class="table" id="parameter_table">
             <thead>
             <tr>
+                <th scope="col">#</th>
                 <th scope="col">参数名称</th>
                 <th scope="col">参数值</th>
                 <th scope="col">创建人</th>
@@ -106,7 +107,8 @@
                             '<button type="button" class="btn btn-dark btn-secondary delete-button" value="' + parameter.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                         $("#parameter_table").find('tbody')
                             .append('<tr>' +
-                                '<th scope="row">' + parameter.parameter_name + '</th>' +
+                                '<th scope="row">' + (i + 1) + '</th>'+
+                                '<td>' + parameter.parameter_name + '</td>' +
                                 '<td>' + parameter.value + '</td>' +
                                 '<td>' + parameter.create_by + '</td>' +
                                 '<td>' + button_col + '</td></tr>')
