@@ -4,7 +4,7 @@
 <head>
     <title></title>
 
-    <link href="component/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/component/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
     <link href="/css/loader.css" rel="stylesheet">
 
@@ -107,7 +107,7 @@
                             '<button type="button" class="btn btn-dark btn-secondary delete-button" value="' + parameter.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                         $("#parameter_table").find('tbody')
                             .append('<tr>' +
-                                '<th scope="row">' + (i + 1) + '</th>'+
+                                '<th scope="row">' + (i + 1) + '</th>' +
                                 '<td>' + parameter.parameter_name + '</td>' +
                                 '<td>' + parameter.value + '</td>' +
                                 '<td>' + parameter.create_by + '</td>' +
