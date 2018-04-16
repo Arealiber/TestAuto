@@ -39,7 +39,7 @@ class Interface(Base):
     }
 
     id = Column(Integer, primary_key=True)
-    interface_name = Column(String(100), nullable=False, unique=True)
+    interface_name = Column(String(100), nullable=False)
     interface_entry = Column(Integer, nullable=False)  # 入口
     interface_url = Column(String(255), nullable=False)
     interface_method = Column(Integer, nullable=False)

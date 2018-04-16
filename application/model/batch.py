@@ -15,7 +15,7 @@ class Batch(Base):
     }
 
     id = Column(Integer, primary_key=True)
-    batch_name = Column(String(100), nullable=False, unique=True)
+    batch_name = Column(String(100), nullable=False)
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.now())
     update_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())

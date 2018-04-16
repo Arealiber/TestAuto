@@ -16,7 +16,7 @@ class UseCase(Base):
     }
 
     id = Column(Integer, primary_key=True)
-    use_case_name = Column(String(100), nullable=False, unique=True)
+    use_case_name = Column(String(100), nullable=False)
     auto_run = Column(Boolean, nullable=False, default=False)
     desc = Column(String(1000))
     create_by = Column(Integer, nullable=False)
