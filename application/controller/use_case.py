@@ -33,11 +33,14 @@ def use_case_list():
     获取use_case列表，不需要获取与use_case关联的interface
     :return:
     """
+    param_json = request.get_json()
+    pageIndex = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
+    pageSize = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
     try:
-        result = Case_API.get_use_case(**request.get_json())
+        result = Case_API.get_use_case(**param_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True, 'res': result})
+    return jsonify({'success': True, 'res': result[(pageIndex-1)*pageSize:pageIndex*pageSize]})
 
 
 @app.route('/use_case/count', methods=['GET'])

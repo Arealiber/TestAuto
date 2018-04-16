@@ -36,7 +36,7 @@ def parameter_info():
         result = ParameterAPI.get_parameter(**param_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True, 'res': result[int(pageIndex-1)*int(pageSize):int(pageIndex)*int(pageSize)]})
+    return jsonify({'success': True, 'res': result[(pageIndex-1)*pageSize:pageIndex*pageSize]})
 
 
 @app.route('/parameter/count', methods=['GET'])

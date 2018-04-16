@@ -27,12 +27,14 @@ def get_interface():
     """
     根据过滤规则获取interface列表, 无规则则返回所有interface
     """
+    param_json = request.get_json()
+    pageIndex = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
+    pageSize = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
     try:
-
-        results = InterfaceAPI.get_interface(**request.get_json())
+        result = InterfaceAPI.get_interface(**param_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True, 'res': results})
+    return jsonify({'success': True, 'res': result[(pageIndex-1)*pageSize:pageIndex*pageSize]})
 
 
 @app.route('/interface/count', methods=['GET'])

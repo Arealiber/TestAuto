@@ -26,11 +26,14 @@ def get_batch():
     query batch of use case
     :return:
     """
+    param_json = request.get_json()
+    pageIndex = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
+    pageSize = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
     try:
-        result = BatchAPI.get_batch(**request.get_json())
+        result = BatchAPI.get_batch(**param_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True, 'res': result})
+    return jsonify({'success': True, 'res': result[(pageIndex-1)*pageSize:pageIndex*pageSize]})
 
 
 @app.route('/batch/count', methods=['GET'])
