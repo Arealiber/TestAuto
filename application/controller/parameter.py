@@ -30,8 +30,8 @@ def parameter_info():
     :return
     """
     param_json = request.get_json()
-    pageIndex =  param_json.pop('pageIndex') if 'pageIndex' in param_json else 1
-    pageSize = param_json.pop('pageSize') if 'pageSize' in param_json else 10
+    pageIndex = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
+    pageSize = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
     try:
         result = ParameterAPI.get_parameter(**param_json)
     except Exception as e:
