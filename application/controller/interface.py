@@ -35,6 +35,19 @@ def get_interface():
     return jsonify({'success': True, 'res': results})
 
 
+@app.route('/interface/count', methods=['GET'])
+def query_interface_count():
+    """
+    获取数据库中所有interface的总个数
+    """
+    try:
+
+        result = InterfaceAPI.query_interface_count()
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+    return jsonify({'success': True, 'res': result})
+
+
 @app.route('/interface/update', methods=['POST'])
 def modify_interface():
     """

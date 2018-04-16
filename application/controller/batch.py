@@ -33,6 +33,19 @@ def get_batch():
     return jsonify({'success': True, 'res': result})
 
 
+@app.route('/batch/count', methods=['GET'])
+def query_batch_count():
+    """
+    query batch count of use case
+    :return:
+    """
+    try:
+        result = BatchAPI.query_batch_count()
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+    return jsonify({'success': True, 'res': result})
+
+
 @app.route('/batch/update', methods=['POST'])
 def modify_batch():
     """

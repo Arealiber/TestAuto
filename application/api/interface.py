@@ -16,6 +16,12 @@ def get_interface(**kwargs):
     return interface_list
 
 
+def query_interface_count():
+    with session_scope() as session:
+        interface_count = session.query(Interface).filter_by(status=1).count()
+    return interface_count
+
+
 def modify_interface(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')

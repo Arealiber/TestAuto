@@ -15,6 +15,12 @@ def get_batch(**kwargs):
     return batch_list
 
 
+def query_batch_count():
+    with session_scope() as session:
+        batch_count = session.query(Batch).filter_by(status=1).count()
+    return batch_count
+
+
 def modify_batch(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')

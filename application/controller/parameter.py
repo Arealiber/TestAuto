@@ -32,6 +32,18 @@ def parameter_info():
     return jsonify({'success': True, 'res': result})
 
 
+@app.route('/parameter/count', methods=['GET'])
+def parameter_count():
+    """
+    获取parameter总个数
+    """
+    try:
+        result = ParameterAPI.query_parameter_count()
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+    return jsonify({'success': True, 'res': result})
+
+
 @app.route('/parameter/update', methods=['POST'])
 def update_parameter():
     """

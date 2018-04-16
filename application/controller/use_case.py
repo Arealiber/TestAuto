@@ -40,6 +40,19 @@ def use_case_list():
     return jsonify({'success': True, 'res': result})
 
 
+@app.route('/use_case/count', methods=['GET'])
+def use_case_count():
+    """
+    获取use_case的总个数
+    :return:
+    """
+    try:
+        result = Case_API.query_use_case_count()
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+    return jsonify({'success': True, 'res': result})
+
+
 @app.route('/use_case/detail', methods=['POST'])
 def use_case_detail():
     """

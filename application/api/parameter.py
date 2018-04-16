@@ -18,6 +18,12 @@ def get_parameter(**kwargs):
     return parameter_list
 
 
+def query_parameter_count():
+    with session_scope() as session:
+        parameter_count = session.query(Parameter).filter_by(status=1).count()
+    return parameter_count
+
+
 def modify_parameter(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
@@ -28,4 +34,4 @@ def modify_parameter(**kwargs):
 def del_parameter(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
-        session.query(Parameter).filter_by(id=id).update({'status': 0})
+        session.query(Parameter).filter_by(id=id).delete(synchronize_session=False)

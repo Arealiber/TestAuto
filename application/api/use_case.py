@@ -17,6 +17,12 @@ def get_use_case(**kwargs):
     return use_case_list
 
 
+def query_use_case_count():
+    with session_scope() as session:
+        use_case_count = session.query(UseCase).filter_by(status=1).count()
+    return use_case_count
+
+
 def modify_use_case(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
