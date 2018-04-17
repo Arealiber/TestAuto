@@ -30,13 +30,13 @@ def parameter_info():
     :return
     """
     param_json = request.get_json()
-    pageIndex = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
-    pageSize = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
+    page_index = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
+    page_size = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
     try:
         result = ParameterAPI.get_parameter(**param_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True, 'res': result[(pageIndex-1)*pageSize:pageIndex*pageSize]})
+    return jsonify({'success': True, 'res': result[(page_index - 1) * page_size:page_index * page_size]})
 
 
 @app.route('/parameter/count', methods=['GET'])
