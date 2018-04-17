@@ -39,7 +39,7 @@
             </ol>
         </nav>
 
-        <a class="btn btn-dark btn-sm" href="/parameter_detail/new" role="button" style="margin-bottom: 20px;">新增</a>
+        <a class="btn btn-primary btn-sm" href="/parameter_detail/new" role="button" style="margin-bottom: 20px;">新增</a>
 
         <div id="loader"></div>
         <div id="error_alert" class="alert alert-danger" role="alert"></div>
@@ -158,8 +158,8 @@
                                     var parameter_list = response.res;
                                     $.each(parameter_list, function (i, parameter) {
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
-                                            '<a class="btn btn-dark" href="/parameter_detail/' + parameter.id + '" role="button">详情</a>' +
-                                            '<button type="button" class="btn btn-dark btn-secondary delete-button" value="' + parameter.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
+                                            '<a class="btn btn-info" href="/parameter_detail/' + parameter.id + '" role="button">详情</a>' +
+                                            '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + parameter.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                                         $("#parameter_table").find('tbody')
                                             .append('<tr>' +
                                                 '<th scope="row">' + (10 * (page_num - 1 ) + i + 1) + '</th>' +

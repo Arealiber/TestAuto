@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title></title>
 
     <link href="/component/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
     <link href="/css/loader.css" rel="stylesheet">
-
 </head>
-
 <body>
 <div id="wrapper">
     <div id="sidebar-wrapper">
@@ -35,8 +32,8 @@
     <div id="page-content-wrapper">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/parameter/1">参数管理</a></li>
-                <li class="breadcrumb-item active" aria-current="page">参数</li>
+                <li class="breadcrumb-item"><a href="/use_case/1">用例管理</a></li>
+                <li class="breadcrumb-item active" aria-current="page">用例</li>
             </ol>
         </nav>
         <HR>
@@ -44,21 +41,22 @@
         <div id="loader"></div>
         <div id="error_alert" class="alert alert-danger" role="alert"></div>
 
-        <form id="parameter_form">
+        <form id="use_case_form">
             <div class="form-group">
-                <label for="parameter_id" style="display: none;">参数id</label>
-                <input style="display: none;" type="text" class="form-control" id="parameter_id" placeholder="" readonly>
+                <label for="use_case_id" style="display: none;">接口id</label>
+                <input style="display: none;" type="text" class="form-control" id="use_case_id" placeholder=""
+                       readonly>
             </div>
             <div class="form-group">
-                <label for="parameter_name">参数名称</label>
-                <input type="text" class="form-control" id="parameter_name" placeholder="参数名(英文&数字)" value="">
+                <label for="use_case_name">名称</label>
+                <input type="text" class="form-control" id="use_case_name" placeholder="用例名称" value="">
             </div>
             <div class="form-group">
-                <label for="parameter_value">参数值</label>
-                <input type="text" class="form-control" id="parameter_value" placeholder="参数值" value="">
+                <label for="use_case_desc">描述</label>
+                <input type="text" class="form-control" id="use_case_desc" placeholder="用例描述" value="">
             </div>
         </form>
-        <button class="btn btn-primary" id="submit_parameter">提交</button>
+        <button class="btn btn-primary" id="submit_use_case">提交</button>
     </div>
 </div>
 
@@ -70,58 +68,59 @@
     var error_alert = $("#error_alert");
     var loader = $("#loader");
 
-    function show_alert(alert_text){
+    function show_alert(alert_text) {
         loader.hide();
         error_alert.text(alert_text);
         error_alert.show();
     }
 
     $(document).ready(function () {
-        var parameter_id = window.location.pathname.split("/").pop();
-        if (parameter_id != 'new') {
+        var use_case_id = window.location.pathname.split('/').pop();
+        if (use_case_id != 'new'){
             $.ajax({
                 type: 'post',
-                url: '/parameter/info',
+                url: '/use_case/detail',
                 data: JSON.stringify({
-                    'id': parameter_id
+                    'id': use_case_id
                 }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
                     loader.hide();
-                    if (!response.success) {
-                        show_alert("获取数据失败");
+                    if (!response.success){
+                        show_alert('获取数据失败');
                     } else {
-                        var parameter_detail = response.res[0];
-                        $("#parameter_id").attr("placeholder", parameter_detail.id);
-                        $("#parameter_name").val(parameter_detail.parameter_name);
-                        $("#parameter_value").val(parameter_detail.value);
-                        $("#parameter_form").show();
-                        $("#submit_parameter").show();
+                        var use_case_detail = response.res;
+                        $("#use_case_id").attr('placeholder', use_case_detail.id);
+                        $("#use_case_name").val(use_case_detail.use_case_name);
+                        $("#use_case_desc").val(use_case_detail.desc);
+
+                        $("#use_case_form").show();
+                        $("#submit_use_case").show();
                     }
                 }
             })
         } else {
             loader.hide();
-            $("#parameter_form").show();
-            $("#submit_parameter").show();
+            $("#use_case_form").show();
+            $("#submit_use_case").show();
         }
     });
-
+    
     $(document).ready(function () {
-        $("#submit_parameter").click(function () {
-            var parameter_dict = {
-                'parameter_name': $("#parameter_name").val(),
-                'value': $("#parameter_value").val()
+        $("#submit_use_case").click(function () {
+            var use_case_dict = {
+                'use_case_name': $("#use_case_name").val(),
+                'desc': $("#use_case_desc").val()
             };
-            var parameter_id = $("#parameter_id").attr("placeholder");
-            if (!parameter_id) {
-                var url = '/parameter/add';
-                var data = JSON.stringify(parameter_dict)
+            var use_case_id = $("#use_case_id").attr('placeholder');
+            if (!use_case_id) {
+                var url = '/use_case/add';
+                var data = JSON.stringify(use_case_dict)
             } else {
-                var url = '/parameter/update';
-                parameter_dict.id = parameter_id;
-                var data = JSON.stringify(parameter_dict)
+                var url = '/use_case/update';
+                use_case_dict.id = use_case_id;
+                var data = JSON.stringify(use_case_dict)
             }
             $.ajax({
                 type: 'post',
@@ -130,16 +129,16 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
+                    console.log(response);
                     if (!response.success) {
-                        show_alert("更新数据失败");
+                        show_alert('更新数据失败');
                     } else {
-                        window.location.href = "/parameter/1";
+                        window.location.href = '/use_case_detail/' + response.res
                     }
                 }
             })
         })
     })
 </script>
-
 </body>
 </html>
