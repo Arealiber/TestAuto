@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+
+    <link href="/component/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/loader.css" rel="stylesheet">
+
+</head>
+
+<body>
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand"><a href="/">自动巡检测试系统</a></li>
+
+            <li><a href="/parameter/1">参数</a></li>
+
+            <li><a href="/interface/1">接口</a></li>
+
+            <li><a href="/use_case">用例</a></li>
+
+            <li><a href="/batch">批次</a></li>
+
+            <li><a href="/run_log">运行日志</a></li>
+
+            <li><a href="#">报表</a></li>
+
+            <li><a href="#">登出</a></li>
+        </ul>
+    </div>
+
+    <div id="page-content-wrapper">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/interface/1">接口管理</a></li>
+                <li class="breadcrumb-item active" aria-current="page">接口</li>
+            </ol>
+        </nav>
+        <HR>
+
+        <div id="loader"></div>
+        <div id="error_alert" class="alert alert-danger" role="alert"></div>
+
+        <form id="interface_form">
+            <div class="form-group">
+                <label for="interface_id" style="display: none;">接口id</label>
+                <input style="display: none;" type="text" class="form-control" id="interface_id" placeholder=""
+                       readonly>
+            </div>
+            <div class="form-group">
+                <label for="interface_name">名称</label>
+                <input type="text" class="form-control" id="interface_name" placeholder="接口名称" value="">
+            </div>
+            <div class="form-group">
+                <label for="interface_entry">入口</label>
+                <input type="text" class="form-control" id="interface_entry" placeholder="接口入口" value="">
+            </div>
+            <div class="form-group">
+                <label for="interface_url">url</label>
+                <input type="text" class="form-control" id="interface_url" placeholder="接口url" value="">
+            </div>
+            <div class="form-group">
+                <label for="interface_method">请求方式</label>
+                <input type="text" class="form-control" id="interface_method" placeholder="接口请求方式(GET/POST等)" value="">
+            </div>
+            <div class="form-group">
+                <label for="interface_header">HTTP包头</label>
+                <input type="text" class="form-control" id="interface_header" placeholder="接口HTTP包头" value="">
+            </div>
+            <div class="form-group">
+                <label for="interface_json_payload">json内容</label>
+                <input type="text" class="form-control" id="interface_json_payload" placeholder="接口json内容" value="">
+            </div>
+        </form>
+        <button class="btn btn-dark" id="submit_interface">提交</button>
+    </div>
+</div>
+
+<script src="/component/js/jquery-3.3.1.min.js"></script>
+<script src="/component/js/popper.min.js"></script>
+<script src="/component/js/bootstrap.min.js"></script>
+
+<script>
+    var error_alert = $("#error_alert");
+    var loader = $("#loader");
+
+    function show_alert(alert_text) {
+        loader.hide();
+        error_alert.text(alert_text);
+        error_alert.show();
+    }
+
+    $(document).ready(function () {
+        var interface_id = window.location.pathname.split('/').pop()
+        if (interface_id != 'new'){
+            $.ajax({
+                type: 'post',
+                url: '/interface/info',
+                data: JSON.stringify({
+                    'id': interface_id
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    loader.hide();
+                    if (!response.success) {
+                        show_alert('获取数据失败');
+                    } else {
+                        var interface_detail = response.res[0];
+                        $("#interface_id").attr('placeholder', interface_detail.id);
+                        $("#interface_name").val(interface_detail.interface_name);
+                        $("#interface_entry").val(interface_detail.interface_entry);
+                        $("#interface_url").val(interface_detail.interface_url);
+                        $("#interface_method").val(interface_detail.interface_method);
+                        $("#interface_header").val(interface_detail.interface_header);
+                        $("#interface_json_payload").val(interface_detail.interface_json_payload);
+
+                        $("#interface_form").show();
+                        $("#submit_interface").show();
+                    }
+                }
+            })
+        } else {
+            loader.hide();
+            $("#interface_form").show();
+            $("#submit_interface").show();
+        }
+    });
+
+    $(document).ready(function () {
+        $("#submit_interface").click(function () {
+            var interface_dict = {
+                'interface_name': $("#interface_name").val(),
+                'interface_entry': $("#interface_entry").val(),
+                'interface_url': $("#interface_url").val(),
+                'interface_method': $("#interface_method").val(),
+                'interface_header': $("#interface_header").val(),
+                'interface_json_payload': $("#interface_json_payload").val()
+            };
+            var interface_id = $("#interface_id").attr('placeholder');
+            if (!interface_id) {
+                var url = '/interface/add';
+                var data = JSON.stringify(interface_dict)
+            } else {
+                var url = '/interface/update';
+                interface_dict.id = interface_id;
+                var data = JSON.stringify(interface_dict)
+            }
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: data,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (!response.success) {
+                        show_alert('更新数据失败');
+                    } else {
+                        window.location.href = '/interface/1'
+                    }
+                }
+            })
+        })
+    })
+</script>
+
+</body>
+</html>

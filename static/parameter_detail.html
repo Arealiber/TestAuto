@@ -67,6 +67,15 @@
 <script src="/component/js/bootstrap.min.js"></script>
 
 <script>
+    var error_alert = $("#error_alert");
+    var loader = $("#loader");
+
+    function show_alert(alert_text){
+        loader.hide();
+        error_alert.text(alert_text);
+        error_alert.show();
+    }
+
     $(document).ready(function () {
         var parameter_id = window.location.pathname.split("/").pop();
         if (parameter_id != 'new') {
@@ -79,22 +88,21 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
-                    $("#loader").hide();
+                    loader.hide();
                     if (!response.success) {
-                        $("#error_alert").text("获取数据失败");
-                        $("#error_alert").show();
+                        show_alert("获取数据失败");
                     } else {
                         var parameter_detail = response.res[0];
                         $("#parameter_id").attr("placeholder", parameter_detail.id);
-                        $("#parameter_name").attr("value", parameter_detail.parameter_name);
-                        $("#parameter_value").attr("value", parameter_detail.value);
+                        $("#parameter_name").val(parameter_detail.parameter_name);
+                        $("#parameter_value").val(parameter_detail.value);
                         $("#parameter_form").show();
                         $("#submit_parameter").show();
                     }
                 }
             })
         } else {
-            $("#loader").hide();
+            loader.hide();
             $("#parameter_form").show();
             $("#submit_parameter").show();
         }
@@ -102,22 +110,18 @@
 
     $(document).ready(function () {
         $("#submit_parameter").click(function () {
+            var parameter_dict = {
+                'parameter_name': $("#parameter_name").val(),
+                'value': $("#parameter_value").val()
+            };
             var parameter_id = $("#parameter_id").attr("placeholder");
-            var parameter_name = $("#parameter_name").val();
-            var parameter_value = $("#parameter_value").val();
             if (!parameter_id) {
                 var url = '/parameter/add';
-                var data = JSON.stringify({
-                    'parameter_name': parameter_name,
-                    'value': parameter_value
-                })
+                var data = JSON.stringify(parameter_dict)
             } else {
                 var url = '/parameter/update';
-                var data = JSON.stringify({
-                    'id': parameter_id,
-                    'parameter_name': parameter_name,
-                    'value': parameter_value
-                })
+                parameter_dict.id = parameter_id;
+                var data = JSON.stringify(parameter_dict)
             }
             $.ajax({
                 type: 'post',
@@ -127,10 +131,8 @@
                 dataType: "json",
                 success: function (response) {
                     if (!response.success) {
-                        $("#error_alert").text("更新数据失败");
-                        $("#error_alert").show();
+                        show_alert("更新数据失败");
                     } else {
-                        parameter_id = response.res;
                         window.location.href = "/parameter/1";
                     }
                 }
