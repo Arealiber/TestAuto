@@ -97,11 +97,14 @@ def get_batch_use_case_relation():
     查询某一个批次已添加的用例列表
     :return:{'success': True, 'res': relation_use_case_list}
     """
+    param_json = request.get_json()
+    page_index = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
+    page_size = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
     try:
         result = BatchAPI.get_batch_use_case_relation(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True, 'res': result})
+    return jsonify({'success': True, 'res': result[(page_index-1)*page_size:page_index*page_size]})
 
 
 @app.route('/batch/relation/delete', methods=['POST'])
