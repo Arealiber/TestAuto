@@ -21,10 +21,13 @@ def add_use_case():
     :return:
     """
     try:
-        Case_API.add_use_case(**request.get_json())
+        # TODO 接入权限系统后移除写死创建人
+        use_case_json = request.get_json()
+        use_case_json['create_by'] = 1
+        use_case_id = Case_API.add_use_case(**use_case_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'res': use_case_id})
 
 
 @app.route('/use_case/list', methods=['POST'])
@@ -67,7 +70,7 @@ def use_case_detail():
     :return:
     """
     try:
-        schema.use_case_schema(request.get_json())
+        # schema.use_case_schema(request.get_json())
         use_case_info = Case_API.get_use_case(**request.get_json())[0]
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
@@ -96,10 +99,10 @@ def update_use_case():
     :return:
     """
     try:
-        Case_API.modify_use_case(**request.get_json())
+        use_case_id = Case_API.modify_use_case(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'res' : use_case_id})
 
 
 @app.route('/use_case/delete', methods=['POST'])

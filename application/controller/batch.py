@@ -13,11 +13,14 @@ def add_batch():
     :return:
     """
     try:
-        schema.add_batch_schema(request.get_json())
-        BatchAPI.add_batch(**request.get_json())
+        # TODO 接入权限系统后移除写死创建人
+        # schema.add_batch_schema(request.get_json())
+        batch_json = request.get_json()
+        batch_json['create_by'] = 1
+        batch_id = BatchAPI.add_batch(**batch_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'res': batch_id})
 
 
 @app.route('/batch/info', methods=['POST'])
@@ -56,10 +59,10 @@ def modify_batch():
     :return:
     """
     try:
-        BatchAPI.modify_batch(**request.get_json())
+        batch_id = BatchAPI.modify_batch(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'res': batch_id})
 
 
 @app.route('/batch/delete', methods=['POST'])

@@ -97,7 +97,7 @@
     var error_alert = $("#error_alert");
     var loader = $("#loader");
 
-    function show_alert(alert_text){
+    function show_alert(alert_text) {
         loader.hide();
         error_alert.text(alert_text);
         error_alert.show();
@@ -108,7 +108,7 @@
             type: 'get',
             url: '/interface/count',
             success: function (response) {
-                if (!response.success){
+                if (!response.success) {
                     show_alert('获取接口失败');
                 } else if (response.res == 0) {
                     show_alert('没有接口数据，请新增');
@@ -126,10 +126,10 @@
                             next_page.find('.page-link').attr('href', '/interface/' + (Number(page_num) + 1))
                         } else if (page_num == total_page) {
                             next_page.addClass('disabled');
-                            previous_page.find('.page-link').attr('href', '/parameter/' + (Number(page_num) - 1))
+                            previous_page.find('.page-link').attr('href', '/interface/' + (Number(page_num) - 1))
                         } else {
-                            next_page.find('.page-link').attr('href', '/parameter/' + (Number(page_num) + 1));
-                            previous_page.find('.page-link').attr('href', '/parameter/' + (Number(page_num) - 1))
+                            next_page.find('.page-link').attr('href', '/interface/' + (Number(page_num) + 1));
+                            previous_page.find('.page-link').attr('href', '/interface/' + (Number(page_num) - 1))
                         }
                         var page_item_string = '';
                         for (var i = 1; i <= total_page; i++) {
@@ -163,7 +163,7 @@
                                             '<button type="button" class="btn btn-dark btn-secondary delete-button" value="' + interface.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                                         $("#interface_table").find('tbody')
                                             .append('<tr>' +
-                                                '<th scope="row">' + (10 * (page_num - 1 ) + i + 1) +'</th>' +
+                                                '<th scope="row">' + (10 * (page_num - 1) + i + 1) + '</th>' +
                                                 '<td>' + interface.interface_name + '</td>' +
                                                 '<td>' + interface.interface_entry + '</td>' +
                                                 '<td>' + interface.create_by + '</td>' +

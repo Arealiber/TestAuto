@@ -6,6 +6,8 @@ def add_batch(**kwargs):
     with session_scope() as session:
         batch = Batch(**kwargs)
         session.add(batch)
+        session.flush()
+        return batch.id
 
 
 def get_batch(**kwargs):
@@ -25,6 +27,7 @@ def modify_batch(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
         session.query(Batch).filter_by(id=id).update(kwargs)
+        return id
 
 
 def del_batch(**kwargs):

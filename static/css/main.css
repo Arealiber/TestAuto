@@ -8,10 +8,6 @@ body {
 
 #wrapper {
     padding-left: 250px;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
 }
 
 #sidebar-wrapper {
@@ -23,10 +19,6 @@ body {
     margin-left: -250px;
     overflow-y: auto;
     background: #262f3b;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
 }
 
 #page-content-wrapper {
