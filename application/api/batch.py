@@ -6,6 +6,8 @@ def add_batch(**kwargs):
     with session_scope() as session:
         batch = Batch(**kwargs)
         session.add(batch)
+        session.flush()
+        return batch.id
 
 
 def get_batch(**kwargs):

@@ -6,8 +6,10 @@ from application.model.use_case import UseCase, UseCaseInterfaceRelation, UseCas
 
 def add_use_case(**kwargs):
     with session_scope() as session:
-        script = UseCase(**kwargs)
-        session.add(script)
+        use_case = UseCase(**kwargs)
+        session.add(use_case)
+        session.flush()
+        return use_case.id
 
 
 def get_use_case(**kwargs):
