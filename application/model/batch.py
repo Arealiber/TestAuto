@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
 from application import engine
@@ -16,6 +16,7 @@ class Batch(Base):
 
     id = Column(Integer, primary_key=True)
     batch_name = Column(String(100), nullable=False)
+    auto_run = Column(Boolean, nullable=False, default=False)
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.now())
     update_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
@@ -25,6 +26,7 @@ class Batch(Base):
         return {
             'id': self.id,
             'batch_name': self.batch_name,
+            'auto_run': self.auto_run,
             'create_by': self.create_by,
             'create_time': self.create_time,
             'update_time': self.update_time

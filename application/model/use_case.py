@@ -17,7 +17,6 @@ class UseCase(Base):
 
     id = Column(Integer, primary_key=True)
     use_case_name = Column(String(100), nullable=False)
-    auto_run = Column(Boolean, nullable=False, default=False)
     desc = Column(String(1000))
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.now())
@@ -28,7 +27,6 @@ class UseCase(Base):
         return {
             'id': self.id,
             'use_case_name': self.use_case_name,
-            'auto_run': self.auto_run,
             'desc': self.desc,
             'create_by': self.create_by,
             'create_time': self.create_time,
