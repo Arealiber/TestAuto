@@ -39,7 +39,7 @@ def del_batch(**kwargs):
 
 def add_batch_use_case_relation(batch_id, use_case_id):
     with session_scope() as session:
-        batchUseCaseRelation = BatchUseCaseRelation(batch_id, use_case_id)
+        batchUseCaseRelation = BatchUseCaseRelation(batch_id=batch_id, use_case_id=use_case_id)
         session.add(batchUseCaseRelation)
 
 
