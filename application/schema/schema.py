@@ -16,4 +16,4 @@ use_case_schema = Schema({
 add_batch_schema = Schema({
     Required('batch_name'): str,
     Required('create_by'): int
-})
+}, extra=True)
