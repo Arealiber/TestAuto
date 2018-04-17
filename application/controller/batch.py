@@ -107,7 +107,7 @@ def get_batch_use_case_relation():
 @app.route('/batch/relation/delete', methods=['POST'])
 def del_batch_use_case_relation():
     """
-    查询某一个批次已添加的用例列表
+    删除某一个批次已添加的用例列表
     :return:{'success': True, 'res': relation_use_case_list}
     """
     try:
