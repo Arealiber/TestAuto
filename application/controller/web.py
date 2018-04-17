@@ -16,9 +16,14 @@ def parameter_detail(parameter_id):
     return app.send_static_file('parameter_detail.html')
 
 
-@app.route('/interface')
-def interface_index():
+@app.route('/interface/<page_num>')
+def interface_page(page_num):
     return app.send_static_file('interface.html')
+
+
+@app.route('/interface_detail/<interface_id>')
+def interface_detail(interface_id):
+    return app.send_static_file('interface_detail.html')
 
 
 @app.route('/use_case')
