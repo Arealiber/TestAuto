@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+
+    <link href="/component/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/loader.css" rel="stylesheet">
+</head>
+<body>
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand"><a href="/">自动巡检测试系统</a></li>
+
+            <li><a href="/parameter/1">参数</a></li>
+
+            <li><a href="/interface/1">接口</a></li>
+
+            <li><a href="/use_case/1">用例</a></li>
+
+            <li><a href="/batch/1">批次</a></li>
+
+            <li><a href="/run_log">运行日志</a></li>
+
+            <li><a href="#">报表</a></li>
+
+            <li><a href="#">登出</a></li>
+        </ul>
+    </div>
+
+    <div id="page-content-wrapper">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/use_case/1">用例管理</a></li>
+                <li class="breadcrumb-item active" aria-current="page">用例</li>
+            </ol>
+        </nav>
+        <HR>
+
+        <div id="loader"></div>
+        <div id="error_alert" class="alert alert-danger" role="alert"></div>
+
+        <form id="use_case_form">
+            <div class="form-group">
+                <label for="use_case_id" style="display: none;">接口id</label>
+                <input style="display: none;" type="text" class="form-control" id="use_case_id" placeholder=""
+                       readonly>
+            </div>
+            <div class="form-group">
+                <label for="use_case_name">名称</label>
+                <input type="text" class="form-control" id="use_case_name" placeholder="用例名称" value="">
+            </div>
+            <div class="form-group">
+                <label for="use_case_desc">描述</label>
+                <input type="text" class="form-control" id="use_case_desc" placeholder="用例描述" value="">
+            </div>
+        </form>
+        <button class="btn btn-primary" id="submit_use_case">提交</button>
+    </div>
+</div>
+
+<script src="/component/js/jquery-3.3.1.min.js"></script>
+<script src="/component/js/popper.min.js"></script>
+<script src="/component/js/bootstrap.min.js"></script>
+
+<script>
+    var error_alert = $("#error_alert");
+    var loader = $("#loader");
+
+    function show_alert(alert_text) {
+        loader.hide();
+        error_alert.text(alert_text);
+        error_alert.show();
+    }
+
+    $(document).ready(function () {
+        var use_case_id = window.location.pathname.split('/').pop();
+        if (use_case_id != 'new'){
+            $.ajax({
+                type: 'post',
+                url: '/use_case/detail',
+                data: JSON.stringify({
+                    'id': use_case_id
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    loader.hide();
+                    if (!response.success){
+                        show_alert('获取数据失败');
+                    } else {
+                        var use_case_detail = response.res;
+                        $("#use_case_id").attr('placeholder', use_case_detail.id);
+                        $("#use_case_name").val(use_case_detail.use_case_name);
+                        $("#use_case_desc").val(use_case_detail.desc);
+
+                        $("#use_case_form").show();
+                        $("#submit_use_case").show();
+                    }
+                }
+            })
+        } else {
+            loader.hide();
+            $("#use_case_form").show();
+            $("#submit_use_case").show();
+        }
+    });
+    
+    $(document).ready(function () {
+        $("#submit_use_case").click(function () {
+            var use_case_dict = {
+                'use_case_name': $("#use_case_name").val(),
+                'desc': $("#use_case_desc").val()
+            };
+            var use_case_id = $("#use_case_id").attr('placeholder');
+            if (!use_case_id) {
+                var url = '/use_case/add';
+                var data = JSON.stringify(use_case_dict)
+            } else {
+                var url = '/use_case/update';
+                use_case_dict.id = use_case_id;
+                var data = JSON.stringify(use_case_dict)
+            }
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: data,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    console.log(response);
+                    if (!response.success) {
+                        show_alert('更新数据失败');
+                    } else {
+                        window.location.href = '/use_case_detail/' + response.res
+                    }
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>
