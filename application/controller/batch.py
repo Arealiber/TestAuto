@@ -59,10 +59,10 @@ def modify_batch():
     :return:
     """
     try:
-        BatchAPI.modify_batch(**request.get_json())
+        batch_id = BatchAPI.modify_batch(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'res': batch_id})
 
 
 @app.route('/batch/delete', methods=['POST'])

@@ -99,10 +99,10 @@ def update_use_case():
     :return:
     """
     try:
-        Case_API.modify_use_case(**request.get_json())
+        use_case_id = Case_API.modify_use_case(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'res' : use_case_id})
 
 
 @app.route('/use_case/delete', methods=['POST'])

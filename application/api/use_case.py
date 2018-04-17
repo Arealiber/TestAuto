@@ -29,6 +29,7 @@ def modify_use_case(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
         session.query(UseCase).filter_by(id=id).update(kwargs)
+        return id
 
 
 def del_use_case(**kwargs):

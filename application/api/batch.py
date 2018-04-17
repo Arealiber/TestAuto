@@ -27,6 +27,7 @@ def modify_batch(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
         session.query(Batch).filter_by(id=id).update(kwargs)
+        return id
 
 
 def del_batch(**kwargs):
