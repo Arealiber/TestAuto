@@ -194,7 +194,7 @@ def modify_case_parameter_relation(**kwargs):
 
 def del_case_parameter_relation(**kwargs):
     """
-    更新用例关联参数信息
+    删除用例关联参数
     :param kwargs:
     :return:
     """
