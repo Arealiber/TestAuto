@@ -152,7 +152,7 @@ def add_relation():
     return jsonify({'success': True})
 
 
-@app.route('use_case/relation/update_eval', methods=['POST'])
+@app.route('/use_case/relation/update_eval', methods=['POST'])
 def update_eval():
     """
     更新eval_string的值
