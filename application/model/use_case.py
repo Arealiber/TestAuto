@@ -45,7 +45,7 @@ class UseCaseInterfaceRelation(Base):
     use_case_id = Column(Integer, nullable=False)
     interface_id = Column(Integer, nullable=False)
     order = Column(Integer, nullable=False)
-    eval_string = Column(String(1000))
+    eval_string = Column(String(1000), nullable=False, default='')
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)
