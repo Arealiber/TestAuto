@@ -88,6 +88,16 @@ def add_relation(use_case_id, interface_id, order=None):
         return relation.id
 
 
+def update_eval_relation(id, eval_string):
+    """
+    获取某use_case下interface的最大eval_string值
+    :param id:    , eval_string
+    :return:
+    """
+    with session_scope() as session:
+        session.query(UseCaseInterfaceRelation).filter_by(id=id).update(eval_string=eval_string)
+
+
 def get_relation(**kwargs):
     """
     根据传入参数不同获取不同信息：

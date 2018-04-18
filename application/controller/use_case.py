@@ -152,6 +152,18 @@ def add_relation():
     return jsonify({'success': True})
 
 
+@app.route('use_case/relation/update_eval', methods=['POST'])
+def update_eval():
+    """
+    更新eval_string的值
+    :return:
+    """
+    try:
+        Case_API.update_eval_relation(**request.get_json())
+    except Exception as e:
+        return jsonify({'success': False, 'res': str(e)})
+
+
 @app.route('/use_case/relation/delete', methods=['POST'])
 def del_relation():
     """
