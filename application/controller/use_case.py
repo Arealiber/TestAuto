@@ -159,7 +159,6 @@ def update_eval():
     :return:
     """
     try:
-
         Case_API.update_eval_relation(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
