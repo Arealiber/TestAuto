@@ -46,8 +46,8 @@ class Interface(Base):
     interface_header = Column(String(255))
     interface_json_payload = Column(String(1024))
     create_by = Column(Integer, nullable=False)
-    create_time = Column(DateTime, default=datetime.now())
-    update_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
+    create_time = Column(DateTime, default=datetime.utcnow())
+    update_time = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
     status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):
