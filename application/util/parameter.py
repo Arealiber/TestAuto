@@ -7,7 +7,7 @@ def search_parameter(input_string):
     :param input_string:        给定用来搜索参数的字符串
     :return:                    参数列表
     """
-    pattern = re.compile(r'\${[^$]*}')
+    pattern = re.compile(r'\${[^${}]*}')
     match_result = pattern.findall(input_string)
     param_list = []
     for item in match_result:
