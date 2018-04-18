@@ -123,7 +123,11 @@
                     } else {
                         var previous_page = $('li[id="previous_page"]');
                         var next_page = $('li[id="next_page"]');
-                        if (page_num == 1) {
+                        if (total_page == 1) {
+                            previous_page.addClass('disabled');
+                            next_page.addClass('disabled')
+                         }
+                        else if (page_num == 1) {
                             previous_page.addClass('disabled');
                             next_page.find('.page-link').attr('href', '/parameter/' + (Number(page_num) + 1))
                         } else if (page_num == total_page) {
