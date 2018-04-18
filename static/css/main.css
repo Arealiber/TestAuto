@@ -100,9 +100,9 @@ body {
     display: none;
 }
 
-#error_alert {
-    display: none;
-}
+/*#error_alert {*/
+    /*display: none;*/
+/*}*/
 
 #parameter_form {
     display: none;
@@ -119,4 +119,25 @@ body {
 
 .detail_submit {
     margin-left: 25%;
+    margin-bottom: 20px;
+}
+
+#use_case_interface_list {
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+.alert {
+    display: none;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+.param_form {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+#submit_param {
+    margin-left: 5%;
 }

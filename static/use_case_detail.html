@@ -57,6 +57,15 @@
             </div>
         </form>
         <button class="btn btn-primary detail_submit" id="submit_use_case">提交</button>
+
+        <HR>
+        <h6 style="margin-left: 25%">用例接口列表</h6>
+        <div id="interface_alert" class="alert alert-danger" role="alert"></div>
+
+        <div class="accordion" id="use_case_interface_list">
+
+        </div>
+
     </div>
 </div>
 
@@ -76,7 +85,7 @@
 
     $(document).ready(function () {
         var use_case_id = window.location.pathname.split('/').pop();
-        if (use_case_id != 'new'){
+        if (use_case_id != 'new') {
             $.ajax({
                 type: 'post',
                 url: '/use_case/detail',
@@ -87,13 +96,59 @@
                 dataType: "json",
                 success: function (response) {
                     loader.hide();
-                    if (!response.success){
+                    if (!response.success) {
                         show_alert('获取数据失败');
                     } else {
                         var use_case_detail = response.res;
                         $("#use_case_id").attr('placeholder', use_case_detail.id);
                         $("#use_case_name").val(use_case_detail.use_case_name);
                         $("#use_case_desc").val(use_case_detail.desc);
+
+                        var interface_list = use_case_detail.interface_list;
+                        if (interface_list.length == 0) {
+                            $("#interface_alert").text('此用例目前没有接口，请添加。')
+                            $("#interface_alert").show()
+                        } else {
+                            $.each(interface_list, function (i, interface) {
+                                var interface_card = "<div class=\"card\">\n" +
+                                    "                <div class=\"card-header\" data-value=\"" + interface.id + "\" id=\"heading_" + interface.id + "\">\n" +
+                                    "                    <h5 class=\"mb-0\">\n" +
+                                    "                        <button class=\"btn btn-link collapsed\" type=\"button\" data-toggle=\"collapse\"\n" +
+                                    "                                data-target=\"#collapse_" + interface.id + "\" aria-expanded=\"false\" aria-controls=\"collapse_" + interface.id + "\">\n" +
+                                    "                            " + interface.interface_name + "\n" +
+                                    "                        </button>\n" +
+                                    "                    </h5>\n" +
+                                    "                </div>\n" +
+                                    "                <div id=\"collapse_" + interface.id + "\" class=\"collapse\" aria-labelledby=\"heading_" + interface.id + "\" data-parent=\"#accordion\">\n" +
+                                    "                    <div class=\"card-body\">\n" +
+                                    "                        <form class='param_form'></form>" +
+                                    "                    </div>\n" +
+                                    "                </div>\n" +
+                                    "            </div>";
+                                $("#use_case_interface_list").append(interface_card);
+                                var param_list = interface.param_list;
+                                $.each(param_list, function (i, param) {
+                                    if (param_list.length != 0) {
+                                        var param_string = "<div class=\"form-group row\">\n" +
+                                            "                                <label for=\"param_" + param.id + "\" class=\"col-sm-2 col-form-label\">" + param.parameter_name + "</label>\n" +
+                                            "                                <div class=\"col-sm-10\">\n" +
+                                            "                                    <input class=\"param_input\" type=\"text\" data-value=\"" + param.id + "\" class=\"form-control param_input\" id=\"param_" + param.id + "\" value=\""+ param.parameter_value +"\">\n" +
+                                            "                                </div>\n" +
+                                            "                            </div>";
+                                        $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').append(param_string);
+                                    }
+                                });
+                                var eval_string = "<div class=\"form-group row\">\n" +
+                                            "                                <label for=\"eval_" + interface.id + "\" class=\"col-sm-2 col-form-label\">验证</label>\n" +
+                                            "                                <div class=\"col-sm-10\">\n" +
+                                            "                                    <input class=\"eval_input\" type=\"text\" data-value=\"" + interface.id + "\" class=\"form-control param_input\" id=\"eval_" + interface.id + "\" value=\"" + interface.eval_string + "\">\n" +
+                                            "                                </div>\n" +
+                                            "                            </div>";
+                                $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').append(eval_string);
+                                var button_string = "<button class=\"btn btn-sm btn-primary param_submit\" id=\"submit_param\">更新</button>";
+                                $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').after(button_string);
+                            })
+                        }
 
                         $("#use_case_form").show();
                         $("#submit_use_case").html('更新');
@@ -108,7 +163,7 @@
             $("#submit_use_case").show();
         }
     });
-    
+
     $(document).ready(function () {
         $("#submit_use_case").click(function () {
             var use_case_dict = {
@@ -131,11 +186,53 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
-                    console.log(response);
                     if (!response.success) {
                         show_alert('更新数据失败');
                     } else {
                         window.location.href = '/use_case_detail/' + response.res
+                    }
+                }
+            })
+        })
+    });
+
+    $(document).ready(function () {
+        $("#use_case_interface_list").on('click', '.param_submit', function () {
+            var card = $(this).closest('.card');
+            var param_list = card.find(".param_input");
+            $.each(param_list, function (i, param) {
+                var id_to_update = param.dataset.value;
+                $.ajax({
+                    type: 'post',
+                    url: '/use_case/relation/parameter/modify',
+                    data: JSON.stringify({
+                        'id': id_to_update,
+                        'parameter_value': param.value
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function () {
+                        
+                    }
+                })
+            });
+            var eval_input = card.find(".eval_input");
+            var id_to_update = eval_input.data('value');
+            var eval_string = eval_input.val();
+            $.ajax({
+                type: 'post',
+                url: '/use_case/relation/update_eval',
+                data: JSON.stringify({
+                    'id': id_to_update,
+                    'eval_string': eval_string
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (!response.success) {
+                        show_alert('更新数据失败');
+                    } else {
+                        location.reload();
                     }
                 }
             })
