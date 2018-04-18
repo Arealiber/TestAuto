@@ -159,8 +159,8 @@ def update_eval():
     :return:
     """
     try:
-        eval_dict = request.get_json()
-        Case_API.update_eval_relation(eval_dict['id'], eval_dict['eval_string'])
+
+        Case_API.update_eval_relation(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
     return jsonify({'success': True})
