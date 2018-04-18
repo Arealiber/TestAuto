@@ -51,6 +51,8 @@
                 <th scope="col">#</th>
                 <th scope="col">接口名称</th>
                 <th scope="col">接口入口</th>
+                <th scope="col">创建时间</th>
+                <th scope="col">更新时间</th>
                 <th scope="col">创建人</th>
                 <th scope="col">操作</th>
             </tr>
@@ -92,6 +94,7 @@
 <script src="/component/js/jquery-3.3.1.min.js"></script>
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
+<script src="/component/js/moment.min.js"></script>
 
 <script>
     var error_alert = $("#error_alert");
@@ -166,6 +169,8 @@
                                                 '<th scope="row">' + (10 * (page_num - 1) + i + 1) + '</th>' +
                                                 '<td>' + interface.interface_name + '</td>' +
                                                 '<td>' + interface.interface_entry + '</td>' +
+                                                '<td>' + moment(interface.create_time).format('YYYY/MM/DD HH:mm') + '</td>' +
+                                                '<td>' + moment(interface.update_time).format('YYYY/MM/DD HH:mm') + '</td>' +
                                                 '<td>' + interface.create_by + '</td>' +
                                                 '<td>' + button_col + '</td></tr>')
                                     })
