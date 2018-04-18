@@ -96,7 +96,9 @@
                         $("#parameter_id").attr("placeholder", parameter_detail.id);
                         $("#parameter_name").val(parameter_detail.parameter_name);
                         $("#parameter_value").val(parameter_detail.value);
+
                         $("#parameter_form").show();
+                        $("#submit_parameter").html('更新');
                         $("#submit_parameter").show();
                     }
                 }
@@ -104,6 +106,7 @@
         } else {
             loader.hide();
             $("#parameter_form").show();
+            $("#submit_parameter").html('新增');
             $("#submit_parameter").show();
         }
     });

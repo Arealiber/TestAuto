@@ -118,6 +118,7 @@
                         $("#interface_json_payload").val(interface_detail.interface_json_payload);
 
                         $("#interface_form").show();
+                        $("#submit_interface").html('更新');
                         $("#submit_interface").show();
                     }
                 }
@@ -125,6 +126,7 @@
         } else {
             loader.hide();
             $("#interface_form").show();
+            $("#submit_interface").html('新增');
             $("#submit_interface").show();
         }
     });
