@@ -111,3 +111,12 @@ body {
 #submit_parameter {
     display: none;
 }
+
+.detail_form {
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+.detail_submit {
+    margin-left: 25%;
+}
