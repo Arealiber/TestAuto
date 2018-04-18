@@ -87,7 +87,7 @@ def use_case_detail():
         interface_list = InterfaceAPI.get_interface(id=interface_id)
         relation_interface.update({'interface_name': interface_list[0].get('interface_name')})
         para_list = Case_API.get_case_parameter_relation(relation_id=relation_interface['id'])
-        relation_interface.update({'para_list': para_list})
+        relation_interface.update({'param_list': para_list})
         use_case_info['interface_list'].append(relation_interface)
     return jsonify({'success': True, 'res': use_case_info})
 
@@ -148,7 +148,7 @@ def add_relation():
                             the_interface.get('interface_url')])
     param_list = search_parameter(analysis_str)
     for para in param_list:
-        Case_API.add_case_parameter_relation(relation_id = relation_id, parameter_name = para, parameter_value = '')
+        Case_API.add_case_parameter_relation(relation_id=relation_id, parameter_name=para, parameter_value='')
     return jsonify({'success': True})
 
 
