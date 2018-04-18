@@ -51,6 +51,8 @@
                 <th scope="col">用例名称</th>
                 <th scope="col">描述</th>
                 <th scope="col">创建人</th>
+                <th scope="col">创建时间</th>
+                <th scope="col">更新时间</th>
                 <th scope="col">操作</th>
             </tr>
             </thead>
@@ -90,6 +92,7 @@
 <script src="/component/js/jquery-3.3.1.min.js"></script>
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
+<script src="/component/js/moment.min.js"></script>
 
 <script>
     var error_alert = $("#error_alert");
@@ -165,6 +168,8 @@
                                                 '<td>' + use_case.use_case_name + '</td>' +
                                                 '<td>' + use_case.desc + '</td>' +
                                                 '<td>' + use_case.create_by + '</td>' +
+                                                '<td>' + moment(use_case.create_time).format("YYYY/MM/DD HH:mm") + '</td>' +
+                                                '<td>' + moment(use_case.update_time).format("YYYY/MM/DD HH:mm") + '</td>' +
                                                 '<td>' + button_col + '</td></tr>')
                                     })
                                 }

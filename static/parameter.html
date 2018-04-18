@@ -51,6 +51,8 @@
                 <th scope="col">参数名称</th>
                 <th scope="col">参数值</th>
                 <th scope="col">创建人</th>
+                <th scope="col">创建时间</th>
+                <th scope="col">更新时间</th>
                 <th scope="col">操作</th>
             </tr>
             </thead>
@@ -91,6 +93,7 @@
 <script src="/component/js/jquery-3.3.1.min.js"></script>
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
+<script src="/component/js/moment.min.js"></script>
 
 <script>
     var error_alert = $("#error_alert");
@@ -166,6 +169,8 @@
                                                 '<td>' + parameter.parameter_name + '</td>' +
                                                 '<td>' + parameter.value + '</td>' +
                                                 '<td>' + parameter.create_by + '</td>' +
+                                                '<td>' + moment(parameter.create_time).format("YYYY/MM/DD HH:mm") + '</td>' +
+                                                '<td>' + moment(parameter.update_time).format("YYYY/MM/DD HH:mm") + '</td>' +
                                                 '<td>' + button_col + '</td></tr>')
                                     });
                                 }
