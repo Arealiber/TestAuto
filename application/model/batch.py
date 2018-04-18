@@ -18,8 +18,8 @@ class Batch(Base):
     batch_name = Column(String(100), nullable=False)
     auto_run = Column(Boolean, nullable=False, default=False)
     create_by = Column(Integer, nullable=False)
-    create_time = Column(DateTime, default=datetime.utcnow())
-    update_time = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
+    create_time = Column(DateTime, default=datetime.utcnow)
+    update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):
@@ -43,8 +43,8 @@ class BatchUseCaseRelation(Base):
     id = Column(Integer, primary_key=True)
     batch_id = Column(Integer, nullable=False)
     use_case_id = Column(Integer, nullable=False)
-    create_time = Column(DateTime, default=datetime.utcnow())
-    update_time = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
+    create_time = Column(DateTime, default=datetime.utcnow)
+    update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):

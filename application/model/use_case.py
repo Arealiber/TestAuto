@@ -19,8 +19,8 @@ class UseCase(Base):
     use_case_name = Column(String(100), nullable=False)
     desc = Column(String(1000))
     create_by = Column(Integer, nullable=False)
-    create_time = Column(DateTime, default=datetime.utcnow())
-    update_time = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
+    create_time = Column(DateTime, default=datetime.utcnow)
+    update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):
@@ -46,8 +46,8 @@ class UseCaseInterfaceRelation(Base):
     interface_id = Column(Integer, nullable=False)
     order = Column(Integer, nullable=False)
     eval_string = Column(String(1000))
-    create_time = Column(DateTime, default=datetime.utcnow())
-    update_time = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
+    create_time = Column(DateTime, default=datetime.utcnow)
+    update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):
@@ -73,8 +73,8 @@ class UseCaseParameterRelation(Base):
     relation_id = Column(Integer, nullable=False)
     parameter_name = Column(String(20), nullable=False)
     parameter_value = Column(String(200))
-    create_time = Column(DateTime, default=datetime.utcnow())
-    update_time = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
+    create_time = Column(DateTime, default=datetime.utcnow)
+    update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):

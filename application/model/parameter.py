@@ -29,8 +29,8 @@ class Parameter(Base):
     parameter_name = Column(String(20), nullable=False, unique=True)
     value = Column(String(255), nullable=False)
     create_by = Column(Integer, nullable=False)
-    create_time = Column(DateTime, default=datetime.utcnow())
-    update_time = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
+    create_time = Column(DateTime, default=datetime.utcnow)
+    update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def to_dict(self):
         return {
