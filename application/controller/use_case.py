@@ -162,6 +162,7 @@ def update_eval():
         Case_API.update_eval_relation(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
+    return jsonify({'success': True})
 
 
 @app.route('/use_case/relation/delete', methods=['POST'])
