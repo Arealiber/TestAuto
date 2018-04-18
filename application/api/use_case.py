@@ -100,7 +100,7 @@ def get_relation(**kwargs):
         query = session\
             .query(UseCaseInterfaceRelation)\
             .filter_by(**kwargs)\
-            .filter_by(status=1)
+            .filter_by(status=1).order_by(UseCaseInterfaceRelation.order)
         session.expunge_all()
     relation_list = [s_relation.to_dict() for s_relation in query]
     return relation_list
