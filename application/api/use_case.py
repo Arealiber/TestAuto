@@ -95,7 +95,7 @@ def update_eval_relation(id, eval_string):
     :return:
     """
     with session_scope() as session:
-        session.query(UseCaseInterfaceRelation).filter_by(id=id).update(eval_string=eval_string)
+        session.query(UseCaseInterfaceRelation).filter_by(id=id).update({'eval_string': eval_string})
 
 
 def get_relation(**kwargs):
