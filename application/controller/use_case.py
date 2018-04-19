@@ -188,7 +188,9 @@ def reorder_relation():
     :return:
     """
     try:
-        Case_API.reorder_relation(**request.get_json())
+        relation_id = request.get_json()['id']
+        new_order = request.get_json()['new_order']
+        Case_API.reorder_relation(relation_id, new_order)
     except Exception as e:
         return jsonify({'success':False, 'res':str(e)})
     return jsonify({'success': True})
