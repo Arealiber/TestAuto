@@ -61,7 +61,7 @@
         <HR>
         <h6 id="interface_list_title" style="margin-left: 25%">用例接口列表</h6>
 
-        <button style="margin: 0 0 20px 25%;" type="button" class="btn btn-info btn-sm" data-toggle="modal"
+        <button style="margin: 0 0 20px 25%;" type="button" class="btn btn-primary btn-sm" data-toggle="modal"
                 data-target="#addInterfaceModal">
             新增接口
         </button>
@@ -92,6 +92,26 @@
             </div>
         </div>
 
+        <div class="modal fade" id="deleteInterfaceModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">删除接口</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>确认要删除吗？</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-danger" name="delete-confirm-btn" value="">确认删除</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -100,15 +120,16 @@
 <script src="/component/js/bootstrap.min.js"></script>
 
 <script>
+    // 警告内容
     var error_alert = $("#error_alert");
     var loader = $("#loader");
-
     function show_alert(alert_text) {
         loader.hide();
         error_alert.text(alert_text);
         error_alert.show();
     }
 
+    // 读取用例信息并展示
     $(document).ready(function () {
         var use_case_id = window.location.pathname.split('/').pop();
         if (use_case_id != 'new') {
@@ -144,6 +165,11 @@
                                     "                            " + interface.interface_name + "\n" +
                                     "                        </button>\n" +
                                     "                    </h5>\n" +
+                                    "                    <div class=\"btn-group btn-group-sm float-right\" data-order=\"" + (i + 1) + "\" role=\"group\" aria-label=\"Basic example\">\n" +
+                                    "                        <button type=\"button\" name=\"move_up\" class=\"btn btn-info\">上移</button>\n" +
+                                    "                        <button type=\"button\" name=\"move_down\" class=\"btn btn-info\">下移</button>\n" +
+                                    "                        <button type=\"button\" name=\"delete_interface\" class=\"btn btn-info delete_interface\" data-toggle=\"modal\" data-target=\"#deleteInterfaceModal\">删除</button>\n" +
+                                    "                    </div>" +
                                     "                </div>\n" +
                                     "                <div id=\"collapse_" + interface.id + "\" class=\"collapse\" aria-labelledby=\"heading_" + interface.id + "\" data-parent=\"#accordion\">\n" +
                                     "                    <div class=\"card-body\">\n" +
@@ -190,6 +216,7 @@
         }
     });
 
+    // 获取所有接口列表并放入接口添加列表
     $(document).ready(function () {
         $.ajax({
             type: 'post',
@@ -213,6 +240,7 @@
         })
     });
 
+    // 接口添加列表搜索功能
     function interfaceSearch() {
         var input, filter, ul, li, item, i;
         input = document.getElementById('interface_search');
@@ -220,18 +248,19 @@
         ul = document.getElementById('interfaceUL');
         li = ul.getElementsByTagName('li');
 
-        for (i=0; i < li.length; i++) {
+        for (i = 0; i < li.length; i++) {
             item = li[i];
             if (item.innerHTML.toUpperCase().indexOf(filter) > -1) {
                 item.style.display = "";
             } else {
-                if (!item.classList.contains('active')){
+                if (!item.classList.contains('active')) {
                     item.style.display = "none";
                 }
             }
         }
     }
 
+    // 接口添加列表点击选中功能
     $(document).ready(function () {
         var ul = $("#interfaceUL");
         ul.on('click', 'li', function () {
@@ -243,6 +272,7 @@
         })
     });
 
+    // 添加接口到用例
     $(document).ready(function () {
         $('button[name="add_interface"]').click(function () {
             var selected_interface = $("#interfaceUL").find('.active');
@@ -272,6 +302,7 @@
         })
     });
 
+    //添加或更新用例基本信息
     $(document).ready(function () {
         $("#submit_use_case").click(function () {
             var use_case_dict = {
@@ -304,6 +335,7 @@
         })
     });
 
+    // 更新用例传给接口的数据
     $(document).ready(function () {
         $("#use_case_interface_list").on('click', '.param_submit', function () {
             var card = $(this).closest('.card');
@@ -341,6 +373,39 @@
                         show_alert('更新数据失败');
                     } else {
                         location.reload();
+                    }
+                }
+            })
+        })
+    });
+
+    // 预删除接口
+    $(document).ready(function () {
+        $("#use_case_interface_list").on('click', '.delete_interface', function () {
+            var to_delete = $(this).closest('.card-header').data('value');
+            var delete_button = $('button[name="delete-confirm-btn"]');
+            delete_button.val(to_delete)
+        })
+    });
+    
+    // 删除接口
+    $(document).ready(function () {
+        $('button[name="delete-confirm-btn"]').click(function () {
+            var id_to_delete = $(this).val();
+            $.ajax({
+                type: 'post',
+                url: '/use_case/relation/delete',
+                data: JSON.stringify({
+                    'id': id_to_delete
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    console.log(response);
+                    if (!response.success) {
+                        show_alert('删除失败')
+                    } else {
+                        location.reload()
                     }
                 }
             })
