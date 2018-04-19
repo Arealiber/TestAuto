@@ -223,9 +223,11 @@
         for (i=0; i < li.length; i++) {
             item = li[i];
             if (item.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                li[i].style.display = "";
+                item.style.display = "";
             } else {
-                li[i].style.display = "none";
+                if (!item.classList.contains('active')){
+                    item.style.display = "none";
+                }
             }
         }
     }
