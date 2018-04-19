@@ -4,7 +4,7 @@ from flask import request, jsonify
 from application import app
 from application.api import run_log as RunLogAPI
 
-current_time = time.strftime('%Y%m')
+current_time = time.strftime('%Y%m%M')
 
 
 if RunLogAPI.current_time != current_time:
