@@ -57,6 +57,38 @@
             </div>
         </form>
         <button class="btn btn-primary detail_submit" id="submit_batch">提交</button>
+
+        <HR>
+        <h6 id="interface_list_title" style="margin-left: 25%">批次用例列表</h6>
+
+        <button style="margin: 0 0 20px 25%;" type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                data-target="#addUseCaseModal">
+            新增用例
+        </button>
+
+        <!--添加用例弹出框-->
+        <div class="modal fade" id="addUseCaseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">添加用例</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="use_case_search" onkeyup="use_case_search()" placeholder="搜索接口">
+                        <!--所有用例列表-->
+                        <ul class="list-group" id="use_caseUL" style="max-height: 300px; overflow-y:scroll;"></ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" name="add_use_case" class="btn btn-primary">添加</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -140,6 +172,92 @@
                     }
                 }
             })
+        })
+    });
+
+    // 获取所有用例列表并放入接口添加列表
+    $(document).ready(function () {
+        $.ajax({
+            type: 'post',
+            url: '/use_case/list',
+            data: JSON.stringify({
+                'pageIndex': 0,
+                'pageSize': 0
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (!response.success) {
+                    show_alert('获取数据失败')
+                } else {
+                    var use_case_list = response.res;
+                    $.each(use_case_list, function (i, use_case) {
+                        $("#use_caseUL").append('<li data-value="' + use_case.id + '" class="list-group-item">' + use_case.use_case_name + '</li>')
+                    })
+                }
+            }
+        })
+    });
+
+    // 用例添加列表搜索功能
+    function use_case_search() {
+        var input, filter, ul, li, item, i;
+        input = document.getElementById('use_case_search');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById('use_caseUL');
+        li = ul.getElementsByTagName('li');
+
+        for (i=0; i < li.length; i++) {
+            item = li[i];
+            if (item.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                item.style.display = '';
+            } else {
+                if (!item.classList.contains('active')) {
+                    item.style.display = 'none';
+                }
+            }
+        }
+    }
+
+    // 用例添加列表点击选中功能
+    $(document).ready(function () {
+        var ul = $("#use_caseUL");
+        ul.on('click', 'li', function () {
+            var li = ul.find('li');
+            $.each(li, function (i, li_item) {
+                li_item.classList.remove('active');
+            });
+            $(this).addClass('active');
+        })
+    });
+    
+    // 添加用例到批次
+    $(document).ready(function () {
+        $('button[name="add_use_case"]').click(function () {
+            var selected_use_case = $("#use_caseUL").find('.active');
+            if (selected_use_case.length == 0) {
+                location.reload();
+            } else {
+                var selected_use_case_id = selected_use_case.data('value');
+                var batch_id = window.location.pathname.split('/').pop();
+                $.ajax({
+                    type: 'post',
+                    url: '/batch/relation/add',
+                    data: JSON.stringify({
+                        'batch_id': batch_id,
+                        'use_case_id': selected_use_case_id
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (!response.success) {
+                            show_alert('更新数据失败')
+                        } else {
+                            location.reload();
+                        }
+                    }
+                })
+            }
         })
     })
 </script>
