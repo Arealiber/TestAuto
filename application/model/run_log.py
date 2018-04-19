@@ -8,11 +8,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from application import engine
 
 
-import_time = time.strftime(rebuild_run_log_table_time)
 Base = declarative_base()
 
 
 class UseCaseRunLog(Base):
+    import_time = time.strftime(rebuild_run_log_table_time)
     __tablename__ = 'test_case_run_log_%s' % import_time
     __table_args__ = {
         "mysql_engine": "InnoDB",
