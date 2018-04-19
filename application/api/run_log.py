@@ -2,19 +2,11 @@
 import time
 import importlib
 from application.config.default import *
+from application.util.reload_import import *
 from application import session_scope
 from application.model.run_log import UseCaseRunLog, RelationInterfaceRunLog
 
 current_time = time.strftime(rebuild_run_log_table_time)
-
-
-def reload_import_module(imp_package_path, **kwargs):
-    imp_module = importlib.import_module('.', imp_package_path)
-    importlib.reload(imp_module)
-    module_list = []
-    for arg in kwargs.values():
-        module_list.append(getattr(imp_module, arg))
-    return tuple(module_list)
 
 
 if UseCaseRunLog.import_time != current_time:
