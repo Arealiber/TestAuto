@@ -123,6 +123,7 @@
     // 警告内容
     var error_alert = $("#error_alert");
     var loader = $("#loader");
+
     function show_alert(alert_text) {
         loader.hide();
         error_alert.text(alert_text);
@@ -157,6 +158,13 @@
                             $("#interface_alert").show()
                         } else {
                             $.each(interface_list, function (i, interface) {
+                                var move_up_class = 'btn btn-info';
+                                var move_down_class = 'btn btn-info';
+                                if (interface.order == 1) {
+                                    move_up_class = 'btn btn-secondary disabled'
+                                } else if (interface.order == interface_list.length) {
+                                    move_down_class = 'btn btn-secondary disabled'
+                                }
                                 var interface_card = "<div class=\"card\">\n" +
                                     "                <div class=\"card-header\" data-value=\"" + interface.id + "\" id=\"heading_" + interface.id + "\">\n" +
                                     "                    <h5 class=\"mb-0\">\n" +
@@ -165,9 +173,9 @@
                                     "                            " + interface.interface_name + "\n" +
                                     "                        </button>\n" +
                                     "                    </h5>\n" +
-                                    "                    <div class=\"btn-group btn-group-sm float-right\" data-order=\"" + (i + 1) + "\" role=\"group\" aria-label=\"Basic example\">\n" +
-                                    "                        <button type=\"button\" name=\"move_up\" class=\"btn btn-info\">上移</button>\n" +
-                                    "                        <button type=\"button\" name=\"move_down\" class=\"btn btn-info\">下移</button>\n" +
+                                    "                    <div class=\"btn-group btn-group-sm float-right\" data-order=\"" + interface.order + "\" role=\"group\" aria-label=\"Basic example\">\n" +
+                                    "                        <button type=\"button\" name=\"move_up\" class=\"move_up " + move_up_class + "\">上移</button>\n" +
+                                    "                        <button type=\"button\" name=\"move_down\" class=\"move_down " + move_down_class + "\">下移</button>\n" +
                                     "                        <button type=\"button\" name=\"delete_interface\" class=\"btn btn-info delete_interface\" data-toggle=\"modal\" data-target=\"#deleteInterfaceModal\">删除</button>\n" +
                                     "                    </div>" +
                                     "                </div>\n" +
@@ -387,7 +395,7 @@
             delete_button.val(to_delete)
         })
     });
-    
+
     // 删除接口
     $(document).ready(function () {
         $('button[name="delete-confirm-btn"]').click(function () {
@@ -409,6 +417,60 @@
                     }
                 }
             })
+        })
+    });
+
+    // 上移
+    $(document).ready(function () {
+        $("#use_case_interface_list").on('click', '.move_up', function () {
+            if (!$(this).hasClass('disabled')) {
+                var relation_id = $(this).closest('.card-header').data('value');
+                var current_order = $(this).closest('.btn-group').data('order');
+                $.ajax({
+                    type: 'post',
+                    url: '/use_case/relation/reorder',
+                    data: JSON.stringify({
+                        'id': relation_id,
+                        'new_order': current_order - 1
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (!response.success) {
+                            show_alert('更新数据失败')
+                        } else {
+                            location.reload()
+                        }
+                    }
+                })
+            }
+        })
+    });
+
+    // 下移
+    $(document).ready(function () {
+        $("#use_case_interface_list").on('click', '.move_down', function () {
+            if (!$(this).hasClass('disabled')) {
+                var relation_id = $(this).closest('.card-header').data('value');
+                var current_order = $(this).closest('.btn-group').data('order');
+                $.ajax({
+                    type: 'post',
+                    url: '/use_case/relation/reorder',
+                    data: JSON.stringify({
+                        'id': relation_id,
+                        'new_order': current_order + 1
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (!response.success) {
+                            show_alert('更新数据失败')
+                        } else {
+                            location.reload()
+                        }
+                    }
+                })
+            }
         })
     })
 </script>
