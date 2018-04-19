@@ -174,7 +174,8 @@ def del_relation():
     :return:
     """
     try:
-        Case_API.del_relation(**request.get_json())
+        id_to_delete = request.get_json()['id']
+        Case_API.del_relation(id_to_delete)
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
     return jsonify({'success': True})
