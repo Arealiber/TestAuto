@@ -105,7 +105,7 @@ def get_batch_use_case_relation():
         relation_use_case_id_list = [res.get('use_case_id') for res in result]
         use_case_info_lst = []
         for relation_use_case_id in relation_use_case_id_list:
-            use_case_info = UseCaseAPI.get_use_case(id=relation_use_case_id)
+            use_case_info = UseCaseAPI.get_use_case(id=relation_use_case_id)[0]
             use_case_info_lst.append(use_case_info)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
