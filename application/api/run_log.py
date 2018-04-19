@@ -1,10 +1,11 @@
 # -*- coding:utf-8 -*-
 import time
 import importlib
+from application.config.default import *
 from application import session_scope
 from application.model.run_log import UseCaseRunLog, RelationInterfaceRunLog
 
-current_time = time.strftime('%Y%m%M')
+current_time = time.strftime(rebuild_run_log_table_time)
 
 
 def reload_import_module(imp_package_path, **kwargs):

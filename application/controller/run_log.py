@@ -1,10 +1,11 @@
 # -*- coding:utf-8 -*-
 import time, importlib
 from flask import request, jsonify
+from application.config.default import *
 from application import app
 from application.api import run_log as RunLogAPI
 
-current_time = time.strftime('%Y%m%M')
+current_time = time.strftime(rebuild_run_log_table_time)
 
 
 if RunLogAPI.current_time != current_time:

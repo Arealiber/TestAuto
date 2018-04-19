@@ -1,13 +1,14 @@
 # -*- coding:utf-8 -*-
 import time
 from datetime import datetime
+from application.config.default import *
 from sqlalchemy import Column, Integer, String, DateTime, Float, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
 from application import engine
 
 
-import_time = time.strftime('%Y%m')
+import_time = time.strftime(rebuild_run_log_table_time)
 Base = declarative_base()
 
 
