@@ -43,6 +43,8 @@ def use_case_list():
         result = Case_API.get_use_case(**param_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+    if not(page_index and page_size):
+        jsonify({'success': True, 'res': result})
     return jsonify({'success': True, 'res': result[(page_index - 1) * page_size:page_index * page_size]})
 
 
