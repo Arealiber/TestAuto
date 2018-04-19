@@ -41,6 +41,7 @@
         <div id="loader"></div>
         <div id="error_alert" class="alert alert-danger" role="alert"></div>
 
+        <!--用例基础信息form-->
         <form id="use_case_form" class="detail_form">
             <div class="form-group">
                 <label for="use_case_id" style="display: none;">接口id</label>
@@ -68,8 +69,10 @@
 
         <div id="interface_alert" class="alert alert-danger" role="alert"></div>
 
+        <!--用例包含接口列表-->
         <div class="accordion" id="use_case_interface_list"></div>
 
+        <!--添加接口弹出框-->
         <div class="modal fade" id="addInterfaceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
              aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -82,6 +85,7 @@
                     </div>
                     <div class="modal-body">
                         <input type="text" id="interface_search" onkeyup="interfaceSearch()" placeholder="搜索接口">
+                        <!--所有接口列表-->
                         <ul class="list-group" id="interfaceUL" style="max-height: 300px; overflow-y:scroll;"></ul>
                     </div>
                     <div class="modal-footer">
@@ -92,6 +96,7 @@
             </div>
         </div>
 
+        <!--删除接口弹出确认框-->
         <div class="modal fade" id="deleteInterfaceModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
