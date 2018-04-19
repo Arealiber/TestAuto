@@ -62,7 +62,7 @@
         <HR>
         <h6 id="interface_list_title" style="margin-left: 25%">用例接口列表</h6>
 
-        <button style="margin: 0 0 20px 25%;" type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+        <button id="add_interface_button" style="margin: 0 0 20px 25%;" type="button" class="btn btn-primary btn-sm" data-toggle="modal"
                 data-target="#addInterfaceModal">
             新增接口
         </button>
@@ -167,7 +167,8 @@
                                 var move_down_class = 'btn btn-info';
                                 if (interface.order == 1) {
                                     move_up_class = 'btn btn-secondary disabled'
-                                } else if (interface.order == interface_list.length) {
+                                }
+                                if (interface.order == interface_list.length) {
                                     move_down_class = 'btn btn-secondary disabled'
                                 }
                                 var interface_card = "<div class=\"card\">\n" +
@@ -222,6 +223,9 @@
                 }
             })
         } else {
+            $("#interface_list_title").hide();
+            $("#add_interface_button").hide();
+            $("#use_case_interface_list").hide();
             loader.hide();
             $("#use_case_form").show();
             $("#submit_use_case").html('新增');
