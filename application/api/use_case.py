@@ -103,7 +103,7 @@ def get_relation(**kwargs):
     根据传入参数不同获取不同信息：
         use_case_id：获取某个use_case包含的interface
         interface_id：获取某个interface关联的use_case
-    :param use_case_id:
+    :param: use_case_id:
     :return:
     """
     with session_scope() as session:
@@ -209,8 +209,4 @@ def del_case_parameter_relation(**kwargs):
     :return:
     """
     with session_scope() as session:
-        session.query(UseCaseParameterRelation).filter_by(**kwargs).update({'status':0})
-
-
-
-
+        session.query(UseCaseParameterRelation).filter_by(**kwargs).update({'status': 0})
