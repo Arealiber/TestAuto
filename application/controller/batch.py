@@ -85,7 +85,9 @@ def add_batch_use_case_relation():
     :return:
     """
     try:
-        BatchAPI.add_batch_use_case_relation(**request.get_json())
+        batch_id = request.get_json()['batch_id']
+        use_case_id = request.get_json()['use_case_id']
+        BatchAPI.add_batch_use_case_relation(batch_id, use_case_id)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
     return jsonify({'success': True})
