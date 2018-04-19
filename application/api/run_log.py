@@ -2,15 +2,13 @@
 import time
 import importlib
 from application import session_scope
-# from application.model.run_log import UseCaseRunLog, RelationInterfaceRunLog
-from application.api import *
+from application.model.run_log import UseCaseRunLog, RelationInterfaceRunLog
+
+current_time = time.strftime('%Y%m')
 
 
 def reload_import_module(imp_package_path, **kwargs):
     imp_module = importlib.import_module('.', imp_package_path)
-    print(imp_module)
-    if imp_module.import_time == time.strftime('%Y%m'):
-        return
     importlib.reload(imp_module)
     module_list = []
     for arg in kwargs.values():
@@ -18,9 +16,10 @@ def reload_import_module(imp_package_path, **kwargs):
     return tuple(module_list)
 
 
-UseCaseRunLog, RelationInterfaceRunLog = reload_import_module('application.model.run_log',
-                                                              UseCaseRunLog='UseCaseRunLog',
-                                                              RelationInterfaceRunLog='RelationInterfaceRunLog')
+if UseCaseRunLog.run_time == current_time:
+    UseCaseRunLog, RelationInterfaceRunLog = reload_import_module('application.model.run_log',
+                                                                  UseCaseRunLog='UseCaseRunLog',
+                                                                  RelationInterfaceRunLog='RelationInterfaceRunLog')
 
 
 def add_use_case_run_log(**kwargs):
