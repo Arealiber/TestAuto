@@ -86,7 +86,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                        <button type="button" id="add_interface" class="btn btn-primary">添加</button>
+                        <button type="button" name="add_interface" class="btn btn-primary">添加</button>
                     </div>
                 </div>
             </div>
@@ -240,6 +240,35 @@
                 li_item.classList.remove('active');
             });
             $(this).addClass('active');
+        })
+    });
+
+    $(document).ready(function () {
+        $('button[name="add_interface"]').click(function () {
+            var selected_interface = $("#interfaceUL").find('.active');
+            if (selected_interface.length == 0) {
+                location.reload();
+            } else {
+                var selected_interface_id = selected_interface.data('value');
+                var use_case_id = window.location.pathname.split('/').pop();
+                $.ajax({
+                    type: 'post',
+                    url: '/use_case/relation/add',
+                    data: JSON.stringify({
+                        'use_case_id': use_case_id,
+                        'interface_id': selected_interface_id
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (!response.success) {
+                            show_alert('更新数据失败')
+                        } else {
+                            location.reload();
+                        }
+                    }
+                })
+            }
         })
     });
 
