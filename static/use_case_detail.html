@@ -59,11 +59,37 @@
         <button class="btn btn-primary detail_submit" id="submit_use_case">提交</button>
 
         <HR>
-        <h6 style="margin-left: 25%">用例接口列表</h6>
+        <h6 id="interface_list_title" style="margin-left: 25%">用例接口列表</h6>
+
+        <button style="margin: 0 0 20px 25%;" type="button" class="btn btn-info btn-sm" data-toggle="modal"
+                data-target="#addInterfaceModal">
+            新增接口
+        </button>
+
         <div id="interface_alert" class="alert alert-danger" role="alert"></div>
 
-        <div class="accordion" id="use_case_interface_list">
+        <div class="accordion" id="use_case_interface_list"></div>
 
+        <div class="modal fade" id="addInterfaceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">添加接口</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="interface_search" onkeyup="interfaceSearch()" placeholder="搜索接口">
+                        <ul class="list-group" id="interfaceUL" style="max-height: 300px; overflow-y:scroll;"></ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" id="add_interface" class="btn btn-primary">添加</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -132,18 +158,18 @@
                                         var param_string = "<div class=\"form-group row\">\n" +
                                             "                                <label for=\"param_" + param.id + "\" class=\"col-sm-2 col-form-label\">" + param.parameter_name + "</label>\n" +
                                             "                                <div class=\"col-sm-10\">\n" +
-                                            "                                    <input class=\"param_input\" type=\"text\" data-value=\"" + param.id + "\" class=\"form-control param_input\" id=\"param_" + param.id + "\" value=\""+ param.parameter_value +"\">\n" +
+                                            "                                    <input class=\"param_input\" type=\"text\" data-value=\"" + param.id + "\" class=\"form-control param_input\" id=\"param_" + param.id + "\" value=\"" + param.parameter_value + "\">\n" +
                                             "                                </div>\n" +
                                             "                            </div>";
                                         $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').append(param_string);
                                     }
                                 });
                                 var eval_string = "<div class=\"form-group row\">\n" +
-                                            "                                <label for=\"eval_" + interface.id + "\" class=\"col-sm-2 col-form-label\">验证</label>\n" +
-                                            "                                <div class=\"col-sm-10\">\n" +
-                                            "                                    <input class=\"eval_input\" type=\"text\" data-value=\"" + interface.id + "\" class=\"form-control param_input\" id=\"eval_" + interface.id + "\" value=\"" + interface.eval_string + "\">\n" +
-                                            "                                </div>\n" +
-                                            "                            </div>";
+                                    "                                <label for=\"eval_" + interface.id + "\" class=\"col-sm-2 col-form-label\">验证</label>\n" +
+                                    "                                <div class=\"col-sm-10\">\n" +
+                                    "                                    <input class=\"eval_input\" type=\"text\" data-value=\"" + interface.id + "\" class=\"form-control param_input\" id=\"eval_" + interface.id + "\" value=\"" + interface.eval_string + "\">\n" +
+                                    "                                </div>\n" +
+                                    "                            </div>";
                                 $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').append(eval_string);
                                 var button_string = "<button class=\"btn btn-sm btn-primary param_submit\" id=\"submit_param\">更新</button>";
                                 $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').after(button_string);
@@ -162,6 +188,57 @@
             $("#submit_use_case").html('新增');
             $("#submit_use_case").show();
         }
+    });
+
+    $(document).ready(function () {
+        $.ajax({
+            type: 'post',
+            url: '/interface/info',
+            data: JSON.stringify({
+                'pageIndex': 0,
+                'pageSize': 0
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (!response.success) {
+                    show_alert('获取数据失败');
+                } else {
+                    var interface_list = response.res;
+                    $.each(interface_list, function (i, interface) {
+                        $("#interfaceUL").append('<li data-value="' + interface.id + '" class="list-group-item">' + interface.interface_name + '</li>')
+                    })
+                }
+            }
+        })
+    });
+
+    function interfaceSearch() {
+        var input, filter, ul, li, item, i;
+        input = document.getElementById('interface_search');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById('interfaceUL');
+        li = ul.getElementsByTagName('li');
+
+        for (i=0; i < li.length; i++) {
+            item = li[i];
+            if (item.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        var ul = $("#interfaceUL");
+        ul.on('click', 'li', function () {
+            var li = ul.find('li');
+            $.each(li, function (i, li_item) {
+                li_item.classList.remove('active');
+            });
+            $(this).addClass('active');
+        })
     });
 
     $(document).ready(function () {
@@ -212,7 +289,7 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function () {
-                        
+
                     }
                 })
             });
