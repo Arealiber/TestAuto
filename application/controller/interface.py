@@ -34,6 +34,8 @@ def get_interface():
         result = InterfaceAPI.get_interface(**param_json)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+    if not (page_index and page_size):
+        return jsonify({'success': True, 'res': result})
     return jsonify({'success': True, 'res': result[(page_index - 1) * page_size:page_index * page_size]})
 
 
