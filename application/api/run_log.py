@@ -16,7 +16,7 @@ def reload_import_module(imp_package_path, **kwargs):
     return tuple(module_list)
 
 
-if UseCaseRunLog.run_time == current_time:
+if UseCaseRunLog.run_time != current_time:
     UseCaseRunLog, RelationInterfaceRunLog = reload_import_module('application.model.run_log',
                                                                   UseCaseRunLog='UseCaseRunLog',
                                                                   RelationInterfaceRunLog='RelationInterfaceRunLog')
