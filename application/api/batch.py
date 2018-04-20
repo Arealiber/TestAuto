@@ -50,7 +50,7 @@ def get_batch_use_case_relation(**kwargs):
     return batch_use_case_relation_list
 
 
-def del_batch_use_case_relation(batch_id, use_case_id):
+def del_batch_use_case_relation(relation_id):
     with session_scope() as session:
         session.query(BatchUseCaseRelation).\
-            filter_by(batch_id=batch_id).filter_by(use_case_id=use_case_id).update({'status': 0})
+            filter_by(id=relation_id).update({'status': 0})
