@@ -1,18 +1,6 @@
 # -*- coding:utf-8 -*-
-import time
-import importlib
-from application.config.default import *
-from application.util.reload_import import *
 from application import session_scope
 from application.model.run_log import UseCaseRunLog, RelationInterfaceRunLog
-
-current_time = time.strftime(rebuild_run_log_table_time)
-
-
-if UseCaseRunLog.import_time != current_time:
-    UseCaseRunLog, RelationInterfaceRunLog = reload_import_module('application.model.run_log',
-                                                                  UseCaseRunLog='UseCaseRunLog',
-                                                                  RelationInterfaceRunLog='RelationInterfaceRunLog')
 
 
 def add_use_case_run_log(**kwargs):

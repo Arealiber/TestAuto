@@ -1,7 +1,5 @@
 # -*- coding:utf-8 -*-
-import time
 from datetime import datetime
-from application.config.default import *
 from sqlalchemy import Column, Integer, String, DateTime, Float, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -12,8 +10,7 @@ Base = declarative_base()
 
 
 class UseCaseRunLog(Base):
-    import_time = time.strftime(rebuild_run_log_table_time)
-    __tablename__ = 'test_case_run_log_%s' % import_time
+    __tablename__ = 'test_case_run_log'
     __table_args__ = {
         "mysql_engine": "InnoDB",
         "mysql_charset": "utf8"
