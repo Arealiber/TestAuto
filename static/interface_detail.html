@@ -59,7 +59,7 @@
             </div>
             <div class="form-group">
                 <label for="interface_url">url</label>
-                <a href="/interface_parameter_help.html" target="_blank" class="badge badge-info">如何填写参数？</a>
+                <span class="badge badge-info" data-toggle="modal" data-target="#how_to_parameter">如何填写参数?</span>
                 <input type="text" class="form-control" id="interface_url" placeholder="接口url" value="">
             </div>
             <div class="form-group">
@@ -68,16 +68,49 @@
             </div>
             <div class="form-group">
                 <label for="interface_header">HTTP包头</label>
-                <a href="/interface_parameter_help.html" target="_blank" class="badge badge-info">如何填写参数？</a>
+                <span class="badge badge-info" data-toggle="modal" data-target="#how_to_parameter">如何填写参数?</span>
                 <input type="text" class="form-control" id="interface_header" placeholder="接口HTTP包头" value="">
             </div>
             <div class="form-group">
                 <label for="interface_json_payload">json内容</label>
-                <a href="/interface_parameter_help.html" target="_blank" class="badge badge-info">如何填写参数？</a>
+                <span class="badge badge-info" data-toggle="modal" data-target="#how_to_parameter">如何填写参数?</span>
                 <input type="text" class="form-control" id="interface_json_payload" placeholder="接口json内容" value="">
             </div>
         </form>
         <button class="btn btn-primary detail_submit" id="submit_interface">提交</button>
+
+        <div class="modal fade" id="how_to_parameter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">参数说明</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>接口支持在URL/包头/json内容中自定义参数预留位</p>
+                        <p>方法为：使用${}将需要预定义参数的地方包裹起来</p>
+                        <p>json例子:</p>
+                        <p>{
+                            "head":{
+                            "a": 1,
+                            "param1": ${param1}
+                            },
+                            "body": {
+                            "b": 2,
+                            "param2": ${param1}
+                            }
+                            }</p>
+                        <p>其中param1及param2为需要替换的预留参数位, 使用${param1}以及${param2}代替</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -97,7 +130,7 @@
 
     $(document).ready(function () {
         var interface_id = window.location.pathname.split('/').pop()
-        if (interface_id != 'new'){
+        if (interface_id != 'new') {
             $.ajax({
                 type: 'post',
                 url: '/interface/info',
