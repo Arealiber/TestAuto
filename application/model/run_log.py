@@ -48,9 +48,9 @@ class RelationInterfaceRunLog(Base):
     run_key = Column(String(100), nullable=False)
     use_case_run_log_id = Column(Integer, nullable=False)  # 关联的testcase运行的日志id
     interface_id = Column(Integer, nullable=False)
-    res_status_code = Column(Integer, nullable=False)
-    res_headers = Column(String(1000), nullable=False)
-    res_payload = Column(String(10000), nullable=False)
+    re_code = Column(Integer, nullable=False)
+    re_headers = Column(String(1000), nullable=False)
+    re_payload = Column(String(10000), nullable=False)
     is_pass = Column(Boolean, nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
 
@@ -60,9 +60,9 @@ class RelationInterfaceRunLog(Base):
             'run_key': self.run_key,
             'use_case_run_log_id': self.use_case_run_log_id,
             'interface_id': self.interface_id,
-            're_code': self.res_status_code,
-            're_headers': self.res_headers,
-            're_payload': self.res_payload,
+            're_code': self.re_code,
+            're_headers': self.re_headers,
+            're_payload': self.re_payload,
             'is_pass': self.is_pass
         }
 
