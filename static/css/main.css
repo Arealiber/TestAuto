@@ -141,3 +141,7 @@ body {
 #submit_param {
     margin-left: 5%;
 }
+
+#batch_use_case_list {
+    margin: 0 25%;
+}
