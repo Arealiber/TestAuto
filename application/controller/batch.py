@@ -40,6 +40,28 @@ def get_batch():
     return jsonify({'success': True, 'res': result[(page_index-1)*page_size:page_index*page_size]})
 
 
+@app.route('/batch/detail', methods=['POST'])
+def batch_detail():
+    """
+
+    :return:
+    """
+    try:
+        batch = BatchAPI.get_batch(**request.get_json())[0]
+        relation_list = BatchAPI.get_batch_use_case_relation(batch_id=batch['id'])
+        batch['use_case_list'] = []
+        for relation in relation_list:
+            use_case = UseCaseAPI.get_use_case(id=relation['use_case_id'])[0]
+            batch['use_case_list'].append({
+                'id': relation['id'],
+                'use_case_name': use_case['use_case_name'],
+                'desc': use_case['desc']
+            })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+    return jsonify({'success': True, 'res': batch})
+
+
 @app.route('/batch/count', methods=['GET'])
 def query_batch_count():
     """
