@@ -147,7 +147,8 @@ def del_batch_use_case_relation():
     :return:{'success': True, 'res': relation_use_case_list}
     """
     try:
-        BatchAPI.del_batch_use_case_relation(**request.get_json())
+        relation_id = request.get_json()['id']
+        BatchAPI.del_batch_use_case_relation(relation_id)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
     return jsonify({'success': True})
