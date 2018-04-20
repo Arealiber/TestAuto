@@ -124,7 +124,6 @@ def get_batch_use_case_relation():
 
     try:
         result = BatchAPI.get_batch_use_case_relation(**request.get_json())
-        print(result)
         relation_use_case_id_list = [(res.get('use_case_id'), res.get('id'))for res in result]
         use_case_info_lst = []
         for relation_id_use_case_id_tuple in relation_use_case_id_list:
