@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>接口支持在URL/包头/json内容中自定义参数预留位</p>
+<p>方法为：使用${}将需要预定义参数的地方包裹起来</p>
+<p>json例子:</p>
+<p>{
+  "head":{
+    "a": 1,
+    "param1": ${param1}
+  },
+  "body": {
+    "b": 2,
+    "param2": ${param1}
+  }
+}</p>
+<p>其中param1及param2为需要替换的预留参数位, 使用${param1}以及${param2}代替</p>
+</body>
+</html>

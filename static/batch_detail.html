@@ -59,12 +59,18 @@
         <button class="btn btn-primary detail_submit" id="submit_batch">提交</button>
 
         <HR>
-        <h6 id="interface_list_title" style="margin-left: 25%">批次用例列表</h6>
+        <h6 id="use_case_list_title" style="margin-left: 25%">批次用例列表</h6>
 
-        <button style="margin: 0 0 20px 25%;" type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+        <button id="add_use_case_button" style="margin: 0 0 20px 25%;" type="button" class="btn btn-primary btn-sm"
+                data-toggle="modal"
                 data-target="#addUseCaseModal">
             新增用例
         </button>
+
+        <div id="use_case_alert" class="alert alert-danger" role="alert"></div>
+
+        <!--批次包含用例列表-->
+        <ul class="list-group" id="batch_use_case_list"></ul>
 
         <!--添加用例弹出框-->
         <div class="modal fade" id="addUseCaseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -89,6 +95,27 @@
                 </div>
             </div>
         </div>
+
+        <!--删除用例弹出确认框-->
+        <div class="modal fade" id="deleteUseCaseModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">删除用例</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>确认要删除吗？</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-danger" name="delete-confirm-btn" value="">确认删除</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -105,13 +132,13 @@
         error_alert.text(alert_text);
         error_alert.show();
     }
-    
+
     $(document).ready(function () {
         var batch_id = window.location.pathname.split('/').pop();
         if (batch_id != 'new') {
             $.ajax({
                 type: 'post',
-                url: '/batch/info',
+                url: '/batch/detail',
                 data: JSON.stringify({
                     'id': batch_id
                 }),
@@ -122,11 +149,25 @@
                     if (!response.success) {
                         show_alert('获取数据失败');
                     } else {
-                        var batch_detail = response.res[0];
+                        var batch_detail = response.res;
                         $("#batch_id").attr('placeholder', batch_detail.id);
                         $("#batch_name").val(batch_detail.batch_name);
                         if (batch_detail.auto_run) {
                             $("#batch_auto_run").prop('checked', true);
+                        }
+
+                        var use_case_list = batch_detail.use_case_list;
+                        if (use_case_list.length == 0) {
+                            $("#use_case_alert").text('此批次目前没有用例，请添加');
+                            $("#use_case_alert").show();
+                        } else {
+                            $.each(use_case_list, function (i, use_case) {
+                                var use_case_li = '<li class="list-group-item d-flex justify-content-between align-items-center">\n' +
+                                    '                  ' + use_case.use_case_name + '\n' +
+                                    '                  <button type="button" data-value="' + use_case.id + '" class="btn btn-info btn-sm delete-use-case" data-toggle="modal" data-target="#deleteUseCaseModal">删除</button>\n' +
+                                    '              </li>';
+                                $("#batch_use_case_list").append(use_case_li);
+                            });
                         }
 
                         $("#batch_form").show();
@@ -136,13 +177,16 @@
                 }
             })
         } else {
+            $("#use_case_list_title").hide();
+            $("#add_use_case_button").hide();
+            $("#batch_use_case_list").hide();
             loader.hide();
             $("#batch_form").show();
             $("#submit_batch").html('新增');
             $("#submit_batch").show();
         }
     });
-    
+
     $(document).ready(function () {
         $("#submit_batch").click(function () {
             var batch_dict = {
@@ -207,7 +251,7 @@
         ul = document.getElementById('use_caseUL');
         li = ul.getElementsByTagName('li');
 
-        for (i=0; i < li.length; i++) {
+        for (i = 0; i < li.length; i++) {
             item = li[i];
             if (item.innerHTML.toUpperCase().indexOf(filter) > -1) {
                 item.style.display = '';
@@ -230,7 +274,7 @@
             $(this).addClass('active');
         })
     });
-    
+
     // 添加用例到批次
     $(document).ready(function () {
         $('button[name="add_use_case"]').click(function () {
@@ -258,6 +302,38 @@
                     }
                 })
             }
+        })
+    });
+
+    // 预删除用例
+    $(document).ready(function () {
+        $("#batch_use_case_list").on('click', '.delete-use-case', function () {
+            var to_delete = $(this).data('value');
+            var delete_button = $('button[name="delete-confirm-btn"]');
+            delete_button.val(to_delete);
+        })
+    });
+    
+    // 删除用例
+    $(document).ready(function () {
+        $('button[name="delete-confirm-btn"]').click(function () {
+            var id_to_delete = $(this).val();
+            $.ajax({
+                type: 'post',
+                url: '/batch/relation/delete',
+                data: JSON.stringify({
+                    'id': id_to_delete
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (!response.success) {
+                        show_alert('更新数据失败')
+                    } else {
+                        location.reload();
+                    }
+                }
+            })
         })
     })
 </script>
