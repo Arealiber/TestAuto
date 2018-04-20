@@ -60,9 +60,9 @@ class RelationInterfaceRunLog(Base):
             'run_key': self.run_key,
             'use_case_run_log_id': self.use_case_run_log_id,
             'interface_id': self.interface_id,
-            'res_status_code': self.res_status_code,
-            'res_headers': self.res_headers,
-            'res_payload': self.res_payload,
+            're_code': self.res_status_code,
+            're_headers': self.res_headers,
+            're_payload': self.res_payload,
             'is_pass': self.is_pass
         }
 
