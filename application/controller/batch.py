@@ -124,15 +124,18 @@ def get_batch_use_case_relation():
 
     try:
         result = BatchAPI.get_batch_use_case_relation(**request.get_json())
-        relation_use_case_id_list = [res.get('use_case_id') for res in result]
+        print(result)
+        relation_use_case_id_list = [(res.get('use_case_id'), res.get('id'))for res in result]
         use_case_info_lst = []
-        for relation_use_case_id in relation_use_case_id_list:
-            use_case_info = UseCaseAPI.get_use_case(id=relation_use_case_id)[0]
+        for relation_id_use_case_id_tuple in relation_use_case_id_list:
+            use_case_info = UseCaseAPI.get_use_case(id=relation_id_use_case_id_tuple[0])[0]
+            use_case_info.update({'id': relation_id_use_case_id_tuple[1]})
             use_case_info_lst.append(use_case_info)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
     batch_use_case_relation_info = result[-1]
     batch_use_case_relation_info.pop('use_case_id')
+    batch_use_case_relation_info.pop('id')
     batch_use_case_relation_info.update({'use_case_info': use_case_info_lst})
     return jsonify({'success': True, 'res': batch_use_case_relation_info})
 
