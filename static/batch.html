@@ -204,7 +204,7 @@
                 }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function () {
+                success: function (response) {
                     if (!response.success) {
                         show_alert('删除批次失败');
                     } else {
