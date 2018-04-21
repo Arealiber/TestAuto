@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
 
-TIME_FMT = '%Y%m%d%M'
+TIME_FMT = '%Y%m%d%H%M'
 web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 
 

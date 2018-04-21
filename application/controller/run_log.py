@@ -16,3 +16,17 @@ def add_batch_run_log():
         return jsonify({'success': False, 'res': str(e)})
     return jsonify({'success': True})
 
+
+@app.route('/run_log/batch/info', methods=['POST'])
+def get_multi_batch_run_log_info():
+    """
+    :return:
+    """
+    print(request.get_json())
+    try:
+        result = RunLogAPI.get_multi_batch_run_log_info(**request.get_json())
+    except Exception as e:
+        raise e
+        # return jsonify({'success': False, 'res': str(e)})
+    return jsonify({'success': True, 'res': result})
+
