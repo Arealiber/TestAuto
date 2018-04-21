@@ -1,68 +1,109 @@
 # -*- coding:utf-8 -*-
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Float, Boolean
-from sqlalchemy.ext.declarative import declarative_base
-
 from application import engine
+from sqlalchemy import Table, MetaData, Column, Integer, String, DateTime, Float, Boolean
 
 
-Base = declarative_base()
+meta = MetaData(bind=engine)
+batch_run_log_table = {}
+use_case_run_log_table = {}
+interface_run_log_table = {}
 
 
-class UseCaseRunLog(Base):
-    __tablename__ = 'test_case_run_log'
-    __table_args__ = {
-        "mysql_engine": "InnoDB",
-        "mysql_charset": "utf8"
-    }
-
-    id = Column(Integer, primary_key=True)
-    run_key = Column(String(100), nullable=False)  # 指定某次触发标志，必须是独一无二的
-    use_case_id = Column(Integer, nullable=False)
-    is_pass = Column(Boolean, nullable=False)
-    create_time = Column(DateTime, default=datetime.utcnow)
-    run_time = Column(Float, default=0, nullable=False)
-
-    def to_dict(self):
-        return{
-            'id': self.id,
-            'run_key': self.run_key,
-            'use_case_id': self.use_case_id,
-            'is_pass': self.is_pass,
-            'create_time': self.create_time,
-            'run_time': self.run_time
-        }
+# 用例脚本的运行日记表
+def get_batch_run_log_table(table_name):
+    table = batch_run_log_table.get(table_name)
+    if table is None:
+        table = Table(table_name, meta,
+                      Column('id', Integer, primary_key=True),
+                      Column('run_ID', Integer, nullable=False),
+                      Column('batch_id', Integer, nullable=False),
+                      Column('use_case_count', Integer, nullable=False),
+                      Column('pass_rate', Float, nullable=False),
+                      Column('create_time', DateTime, default=datetime.utcnow),
+                      Column('end_time', DateTime, nullable=False),
+                      Column('cost_time', Float, nullable=False)
+                      )
+        table.create(checkfirst=True)
+        batch_run_log_table[table_name] = table
+    return table
 
 
-class RelationInterfaceRunLog(Base):
-    __tablename__ = "relation_interface_run_log"
-    __table_args__ = {
-        "mysql_engine": "InnoDB",
-        "mysql_charset": "utf8"
-    }
-
-    id = Column(Integer, primary_key=True)
-    run_key = Column(String(100), nullable=False)
-    use_case_run_log_id = Column(Integer, nullable=False)  # 关联的testcase运行的日志id
-    interface_id = Column(Integer, nullable=False)
-    re_code = Column(Integer, nullable=False)
-    re_headers = Column(String(1000), nullable=False)
-    re_payload = Column(String(10000), nullable=False)
-    is_pass = Column(Boolean, nullable=False)
-    create_time = Column(DateTime, default=datetime.utcnow)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'run_key': self.run_key,
-            'use_case_run_log_id': self.use_case_run_log_id,
-            'interface_id': self.interface_id,
-            're_code': self.re_code,
-            're_headers': self.re_headers,
-            're_payload': self.re_payload,
-            'is_pass': self.is_pass
-        }
+# 用例脚本的运行日记表
+def get_use_case_run_log_table(table_name):
+    table = use_case_run_log_table.get(table_name)
+    if table is None:
+        table = Table(table_name, meta,
+                      Column('id', Integer, primary_key=True),
+                      Column('run_ID', Integer, nullable=False),
+                      Column('batch_id', Integer, nullable=False),
+                      Column('use_case_id', Integer, nullable=False),
+                      Column('is_pass', Boolean, nullable=False),
+                      Column('create_time', DateTime, default=datetime.utcnow),
+                      Column('cost_time', Float, nullable=False)
+                      )
+        table.create(checkfirst=True)
+        use_case_run_log_table[table_name] = table
+    return table
 
 
-Base.metadata.create_all(engine)
+# 接口的运行日记表
+def get_interface_run_log_table(table_name):
+    table = interface_run_log_table.get(table_name)
+    if table is None:
+        table = Table(table_name, meta,
+                      Column('id', Integer, primary_key=True),
+                      Column('use_case_run_log_id', Integer, nullable=False),
+                      Column('run_ID', Integer, nullable=False),
+                      Column('use_case_id', Integer, nullable=False),
+                      Column('interface_id', Integer, nullable=False),
+                      Column('re_code', String(1000), nullable=False),
+                      Column('re_header', String(1000), nullable=False),
+                      Column('re_payload', String(1000), nullable=False),
+                      Column('is_pass', Boolean, nullable=False),
+                      Column('cost_time', Float, nullable=False)
+                      )
+        table.create(checkfirst=True)
+        interface_run_log_table[table_name] = table
+    return table
 
+
+def exec_query(sql, is_list=False):
+    conn = engine.connect()
+    try:
+        ret = []
+        for one in conn.execute(sql).fetchall():
+            ret.append(dict(one.items()))
+        if not is_list:
+            return ret if len(ret) != 1 else ret[0]
+        return ret
+    except Exception as e:
+        raise (str(e))
+    finally:
+        conn.close()
+
+
+def exec_change(*args):
+    conn = engine.connect()
+    trans = conn.begin()
+    try:
+        ret = []
+        for sql in args:
+            ret.append(conn.execute(sql))
+        trans.commit()
+        return ret if len(ret) != 1 else ret[0]
+    except Exception as e:
+        trans.rollback()
+        raise e
+    finally:
+        conn.close()
+
+
+def drop_all():
+    meta.reflect(engine)
+    meta.drop_all()
+
+
+def create_all():
+    meta.reflect(engine)
+    meta.create_all()
