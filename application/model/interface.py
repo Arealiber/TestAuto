@@ -42,7 +42,7 @@ class Interface(Base):
     interface_name = Column(String(100), nullable=False)
     interface_entry = Column(Integer, nullable=False)  # 入口
     interface_url = Column(String(255), nullable=False)
-    interface_method = Column(Integer, nullable=False)
+    interface_method = Column(String(20), nullable=False)
     interface_header = Column(String(255))
     interface_json_payload = Column(String(1024))
     create_by = Column(Integer, nullable=False)
