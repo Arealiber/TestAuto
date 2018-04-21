@@ -1,60 +1,10 @@
-# -*- coding:utf-8 -*-
-import time
-import importlib
-from application.config.default import *
-from application.util.reload_import import *
-from application import session_scope
-from application.model.run_log import UseCaseRunLog, RelationInterfaceRunLog
-
-current_time = time.strftime(rebuild_run_log_table_time)
+# -*- coding: utf-8 -*-
+from application.util.decorator import *
+from application.model.run_log import *
 
 
-if UseCaseRunLog.import_time != current_time:
-    UseCaseRunLog, RelationInterfaceRunLog = reload_import_module('application.model.run_log',
-                                                                  UseCaseRunLog='UseCaseRunLog',
-                                                                  RelationInterfaceRunLog='RelationInterfaceRunLog')
-
-
-def add_use_case_run_log(**kwargs):
-    with session_scope() as session:
-        use_case_run_log = UseCaseRunLog(**kwargs)
-        session.add(use_case_run_log)
-        session.flush()
-
-
-def get_use_case_run_log(**kwargs):
-    with session_scope() as session:
-        query = session.query(UseCaseRunLog).filter_by(**kwargs).filter_by(status=1)
-    use_case_run_log_list = [use_case.to_dict() for use_case in query]
-    return use_case_run_log_list
-
-
-def query_run_log_count(**kwargs):
-    with session_scope() as session:
-        run_log_count = session.query(UseCaseRunLog).filter_by(**kwargs).filter_by(status=1).count()
-    return run_log_count
-
-
-def add_relation_interface_run_log(**kwargs):
-    with session_scope() as session:
-        relation_interface_run_log = RelationInterfaceRunLog(**kwargs)
-        session.add(relation_interface_run_log)
-        session.flush()
-
-
-def get_relation_interface_run_log(**kwargs):
-    with session_scope() as session:
-        query = session.query(RelationInterfaceRunLog).filter_by(**kwargs).filter_by(status=1)
-        relation_interface_run_log_list = [relation_interface_run_log.to_dict() for relation_interface_run_log in query]
-        return relation_interface_run_log_list
-
-
-def query_relation_interface_run_log_count(**kwargs):
-    with session_scope() as session:
-        run_log_count = session.query(RelationInterfaceRunLog).filter_by(**kwargs).filter_by(status=1).count()
-    return run_log_count
-
-
-
-
-
+@table_decorator
+def add_batch_run_log(**kwargs):
+    table = get_batch_run_log_table(kwargs.pop('table_time'))
+    sql = table.insert(kwargs)
+    return exec_change(sql)
