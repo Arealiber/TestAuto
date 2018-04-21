@@ -266,7 +266,7 @@
                                 var eval_string = "<div class=\"form-group row\">\n" +
                                     "                                <label for=\"eval_" + interface.id + "\" class=\"col-sm-2 col-form-label\">验证</label>\n" +
                                     "                                <div class=\"col-sm-10\">\n" +
-                                    "                                    <input class=\"eval_input\" type=\"text\" data-value=\"" + interface.id + "\" class=\"form-control param_input\" id=\"eval_" + interface.id + "\" value=\"" + interface.eval_string + "\">\n" +
+                                    "                                    <input class=\"eval_input\" type=\"text\" data-value=\"" + interface.id + "\" class=\"form-control param_input\" id=\"eval_" + interface.id + "\" value='" + interface.eval_string + "'>\n" +
                                     "                                </div>\n" +
                                     "                            </div>";
                                 $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').append(eval_string);
