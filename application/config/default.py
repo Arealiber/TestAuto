@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
 
-rebuild_run_log_table_time = '%Y%m%d'
+TIME_FMT = '%Y%m%d%M'
 web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 
 

@@ -14,15 +14,16 @@ interface_run_log_table = {}
 def get_batch_run_log_table(table_name):
     table = batch_run_log_table.get(table_name)
     if table is None:
-        table = Table(table_name, meta,
+        table = Table('batch_run_log_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
                       Column('run_ID', Integer, nullable=False),
                       Column('batch_id', Integer, nullable=False),
                       Column('use_case_count', Integer, nullable=False),
                       Column('pass_rate', Float, nullable=False),
+                      Column('cost_time', Float, nullable=False),
                       Column('create_time', DateTime, default=datetime.utcnow),
-                      Column('end_time', DateTime, nullable=False),
-                      Column('cost_time', Float, nullable=False)
+                      Column('end_time', DateTime, nullable=False)
+
                       )
         table.create(checkfirst=True)
         batch_run_log_table[table_name] = table
@@ -33,7 +34,7 @@ def get_batch_run_log_table(table_name):
 def get_use_case_run_log_table(table_name):
     table = use_case_run_log_table.get(table_name)
     if table is None:
-        table = Table(table_name, meta,
+        table = Table('use_case_run_log_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
                       Column('run_ID', Integer, nullable=False),
                       Column('batch_id', Integer, nullable=False),
@@ -51,7 +52,7 @@ def get_use_case_run_log_table(table_name):
 def get_interface_run_log_table(table_name):
     table = interface_run_log_table.get(table_name)
     if table is None:
-        table = Table(table_name, meta,
+        table = Table('interface_run_log_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
                       Column('use_case_run_log_id', Integer, nullable=False),
                       Column('run_ID', Integer, nullable=False),
