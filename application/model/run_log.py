@@ -21,9 +21,8 @@ def get_batch_run_log_table(table_name):
                       Column('use_case_count', Integer, nullable=False),
                       Column('pass_rate', Float, nullable=False),
                       Column('cost_time', Float, nullable=False),
-                      Column('create_time', DateTime, default=datetime.utcnow),
-                      Column('end_time', DateTime, nullable=False)
-
+                      Column('create_time', DateTime, default=datetime.utcnow, nullable=False),
+                      Column('end_time', DateTime, default=datetime.utcnow, nullable=False)
                       )
         table.create(checkfirst=True)
         batch_run_log_table[table_name] = table
@@ -79,7 +78,7 @@ def exec_query(sql, is_list=False):
             return ret if len(ret) != 1 else ret[0]
         return ret
     except Exception as e:
-        raise (str(e))
+        raise e
     finally:
         conn.close()
 
