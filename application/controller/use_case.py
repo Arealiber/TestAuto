@@ -4,9 +4,10 @@ from flask import request, jsonify
 from application import app
 from application.api import interface as InterfaceAPI
 from application.api import use_case as Case_API
+from application.api import parameter as ParameterAPI
 from application.schema import schema
 from application.util.parameter import *
-
+from application.util import execute_test as Exec
 
 """
 用例
@@ -126,7 +127,34 @@ def execute_use_case():
     先不写，等测试流程实现再补上
     :return:
     """
-    pass
+    use_case_id = request.get_json()['id']
+    try:
+        use_case_info = Case_API.get_use_case(id=use_case_id)[0]
+        interface_list = Case_API.get_relation(use_case_id=use_case_id)
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+    use_case_info['interface_list'] = []
+    for interface_relation in interface_list:
+        eval_string = interface_relation['eval_string']
+        interface_id = interface_relation['interface_id']
+        interface_info = InterfaceAPI.get_interface(id=interface_id)[0]
+        interface_info['eval_string'] = eval_string
+
+        interface_info['param_define_list'] = []
+        param_define_list = Case_API.get_case_parameter_relation(relation_id=interface_relation['id'])
+        for param in param_define_list:
+            pattern = re.compile(r'\${param\|[^${}]*}')
+            match_result = pattern.findall(param['parameter_value'])
+            if match_result:
+                param_name = match_result[0].split('|')[1].replace('}', '')
+                param_value = ParameterAPI.get_parameter(parameter_name=param_name)[0]['value']
+                param['parameter_value'] = param_value
+            interface_info['param_define_list'].append(param)
+
+        use_case_info['interface_list'].append(interface_info)
+
+    Exec.run_use_case(use_case_info)
+    return jsonify(use_case_info)
 
 
 @app.route('/use_case/relation/add', methods=['POST'])
