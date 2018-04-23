@@ -1,7 +1,9 @@
 # -*- coding:utf-8 -*-
 import os
 
-TIME_FMT = '%Y%m%d%H%M'
+TIME_FMT = '%Y-%m-%d %H:%M:%S GMT'
+QUERY_TIME_FMT = '%Y-%m-%d %H:%M:%S GMT'
+TABLE_TIME_FMT = '%Y-%m'
 web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 
 
