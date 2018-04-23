@@ -4,6 +4,8 @@ import os
 TIME_FMT = '%Y-%m-%d %H:%M:%S GMT'
 QUERY_TIME_FMT = '%Y-%m-%d %H:%M:%S GMT'
 TABLE_TIME_FMT = '%Y-%m'
+CONSTANT_LEN = 7  # 7 按月分表
+
 web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 
 

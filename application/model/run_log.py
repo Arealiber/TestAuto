@@ -17,7 +17,10 @@ def get_batch_run_log_table(table_name):
         table = Table('batch_run_log_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
                       Column('batch_id', Integer, nullable=False),
+                      Column('use_case_count', Integer, nullable=False),
+                      Column('pass_rate', Float, nullable=False),
                       Column('start_time', DateTime, nullable=False),
+                      Column('end_time', DateTime, nullable=False),
                       Column('create_time', DateTime, default=datetime.utcnow, nullable=False)
                       )
         table.create(checkfirst=True)
