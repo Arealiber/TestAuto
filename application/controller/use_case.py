@@ -121,13 +121,23 @@ def del_use_case():
 @app.route('/use_case/execute', methods=['POST'])
 def execute_use_case():
     """
-    手动执行某个use_case
-    先不写，等测试流程实现再补上
+    手动执行某个use_case, 前端等待执行完成返回
     :return:
     """
     use_case_id = request.get_json()['id']
     result = Exec.run_use_case(use_case_id)
     return jsonify({'success': True, 'res': result})
+
+
+@app.route('/use_case/execute/background', methods=['POST'])
+def execute_use_case_background():
+    """
+    手动后台运行某个use_case, 不等待直接返回, 需要查看日志确认运行结果
+    :return:
+    """
+    use_case_id = request.get_json()['id']
+    Exec.run_use_case_async(use_case_id)
+    return jsonify({'success': True})
 
 
 @app.route('/use_case/relation/add', methods=['POST'])
