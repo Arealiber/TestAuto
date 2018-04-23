@@ -1,17 +1,51 @@
 import requests
 import json
 import timeit
+import re
 from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime
 
 from application.util import encryption as Encryption
 from application.util import parameter as ParameterUtil
 from application.api import run_log as RunLogAPI
+from application.api import interface as InterfaceAPI
+from application.api import use_case as Case_API
+from application.api import parameter as ParameterAPI
 
 executor = ProcessPoolExecutor()
 
 
-def run_use_case(use_case_info):
+def run_use_case(use_case_id):
+    # 获取用例信息以及用例下接口信息
+    try:
+        use_case_info = Case_API.get_use_case(id=use_case_id)[0]
+        interface_list = Case_API.get_relation(use_case_id=use_case_id)
+    except Exception as e:
+        return
+        # return jsonify({'success': False, 'error': str(e)})
+    use_case_info['interface_list'] = []
+
+    # 对用例中使用预定义参数的做参数替换
+    for interface_relation in interface_list:
+        eval_string = interface_relation['eval_string']
+        interface_id = interface_relation['interface_id']
+        interface_info = InterfaceAPI.get_interface(id=interface_id)[0]
+        interface_info['eval_string'] = eval_string
+
+        interface_info['param_define_list'] = []
+        param_define_list = Case_API.get_case_parameter_relation(relation_id=interface_relation['id'])
+        for param in param_define_list:
+            pattern = re.compile(r'\${param\|[^${}]*}')
+            match_result = pattern.findall(param['parameter_value'])
+            if match_result:
+                param_name = match_result[0].split('|')[1].replace('}', '')
+                param_value = ParameterAPI.get_parameter(parameter_name=param_name)[0]['value']
+                param['parameter_value'] = param_value
+            interface_info['param_define_list'].append(param)
+
+        use_case_info['interface_list'].append(interface_info)
+
+    # 信息初始化
     start_time = datetime.utcnow()
     use_case_start = timeit.default_timer()
     run_pass = True
@@ -24,6 +58,7 @@ def run_use_case(use_case_info):
     session = requests.Session()
     exec_result_list = []
 
+    # 将接口未替换的参数全部替换
     for interface in interface_list:
         interface_start_time = datetime.utcnow()
         interface_start = timeit.default_timer()
@@ -62,10 +97,12 @@ def run_use_case(use_case_info):
         header = result_list[1]
         json_payload = result_list[2]
 
+        # 加密
         if json_payload:
             json_payload = json.loads(json_payload)
             json_payload = Encryption.huan_ji_xia_encryption(json_payload)
 
+        # 请求接口
         if request_method.upper() == 'GET':
             if header:
                 r = session.get(url, headers=header, json=json_payload)
@@ -82,6 +119,7 @@ def run_use_case(use_case_info):
             'json_response': r.json()
         }
 
+        # 验证接口返回
         eval_string = interface['eval_string']
         eval_string = eval_string.replace('${status_code}', 'result["status_code"]')\
             .replace('${header}', 'result["header"]')\
@@ -95,6 +133,7 @@ def run_use_case(use_case_info):
         run_pass = run_pass and eval_success
         exec_result_list.append(result)
 
+        # 数据处理以及日志记录
         interface_end_time = datetime.utcnow()
         interface_stop = timeit.default_timer()
         RunLogAPI.add_interface_run_log(**{
@@ -112,6 +151,7 @@ def run_use_case(use_case_info):
     use_case_stop = timeit.default_timer()
     end_time = datetime.utcnow()
 
+    # 日志记录
     RunLogAPI.modify_use_case_run_log(**{
         'id': use_case_log_id,
         'is_pass': run_pass,
@@ -126,5 +166,5 @@ def run_use_case_callback(obj):
     pass
 
 
-def run_use_case_async(use_case_info):
-    executor.submit(run_use_case, use_case_info).add_done_callback(run_use_case_callback)
+def run_use_case_async(use_case_id):
+    executor.submit(run_use_case, use_case_id).add_done_callback(run_use_case_callback)
