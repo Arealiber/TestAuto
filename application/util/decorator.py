@@ -1,13 +1,13 @@
 # -*- coding:utf-8 -*-
 from datetime import datetime
-from application.config.default import TIME_FMT, QUERY_TIME_FMT, TABLE_TIME_FMT, CONSTANT_LEN
+from application.config.default import QUERY_TIME_FMT, TABLE_TIME_FMT, CONSTANT_LEN
 from dateutil.rrule import rrule, MONTHLY
 
 
 # 处理日志模块对于分表和按时间查询参数的装饰器
 def table_decorator(func):
     def wrapper(**kwargs):
-        fmt_str = (datetime.strftime(datetime.now(), TIME_FMT))
+        fmt_str = (datetime.strftime(datetime.utcnow(), QUERY_TIME_FMT))
         if not('from_time' in kwargs or 'to_time' in kwargs):
             kwargs.update({'table_name_fix_lst': [fmt_str[:CONSTANT_LEN]]})
         else:

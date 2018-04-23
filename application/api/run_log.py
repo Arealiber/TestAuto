@@ -7,7 +7,7 @@ from application.model.run_log import *
 def add_batch_run_log(**kwargs):
     table = get_batch_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     sql = table.insert(kwargs)
-    return exec_change(sql)
+    return exec_change(sql).inserted_primary_key[0]
 
 
 @table_decorator
@@ -46,10 +46,18 @@ def get_multi_batch_run_log_info(**kwargs):
 
 
 @table_decorator
+def modify_batch_run_log(**kwargs):
+    table = get_batch_run_log_table(kwargs.pop('table_name_fix_lst')[0])
+    id = kwargs.pop('id')
+    sql = table.select(id=id)
+    return exec_change(sql).inserted_primary_key[0]
+
+
+@table_decorator
 def add_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     sql = table.insert(kwargs)
-    return exec_change(sql)
+    return exec_change(sql).inserted_primary_key[0]
 
 
 @table_decorator
@@ -92,7 +100,7 @@ def get_use_case_run_log(**kwargs):
 def add_interface_run_log(**kwargs):
     table = get_interface_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     sql = table.insert(kwargs)
-    return exec_change(sql)
+    return exec_change(sql).inserted_primary_key[0]
 
 
 @table_decorator

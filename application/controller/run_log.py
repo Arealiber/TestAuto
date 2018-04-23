@@ -11,10 +11,10 @@ def add_batch_run_log():
     """
     print(request.get_json())
     try:
-        RunLogAPI.add_batch_run_log(**request.get_json())
+        result = RunLogAPI.add_batch_run_log(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'res': str(result)})
 
 
 @app.route('/run_log/batch/info', methods=['POST'])
