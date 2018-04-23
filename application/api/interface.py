@@ -16,6 +16,13 @@ def get_interface(**kwargs):
     return interface_list
 
 
+def query_single_interface(interface_id):
+    with session_scope() as session:
+        query = session.query(Interface).filter_by(id=interface_id)
+    interface_info = [interface.to_dict() for interface in query][0]
+    return interface_info
+
+
 def query_interface_count():
     with session_scope() as session:
         interface_count = session.query(Interface).filter_by(status=1).count()

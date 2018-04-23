@@ -2,6 +2,7 @@
 from flask import request, jsonify
 from application.api import run_log as RunLogAPI
 from application.api import use_case as UseCaseAPI
+from application.api import interface as InterfaceAPI
 from application import app
 
 
@@ -44,7 +45,7 @@ def add_use_case_run_log():
     return jsonify({'success': True})
 
 
-@app.route('/run_log/use_case/list', methods=['POST'])
+@app.route('/run_log/use_case/info', methods=['POST'])
 def get_use_case_run_log():
     """
     :return:
@@ -78,6 +79,21 @@ def add_interface_run_log():
     return jsonify({'success': True})
 
 
-
-
-
+@app.route('/run_log/interface/info', methods=['POST'])
+def get_interface_run_log():
+    """
+    :return:
+    """
+    try:
+        result = RunLogAPI.get_interface_run_log(**request.get_json())
+    except Exception as e:
+        return jsonify({'success': False, 'res': str(e)})
+    for interface_run_log_dict in result:
+        interface_id = interface_run_log_dict.pop('interface_id')
+        try:
+            interface_info = InterfaceAPI.query_single_interface(interface_id)
+        except Exception as e:
+            return jsonify({'success': False, 'res': str(e)})
+        interface_name = interface_info.get('interface_name')
+        interface_run_log_dict.update({'interface_name': interface_name})
+    return jsonify({'success': True, 'res': result})
