@@ -4,6 +4,7 @@ from application.config.default import TIME_FMT, QUERY_TIME_FMT, TABLE_TIME_FMT,
 from dateutil.rrule import rrule, MONTHLY
 
 
+# 处理日志模块对于分表和按时间查询参数的装饰器
 def table_decorator(func):
     def wrapper(**kwargs):
         fmt_str = (datetime.strftime(datetime.now(), TIME_FMT))
@@ -32,6 +33,7 @@ def table_decorator(func):
     return wrapper
 
 
+# 批量把字符串格式生成datetime格式
 def multi_strptime(*args, str_format=QUERY_TIME_FMT):
     dt_time = []
     for dt_arg in args:
@@ -42,6 +44,4 @@ def multi_strptime(*args, str_format=QUERY_TIME_FMT):
         dt_time.append(datetime.strptime(dt_arg, str_format))
     return tuple(dt_time)
 
-
-print(datetime.strftime(datetime.now(), TIME_FMT))
 
