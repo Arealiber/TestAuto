@@ -1,18 +1,33 @@
 import requests
 import json
+import timeit
+from concurrent.futures import ProcessPoolExecutor
+from datetime import datetime
 
 from application.util import encryption as Encryption
 from application.util import parameter as ParameterUtil
+from application.api import run_log as RunLogAPI
+
+executor = ProcessPoolExecutor()
 
 
 def run_use_case(use_case_info):
+    start_time = datetime.utcnow()
+    use_case_start = timeit.default_timer()
     run_pass = True
     use_case_id = use_case_info['id']
+    use_case_log_id = RunLogAPI.add_use_case_run_log(**{
+        'use_case_id': use_case_id,
+        'start_time': start_time,
+    })
     interface_list = use_case_info['interface_list']
     session = requests.Session()
     exec_result_list = []
 
     for interface in interface_list:
+        interface_start_time = datetime.utcnow()
+        interface_start = timeit.default_timer()
+
         request_method = interface['interface_method']
         to_rephrase_list = [interface['interface_url'], interface['interface_header'], interface['interface_json_payload']]
         result_list = []
@@ -80,4 +95,36 @@ def run_use_case(use_case_info):
         run_pass = run_pass and eval_success
         exec_result_list.append(result)
 
+        interface_end_time = datetime.utcnow()
+        interface_stop = timeit.default_timer()
+        RunLogAPI.add_interface_run_log(**{
+            'use_case_run_log_id': use_case_log_id,
+            'interface_id': interface['id'],
+            'r_code': result['status_code'],
+            'r_header': json.dumps(result['header']),
+            'r_payload': json.dumps(result['json_response']),
+            'is_pass': result['success'],
+            'cost_time': interface_stop - interface_start,
+            'start_time': interface_start_time,
+            'end_time': interface_end_time
+        })
+
+    use_case_stop = timeit.default_timer()
+    end_time = datetime.utcnow()
+
+    RunLogAPI.modify_use_case_run_log(**{
+        'id': use_case_log_id,
+        'is_pass': run_pass,
+        'end_time': end_time,
+        'cost_time': use_case_stop - use_case_start
+    })
+
     return {'pass': run_pass, 'res': exec_result_list}
+
+
+def run_use_case_callback(obj):
+    pass
+
+
+def run_use_case_async(use_case_info):
+    executor.submit(run_use_case, use_case_info).add_done_callback(run_use_case_callback)
