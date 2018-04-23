@@ -16,13 +16,12 @@ def get_batch_run_log_table(table_name):
     if table is None:
         table = Table('batch_run_log_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
-                      Column('run_ID', Integer, nullable=False),
                       Column('batch_id', Integer, nullable=False),
                       Column('use_case_count', Integer, nullable=False),
                       Column('pass_rate', Float, nullable=False),
-                      Column('cost_time', Float, nullable=False),
-                      Column('create_time', DateTime, default=datetime.utcnow, nullable=False),
-                      Column('end_time', DateTime, default=datetime.utcnow, nullable=False)
+                      Column('start_time', DateTime, nullable=False),
+                      Column('end_time', DateTime, nullable=False),
+                      Column('create_time', DateTime, default=datetime.utcnow, nullable=False)
                       )
         table.create(checkfirst=True)
         batch_run_log_table[table_name] = table
@@ -35,10 +34,11 @@ def get_use_case_run_log_table(table_name):
     if table is None:
         table = Table('use_case_run_log_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
-                      Column('run_ID', Integer, nullable=False),
-                      Column('batch_id', Integer, nullable=False),
+                      Column('batch_run_log_id', Integer),
                       Column('use_case_id', Integer, nullable=False),
                       Column('is_pass', Boolean, nullable=False),
+                      Column('start_time', DateTime, nullable=False),
+                      Column('end_time', DateTime, nullable=False),
                       Column('create_time', DateTime, default=datetime.utcnow),
                       Column('cost_time', Float, nullable=False)
                       )
@@ -54,14 +54,14 @@ def get_interface_run_log_table(table_name):
         table = Table('interface_run_log_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
                       Column('use_case_run_log_id', Integer, nullable=False),
-                      Column('run_ID', Integer, nullable=False),
-                      Column('use_case_id', Integer, nullable=False),
                       Column('interface_id', Integer, nullable=False),
-                      Column('re_code', String(1000), nullable=False),
-                      Column('re_header', String(1000), nullable=False),
-                      Column('re_payload', String(1000), nullable=False),
+                      Column('r_code', String(1000), nullable=False),
+                      Column('r_header', String(1000), nullable=False),
+                      Column('r_payload', String(1000), nullable=False),
                       Column('is_pass', Boolean, nullable=False),
-                      Column('cost_time', Float, nullable=False)
+                      Column('cost_time', Float, nullable=False),
+                      Column('start_time', DateTime, nullable=False),
+                      Column('end_time', DateTime, nullable=False)
                       )
         table.create(checkfirst=True)
         interface_run_log_table[table_name] = table
