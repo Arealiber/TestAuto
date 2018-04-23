@@ -97,7 +97,7 @@ def add_interface_run_log(**kwargs):
 
 @table_decorator
 def get_interface_run_log(**kwargs):
-    table = get_use_case_run_log_table(kwargs.pop('table_time'))
+    table = get_use_case_run_log_table(kwargs.pop('table_time')[0])
     sql = table.insert(kwargs)
     return exec_change(sql)
 
