@@ -36,9 +36,9 @@ def get_use_case_run_log_table(table_name):
                       Column('id', Integer, primary_key=True),
                       Column('batch_run_log_id', Integer),
                       Column('use_case_id', Integer, nullable=False),
-                      Column('is_pass', Boolean, nullable=False),
+                      Column('is_pass', Boolean),
                       Column('start_time', DateTime, nullable=False),
-                      Column('end_time', DateTime, nullable=False),
+                      Column('end_time', DateTime),
                       Column('create_time', DateTime, default=datetime.utcnow),
                       Column('cost_time', Float, nullable=False)
                       )
