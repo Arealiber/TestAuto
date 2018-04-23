@@ -18,9 +18,9 @@ def get_batch_run_log_table(table_name):
                       Column('id', Integer, primary_key=True),
                       Column('batch_id', Integer, nullable=False),
                       Column('use_case_count', Integer, nullable=False),
-                      Column('pass_rate', Float, nullable=False),
+                      Column('pass_rate', Integer, default=-1, nullable=False),  # 百分比，-1表示未执行完成
                       Column('start_time', DateTime, nullable=False),
-                      Column('end_time', DateTime, nullable=False),
+                      Column('end_time', DateTime),
                       Column('create_time', DateTime, default=datetime.utcnow, nullable=False)
                       )
         table.create(checkfirst=True)
