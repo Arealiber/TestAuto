@@ -20,7 +20,6 @@ def get_multi_batch_run_log_info(**kwargs):
     ret = []
     for table_name in table_name_fix_lst:
         table = get_batch_run_log_table(table_name)
-
         batch_list = [batch_id] if not isinstance(batch_id, list) else batch_id
 
         if len(table_name_fix_lst) == 1 and to_time:
