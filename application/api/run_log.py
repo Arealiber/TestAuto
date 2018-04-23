@@ -47,7 +47,7 @@ def modify_batch_run_log(**kwargs):
     table = get_batch_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     id = kwargs.pop('id')
     sql = table.update(table.c.id == id).values(**kwargs)
-    return exec_change(sql).inserted_primary_key[0]
+    return exec_change(sql)
 
 
 @table_decorator
@@ -62,7 +62,7 @@ def modify_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     id = kwargs.pop('id')
     sql = table.update(table.c.id == id).values(**kwargs)
-    return exec_change(sql).inserted_primary_key[0]
+    return exec_change(sql)
 
 
 @table_decorator

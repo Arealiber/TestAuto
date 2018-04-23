@@ -46,6 +46,6 @@ def batch_detail_page(batch_id):
     return app.send_static_file('batch_detail.html')
 
 
-@app.route('/run_log')
-def run_log_index():
+@app.route('/run_log/<page_num>')
+def run_log_index(page_num):
     return app.send_static_file('run_log.html')
