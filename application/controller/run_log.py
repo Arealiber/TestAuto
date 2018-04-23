@@ -54,12 +54,14 @@ def get_use_case_run_log():
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
     for use_case_run_log_dict in result:
-        use_case_id = use_case_run_log_dict.get('use_case_id')
+        use_case_id = use_case_run_log_dict.pop('use_case_id')
+        print(use_case_id)
         try:
-            pass
+            use_case_info = UseCaseAPI.get_single_use_case(use_case_id)
         except Exception as e:
-            pass
-
+            return jsonify({'success': False, 'res': str(e)})
+        use_case_name = use_case_info.get('use_case_name')
+        use_case_run_log_dict.update({'use_case_name': use_case_name})
     return jsonify({'success': True, 'res': result})
 
 
