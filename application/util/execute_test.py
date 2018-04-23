@@ -6,6 +6,7 @@ from application.util import parameter as ParameterUtil
 
 
 def run_use_case(use_case_info):
+    run_pass = True
     use_case_id = use_case_info['id']
     interface_list = use_case_info['interface_list']
     session = requests.Session()
@@ -62,7 +63,7 @@ def run_use_case(use_case_info):
                 r = session.post(url, json=json_payload)
         result = {
             'status_code': r.status_code,
-            'header': r.headers,
+            'header': json.dumps(dict(r.headers)),
             'json_response': r.json()
         }
 
@@ -70,10 +71,13 @@ def run_use_case(use_case_info):
         eval_string = eval_string.replace('${status_code}', 'result["status_code"]')\
             .replace('${header}', 'result["header"]')\
             .replace('${json_payload}', 'result["json_response"]')
-        exec_result_list.append(result)
         a = []
         exec_string = 'a.append({0})'.format(eval_string)
         exec(exec_string)
 
         eval_success = a[0]
-        print(eval_success)
+        result['success'] = eval_success
+        run_pass = run_pass and eval_success
+        exec_result_list.append(result)
+
+    return {'pass': run_pass, 'res': exec_result_list}

@@ -153,8 +153,8 @@ def execute_use_case():
 
         use_case_info['interface_list'].append(interface_info)
 
-    Exec.run_use_case(use_case_info)
-    return jsonify(use_case_info)
+    result = Exec.run_use_case(use_case_info)
+    return jsonify({'success': True, 'res': result})
 
 
 @app.route('/use_case/relation/add', methods=['POST'])

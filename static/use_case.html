@@ -67,6 +67,7 @@
             </ul>
         </nav>
 
+        <!--删除确认-->
         <div class="modal fade" id="delete_confirm" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -86,6 +87,29 @@
                 </div>
             </div>
         </div>
+
+        <!--执行结果-->
+        <div class="modal fade" id="execute_result" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">执行结果</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="execute_loader"></div>
+                        <div id="execute_alert" class="alert alert-success" role="alert"></div>
+                        <div id="execute_result_display"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -165,6 +189,7 @@
                                     $.each(use_case_list, function (i, use_case) {
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
                                             '<a class="btn btn-info" href="/use_case_detail/' + use_case.id + '" role="button">详情</a>' +
+                                            '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
                                             '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                                         $("#use_case_table").find('tbody')
                                             .append('<tr>' +
@@ -185,6 +210,7 @@
         })
     });
 
+    // 预删除动作
     $(document).ready(function () {
         $("#use_case_table").on('click', '.delete-button', function () {
             var to_delete = $(this).val();
@@ -193,6 +219,7 @@
         })
     });
 
+    // 确认删除
     $(document).ready(function () {
         $('button[name="delete-confirm-btn"]').click(function () {
             var id_to_delete = $(this).val();
@@ -209,6 +236,61 @@
                         show_alert('删除接口失败');
                     } else {
                         window.location.href = '/use_case/1'
+                    }
+                }
+            })
+        })
+    });
+
+    function show_execute_alert(alert_text, class_name) {
+        var execute_alert = $("#execute_alert");
+        execute_alert.text(alert_text);
+        execute_alert.removeClass('alert-success');
+        execute_alert.removeClass('alert-danger');
+        execute_alert.removeClass('alert-warning');
+        execute_alert.addClass(class_name);
+        execute_alert.show();
+    }
+
+    // 执行
+    $(document).ready(function () {
+        $("#use_case_table").on('click', '.execute-button', function () {
+            var execute_result_display = $("#execute_result_display");
+            execute_result_display.empty();
+            $("#execute_loader").show();
+            $("#execute_alert").hide();
+            var use_case_id = $(this).val();
+            $.ajax({
+                type: 'post',
+                url: '/use_case/execute',
+                data: JSON.stringify({
+                    'id': use_case_id
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $("#execute_loader").hide();
+                    if (!response.success) {
+                        show_execute_alert('执行失败', 'alert-danger');
+                    } else {
+                        // console.log(response.res.pass);
+                        // console.log(response.res.res);
+                        $("#execute_loader").hide();
+                        if (response.res.pass) {
+                            show_execute_alert('执行通过', 'alert-success');
+                        } else {
+                            show_execute_alert('执行不通过', 'alert-warning')
+                        }
+                        var execute_result_list = response.res.res;
+                        $.each(execute_result_list, function (i, result) {
+                            console.log(result);
+                            console.log(typeof(result));
+                            execute_result_display.append('<h5>接口' + (i+1) + '</h5>');
+                            execute_result_display.append('<p>成功：' + result.success  + '</p>');
+                            execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
+                            execute_result_display.append('<p>返回包头：' + result.header + '</p>');
+                            execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
+                        })
                     }
                 }
             })
