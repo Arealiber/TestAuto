@@ -11,7 +11,6 @@ def add_batch_run_log():
     """
     :return:
     """
-    print(request.get_json())
     try:
         result = RunLogAPI.add_batch_run_log(**request.get_json())
     except Exception as e:
@@ -55,8 +54,7 @@ def get_use_case_run_log():
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
     for use_case_run_log_dict in result:
-        use_case_id = use_case_run_log_dict.pop('use_case_id')
-        print(use_case_id)
+        use_case_id = use_case_run_log_dict.get('use_case_id')
         try:
             use_case_info = UseCaseAPI.get_single_use_case(use_case_id)
         except Exception as e:
@@ -82,6 +80,7 @@ def add_interface_run_log():
 @app.route('/run_log/interface/info', methods=['POST'])
 def get_interface_run_log():
     """
+    :param: 必须需要传入use_case_run_log_id
     :return:
     """
     try:
@@ -89,7 +88,7 @@ def get_interface_run_log():
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
     for interface_run_log_dict in result:
-        interface_id = interface_run_log_dict.pop('interface_id')
+        interface_id = interface_run_log_dict.get('interface_id')
         try:
             interface_info = InterfaceAPI.query_single_interface(interface_id)
         except Exception as e:

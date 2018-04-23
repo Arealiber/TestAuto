@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from application.util.decorator import *
-from application.model import run_log as RunLogObj
 from application.model.run_log import *
 
 
@@ -35,7 +34,9 @@ def get_multi_batch_run_log_info(**kwargs):
         else:
             sql = table.select()
         if batch_id:
-            sql = sql.where(table.c.batch_id.in_(batch_list))
+            sql = sql.where(table.c.batch_id.in_(batch_list)).order_by(table.c.end_time)
+        else:
+            sql = sql.order_by(table.c.end_time)
         if limit:
             sql.limit(limit)
         ret += exec_query(sql, is_list=True)
@@ -72,6 +73,7 @@ def get_use_case_run_log(**kwargs):
     limit = kwargs.get('limit')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
+    batch_run_log_id = kwargs.get('batch_run_log_id')
     ret = []
     for table_name in table_name_fix_lst:
         table = get_use_case_run_log_table(table_name)
@@ -90,7 +92,11 @@ def get_use_case_run_log(**kwargs):
         else:
             sql = table.select()
         if use_case_id:
-            sql = sql.where(table.c.use_case_id.in_(use_case_list))
+            sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(table.c.end_time)
+        else:
+            sql = sql.order_by(table.c.end_time)
+        if batch_run_log_id:
+            sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
         if limit:
             sql.limit(limit)
         ret += exec_query(sql, is_list=True)
@@ -111,32 +117,34 @@ def get_interface_run_log(**kwargs):
     limit = kwargs.get('limit')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
+    use_case_run_log_id = kwargs.get('use_case_run_log_id')
     ret = []
     for table_name in table_name_fix_lst:
         table = get_interface_run_log_table(table_name)
-        if interface_id:
-            interface_list = [interface_id] if not isinstance(interface_id, list) else interface_id
-            if len(table_name_fix_lst) == 1 and to_time:
-                sql = table.select().where(table.c.end_time.__le__(to_time)). \
-                    where(table.c.interface_id.in_(interface_list))
-                if from_time:
-                    sql.where(table.c.end_time.__ge__(from_time))
 
-            elif table_name == table_name_fix_lst[0] and from_time:
-                sql = table.select().where(table.c.end_time.__ge__(from_time)). \
-                    where(table.c.interface_id.in_(interface_list))
-
-            elif table_name == table_name_fix_lst[-1] and to_time:
-                sql = table.select().where(table.c.end_time.__le__(to_time)). \
-                    where(table.c.interface_id.in_(interface_list))
-
-            else:
-                sql = table.select().where(table.c.interface_id.in_(interface_list))
+        interface_list = [interface_id] if not isinstance(interface_id, list) else interface_id
+        if len(table_name_fix_lst) == 1 and to_time:
+            sql = table.select().where(table.c.end_time.__le__(to_time))
+            if from_time:
+                sql.where(table.c.end_time.__ge__(from_time))
+        elif table_name == table_name_fix_lst[0] and from_time:
+            sql = table.select().where(table.c.end_time.__ge__(from_time))
+        elif table_name == table_name_fix_lst[-1] and to_time:
+            sql = table.select().where(table.c.end_time.__le__(to_time))
         else:
             sql = table.select()
+
+        if interface_id:
+            sql = sql.where(table.c.interface_id.in_(interface_list))
+        else:
+            sql = table.select()
+        if use_case_run_log_id:
+            sql = sql.where(table.c.use_case_run_log_id == use_case_run_log_id)
+        sql = sql.order_by(table.c.end_time)
         if limit:
             sql.limit(limit)
         ret += exec_query(sql, is_list=True)
+    return ret
 
 
 @table_decorator
