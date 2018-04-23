@@ -37,7 +37,7 @@ def get_multi_batch_run_log_info(**kwargs):
         else:
             sql = sql.order_by(table.c.end_time)
         if limit:
-            sql.limit(limit)
+            sql = sql.limit(limit)
         ret += exec_query(sql, is_list=True)
     return ret
 
@@ -97,7 +97,7 @@ def get_use_case_run_log(**kwargs):
         if batch_run_log_id:
             sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
         if limit:
-            sql.limit(limit)
+            sql = sql.limit(limit)
         ret += exec_query(sql, is_list=True)
     return ret
 
@@ -141,7 +141,7 @@ def get_interface_run_log(**kwargs):
             sql = sql.where(table.c.use_case_run_log_id == use_case_run_log_id)
         sql = sql.order_by(table.c.end_time)
         if limit:
-            sql.limit(limit)
+            sql = sql.limit(limit)
         ret += exec_query(sql, is_list=True)
     return ret
 

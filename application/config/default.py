@@ -2,7 +2,7 @@
 import os
 
 TIME_FMT = '%Y-%m-%d %H:%M:%S GMT'
-QUERY_TIME_FMT = '%Y-%m-%d %H:%M:%S GMT'
+QUERY_TIME_FMT = '%Y-%m-%d %H:%M:%S'
 TABLE_TIME_FMT = '%Y-%m'
 CONSTANT_LEN = 7  # 7 按月分表
 
