@@ -17,7 +17,8 @@ def calc_md5(string_to_hash):
 
 def huan_ji_xia_encryption(json_payload):
     sec_key = 'm2cjgx46md5973n4ymeoxa4v195iwwmb'
-    to_sign = {**json_payload['head'], **json_payload['params']}
+    to_sign = json_payload['head'].copy()
+    to_sign.update(json_payload['params'])
     to_sign = key_value_sort_join(**to_sign)
     to_sign = '{0}&key={1}'.format(to_sign, sec_key)
     sign = calc_md5(to_sign)
