@@ -174,12 +174,25 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None):
 def run_use_case_callback(obj):
     result = obj.result()
     batch_log_id = result['batch_log_id']
+    batch_log = RunLogAPI.get_multi_batch_run_log_info(id=batch_log_id)[0]
+    if batch_log['pass_rate'] != -1:
+        return
     use_case_count = result['use_case_count']
-    print('exec finish')
-    print('use_case_count: {0}'.format(use_case_count))
-    print(RunLogAPI.get_use_case_run_log(batch_run_log_id=batch_log_id))
-    print('length: {0}'.format(len(RunLogAPI.get_use_case_run_log(batch_run_log_id=batch_log_id))))
-    print('')
+    use_case_run_logs = RunLogAPI.get_use_case_run_log(batch_run_log_id=batch_log_id)
+    finished_use_case = len(use_case_run_logs)
+    if finished_use_case == use_case_count:
+        success_count = 0
+        for run_log in use_case_run_logs:
+            if run_log['is_pass']:
+                success_count += 1
+        pass_rate = int(success_count / use_case_count * 100)
+        RunLogAPI.modify_batch_run_log(**{
+            'id': batch_log_id,
+            'pass_rate': pass_rate,
+            'end_time': datetime.utcnow()
+        })
+    else:
+        return
 
 
 def run_use_case_async(use_case_id, batch_log_id=None, use_case_count=None):
