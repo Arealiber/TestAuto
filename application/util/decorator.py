@@ -7,6 +7,12 @@ from dateutil.rrule import rrule, MONTHLY
 # 处理日志模块对于分表和按时间查询参数的装饰器
 def table_decorator(func):
     def wrapper(**kwargs):
+        """
+        对被装饰的函数的参数进行类型处理
+        :param kwargs:
+            from_time和to_time表示起止时间，table_name_fix_lst用于存储表格名称后缀
+        :return:
+        """
         fmt_str = (datetime.strftime(datetime.utcnow(), QUERY_TIME_FMT))
         if not('from_time' in kwargs or 'to_time' in kwargs):
             kwargs.update({'table_name_fix_lst': [fmt_str[:CONSTANT_LEN]]})
@@ -18,7 +24,7 @@ def table_decorator(func):
                 table_from_time = table_to_time
             else:
                 table_from_time = from_time[:CONSTANT_LEN]
-            dt_table_from_time, dt_table_to_time = multi_strptime(table_from_time, table_from_time,
+            dt_table_from_time, dt_table_to_time = multi_strptime(table_from_time, table_to_time,
                                                                   str_format=TABLE_TIME_FMT)
             table_name_fix_lst = [dt.strftime(TABLE_TIME_FMT) for dt in rrule(MONTHLY,
                                                                               dtstart=dt_table_from_time,
