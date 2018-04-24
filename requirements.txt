@@ -1,4 +1,5 @@
 Flask >= 0.12.2
+python-dateutil >= 2.7.0
 PyMySQL >= 0.8.0
 SQLAlchemy >= 1.2.5
 voluptuous >= 0.11.1
