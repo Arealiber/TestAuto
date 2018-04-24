@@ -108,7 +108,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None):
 
         # 加密
         if json_payload:
-            print(json_payload)
             json_payload = json.loads(json_payload)
             json_payload = Encryption.huan_ji_xia_encryption(json_payload)
 
