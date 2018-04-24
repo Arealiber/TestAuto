@@ -5,6 +5,7 @@ from application import app
 from application.api import batch as BatchAPI
 from application.api import use_case as UseCaseAPI
 from application.schema import schema
+from application.util import execute_test as Exec
 
 
 @app.route('/batch/add', methods=['POST'])
@@ -150,4 +151,11 @@ def del_batch_use_case_relation():
         BatchAPI.del_batch_use_case_relation(relation_id)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+    return jsonify({'success': True})
+
+
+@app.route('/batch/execute', methods=['POST'])
+def batch_execute():
+    batch_id = request.get_json()['id']
+    Exec.run_batch(batch_id)
     return jsonify({'success': True})

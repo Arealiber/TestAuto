@@ -11,11 +11,13 @@ from application.api import run_log as RunLogAPI
 from application.api import interface as InterfaceAPI
 from application.api import use_case as Case_API
 from application.api import parameter as ParameterAPI
+from application.api import batch as BatchAPI
+from application.api import use_case as UseCaseAPI
 
 executor = ProcessPoolExecutor()
 
 
-def run_use_case(use_case_id):
+def run_use_case(use_case_id, batch_log_id=None):
     # 获取用例信息以及用例下接口信息
     try:
         use_case_info = Case_API.get_use_case(id=use_case_id)[0]
@@ -50,10 +52,17 @@ def run_use_case(use_case_id):
     use_case_start = timeit.default_timer()
     run_pass = True
     use_case_id = use_case_info['id']
-    use_case_log_id = RunLogAPI.add_use_case_run_log(**{
-        'use_case_id': use_case_id,
-        'start_time': start_time,
-    })
+    if batch_log_id:
+        use_case_log_id = RunLogAPI.add_use_case_run_log(**{
+            'use_case_id': use_case_id,
+            'start_time': start_time,
+            'batch_run_log_id': batch_log_id
+        })
+    else:
+        use_case_log_id = RunLogAPI.add_use_case_run_log(**{
+            'use_case_id': use_case_id,
+            'start_time': start_time,
+        })
     interface_list = use_case_info['interface_list']
     session = requests.Session()
     exec_result_list = []
@@ -159,12 +168,31 @@ def run_use_case(use_case_id):
         'cost_time': use_case_stop - use_case_start
     })
 
-    return {'pass': run_pass, 'res': exec_result_list}
+    return {'pass': run_pass, 'res': exec_result_list, 'batch_log_id': batch_log_id}
 
 
 def run_use_case_callback(obj):
-    pass
+    result = obj.result()
+    batch_log_id = result['batch_log_id']
+    print('exec finish')
+    print(RunLogAPI.get_use_case_run_log(batch_run_log_id=batch_log_id))
+    print('')
 
 
-def run_use_case_async(use_case_id):
-    executor.submit(run_use_case, use_case_id).add_done_callback(run_use_case_callback)
+def run_use_case_async(use_case_id, batch_log_id=None):
+    executor.submit(run_use_case, use_case_id, batch_log_id).add_done_callback(run_use_case_callback)
+
+
+def run_batch(batch_id):
+    relation_list = BatchAPI.get_batch_use_case_relation(batch_id=batch_id)
+    use_case_count = len(relation_list)
+    start_time = datetime.utcnow()
+    batch_log_id = RunLogAPI.add_batch_run_log(**{
+        'batch_id': batch_id,
+        'use_case_count': use_case_count,
+        'start_time': start_time
+    })
+
+    for relation in relation_list:
+        use_case = UseCaseAPI.get_use_case(id=relation['use_case_id'])[0]
+        run_use_case_async(use_case['id'], batch_log_id)
