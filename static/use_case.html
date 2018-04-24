@@ -294,8 +294,6 @@
                     if (!response.success) {
                         show_execute_alert('执行失败', 'alert-danger');
                     } else {
-                        // console.log(response.res.pass);
-                        // console.log(response.res.res);
                         $("#execute_loader").hide();
                         if (response.res.pass) {
                             show_execute_alert('执行通过', 'alert-success');
@@ -304,8 +302,6 @@
                         }
                         var execute_result_list = response.res.res;
                         $.each(execute_result_list, function (i, result) {
-                            console.log(result);
-                            console.log(typeof(result));
                             execute_result_display.append('<h5>接口' + (i+1) + '</h5>');
                             execute_result_display.append('<p>成功：' + result.success  + '</p>');
                             execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
