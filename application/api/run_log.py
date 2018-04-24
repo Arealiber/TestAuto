@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from sqlalchemy import func, select
 from application.util.decorator import *
 from application.model.run_log import *
 
@@ -43,6 +44,28 @@ def get_multi_batch_run_log_info(**kwargs):
 
 
 @table_decorator
+def get_batch_run_log_count(**kwargs):
+    table_name_fix_lst = kwargs.pop('table_name_fix_lst')
+    from_time = kwargs.get('from_time')
+    to_time = kwargs.get('to_time')
+    count = 0
+    for table_name in table_name_fix_lst:
+        table = get_batch_run_log_table(table_name)
+        sql = select([func.count()]).select_from(table)
+        if len(table_name_fix_lst) == 1 and to_time:
+            sql = sql.where(table.c.end_time.__le__(to_time))
+            if from_time:
+                sql.where(table.c.end_time.__ge__(from_time))
+        elif table_name == table_name_fix_lst[0] and from_time:
+            sql = sql.where(table.c.end_time.__ge__(from_time))
+        elif table_name == table_name_fix_lst[-1] and to_time:
+            sql = sql.where(table.c.end_time.__le__(to_time))
+
+        count += exec_query(sql, is_list=True)[0]['count_1']
+    return count
+
+
+@table_decorator
 def modify_batch_run_log(**kwargs):
     table = get_batch_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     id = kwargs.pop('id')
@@ -55,6 +78,28 @@ def add_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     sql = table.insert(kwargs)
     return exec_change(sql).inserted_primary_key[0]
+
+
+@table_decorator
+def get_use_case_run_log_count(**kwargs):
+    table_name_fix_lst = kwargs.pop('table_name_fix_lst')
+    from_time = kwargs.get('from_time')
+    to_time = kwargs.get('to_time')
+    count = 0
+    for table_name in table_name_fix_lst:
+        table = get_use_case_run_log_table(table_name)
+        sql = select([func.count()]).select_from(table)
+        if len(table_name_fix_lst) == 1 and to_time:
+            sql = sql.where(table.c.end_time.__le__(to_time))
+            if from_time:
+                sql.where(table.c.end_time.__ge__(from_time))
+        elif table_name == table_name_fix_lst[0] and from_time:
+            sql = sql.where(table.c.end_time.__ge__(from_time))
+        elif table_name == table_name_fix_lst[-1] and to_time:
+            sql = sql.where(table.c.end_time.__le__(to_time))
+
+        count += exec_query(sql, is_list=True)[0]['count_1']
+    return count
 
 
 @table_decorator
