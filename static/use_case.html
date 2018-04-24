@@ -110,6 +110,26 @@
             </div>
         </div>
 
+        <!--异步执行提示-->
+        <div class="modal fade" id="execute_background" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">异步执行</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>异步执行已提交，请去日志中查看执行结果。</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -190,6 +210,7 @@
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
                                             '<a class="btn btn-info" href="/use_case_detail/' + use_case.id + '" role="button">详情</a>' +
                                             '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
+                                            '<button type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
                                             '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                                         $("#use_case_table").find('tbody')
                                             .append('<tr>' +
@@ -292,6 +313,26 @@
                             execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
                         })
                     }
+                }
+            })
+        })
+    });
+
+    // 提交异步执行
+    $(document).ready(function () {
+        $("#use_case_table").on('click', '.execute-background', function () {
+            console.log('123');
+            var use_case_id = $(this).val();
+            $.ajax({
+                type: 'post',
+                url: '/use_case/execute/background',
+                data: JSON.stringify({
+                    'id': use_case_id
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success:function () {
+
                 }
             })
         })
