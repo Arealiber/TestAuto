@@ -17,7 +17,7 @@ from application.api import use_case as UseCaseAPI
 executor = ProcessPoolExecutor()
 
 
-def run_use_case(use_case_id, batch_log_id=None):
+def run_use_case(use_case_id, batch_log_id=None, use_case_count=None):
     # 获取用例信息以及用例下接口信息
     try:
         use_case_info = Case_API.get_use_case(id=use_case_id)[0]
@@ -168,19 +168,22 @@ def run_use_case(use_case_id, batch_log_id=None):
         'cost_time': use_case_stop - use_case_start
     })
 
-    return {'pass': run_pass, 'res': exec_result_list, 'batch_log_id': batch_log_id}
+    return {'pass': run_pass, 'res': exec_result_list, 'batch_log_id': batch_log_id, 'use_case_count': use_case_count}
 
 
 def run_use_case_callback(obj):
     result = obj.result()
     batch_log_id = result['batch_log_id']
+    use_case_count = result['use_case_count']
     print('exec finish')
+    print('use_case_count: {0}'.format(use_case_count))
     print(RunLogAPI.get_use_case_run_log(batch_run_log_id=batch_log_id))
+    print('length: {0}'.format(len(RunLogAPI.get_use_case_run_log(batch_run_log_id=batch_log_id))))
     print('')
 
 
-def run_use_case_async(use_case_id, batch_log_id=None):
-    executor.submit(run_use_case, use_case_id, batch_log_id).add_done_callback(run_use_case_callback)
+def run_use_case_async(use_case_id, batch_log_id=None, use_case_count=None):
+    executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count).add_done_callback(run_use_case_callback)
 
 
 def run_batch(batch_id):
@@ -195,4 +198,4 @@ def run_batch(batch_id):
 
     for relation in relation_list:
         use_case = UseCaseAPI.get_use_case(id=relation['use_case_id'])[0]
-        run_use_case_async(use_case['id'], batch_log_id)
+        run_use_case_async(use_case['id'], batch_log_id, use_case_count)
