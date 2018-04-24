@@ -23,12 +23,14 @@ def get_multi_batch_run_log_info():
     """
     :return:
     """
-    print(request.get_json())
+    param_json = request.get_json()
+    page_index = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
+    page_size = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
     try:
         result = RunLogAPI.get_multi_batch_run_log_info(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
-    return jsonify({'success': True, 'res': result})
+    return jsonify({'success': True, 'res': result[(page_index - 1) * page_size:page_index * page_size]})
 
 
 @app.route('/run_log/batch/count', methods=['POST'])
@@ -75,6 +77,9 @@ def get_use_case_run_log():
     """
     :return:
     """
+    param_json = request.get_json()
+    page_index = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
+    page_size = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
     try:
         result = RunLogAPI.get_use_case_run_log(**request.get_json())
     except Exception as e:
@@ -87,7 +92,7 @@ def get_use_case_run_log():
             return jsonify({'success': False, 'res': str(e)})
         use_case_name = use_case_info.get('use_case_name')
         use_case_run_log_dict.update({'use_case_name': use_case_name})
-    return jsonify({'success': True, 'res': result})
+    return jsonify({'success': True, 'res': result[(page_index - 1) * page_size:page_index * page_size]})
 
 
 @app.route('/run_log/use_case/add', methods=['POST'])
