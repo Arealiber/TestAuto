@@ -26,7 +26,7 @@ def get_multi_batch_run_log_info(**kwargs):
         if len(table_name_fix_lst) == 1 and to_time:
             sql = table.select().where(table.c.end_time.__le__(to_time))
             if from_time:
-                sql.where(table.c.end_time.__ge__(from_time))
+                sql = sql.where(table.c.end_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[0] and from_time:
             sql = table.select().where(table.c.end_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[-1] and to_time:
@@ -52,10 +52,11 @@ def get_batch_run_log_count(**kwargs):
     for table_name in table_name_fix_lst:
         table = get_batch_run_log_table(table_name)
         sql = select([func.count()]).select_from(table)
+
         if len(table_name_fix_lst) == 1 and to_time:
-            sql = sql.where(table.c.end_time.__le__(to_time))
             if from_time:
-                sql.where(table.c.end_time.__ge__(from_time))
+                sql = sql.where(table.c.end_time.__ge__(from_time))
+            sql = sql.where(table.c.end_time.__le__(to_time))
         elif table_name == table_name_fix_lst[0] and from_time:
             sql = sql.where(table.c.end_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[-1] and to_time:
@@ -92,7 +93,7 @@ def get_use_case_run_log_count(**kwargs):
         if len(table_name_fix_lst) == 1 and to_time:
             sql = sql.where(table.c.end_time.__le__(to_time))
             if from_time:
-                sql.where(table.c.end_time.__ge__(from_time))
+                sql = sql.where(table.c.end_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[0] and from_time:
             sql = sql.where(table.c.end_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[-1] and to_time:
@@ -125,7 +126,7 @@ def get_use_case_run_log(**kwargs):
         if len(table_name_fix_lst) == 1 and to_time:
             sql = table.select().where(table.c.end_time.__le__(to_time))
             if from_time:
-                sql.where(table.c.end_time.__ge__(from_time))
+                sql = sql.where(table.c.end_time.__ge__(from_time))
 
         elif table_name == table_name_fix_lst[0] and from_time:
             sql = table.select().where(table.c.end_time.__ge__(from_time))
@@ -170,7 +171,7 @@ def get_interface_run_log(**kwargs):
         if len(table_name_fix_lst) == 1 and to_time:
             sql = table.select().where(table.c.end_time.__le__(to_time))
             if from_time:
-                sql.where(table.c.end_time.__ge__(from_time))
+                sql = sql.where(table.c.end_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[0] and from_time:
             sql = table.select().where(table.c.end_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[-1] and to_time:
