@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+
+    <link href="/component/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/loader.css" rel="stylesheet">
+
+</head>
+
+<body>
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand"><a href="/">自动巡检测试系统</a></li>
+
+            <li><a href="/parameter/1">参数管理</a></li>
+
+            <li><a href="/interface/1">接口管理</a></li>
+
+            <li><a href="/use_case/1">用例管理</a></li>
+
+            <li><a href="/batch/1">批次管理</a></li>
+
+            <li><a href="/use_case_run_log/1">运行日志</a></li>
+
+            <li>
+                <ul>
+                    <li><a style="font-size: 0.9rem; text-indent: 0; line-height: 15px;" href="/use_case_run_log/1">用例运行日志</a></li>
+                    <li><a style="font-size: 0.9rem; text-indent: 0; line-height: 15px;" href="/batch_run_log/1">批次运行日志</a></li>
+                </ul>
+            </li>
+
+            <li><a href="#">报表</a></li>
+
+            <li><a href="#">注销</a></li>
+        </ul>
+    </div>
+
+    <div id="page-content-wrapper">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active" aria-current="page">用例运行日志</li>
+            </ol>
+        </nav>
+
+        <div id="loader"></div>
+        <div id="error_alert" class="alert alert-danger" role="alert"></div>
+
+        <table class="table" id="run_log_table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">用例名称</th>
+                <th scope="col">测试通过</th>
+                <th scope="col">开始时间</th>
+                <th scope="col">结束时间</th>
+                <th scope="col">耗时</th>
+                <th scope="col">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item" id="previous_page"><a class="page-link" href="#">上一页</a></li>
+                <li class="page-item" id="next_page"><a class="page-link" href="#">下一页</a></li>
+            </ul>
+        </nav>
+
+    </div>
+</div>
+
+<script src="/component/js/jquery-3.3.1.min.js"></script>
+<script src="/component/js/popper.min.js"></script>
+<script src="/component/js/bootstrap.min.js"></script>
+
+<script>
+    var error_alert = $("#error_alert");
+    var loader = $("#loader");
+
+    function show_alert(alert_text) {
+        loader.hide();
+        error_alert.text(alert_text);
+        error_alert.show();
+    }
+
+    $(document).ready(function (response) {
+        $.ajax({
+            type: 'post',
+            url: '/run_log/use_case/info',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (!response.success) {
+                    show_alert('获取数据失败');
+                } else if (response.res.length == 0) {
+                    show_alert('无数据')
+                } else {
+
+                }
+            }
+        })
+    })
+</script>
+
+</body>
+</html>
