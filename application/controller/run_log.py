@@ -73,7 +73,7 @@ def get_use_case_run_log_count():
 
 
 @app.route('/run_log/use_case/info', methods=['POST'])
-def get_use_case_run_log():
+def get_use_case_run_log_():
     """
     :return:
     """

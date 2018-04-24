@@ -15,6 +15,7 @@ def add_batch_run_log(**kwargs):
 def get_multi_batch_run_log_info(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     batch_id = kwargs.get('batch_id')
+    batch_run_log_id = kwargs.get('id')
     limit = kwargs.get('limit')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
@@ -35,6 +36,8 @@ def get_multi_batch_run_log_info(**kwargs):
             sql = table.select()
         if batch_id:
             sql = sql.where(table.c.batch_id.in_(batch_list)).order_by(table.c.end_time)
+        if batch_run_log_id:
+            sql = sql.where(table.c.id == batch_run_log_id)
         else:
             sql = sql.order_by(table.c.end_time)
         if limit:
