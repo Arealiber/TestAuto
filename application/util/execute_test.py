@@ -17,7 +17,7 @@ from application.api import use_case as UseCaseAPI
 executor = ProcessPoolExecutor()
 
 
-def run_use_case(use_case_id, batch_log_id=None, use_case_count=None):
+def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None):
     # 获取用例信息以及用例下接口信息
     try:
         use_case_info = Case_API.get_use_case(id=use_case_id)[0]
@@ -168,7 +168,11 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None):
         'cost_time': use_case_stop - use_case_start
     })
 
-    return {'pass': run_pass, 'res': exec_result_list, 'batch_log_id': batch_log_id, 'use_case_count': use_case_count}
+    return {'pass': run_pass,
+            'res': exec_result_list,
+            'batch_log_id': batch_log_id,
+            'use_case_count': use_case_count,
+            'batch_start_timer': batch_start_timer}
 
 
 def run_use_case_callback(obj):
@@ -181,6 +185,8 @@ def run_use_case_callback(obj):
     use_case_run_logs = RunLogAPI.get_use_case_run_log(batch_run_log_id=batch_log_id)
     finished_use_case = len(use_case_run_logs)
     if finished_use_case == use_case_count:
+        batch_start_timer = result['batch_start_timer']
+        batch_end_timer = timeit.default_timer()
         success_count = 0
         for run_log in use_case_run_logs:
             if run_log['is_pass']:
@@ -189,17 +195,19 @@ def run_use_case_callback(obj):
         RunLogAPI.modify_batch_run_log(**{
             'id': batch_log_id,
             'pass_rate': pass_rate,
-            'end_time': datetime.utcnow()
+            'end_time': datetime.utcnow(),
+            'cost_time': batch_end_timer - batch_start_timer
         })
     else:
         return
 
 
-def run_use_case_async(use_case_id, batch_log_id=None, use_case_count=None):
-    executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count).add_done_callback(run_use_case_callback)
+def run_use_case_async(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None):
+    executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer).add_done_callback(run_use_case_callback)
 
 
 def run_batch(batch_id):
+    start_timer = timeit.default_timer()
     relation_list = BatchAPI.get_batch_use_case_relation(batch_id=batch_id)
     use_case_count = len(relation_list)
     start_time = datetime.utcnow()
@@ -211,4 +219,4 @@ def run_batch(batch_id):
 
     for relation in relation_list:
         use_case = UseCaseAPI.get_use_case(id=relation['use_case_id'])[0]
-        run_use_case_async(use_case['id'], batch_log_id, use_case_count)
+        run_use_case_async(use_case['id'], batch_log_id, use_case_count, start_timer)
