@@ -62,11 +62,13 @@
         <HR>
         <h6 id="interface_list_title" style="margin: 0 25%">
             用例接口列表
-            <span class="badge badge-info float-right" data-toggle="modal" data-target="#how_to_parameter">如何传递参数?</span>
+            <span class="badge badge-info float-right" data-toggle="modal"
+                  data-target="#how_to_parameter">如何传递参数?</span>
             <span class="badge badge-info float-right" data-toggle="modal" data-target="#how_to_eval">如何验证接口?</span>
         </h6>
 
-        <button id="add_interface_button" style="margin: 10px 25%;" type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+        <button id="add_interface_button" style="margin: 10px 25%;" type="button" class="btn btn-primary btn-sm"
+                data-toggle="modal"
                 data-target="#addInterfaceModal">
             新增接口
         </button>
@@ -194,6 +196,20 @@
         error_alert.show();
     }
 
+    function escapeHtml(string) {
+        var entityMap = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': '&quot;',
+            "'": '&#39;',
+            "/": '&#x2F;'
+        };
+        return String(string).replace(/[&<>"'\/]/g, function (s) {
+            return entityMap[s];
+        });
+    }
+
     // 读取用例信息并展示
     $(document).ready(function () {
         var use_case_id = window.location.pathname.split('/').pop();
@@ -257,7 +273,7 @@
                                         var param_string = "<div class=\"form-group row\">\n" +
                                             "                                <label for=\"param_" + param.id + "\" class=\"col-sm-2 col-form-label\">" + param.parameter_name + "</label>\n" +
                                             "                                <div class=\"col-sm-10\">\n" +
-                                            "                                    <input class=\"param_input\" type=\"text\" data-value=\"" + param.id + "\" class=\"form-control param_input\" id=\"param_" + param.id + "\" value='" + param.parameter_value + "'>\n" +
+                                            "                                    <input class=\"param_input\" type=\"text\" data-value=\"" + param.id + "\" class=\"form-control param_input\" id=\"param_" + param.id + "\" value='" + escapeHtml(param.parameter_value) + "'>\n" +
                                             "                                </div>\n" +
                                             "                            </div>";
                                         $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').append(param_string);
