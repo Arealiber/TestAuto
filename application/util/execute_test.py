@@ -128,14 +128,18 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
 
             # 验证接口返回
             eval_string = interface['eval_string']
-            eval_string = eval_string.replace('${status_code}', 'result["status_code"]')\
-                .replace('${header}', 'result["header"]')\
-                .replace('${json_payload}', 'result["json_response"]')
-            a = []
-            exec_string = 'a.append({0})'.format(eval_string)
-            exec(exec_string)
+            if eval_string:
+                eval_string = eval_string.replace('${status_code}', 'result["status_code"]')\
+                    .replace('${header}', 'result["header"]')\
+                    .replace('${json_payload}', 'result["json_response"]')
+                a = []
+                exec_string = 'a.append({0})'.format(eval_string)
+                print(exec_string)
+                exec(exec_string)
 
-            eval_success = a[0]
+                eval_success = a[0]
+            else:
+                eval_success = True
             result['success'] = eval_success
             run_pass = run_pass and eval_success
             exec_result_list.append(result)
