@@ -292,7 +292,7 @@
                 success: function (response) {
                     $("#execute_loader").hide();
                     if (!response.success) {
-                        show_execute_alert('执行失败', 'alert-danger');
+                        show_execute_alert(response.error_str + '执行失败', 'alert-danger');
                         execute_result_display.append('<h5>错误信息：</h5>');
                         execute_result_display.append('<p>' + response.error + '</p>')
                     } else {

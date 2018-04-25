@@ -23,9 +23,11 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
     try:
         use_case_info = Case_API.get_use_case(id=use_case_id)[0]
         interface_list = Case_API.get_relation(use_case_id=use_case_id)
+    except Exception as e:
+        return {'success': False, 'error_str': '数据库', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
+    try:
         use_case_info['interface_list'] = []
-
         # 对用例中使用预定义参数的做参数替换
         for interface_relation in interface_list:
             eval_string = interface_relation['eval_string']
@@ -65,14 +67,19 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
         interface_list = use_case_info['interface_list']
         session = requests.Session()
         exec_result_list = []
+    except Exception as e:
+        return {'success': False, 'error_str': '参数替换', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
         # 将接口未替换的参数全部替换
-        for interface in interface_list:
+    for interface in interface_list:
+        try:
             interface_start_time = datetime.utcnow()
             interface_start = timeit.default_timer()
 
             request_method = interface['interface_method']
-            to_rephrase_list = [interface['interface_url'], interface['interface_header'], interface['interface_json_payload']]
+            to_rephrase_list = [interface['interface_url'],
+                                interface['interface_header'],
+                                interface['interface_json_payload']]
             result_list = []
             param_define_list = interface['param_define_list']
             for item_to_rephrase in to_rephrase_list:
@@ -104,7 +111,10 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             url = result_list[0]
             header = result_list[1]
             json_payload = result_list[2]
+        except Exception as e:
+            return {'success': False, 'error_str': '参数替换', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
+        try:
             # 加密
             if json_payload:
                 json_payload = json.loads(json_payload)
@@ -113,7 +123,10 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     method = getattr(Encryption, encryption_method)
                     json_payload = method(json_payload)
                     print(json_payload)
+        except Exception as e:
+            return {'success': False, 'error_str': '加密', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
+        try:
             # 请求接口
             if request_method.upper() == 'GET':
                 if header:
@@ -130,39 +143,42 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'header': json.dumps(dict(r.headers)),
                 'json_response': r.json()
             }
+        except Exception as e:
+            return {'success': False, 'error_str': '请求', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
+        try:
             # 验证接口返回
             eval_string = interface['eval_string']
             if eval_string:
-                eval_string = eval_string.replace('${status_code}', 'result["status_code"]')\
-                    .replace('${header}', 'result["header"]')\
+                eval_string = eval_string.replace('${status_code}', 'result["status_code"]') \
+                    .replace('${header}', 'result["header"]') \
                     .replace('${json_payload}', 'result["json_response"]')
                 a = []
                 exec_string = 'a.append({0})'.format(eval_string)
-                print(exec_string)
                 exec(exec_string)
-
                 eval_success = a[0]
             else:
                 eval_success = True
             result['success'] = eval_success
             run_pass = run_pass and eval_success
             exec_result_list.append(result)
+        except Exception as e:
+            return {'success': False, 'error_str': '验证', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
-            # 数据处理以及日志记录
-            interface_end_time = datetime.utcnow()
-            interface_stop = timeit.default_timer()
-            RunLogAPI.add_interface_run_log(**{
-                'use_case_run_log_id': use_case_log_id,
-                'interface_id': interface['id'],
-                'r_code': result['status_code'],
-                'r_header': json.dumps(result['header']),
-                'r_payload': json.dumps(result['json_response']),
-                'is_pass': result['success'],
-                'cost_time': interface_stop - interface_start,
-                'start_time': interface_start_time,
-                'end_time': interface_end_time
-            })
+        # 数据处理以及日志记录
+        interface_end_time = datetime.utcnow()
+        interface_stop = timeit.default_timer()
+        RunLogAPI.add_interface_run_log(**{
+            'use_case_run_log_id': use_case_log_id,
+            'interface_id': interface['id'],
+            'r_code': result['status_code'],
+            'r_header': json.dumps(result['header']),
+            'r_payload': json.dumps(result['json_response']),
+            'is_pass': result['success'],
+            'cost_time': interface_stop - interface_start,
+            'start_time': interface_start_time,
+            'end_time': interface_end_time
+        })
 
         use_case_stop = timeit.default_timer()
         end_time = datetime.utcnow()
@@ -174,9 +190,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             'end_time': end_time,
             'cost_time': use_case_stop - use_case_start
         })
-
-    except Exception as e:
-        return {'success': False, 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
     return {'pass': run_pass,
             'res': exec_result_list,
@@ -213,7 +226,11 @@ def run_use_case_callback(obj):
 
 
 def run_use_case_async(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None):
-    executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer).add_done_callback(run_use_case_callback)
+    if batch_log_id:
+        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer).add_done_callback(
+        run_use_case_callback)
+    else:
+        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer)
 
 
 def run_batch(batch_id):
