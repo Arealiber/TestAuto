@@ -19,12 +19,17 @@ executor = ProcessPoolExecutor()
 
 
 def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None):
+    exec_result_list = []
+    interface_count = 1
     # 获取用例信息以及用例下接口信息
     try:
         use_case_info = Case_API.get_use_case(id=use_case_id)[0]
         interface_list = Case_API.get_relation(use_case_id=use_case_id)
     except Exception as e:
-        return {'success': False, 'error_str': '数据库', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+        return {'success': False,
+                'error_str': '接口{0}数据库'.format(interface_count),
+                'res': exec_result_list,
+                'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
     try:
         use_case_info['interface_list'] = []
@@ -66,9 +71,11 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             })
         interface_list = use_case_info['interface_list']
         session = requests.Session()
-        exec_result_list = []
     except Exception as e:
-        return {'success': False, 'error_str': '参数替换', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+        return {'success': False,
+                'error_str': '接口{0}参数替换'.format(interface_count),
+                'res': exec_result_list,
+                'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
         # 将接口未替换的参数全部替换
     for interface in interface_list:
@@ -112,7 +119,10 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             header = result_list[1]
             json_payload = result_list[2]
         except Exception as e:
-            return {'success': False, 'error_str': '参数替换', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+            return {'success': False,
+                    'error_str': '接口{0}参数替换'.format(interface_count),
+                    'res': exec_result_list,
+                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
         try:
             # 加密
@@ -124,7 +134,10 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     json_payload = method(json_payload)
                     print(json_payload)
         except Exception as e:
-            return {'success': False, 'error_str': '加密', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+            return {'success': False,
+                    'error_str': '接口{0}json处理或加密'.format(interface_count),
+                    'res': exec_result_list,
+                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
         try:
             # 请求接口
@@ -144,7 +157,10 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'json_response': r.json()
             }
         except Exception as e:
-            return {'success': False, 'error_str': '请求', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+            return {'success': False,
+                    'error_str': '接口{0}请求'.format(interface_count),
+                    'res': exec_result_list,
+                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
         try:
             # 验证接口返回
@@ -163,7 +179,12 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             run_pass = run_pass and eval_success
             exec_result_list.append(result)
         except Exception as e:
-            return {'success': False, 'error_str': '验证', 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+            result['success'] = False
+            exec_result_list.append(result)
+            return {'success': False,
+                    'error_str': '接口{0}验证'.format(interface_count),
+                    'res': exec_result_list,
+                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
         # 数据处理以及日志记录
         interface_end_time = datetime.utcnow()
@@ -190,6 +211,8 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             'end_time': end_time,
             'cost_time': use_case_stop - use_case_start
         })
+
+        interface_count += 1
 
     return {'pass': run_pass,
             'res': exec_result_list,
