@@ -217,8 +217,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     'res': exec_result_list,
                     'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
-
-
         use_case_stop = timeit.default_timer()
         end_time = datetime.utcnow()
 
@@ -268,8 +266,8 @@ def run_use_case_callback(obj):
 
 def run_use_case_async(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None):
     if batch_log_id:
-        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer).add_done_callback(
-        run_use_case_callback)
+        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer).\
+            add_done_callback(run_use_case_callback)
     else:
         executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer)
 
