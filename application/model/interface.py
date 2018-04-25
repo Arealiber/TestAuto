@@ -44,7 +44,7 @@ class Interface(Base):
     interface_url = Column(String(255), nullable=False)
     interface_method = Column(String(20), nullable=False)
     interface_header = Column(String(255))
-    interface_json_payload = Column(String(1024))
+    interface_json_payload = Column(String(10000))
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
