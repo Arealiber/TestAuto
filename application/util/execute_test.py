@@ -79,10 +79,9 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
 
         # 将接口未替换的参数全部替换
     for interface in interface_list:
+        interface_start_time = datetime.utcnow()
+        interface_start = timeit.default_timer()
         try:
-            interface_start_time = datetime.utcnow()
-            interface_start = timeit.default_timer()
-
             request_method = interface['interface_method']
             to_rephrase_list = [interface['interface_url'],
                                 interface['interface_header'],
@@ -119,6 +118,18 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             header = result_list[1]
             json_payload = result_list[2]
         except Exception as e:
+            # 数据处理以及日志记录
+            interface_end_time = datetime.utcnow()
+            interface_stop = timeit.default_timer()
+            RunLogAPI.add_interface_run_log(**{
+                'use_case_run_log_id': use_case_log_id,
+                'interface_id': interface['id'],
+                'is_pass': False,
+                'cost_time': interface_stop - interface_start,
+                'start_time': interface_start_time,
+                'end_time': interface_end_time,
+                'error_message': '参数替换: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+            })
             return {'success': False,
                     'error_str': '接口{0}参数替换'.format(interface_count),
                     'res': exec_result_list,
@@ -133,8 +144,20 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     method = getattr(Encryption, encryption_method)
                     json_payload = method(json_payload)
         except Exception as e:
+            # 数据处理以及日志记录
+            interface_end_time = datetime.utcnow()
+            interface_stop = timeit.default_timer()
+            RunLogAPI.add_interface_run_log(**{
+                'use_case_run_log_id': use_case_log_id,
+                'interface_id': interface['id'],
+                'is_pass': False,
+                'cost_time': interface_stop - interface_start,
+                'start_time': interface_start_time,
+                'end_time': interface_end_time,
+                'error_message': 'json处理或加密: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+            })
             return {'success': False,
-                    'error_str': '接口{0}json处理或加密'.format(interface_count),
+                    'error_str': '接口{0} json处理或加密'.format(interface_count),
                     'res': exec_result_list,
                     'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
@@ -156,6 +179,18 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'json_response': r.json()
             }
         except Exception as e:
+            # 数据处理以及日志记录
+            interface_end_time = datetime.utcnow()
+            interface_stop = timeit.default_timer()
+            RunLogAPI.add_interface_run_log(**{
+                'use_case_run_log_id': use_case_log_id,
+                'interface_id': interface['id'],
+                'is_pass': False,
+                'cost_time': interface_stop - interface_start,
+                'start_time': interface_start_time,
+                'end_time': interface_end_time,
+                'error_message': '请求: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+            })
             return {'success': False,
                     'error_str': '接口{0}请求'.format(interface_count),
                     'res': exec_result_list,
@@ -193,10 +228,10 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             })
 
             if not result['success']:
+                run_pass = False
                 break
         except Exception as e:
             result['success'] = False
-            run_pass = run_pass and eval_success
             exec_result_list.append(result)
             # 数据处理以及日志记录
             interface_end_time = datetime.utcnow()
@@ -211,25 +246,25 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'cost_time': interface_stop - interface_start,
                 'start_time': interface_start_time,
                 'end_time': interface_end_time,
-                'error_message': '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                'error_message': '验证: {0}: {1}'.format(str(e.__class__.__name__), str(e))
             })
             return {'success': False,
                     'error_str': '接口{0}验证'.format(interface_count),
                     'res': exec_result_list,
                     'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
-        use_case_stop = timeit.default_timer()
-        end_time = datetime.utcnow()
-
-        # 日志记录
-        RunLogAPI.modify_use_case_run_log(**{
-            'id': use_case_log_id,
-            'is_pass': run_pass,
-            'end_time': end_time,
-            'cost_time': use_case_stop - use_case_start
-        })
-
         interface_count += 1
+
+    use_case_stop = timeit.default_timer()
+    end_time = datetime.utcnow()
+
+    # 日志记录
+    RunLogAPI.modify_use_case_run_log(**{
+        'id': use_case_log_id,
+        'is_pass': run_pass,
+        'end_time': end_time,
+        'cost_time': use_case_stop - use_case_start
+    })
 
     return {'pass': run_pass,
             'res': exec_result_list,
