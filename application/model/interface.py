@@ -41,6 +41,7 @@ class Interface(Base):
     id = Column(Integer, primary_key=True)
     interface_name = Column(String(100), nullable=False)
     interface_entry = Column(Integer, nullable=False)  # 入口
+    interface_encryption = Column(Integer, nullable=False, default=0)
     interface_url = Column(String(255), nullable=False)
     interface_method = Column(String(20), nullable=False)
     interface_header = Column(String(255))
@@ -55,6 +56,7 @@ class Interface(Base):
             'id': self.id,
             'interface_name': self.interface_name,
             'interface_entry': self.interface_entry,
+            'interface_encryption': self.interface_encryption,
             'interface_url': self.interface_url,
             'interface_method': self.interface_method,
             'interface_header': self.interface_header,
