@@ -178,28 +178,47 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             result['success'] = eval_success
             run_pass = run_pass and eval_success
             exec_result_list.append(result)
+            # 数据处理以及日志记录
+            interface_end_time = datetime.utcnow()
+            interface_stop = timeit.default_timer()
+            RunLogAPI.add_interface_run_log(**{
+                'use_case_run_log_id': use_case_log_id,
+                'interface_id': interface['id'],
+                'r_code': result['status_code'],
+                'r_header': json.dumps(result['header']),
+                'r_payload': json.dumps(result['json_response']),
+                'is_pass': result['success'],
+                'cost_time': interface_stop - interface_start,
+                'start_time': interface_start_time,
+                'end_time': interface_end_time
+            })
+
+            if not result['success']:
+                break
         except Exception as e:
             result['success'] = False
             exec_result_list.append(result)
+            # 数据处理以及日志记录
+            interface_end_time = datetime.utcnow()
+            interface_stop = timeit.default_timer()
+            RunLogAPI.add_interface_run_log(**{
+                'use_case_run_log_id': use_case_log_id,
+                'interface_id': interface['id'],
+                'r_code': result['status_code'],
+                'r_header': json.dumps(result['header']),
+                'r_payload': json.dumps(result['json_response']),
+                'is_pass': result['success'],
+                'cost_time': interface_stop - interface_start,
+                'start_time': interface_start_time,
+                'end_time': interface_end_time,
+                'error_message': '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+            })
             return {'success': False,
                     'error_str': '接口{0}验证'.format(interface_count),
                     'res': exec_result_list,
                     'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
 
-        # 数据处理以及日志记录
-        interface_end_time = datetime.utcnow()
-        interface_stop = timeit.default_timer()
-        RunLogAPI.add_interface_run_log(**{
-            'use_case_run_log_id': use_case_log_id,
-            'interface_id': interface['id'],
-            'r_code': result['status_code'],
-            'r_header': json.dumps(result['header']),
-            'r_payload': json.dumps(result['json_response']),
-            'is_pass': result['success'],
-            'cost_time': interface_stop - interface_start,
-            'start_time': interface_start_time,
-            'end_time': interface_end_time
-        })
+
 
         use_case_stop = timeit.default_timer()
         end_time = datetime.utcnow()

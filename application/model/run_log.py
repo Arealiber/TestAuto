@@ -62,7 +62,8 @@ def get_interface_run_log_table(table_name):
                       Column('is_pass', Boolean, nullable=False),
                       Column('cost_time', Float, nullable=False),
                       Column('start_time', DateTime, nullable=False),
-                      Column('end_time', DateTime, nullable=False)
+                      Column('end_time', DateTime, nullable=False),
+                      Column('error_message', String(2000))
                       )
         table.create(checkfirst=True)
         interface_run_log_table[table_name] = table
