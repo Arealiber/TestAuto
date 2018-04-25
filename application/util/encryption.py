@@ -25,6 +25,6 @@ def huan_ji_xia_encryption(json_payload):
     sign = calc_md5(to_sign)
     if 'params' in json_payload:
         json_payload['params']['sign'] = sign
-    elif '__param' in json_payload:
+    elif '_param' in json_payload:
         json_payload['_param']['sign'] = sign
     return json_payload
