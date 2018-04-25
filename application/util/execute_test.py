@@ -196,6 +196,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 break
         except Exception as e:
             result['success'] = False
+            run_pass = run_pass and eval_success
             exec_result_list.append(result)
             # 数据处理以及日志记录
             interface_end_time = datetime.utcnow()
