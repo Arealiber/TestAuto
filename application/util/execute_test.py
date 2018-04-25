@@ -132,7 +132,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     encryption_method = EncryptionAPI.get_encryption_method(interface['interface_encryption'])
                     method = getattr(Encryption, encryption_method)
                     json_payload = method(json_payload)
-                    print(json_payload)
         except Exception as e:
             return {'success': False,
                     'error_str': '接口{0}json处理或加密'.format(interface_count),

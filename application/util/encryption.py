@@ -7,7 +7,7 @@ def key_value_sort_join(**kwargs):
     :param kwargs:      key value pair
     :return:            排序并链接过后的字符串
     """
-    kwargs = {k: v for k, v in kwargs.items() if v}
+    kwargs = {k: v for k, v in kwargs.items() if v and type(v) == str}
     keys = sorted(kwargs.keys())
     return '&'.join(['%s=%s' % (key, kwargs[key]) for key in keys])
 
