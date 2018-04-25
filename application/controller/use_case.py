@@ -126,6 +126,8 @@ def execute_use_case():
     """
     use_case_id = request.get_json()['id']
     result = Exec.run_use_case(use_case_id)
+    if 'error' in result:
+        return jsonify(result)
     return jsonify({'success': True, 'res': result})
 
 
