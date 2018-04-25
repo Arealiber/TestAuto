@@ -13,6 +13,7 @@ from application.api import use_case as Case_API
 from application.api import parameter as ParameterAPI
 from application.api import batch as BatchAPI
 from application.api import use_case as UseCaseAPI
+from application.api import encryption as EncryptionAPI
 
 executor = ProcessPoolExecutor()
 
@@ -107,7 +108,11 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             # 加密
             if json_payload:
                 json_payload = json.loads(json_payload)
-                json_payload = Encryption.huan_ji_xia_encryption(json_payload)
+                if interface['interface_encryption'] != 0:
+                    encryption_method = EncryptionAPI.get_encryption_method(interface['interface_encryption'])
+                    method = getattr(Encryption, encryption_method)
+                    json_payload = method(json_payload)
+                    print(json_payload)
 
             # 请求接口
             if request_method.upper() == 'GET':

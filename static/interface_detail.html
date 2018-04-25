@@ -58,6 +58,12 @@
                 <input type="text" class="form-control" id="interface_entry" placeholder="接口入口" value="">
             </div>
             <div class="form-group">
+                <label for="interface_encryption">接口加密方式</label>
+                <select class="form-control" id="interface_encryption">
+                    <option value="0">不加密</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="interface_url">url</label>
                 <span class="badge badge-info" data-toggle="modal" data-target="#how_to_parameter">如何填写参数?</span>
                 <input type="text" class="form-control" id="interface_url" placeholder="接口url" value="">
@@ -130,8 +136,20 @@
         error_alert.show();
     }
 
+    // 获取接口数据并展示
     $(document).ready(function () {
-        var interface_id = window.location.pathname.split('/').pop()
+        $.ajax({
+            type: 'get',
+            url: '/encryption/list',
+            success: function (response) {
+                if (response.length > 0) {
+                    $.each(response, function (i, encryption) {
+                        $("#interface_encryption").append('<option value="' + encryption.id + '">' + encryption.encryption_name + '</option>')
+                    })
+                }
+            }
+        });
+        var interface_id = window.location.pathname.split('/').pop();
         if (interface_id != 'new') {
             $.ajax({
                 type: 'post',
@@ -154,6 +172,14 @@
                         $("#interface_method").val(interface_detail.interface_method);
                         $("#interface_header").val(interface_detail.interface_header);
                         $("#interface_json_payload").val(interface_detail.interface_json_payload);
+                        if (interface_detail.interface_encryption != 0) {
+                            var option_list = $("#interface_encryption").find('option');
+                            $.each(option_list, function (i, option) {
+                                if (option.value == interface_detail.interface_encryption) {
+                                    option.selected=true
+                                }
+                            })
+                        }
 
                         $("#interface_form").show();
                         $("#submit_interface").html('更新');
@@ -169,11 +195,13 @@
         }
     });
 
+    // 提交接口更新
     $(document).ready(function () {
         $("#submit_interface").click(function () {
             var interface_dict = {
                 'interface_name': $("#interface_name").val(),
                 'interface_entry': $("#interface_entry").val(),
+                'interface_encryption': $("#interface_encryption option:selected").val(),
                 'interface_url': $("#interface_url").val(),
                 'interface_method': $("#interface_method").val(),
                 'interface_header': $("#interface_header").val(),
