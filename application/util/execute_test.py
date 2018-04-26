@@ -129,6 +129,15 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'end_time': interface_end_time,
                 'error_message': '参数替换: {0}: {1}'.format(str(e.__class__.__name__), str(e))
             })
+            # 用例运行日志记录
+            use_case_stop = timeit.default_timer()
+            end_time = datetime.utcnow()
+            RunLogAPI.modify_use_case_run_log(**{
+                'id': use_case_log_id,
+                'is_pass': run_pass,
+                'end_time': end_time,
+                'cost_time': use_case_stop - use_case_start
+            })
             return {'success': False,
                     'error_str': '接口{0}参数替换'.format(interface_count),
                     'res': exec_result_list,
@@ -154,6 +163,15 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'start_time': interface_start_time,
                 'end_time': interface_end_time,
                 'error_message': 'json处理或加密: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+            })
+            # 用例运行日志记录
+            use_case_stop = timeit.default_timer()
+            end_time = datetime.utcnow()
+            RunLogAPI.modify_use_case_run_log(**{
+                'id': use_case_log_id,
+                'is_pass': run_pass,
+                'end_time': end_time,
+                'cost_time': use_case_stop - use_case_start
             })
             return {'success': False,
                     'error_str': '接口{0} json处理或加密'.format(interface_count),
@@ -194,6 +212,15 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'start_time': interface_start_time,
                 'end_time': interface_end_time,
                 'error_message': '请求: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+            })
+            # 用例运行日志记录
+            use_case_stop = timeit.default_timer()
+            end_time = datetime.utcnow()
+            RunLogAPI.modify_use_case_run_log(**{
+                'id': use_case_log_id,
+                'is_pass': run_pass,
+                'end_time': end_time,
+                'cost_time': use_case_stop - use_case_start
             })
             return {'success': False,
                     'error_str': '接口{0}请求'.format(interface_count),
@@ -252,6 +279,15 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'end_time': interface_end_time,
                 'error_message': '验证: {0}: {1}'.format(str(e.__class__.__name__), str(e))
             })
+            # 用例运行日志记录
+            use_case_stop = timeit.default_timer()
+            end_time = datetime.utcnow()
+            RunLogAPI.modify_use_case_run_log(**{
+                'id': use_case_log_id,
+                'is_pass': run_pass,
+                'end_time': end_time,
+                'cost_time': use_case_stop - use_case_start
+            })
             return {'success': False,
                     'error_str': '接口{0}验证'.format(interface_count),
                     'res': exec_result_list,
@@ -259,10 +295,9 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
 
         interface_count += 1
 
+    # 用例运行日志记录
     use_case_stop = timeit.default_timer()
     end_time = datetime.utcnow()
-
-    # 日志记录
     RunLogAPI.modify_use_case_run_log(**{
         'id': use_case_log_id,
         'is_pass': run_pass,
