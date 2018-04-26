@@ -46,6 +46,7 @@ class Interface(Base):
     interface_method = Column(String(20), nullable=False)
     interface_header = Column(String(255))
     interface_json_payload = Column(String(10000))
+    body_type = Column(Integer, nullable=False, default=0)  # 消息体类型， 0为json， 1为form
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -63,7 +64,8 @@ class Interface(Base):
             'interface_json_payload': self.interface_json_payload,
             'create_by': self.create_by,
             'create_time': self.create_time,
-            'update_time': self.update_time
+            'update_time': self.update_time,
+            'body_type': self.body_type
         }
 
 

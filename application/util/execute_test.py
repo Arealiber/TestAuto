@@ -193,7 +193,10 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             if header:
                 request_kwargs['headers'] = json.loads(header)
             if json_payload:
-                request_kwargs['json'] = json_payload
+                if interface['body_type'] == 0:
+                    request_kwargs['json'] = json_payload
+                else:
+                    request_kwargs['data'] = json_payload
             if request_method.upper() == 'GET':
                 r = session.get(url, **request_kwargs)
             elif request_method.upper() == 'POST':
