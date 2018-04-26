@@ -73,26 +73,25 @@ def get_use_case_run_log_count():
 
 
 @app.route('/run_log/use_case/info', methods=['POST'])
-def get_use_case_run_log_():
+def get_use_case_run_log():
     """
     :return:
     """
     param_json = request.get_json()
     page_index = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
     page_size = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
+
     try:
         result = RunLogAPI.get_use_case_run_log(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
+    result = result[(page_index - 1) * page_size:page_index * page_size]
     for use_case_run_log_dict in result:
         use_case_id = use_case_run_log_dict.get('use_case_id')
-        try:
-            use_case_info = UseCaseAPI.get_single_use_case(use_case_id)
-        except Exception as e:
-            return jsonify({'success': False, 'res': str(e)})
+        use_case_info = UseCaseAPI.get_single_use_case(use_case_id)
         use_case_name = use_case_info.get('use_case_name')
         use_case_run_log_dict.update({'use_case_name': use_case_name})
-    return jsonify({'success': True, 'res': result[(page_index - 1) * page_size:page_index * page_size]})
+    return jsonify({'success': True, 'res': result})
 
 
 @app.route('/run_log/use_case/add', methods=['POST'])
