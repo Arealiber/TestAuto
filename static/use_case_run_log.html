@@ -7,6 +7,7 @@
     <link href="/component/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
     <link href="/css/loader.css" rel="stylesheet">
+    <link href="/component/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
 </head>
 
@@ -51,6 +52,7 @@
         <div id="loader"></div>
         <div id="error_alert" class="alert alert-danger" role="alert"></div>
 
+
         <table class="table" id="run_log_table">
             <thead>
             <tr>
@@ -81,6 +83,8 @@
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
 <script src="/component/js/moment.min.js"></script>
+<script src="/component/js/bootstrap-datetimepicker.min.js"></script>
+
 
 <script>
     var error_alert = $("#error_alert");
@@ -162,13 +166,25 @@
                                             } else{
                                                 is_pass_string = '<td style="color: red; font-weight: bold;">否</td>';
                                             }
+                                            var start_time = "";
+                                            var end_time = "";
+                                            if (!use_case_run_log.start_time) {
+                                                start_time = "";
+                                            } else{
+                                                start_time = moment(use_case_run_log.start_time).format("YYYY/MM/DD HH:mm");
+                                            }
+                                            if (!use_case_run_log.end_time) {
+                                                end_time = '';
+                                            } else{
+                                                end_time = moment(use_case_run_log.end_time).format("YYYY/MM/DD HH:mm");
+                                            }
                                             $("#run_log_table").find('tbody').
                                             append('<tr>'+
                                                 '<th scope="row">' + (10 * (page_num - 1 ) + i + 1) + '</th>' +
                                                 '<td>' + use_case_run_log.use_case_name + '</td>' +
                                                 is_pass_string +
-                                                '<td>' + moment(use_case_run_log.start_time).format("YYYY/MM/DD HH:mm") + '</td>' +
-                                                '<td>' + moment(use_case_run_log.end_time).format("YYYY/MM/DD HH:mm") + '</td>' +
+                                                '<td style="content;">' + start_time + '</td>' +
+                                                '<td >' + end_time + '</td>' +
                                                 '<td>' + use_case_run_log.cost_time + '</td>' +
                                                 '<td>' + button_col + '</td></tr>')
                                         });
@@ -180,6 +196,11 @@
             }
         });
     });
+    $(".form_datetime").datetimepicker({
+        format: "dd MM yyyy - hh:ii"
+    });
+    $('#datetimepicker1').datetimepicker();
+
 </script>
 
 </body>
