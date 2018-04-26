@@ -124,10 +124,13 @@
                         show_alert("无接口运行日志，请确认用例是否运行")
                     }
                     $.each(interface_run_log_list, function (i, interface_run_log) {
-                        var str_res = "status_code:" + interface_run_log.r_code + '<br>'
-                            + "r_header: " + interface_run_log.r_header + '<br>'
+                        var str_res =
+                            "r_header: " + interface_run_log.r_header + '<br/><br/>'
                             + "r_payload: " + interface_run_log.r_payload;
-                        var start_time = interface_run_log.start_time
+                        if (!interface_run_log.err_message){
+                             str_res = str_res + '<br/>'+ 'error_message: "' + interface_run_log.error_message + '"<br/>'
+                        }
+                        var start_time = interface_run_log.start_time;
                         if (!start_time){
                             start_time = ''
                         }else {
@@ -135,17 +138,17 @@
                         }
                         var is_pass = interface_run_log.is_pass;
                         if (!is_pass){
-                            is_pass = '否'
+                            is_pass = '<td style="color: red; font-weight: bold;">否</td>'
                         }else {
-                            is_pass = '是'
+                            is_pass = '<td>是</td>'
                         }
                         var button_col = '<button class="btn btn-sm btn-primary" data-value="open" type="button" data-json="' + escapeHtml(str_res) +'">...</button>';
 
                         $("#interface_run_log_table").find("tbody").
                         append('<tr>' +
                             '<th scope="row">'+Number(i+1) +'</th>'+
-                            '<td>' + interface_run_log.interface_name + '</td>' +
-                            '<td>' + is_pass + '</td>' +
+                            '<td>' + interface_run_log.interface_name + '</td>'+
+                            is_pass +
                             '<td>' + start_time + '</td>' +
                             '<td>' + interface_run_log.cost_time + '</td>' +
                             '<td>' + interface_run_log.r_code + '</td>' +
