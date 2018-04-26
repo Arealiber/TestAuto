@@ -95,19 +95,18 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                         param_value = next((param for param in param_define_list if param["parameter_name"] == item))['parameter_value']
                         value_to_rephrase = ParameterUtil.search_parameter(param_value)
                         if value_to_rephrase:
-                            value_info = ParameterUtil.search_parameter(param_value)[0]
-                            order = int(value_info.split('|')[0])
-                            name = value_info.split('|')[1]
-                            result_dict = exec_result_list[order - 1]
-                            if name == 'status_code':
-                                temp_dict = result_dict['status_code']
-                            elif name == 'header':
-                                temp_dict = result_dict['header']
-                            else:
-                                temp_dict = result_dict['json_response']
-                            to_exec = param_value.replace('${{{0}}}'.format(value_info), 'temp_dict')
+                            for value_info in value_to_rephrase:
+                                order = int(value_info.split('|')[0])
+                                name = value_info.split('|')[1]
+                                if name == 'status_code':
+                                    temp_string = 'exec_result_list[{0}]["status_code"]'.format(str(order - 1))
+                                elif name == 'header':
+                                    temp_string = 'exec_result_list[{0}]["header"]'.format(str(order - 1))
+                                else:
+                                    temp_string = 'exec_result_list[{0}]["json_response"]'.format(str(order - 1))
+                                param_value = param_value.replace('${{{0}}}'.format(value_info), temp_string)
                             a = []
-                            exec_string = 'a.append({0})'.format(to_exec)
+                            exec_string = 'a.append({0})'.format(param_value)
                             exec(exec_string)
                             new_param_value = '"{0}"'.format(a[0])
                             item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), new_param_value)
