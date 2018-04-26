@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy import func, select
+from sqlalchemy import func, select, desc
 from application.util.decorator import *
 from application.model.run_log import *
 
@@ -140,9 +140,9 @@ def get_use_case_run_log(**kwargs):
         else:
             sql = table.select()
         if use_case_id:
-            sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(table.c.end_time)
+            sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(desc(table.c.start_time))
         else:
-            sql = sql.order_by(table.c.end_time)
+            sql = sql.order_by(desc(table.c.start_time))
         if batch_run_log_id:
             sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
         if limit:

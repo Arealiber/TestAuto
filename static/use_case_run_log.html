@@ -145,7 +145,7 @@
                                 type: 'post',
                                 url: '/run_log/use_case/info',
                                 data: JSON.stringify({
-                                    'pageSize': 50,
+                                    'pageSize': 30,
                                     'pageIndex': page_num
                                 }),
                                 contentType: "application/json; charset=utf-8",
@@ -180,7 +180,7 @@
                                             }
                                             $("#run_log_table").find('tbody').
                                             append('<tr>'+
-                                                '<th scope="row">' + (10 * (page_num - 1 ) + i + 1) + '</th>' +
+                                                '<th scope="row">' + (30 * (page_num - 1 ) + i + 1) + '</th>' +
                                                 '<td>' + use_case_run_log.use_case_name + '</td>' +
                                                 is_pass_string +
                                                 '<td style="content;">' + start_time + '</td>' +
