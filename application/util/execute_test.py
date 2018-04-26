@@ -207,7 +207,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 json_response = {}
             result = {
                 'status_code': r.status_code,
-                'header': json.dumps(dict(r.headers)),
+                'header': dict(r.headers),
                 'json_response': json_response
             }
         except Exception as e:
