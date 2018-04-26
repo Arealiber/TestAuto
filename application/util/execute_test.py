@@ -128,7 +128,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                                 param_value = param_value.replace('${{{0}}}'.format(value_info), temp_string)
                             a = []
                             exec_string = 'a.append({0})'.format(param_value)
-                            exec(exec_string)
+                            exec(exec_string, locals(), locals())
                             new_param_value = '"{0}"'.format(a[0])
                             item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), new_param_value)
                         else:
@@ -193,7 +193,10 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             if header:
                 request_kwargs['headers'] = json.loads(header)
             if json_payload:
-                request_kwargs['json'] = json_payload
+                if interface['body_type'] == 0:
+                    request_kwargs['json'] = json_payload
+                else:
+                    request_kwargs['data'] = json_payload
             if request_method.upper() == 'GET':
                 r = session.get(url, **request_kwargs)
             elif request_method.upper() == 'POST':
