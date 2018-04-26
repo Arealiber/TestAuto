@@ -158,8 +158,10 @@
                                         $("#run_log_table").show();
                                         var use_case_run_log_list = response.res;
                                         $.each(use_case_run_log_list, function (i, use_case_run_log) {
+                                            var start_time = moment(use_case_run_log.start_time).format('YYYY-MM-DD')
                                             var button_col = '<div class="btn-group btn-group-sm" role="group">'+
-                                                '<a class="btn btn-info" href="/use_case_run_log/detail/' + use_case_run_log.id + '" role="button">详情</a></button>';
+                                                '<a class="btn btn-info" href="/use_case_run_log/detail/' +
+                                                 start_time+'/' + use_case_run_log.id + '" role="button">详情</a></button>';
                                             var is_pass_string = '';
                                             if (use_case_run_log.is_pass) {
                                                 is_pass_string = '<td>是</td>';
@@ -183,8 +185,8 @@
                                                 '<th scope="row">' + (30 * (page_num - 1 ) + i + 1) + '</th>' +
                                                 '<td>' + use_case_run_log.use_case_name + '</td>' +
                                                 is_pass_string +
-                                                '<td style="content;">' + start_time + '</td>' +
-                                                '<td >' + end_time + '</td>' +
+                                                '<td>' + start_time + '</td>' +
+                                                '<td>' + end_time + '</td>' +
                                                 '<td>' + use_case_run_log.cost_time + '</td>' +
                                                 '<td>' + button_col + '</td></tr>')
                                         });
