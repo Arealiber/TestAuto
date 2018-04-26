@@ -18,6 +18,24 @@ from application.api import encryption as EncryptionAPI
 executor = ProcessPoolExecutor()
 
 
+def use_case_exception_log_update(use_case_log_id, use_case_start):
+    """
+    用例执行过程中抛出异常时
+    更新用例的运行日志
+    :param use_case_log_id:
+    :param use_case_start:
+    :return:
+    """
+    use_case_stop = timeit.default_timer()
+    end_time = datetime.utcnow()
+    return RunLogAPI.modify_use_case_run_log(**{
+        'id': use_case_log_id,
+        'is_pass': False,
+        'end_time': end_time,
+        'cost_time': use_case_stop - use_case_start
+    })
+
+
 def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None):
     exec_result_list = []
     interface_count = 1
@@ -30,6 +48,23 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'error_str': '接口{0}数据库'.format(interface_count),
                 'res': exec_result_list,
                 'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+
+    # 信息初始化
+    start_time = datetime.utcnow()
+    use_case_start = timeit.default_timer()
+    run_pass = True
+    use_case_id = use_case_info['id']
+    if batch_log_id:
+        use_case_log_id = RunLogAPI.add_use_case_run_log(**{
+            'use_case_id': use_case_id,
+            'start_time': start_time,
+            'batch_run_log_id': batch_log_id
+        })
+    else:
+        use_case_log_id = RunLogAPI.add_use_case_run_log(**{
+            'use_case_id': use_case_id,
+            'start_time': start_time,
+        })
 
     try:
         use_case_info['interface_list'] = []
@@ -53,25 +88,11 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
 
             use_case_info['interface_list'].append(interface_info)
 
-        # 信息初始化
-        start_time = datetime.utcnow()
-        use_case_start = timeit.default_timer()
-        run_pass = True
-        use_case_id = use_case_info['id']
-        if batch_log_id:
-            use_case_log_id = RunLogAPI.add_use_case_run_log(**{
-                'use_case_id': use_case_id,
-                'start_time': start_time,
-                'batch_run_log_id': batch_log_id
-            })
-        else:
-            use_case_log_id = RunLogAPI.add_use_case_run_log(**{
-                'use_case_id': use_case_id,
-                'start_time': start_time,
-            })
         interface_list = use_case_info['interface_list']
         session = requests.Session()
     except Exception as e:
+        # 用例运行日志记录
+        use_case_exception_log_update(use_case_log_id, use_case_start)
         return {'success': False,
                 'error_str': '接口{0}参数替换'.format(interface_count),
                 'res': exec_result_list,
@@ -130,14 +151,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'error_message': '参数替换: {0}: {1}'.format(str(e.__class__.__name__), str(e))
             })
             # 用例运行日志记录
-            use_case_stop = timeit.default_timer()
-            end_time = datetime.utcnow()
-            RunLogAPI.modify_use_case_run_log(**{
-                'id': use_case_log_id,
-                'is_pass': run_pass,
-                'end_time': end_time,
-                'cost_time': use_case_stop - use_case_start
-            })
+            use_case_exception_log_update(use_case_log_id, use_case_start)
             return {'success': False,
                     'error_str': '接口{0}参数替换'.format(interface_count),
                     'res': exec_result_list,
@@ -165,14 +179,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'error_message': 'json处理或加密: {0}: {1}'.format(str(e.__class__.__name__), str(e))
             })
             # 用例运行日志记录
-            use_case_stop = timeit.default_timer()
-            end_time = datetime.utcnow()
-            RunLogAPI.modify_use_case_run_log(**{
-                'id': use_case_log_id,
-                'is_pass': run_pass,
-                'end_time': end_time,
-                'cost_time': use_case_stop - use_case_start
-            })
+            use_case_exception_log_update(use_case_log_id, use_case_start)
             return {'success': False,
                     'error_str': '接口{0} json处理或加密'.format(interface_count),
                     'res': exec_result_list,
@@ -214,14 +221,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'error_message': '请求: {0}: {1}'.format(str(e.__class__.__name__), str(e))
             })
             # 用例运行日志记录
-            use_case_stop = timeit.default_timer()
-            end_time = datetime.utcnow()
-            RunLogAPI.modify_use_case_run_log(**{
-                'id': use_case_log_id,
-                'is_pass': run_pass,
-                'end_time': end_time,
-                'cost_time': use_case_stop - use_case_start
-            })
+            use_case_exception_log_update(use_case_log_id, use_case_start)
             return {'success': False,
                     'error_str': '接口{0}请求'.format(interface_count),
                     'res': exec_result_list,
@@ -280,14 +280,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'error_message': '验证: {0}: {1}'.format(str(e.__class__.__name__), str(e))
             })
             # 用例运行日志记录
-            use_case_stop = timeit.default_timer()
-            end_time = datetime.utcnow()
-            RunLogAPI.modify_use_case_run_log(**{
-                'id': use_case_log_id,
-                'is_pass': run_pass,
-                'end_time': end_time,
-                'cost_time': use_case_stop - use_case_start
-            })
+            use_case_exception_log_update(use_case_log_id, use_case_start)
             return {'success': False,
                     'error_str': '接口{0}验证'.format(interface_count),
                     'res': exec_result_list,
