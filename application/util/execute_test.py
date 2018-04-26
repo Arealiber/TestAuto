@@ -162,23 +162,29 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
 
         try:
             # 请求接口
+            request_kwargs = {
+                'timeout': 10
+            }
+            if header:
+                request_kwargs['headers'] = json.loads(header)
+            if json_payload:
+                request_kwargs['json'] = json_payload
             if request_method.upper() == 'GET':
-                if header:
-                    r = session.get(url, headers=header, json=json_payload, timeout=10)
-                else:
-                    r = session.get(url, json=json_payload, timeout=10)
+                r = session.get(url, **request_kwargs)
             elif request_method.upper() == 'POST':
-                if header:
-                    r = session.post(url, headers=header, json=json_payload, timeout=10)
-                else:
-                    r = session.post(url, json=json_payload, timeout=10)
+                r = session.post(url, **request_kwargs)
+            try:
+                json_response = r.json()
+            except Exception as e:
+                json_response = {}
             result = {
                 'status_code': r.status_code,
                 'header': json.dumps(dict(r.headers)),
-                'json_response': r.json()
+                'json_response': json_response
             }
         except Exception as e:
             # 数据处理以及日志记录
+            raise e
             interface_end_time = datetime.utcnow()
             interface_stop = timeit.default_timer()
             RunLogAPI.add_interface_run_log(**{
