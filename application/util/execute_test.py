@@ -191,7 +191,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'timeout': 10
             }
             if header:
-                request_kwargs['headers'] = header
+                request_kwargs['headers'] = json.loads(header)
             if json_payload:
                 if interface['body_type'] == 0:
                     request_kwargs['json'] = json_payload
