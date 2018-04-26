@@ -184,7 +184,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             }
         except Exception as e:
             # 数据处理以及日志记录
-            raise e
             interface_end_time = datetime.utcnow()
             interface_stop = timeit.default_timer()
             RunLogAPI.add_interface_run_log(**{
