@@ -28,8 +28,10 @@
 
             <li>
                 <ul>
-                    <li><a style="font-size: 0.9rem; text-indent: 0; line-height: 15px;" href="/use_case_run_log/1">用例运行日志</a></li>
-                    <li><a style="font-size: 0.9rem; text-indent: 0; line-height: 15px;" href="/batch_run_log/1">批次运行日志</a></li>
+                    <li><a style="font-size: 0.9rem; text-indent: 0; line-height: 15px;" href="/use_case_run_log/1">用例运行日志</a>
+                    </li>
+                    <li><a style="font-size: 0.9rem; text-indent: 0; line-height: 15px;"
+                           href="/batch_run_log/1">批次运行日志</a></li>
                 </ul>
             </li>
 
@@ -57,7 +59,7 @@
                 <th scope="col">测试通过</th>
                 <th scope="col">开始时间</th>
                 <th scope="col">结束时间</th>
-                <th scope="col">耗时</th>
+                <th scope="col">耗时(s)</th>
                 <th scope="col">操作</th>
             </tr>
             </thead>
@@ -78,6 +80,7 @@
 <script src="/component/js/jquery-3.3.1.min.js"></script>
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
+<script src="/component/js/moment.min.js"></script>
 
 <script>
     var error_alert = $("#error_alert");
@@ -89,24 +92,94 @@
         error_alert.show();
     }
 
-    $(document).ready(function (response) {
+    $(document).ready(function () {
         $.ajax({
             type: 'post',
-            url: '/run_log/use_case/info',
+            url: '/run_log/use_case/count',
             data: JSON.stringify({}),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
                 if (!response.success) {
                     show_alert('获取数据失败');
-                } else if (response.res.length == 0) {
+                } else if (response.res == 0) {
                     show_alert('无数据')
                 } else {
-
+                    var total_use_case_run_log = response.res;
+                    console.log(window.location.pathname);
+                    var page_num = window.location.pathname.split("/").pop();
+                    var total_page = Math.ceil(total_use_case_run_log / 50);
+                    if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
+                        show_alert("无此页数据");
+                    } else {
+                        var previous_page = $('li[id="previous_page"]');
+                        var next_page = $('li[id="next_page"]');
+                        if (total_page == 1) {
+                            previous_page.addClass('disabled');
+                            next_page.addClass('disabled')
+                        }
+                        else if (page_num == 1) {
+                            previous_page.addClass('disabled');
+                            next_page.find('.page-link').attr('href', '/use_case_run_log/' + (Number(page_num) + 1))
+                        } else if (page_num == total_page) {
+                            next_page.addClass('disabled');
+                            previous_page.find('.page-link').attr('href', '/use_case_run_log/' + (Number(page_num) - 1))
+                        } else {
+                            next_page.find('.page-link').attr('href', '/use_case_run_log/' + (Number(page_num) + 1));
+                            previous_page.find('.page-link').attr('href', '/use_case_run_log/' + (Number(page_num) - 1))
+                        }
+                        var page_item_string = '';
+                        for (var i = 1; i <= total_page; i++) {
+                            if (i == page_num) {
+                                page_item_string += '<li class="page-item active"><a class="page-link" href="/use_case_run_log/' + i + '">' + i + '</a></li>'
+                            } else {
+                                page_item_string += '<li class="page-item"><a class="page-link" href="/use_case_run_log/' + i + '">' + i + '</a></li>'
+                            }
+                        }
+                        previous_page.after(page_item_string);
+                        $.ajax({
+                                type: 'post',
+                                url: '/run_log/use_case/info',
+                                data: JSON.stringify({
+                                    'pageSize': 50,
+                                    'pageIndex': page_num
+                                }),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function (response) {
+                                    loader.hide();
+                                    if (!response.success){
+                                        show_alert("获取数据失败")
+                                    }else {
+                                        $("#run_log_table").show();
+                                        var use_case_run_log_list = response.res;
+                                        $.each(use_case_run_log_list, function (i, use_case_run_log) {
+                                            var button_col = '<div class="btn-group btn-group-sm" role="group">'+
+                                                '<a class="btn btn-info" href="/use_case_run_log/detail/' + use_case_run_log.id + '" role="button">详情</a></button>';
+                                            var is_pass_string = '';
+                                            if (use_case_run_log.is_pass) {
+                                                is_pass_string = '<td>是</td>';
+                                            } else{
+                                                is_pass_string = '<td style="color: red; font-weight: bold;">否</td>';
+                                            }
+                                            $("#run_log_table").find('tbody').
+                                            append('<tr>'+
+                                                '<th scope="row">' + (10 * (page_num - 1 ) + i + 1) + '</th>' +
+                                                '<td>' + use_case_run_log.use_case_name + '</td>' +
+                                                is_pass_string +
+                                                '<td>' + moment(use_case_run_log.start_time).format("YYYY/MM/DD HH:mm") + '</td>' +
+                                                '<td>' + moment(use_case_run_log.end_time).format("YYYY/MM/DD HH:mm") + '</td>' +
+                                                '<td>' + use_case_run_log.cost_time + '</td>' +
+                                                '<td>' + button_col + '</td></tr>')
+                                        });
+                                    }
+                                }
+                        });
+                    }
                 }
             }
-        })
-    })
+        });
+    });
 </script>
 
 </body>
