@@ -164,11 +164,11 @@
                                             '<a class="btn btn-info" href="/batch_run_log/detail/' +
                                             start_time + '/' + batch_run_log.id + '" role="button">详情</a></button>';
                                         var str_batch_pass_rate = batch_run_log.pass_rate;
-                                        if (str_batch_pass_rate) {
-                                            str_batch_pass_rate = '<td>' + str_batch_pass_rate +'</td>'
+                                        if (str_batch_pass_rate > 80) {
+                                            str_batch_pass_rate = '<td style="color: green; font-weight: bold;">' + str_batch_pass_rate +'%</td>'
                                         } else {
                                             str_batch_pass_rate = '<td style="color: red; font-weight: bold;">' +
-                                                str_batch_pass_rate + '</td>'
+                                                str_batch_pass_rate + '%</td>'
                                         }
                                         if (!start_time) {
                                             start_time = "";
