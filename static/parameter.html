@@ -160,7 +160,21 @@
                         if (after_page_item_string){
                             page_item_string = after_page_item_string + page_item_string
                         }
+                        var first_page_disabled_str = '';
+                        var last_page_disabled_str = '';
+                        if (page_num == 1) {
+                            first_page_disabled_str = ' disabled';
+                            if (page_num == total_page) {
+                                last_page_disabled_str = ' disabled'
+                            }
+                        }else if (page_num == total_page){
+                            last_page_disabled_str = 'disabled'
+                        }
+                        var first_page_string = '<li class="page-item'+ first_page_disabled_str +'" id="first_page"><a class="page-link" href="/parameter/1">首页</a></li>';
+                        var last_page_string = '<li class="page-item'+ last_page_disabled_str +'" id="last_page"><a class="page-link" href="/parameter/'+ total_page +'">尾页</a></li>';
+                        previous_page.before(first_page_string);
                         previous_page.after(page_item_string);
+                        next_page.after(last_page_string);
 
                         $.ajax({
                             type: 'post',

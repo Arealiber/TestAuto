@@ -145,13 +145,19 @@
                                 page_item_string += '<li class="page-item"><a class="page-link" href="/batch_run_log/' + i + '">' + i + '</a></li>'
                             }
                         }
-                        if (pre_page_item_string){
-                            page_item_string = page_item_string + pre_page_item_string
+                        if (page_num == 1) {
+                            var first_page_string = '<li class="page-item disabled" id="first_page"><a class="page-link" href="/batch_run_log/1">首页</a></li>'
+                            var last_page_string = '<li class="page-item" id="last_page"><a class="page-link" href="/batch_run_log/'+total_page+'">尾页</a></li>'
+                        }else if (page_num == total_page){
+                            var first_page_string = '<li class="page-item" id="first_page"><a class="page-link" href="/batch_run_log/1">首页</a></li>'
+                            var last_page_string = '<li class="page-item disabled" id="last_page"><a class="page-link" href="/batch_run_log/'+total_page+'">尾页</a></li>'
+                        }else {
+                            var first_page_string = '<li class="page-item" id="first_page"><a class="page-link" href="/batch_run_log/1">首页</a></li>';
+                            var last_page_string = '<li class="page-item" id="last_page"><a class="page-link" href="/batch_run_log/'+ total_page +'">尾页</a></li>'
                         }
-                        if (after_page_item_string){
-                            page_item_string = after_page_item_string + page_item_string
-                        }
+                        previous_page.before(first_page_string);
                         previous_page.after(page_item_string);
+                        next_page.after(last_page_string);
                         $.ajax({
                             type: 'post',
                             url: '/run_log/batch/info',
