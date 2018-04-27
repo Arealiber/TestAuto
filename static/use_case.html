@@ -327,7 +327,6 @@
     // 提交异步执行
     $(document).ready(function () {
         $("#use_case_table").on('click', '.execute-background', function () {
-            console.log('123');
             var use_case_id = $(this).val();
             $.ajax({
                 type: 'post',
