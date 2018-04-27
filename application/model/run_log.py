@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
 from datetime import datetime
 from application import engine
-from sqlalchemy import Table, MetaData, Column, Integer, String, DateTime, Float, Boolean
+from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean
+from sqlalchemy.dialects.mysql import TIMESTAMP
 
 
 meta = MetaData(bind=engine)
@@ -19,10 +20,10 @@ def get_batch_run_log_table(table_name):
                       Column('batch_id', Integer, nullable=False),
                       Column('use_case_count', Integer, nullable=False),
                       Column('pass_rate', Integer, default=-1, nullable=False),  # 百分比，-1表示未执行完成
-                      Column('start_time', DateTime, nullable=False),
-                      Column('end_time', DateTime),
+                      Column('start_time', TIMESTAMP(fsp=3), nullable=False),
+                      Column('end_time', TIMESTAMP(fsp=3)),
                       Column('cost_time', Float),
-                      Column('create_time', DateTime, default=datetime.utcnow, nullable=False)
+                      Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False)
                       )
         table.create(checkfirst=True)
         batch_run_log_table[table_name] = table
@@ -38,9 +39,9 @@ def get_use_case_run_log_table(table_name):
                       Column('batch_run_log_id', Integer),
                       Column('use_case_id', Integer, nullable=False),
                       Column('is_pass', Boolean),
-                      Column('start_time', DateTime, nullable=False),
-                      Column('end_time', DateTime),
-                      Column('create_time', DateTime, default=datetime.utcnow),
+                      Column('start_time', TIMESTAMP(fsp=3), nullable=False),
+                      Column('end_time', TIMESTAMP(fsp=3)),
+                      Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
                       Column('cost_time', Float, nullable=False)
                       )
         table.create(checkfirst=True)
@@ -61,8 +62,8 @@ def get_interface_run_log_table(table_name):
                       Column('r_payload', String(1000)),
                       Column('is_pass', Boolean, nullable=False),
                       Column('cost_time', Float, nullable=False),
-                      Column('start_time', DateTime, nullable=False),
-                      Column('end_time', DateTime, nullable=False),
+                      Column('start_time', TIMESTAMP(fsp=3), nullable=False),
+                      Column('end_time', TIMESTAMP(fsp=3), nullable=False),
                       Column('error_message', String(2000))
                       )
         table.create(checkfirst=True)
