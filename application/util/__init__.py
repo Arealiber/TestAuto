@@ -2,9 +2,9 @@ from datetime import datetime
 import pytz
 
 
-def convert_timezone(time_in):
+def utc_to_shanghai_timezone(time_in):
     """
-    系统时间转换成utc时间本地时区时间
+    utc时间转上海时区时间
     :param time_in: datetime格式的utc时间
     :return: datetime时间的本地时区时间
     """
@@ -14,6 +14,18 @@ def convert_timezone(time_in):
         return time_local
     return time_in
 
+
+def shanghai_to_utc_timezone(time_in):
+    """
+    上海时区时间转utc时间
+    :param time_in: datetime格式的utc时间
+    :return: datetime时间的本地时区时间
+    """
+    if time_in:
+        time_utc = time_in.replace(tzinfo=pytz.timezone('Asia/Shanghai'))
+        time_local = time_utc.astimezone(pytz.timezone('UTC'))
+        return time_local
+    return time_in
 
 
 

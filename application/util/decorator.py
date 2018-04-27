@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from datetime import datetime
 from application.config.default import QUERY_TIME_FMT, TABLE_TIME_FMT, CONSTANT_LEN
-from dateutil.rrule import rrule, MONTHLY
+from dateutil.rrule import rrule, DAILY
 
 
 # 处理日志模块对于分表和按时间查询参数的装饰器
@@ -26,7 +26,7 @@ def table_decorator(func):
                 table_from_time = from_time[:CONSTANT_LEN]
             dt_table_from_time, dt_table_to_time = multi_strptime(table_from_time, table_to_time,
                                                                   str_format=TABLE_TIME_FMT)
-            table_name_fix_lst = [dt.strftime(TABLE_TIME_FMT) for dt in rrule(MONTHLY,
+            table_name_fix_lst = [dt.strftime(TABLE_TIME_FMT) for dt in rrule(DAILY,
                                                                               dtstart=dt_table_from_time,
                                                                               until=dt_table_to_time)]
             dt_from_time, dt_to_time = multi_strptime(from_time, to_time)
@@ -46,7 +46,6 @@ def multi_strptime(*args, str_format=QUERY_TIME_FMT):
         if dt_arg is None:
             dt_time.append(None)
             continue
-        print(dt_arg)
         dt_time.append(datetime.strptime(dt_arg, str_format))
     return tuple(dt_time)
 

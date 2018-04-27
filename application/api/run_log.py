@@ -19,6 +19,7 @@ def get_multi_batch_run_log_info(**kwargs):
     limit = kwargs.get('limit')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
+    print(type(from_time), type(to_time))
     ret = []
     for table_name in table_name_fix_lst:
         table = get_batch_run_log_table(table_name)
@@ -64,8 +65,6 @@ def get_batch_run_log_count(**kwargs):
             sql = sql.where(table.c.start_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[-1] and to_time:
             sql = sql.where(table.c.start_time.__le__(to_time))
-        else:
-            sql = sql.where()
 
         count += exec_query(sql, is_list=True)[0]['count_1']
     return count
