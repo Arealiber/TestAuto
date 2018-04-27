@@ -145,3 +145,7 @@ body {
 #batch_use_case_list {
     margin: 0 25%;
 }
+#input_page{
+    width: 5%;
+    min-width: 50px;
+}
