@@ -1,4 +1,4 @@
-certifi >= 2018.1.18
+certifi >= 2018.4.16
 Flask >= 0.12.2
 python-dateutil >= 2.7.0
 PyMySQL >= 0.8.0
