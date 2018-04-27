@@ -78,6 +78,7 @@
 <script src="/component/js/jquery-3.3.1.min.js"></script>
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
+<script src="/component/js/moment.min.js"></script>
 
 <script>
     var error_alert = $("#error_alert");
@@ -93,8 +94,8 @@
             type: 'post',
             url: '/run_log/batch/count',
             data: JSON.stringify({
-                'from_time': '',
-                'to_time': '',
+                'from_time': null,
+                'to_time': null,
             }),
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
@@ -146,13 +147,14 @@
                             dataType: 'json',
                             success: function (response) {
                                 loader.hide();
+                                console.log(response);
                                 if (!response.success) {
                                     show_alert('获取数据失败')
                                 } else {
                                     $("#batch_run_log_table").show();
                                     var batch_run_log_list = response.res;
                                     $.each(batch_run_log_list, function (i, batch_run_log) {
-                                        var start_time = moment(batch_run_log.start_time).format('YYYY-MM-DD_HH:mm');
+                                        var start_time = moment(batch_run_log.start_time).format('YYYY-MM-DD HH:mm:ss');
                                         console.log(start_time)
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
                                             '<a class="btn btn-info" href="/batch_run_log/detail/' +
@@ -170,7 +172,7 @@
                                         } else {
                                             start_time = moment(batch_run_log.start_time).format("YYYY/MM/DD HH:mm");
                                         }
-                                        if (!use_case_run_log.end_time) {
+                                        if (!batch_run_log.end_time) {
                                             end_time = '';
                                         } else {
                                             end_time = moment(batch_run_log.end_time).format("YYYY/MM/DD HH:mm");
