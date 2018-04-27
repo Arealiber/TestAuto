@@ -86,6 +86,7 @@ def get_use_case_run_log_count():
         result = RunLogAPI.get_use_case_run_log_count(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
+    print(111111111, result)
     return jsonify({'success': True, 'res': result})
 
 

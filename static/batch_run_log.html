@@ -105,6 +105,7 @@
                 } else if (response.res == 0) {
                     show_alert('无数据')
                 } else {
+                    console.log(response)
                     var total_batch_run_log = response.res;
                     var page_num = window.location.pathname.split("/").pop();
                     var total_page = Math.ceil(total_batch_run_log / 30);
@@ -155,7 +156,7 @@
                                     var batch_run_log_list = response.res;
                                     console.log(batch_run_log_list);
                                     $.each(batch_run_log_list, function (i, batch_run_log) {
-                                        var start_time = batch_run_log.start_time.substring(0, 10);
+                                        var start_time = batch_run_log.start_time.substring(0, 23).replace(' ', '_');
                                         var end_time = batch_run_log.end_time
 
                                         console.log(start_time);
