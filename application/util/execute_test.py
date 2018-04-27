@@ -36,40 +36,6 @@ def use_case_exception_log_update(use_case_log_id, use_case_start):
     })
 
 
-def use_case_exception_update_batch_log(batch_log_id, use_case_count, batch_start_timer):
-    """
-    用例执行过程中抛出异常时
-    更新用例所属的batch的运行日志
-    :param batch_log_id:
-    :param use_case_count:
-    :param batch_start_timer:
-    :return:
-    """
-    batch_log = RunLogAPI.get_multi_batch_run_log_info(id=batch_log_id)[0]
-    if batch_log['pass_rate'] != -1:
-        return
-    use_case_run_logs = RunLogAPI.get_use_case_run_log(batch_run_log_id=batch_log_id)
-    finished_use_case = 0
-    for use_case_log in use_case_run_logs:
-        if use_case_log['cost_time'] != 0.0:
-            finished_use_case += 1
-    if finished_use_case == use_case_count:
-        batch_end_timer = timeit.default_timer()
-        success_count = 0
-        for run_log in use_case_run_logs:
-            if run_log['is_pass']:
-                success_count += 1
-        pass_rate = int(success_count / use_case_count * 100)
-        RunLogAPI.modify_batch_run_log(**{
-            'id': batch_log_id,
-            'pass_rate': pass_rate,
-            'end_time': datetime.utcnow(),
-            'cost_time': batch_end_timer - batch_start_timer
-        })
-    else:
-        return
-
-
 def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None):
     exec_result_list = []
     interface_count = 1
@@ -78,12 +44,14 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
         use_case_info = Case_API.get_use_case(id=use_case_id)[0]
         interface_list = Case_API.get_relation(use_case_id=use_case_id)
     except Exception as e:
-        if batch_log_id:
-            use_case_exception_update_batch_log(batch_log_id, use_case_count, batch_start_timer)
         return {'success': False,
                 'error_str': '接口{0}数据库'.format(interface_count),
                 'res': exec_result_list,
-                'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+                'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
+                'batch_log_id': batch_log_id,
+                'use_case_count': use_case_count,
+                'batch_start_timer': batch_start_timer
+                }
 
     # 信息初始化
     start_time = datetime.utcnow()
@@ -129,12 +97,14 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
     except Exception as e:
         # 用例运行日志记录
         use_case_exception_log_update(use_case_log_id, use_case_start)
-        if batch_log_id:
-            use_case_exception_update_batch_log(batch_log_id, use_case_count, batch_start_timer)
         return {'success': False,
                 'error_str': '接口{0}参数替换'.format(interface_count),
                 'res': exec_result_list,
-                'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+                'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
+                'batch_log_id': batch_log_id,
+                'use_case_count': use_case_count,
+                'batch_start_timer': batch_start_timer
+                }
 
         # 将接口未替换的参数全部替换
     for interface in interface_list:
@@ -190,12 +160,14 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             })
             # 用例运行日志记录
             use_case_exception_log_update(use_case_log_id, use_case_start)
-            if batch_log_id:
-                use_case_exception_update_batch_log(batch_log_id, use_case_count, batch_start_timer)
             return {'success': False,
                     'error_str': '接口{0}参数替换'.format(interface_count),
                     'res': exec_result_list,
-                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
+                    'batch_log_id': batch_log_id,
+                    'use_case_count': use_case_count,
+                    'batch_start_timer': batch_start_timer
+                    }
 
         try:
             # 加密
@@ -220,12 +192,14 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             })
             # 用例运行日志记录
             use_case_exception_log_update(use_case_log_id, use_case_start)
-            if batch_log_id:
-                use_case_exception_update_batch_log(batch_log_id, use_case_count, batch_start_timer)
             return {'success': False,
                     'error_str': '接口{0} json处理或加密'.format(interface_count),
                     'res': exec_result_list,
-                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
+                    'batch_log_id': batch_log_id,
+                    'use_case_count': use_case_count,
+                    'batch_start_timer': batch_start_timer
+                    }
 
         try:
             # 请求接口
@@ -267,12 +241,14 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             })
             # 用例运行日志记录
             use_case_exception_log_update(use_case_log_id, use_case_start)
-            if batch_log_id:
-                use_case_exception_update_batch_log(batch_log_id, use_case_count, batch_start_timer)
             return {'success': False,
                     'error_str': '接口{0}请求'.format(interface_count),
                     'res': exec_result_list,
-                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
+                    'batch_log_id': batch_log_id,
+                    'use_case_count': use_case_count,
+                    'batch_start_timer': batch_start_timer
+                    }
 
         try:
             # 验证接口返回
@@ -328,12 +304,14 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             })
             # 用例运行日志记录
             use_case_exception_log_update(use_case_log_id, use_case_start)
-            if batch_log_id:
-                use_case_exception_update_batch_log(batch_log_id, use_case_count, batch_start_timer)
             return {'success': False,
                     'error_str': '接口{0}验证'.format(interface_count),
                     'res': exec_result_list,
-                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e))}
+                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
+                    'batch_log_id': batch_log_id,
+                    'use_case_count': use_case_count,
+                    'batch_start_timer': batch_start_timer
+                    }
 
         interface_count += 1
 
