@@ -163,11 +163,12 @@
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
                                             '<a class="btn btn-info" href="/batch_run_log/detail/' +
                                             start_time + '/' + batch_run_log.id + '" role="button">详情</a></button>';
-                                        var is_pass_string = '';
-                                        if (batch_run_log.is_pass) {
-                                            is_pass_string = '<td>是</td>';
+                                        var str_batch_pass_rate = batch_run_log.pass_rate;
+                                        if (str_batch_pass_rate) {
+                                            str_batch_pass_rate = '<td>' + str_batch_pass_rate +'</td>'
                                         } else {
-                                            is_pass_string = '<td style="color: red; font-weight: bold;">否</td>';
+                                            str_batch_pass_rate = '<td style="color: red; font-weight: bold;">' +
+                                                str_batch_pass_rate + '</td>'
                                         }
                                         if (!start_time) {
                                             start_time = "";
@@ -179,14 +180,14 @@
                                         } else {
                                             end_time = batch_run_log.end_time.substring(0, 23);
                                         }
-                                        cost_time = batch_run_log.cost_time;
+                                        var cost_time = batch_run_log.cost_time;
                                         if (!cost_time){
                                             cost_time = 0
                                         }
                                         $("#batch_run_log_table").find('tbody').append('<tr>' +
                                             '<th scope="row">' + (30 * (page_num - 1) + i + 1) + '</th>' +
                                             '<td>' + batch_run_log.batch_name + '</td>' +
-                                            is_pass_string +
+                                            str_batch_pass_rate +
                                             '<td>' + start_time + '</td>' +
                                             '<td>' + end_time + '</td>' +
                                             '<td>' + cost_time + '</td>' +
