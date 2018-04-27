@@ -25,21 +25,21 @@ def get_multi_batch_run_log_info(**kwargs):
         batch_list = [batch_id] if not isinstance(batch_id, list) else batch_id
 
         if len(table_name_fix_lst) == 1 and to_time:
-            sql = table.select().where(table.c.end_time.__le__(to_time))
+            sql = table.select().where(table.c.start_time.__le__(to_time))
             if from_time:
-                sql = sql.where(table.c.end_time.__ge__(from_time))
+                sql = sql.where(table.c.start_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[0] and from_time:
-            sql = table.select().where(table.c.end_time.__ge__(from_time))
+            sql = table.select().where(table.c.start_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[-1] and to_time:
-            sql = table.select().where(table.c.end_time.__le__(to_time))
+            sql = table.select().where(table.c.start_time.__le__(to_time))
         else:
             sql = table.select()
         if batch_id:
-            sql = sql.where(table.c.batch_id.in_(batch_list)).order_by(table.c.end_time)
+            sql = sql.where(table.c.batch_id.in_(batch_list))
         if batch_run_log_id:
-            sql = sql.where(table.c.id == batch_run_log_id)
+            sql = sql.where(table.c.id == batch_run_log_id).order_by(desc(table.c.start_time))
         else:
-            sql = sql.order_by(table.c.end_time)
+            sql = sql.order_by(desc(table.c.start_time))
         if limit:
             sql = sql.limit(limit)
         ret += exec_query(sql, is_list=True)
@@ -58,12 +58,14 @@ def get_batch_run_log_count(**kwargs):
 
         if len(table_name_fix_lst) == 1 and to_time:
             if from_time:
-                sql = sql.where(table.c.end_time.__ge__(from_time))
-            sql = sql.where(table.c.end_time.__le__(to_time))
+                sql = sql.where(table.c.start_time.__ge__(from_time))
+            sql = sql.where(table.c.start_time.__le__(to_time))
         elif table_name == table_name_fix_lst[0] and from_time:
-            sql = sql.where(table.c.end_time.__ge__(from_time))
+            sql = sql.where(table.c.start_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[-1] and to_time:
-            sql = sql.where(table.c.end_time.__le__(to_time))
+            sql = sql.where(table.c.start_time.__le__(to_time))
+        else:
+            sql = sql.where()
 
         count += exec_query(sql, is_list=True)[0]['count_1']
     return count
@@ -94,13 +96,13 @@ def get_use_case_run_log_count(**kwargs):
         table = get_use_case_run_log_table(table_name)
         sql = select([func.count()]).select_from(table)
         if len(table_name_fix_lst) == 1 and to_time:
-            sql = sql.where(table.c.end_time.__le__(to_time))
+            sql = sql.where(table.c.start_time.__le__(to_time))
             if from_time:
-                sql = sql.where(table.c.end_time.__ge__(from_time))
+                sql = sql.where(table.c.start_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[0] and from_time:
-            sql = sql.where(table.c.end_time.__ge__(from_time))
+            sql = sql.where(table.c.start_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[-1] and to_time:
-            sql = sql.where(table.c.end_time.__le__(to_time))
+            sql = sql.where(table.c.start_time.__le__(to_time))
 
         count += exec_query(sql, is_list=True)[0]['count_1']
     return count

@@ -107,7 +107,7 @@
                 } else {
                     var total_batch_run_log = response.res;
                     var page_num = window.location.pathname.split("/").pop();
-                    var total_page = Math.ceil(total_batch_run_log / 50);
+                    var total_page = Math.ceil(total_batch_run_log / 30);
                     if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
                         show_alert("无此页数据");
                     } else {
@@ -153,9 +153,12 @@
                                 } else {
                                     $("#batch_run_log_table").show();
                                     var batch_run_log_list = response.res;
+                                    console.log(batch_run_log_list);
                                     $.each(batch_run_log_list, function (i, batch_run_log) {
-                                        var start_time = moment(batch_run_log.start_time).format('YYYY-MM-DD HH:mm:ss');
-                                        console.log(start_time)
+                                        var start_time = batch_run_log.start_time.substring(0, 10);
+                                        var end_time = batch_run_log.end_time
+
+                                        console.log(start_time);
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
                                             '<a class="btn btn-info" href="/batch_run_log/detail/' +
                                             start_time + '/' + batch_run_log.id + '" role="button">详情</a></button>';
@@ -165,17 +168,19 @@
                                         } else {
                                             is_pass_string = '<td style="color: red; font-weight: bold;">否</td>';
                                         }
-                                        var start_time = "";
-                                        var end_time = "";
-                                        if (!batch_run_log.start_time) {
+                                        if (!start_time) {
                                             start_time = "";
                                         } else {
-                                            start_time = moment(batch_run_log.start_time).format("YYYY/MM/DD HH:mm");
+                                            start_time = batch_run_log.start_time.substring(0, 23);
                                         }
                                         if (!batch_run_log.end_time) {
                                             end_time = '';
                                         } else {
-                                            end_time = moment(batch_run_log.end_time).format("YYYY/MM/DD HH:mm");
+                                            end_time = batch_run_log.end_time.substring(0, 23);
+                                        }
+                                        cost_time = batch_run_log.cost_time;
+                                        if (!cost_time){
+                                            cost_time = 0
                                         }
                                         $("#batch_run_log_table").find('tbody').append('<tr>' +
                                             '<th scope="row">' + (30 * (page_num - 1) + i + 1) + '</th>' +
@@ -183,7 +188,7 @@
                                             is_pass_string +
                                             '<td>' + start_time + '</td>' +
                                             '<td>' + end_time + '</td>' +
-                                            '<td>' + batch_run_log.cost_time + '</td>' +
+                                            '<td>' + cost_time + '</td>' +
                                             '<td>' + button_col + '</td></tr>')
                                     });
                                 }
