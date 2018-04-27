@@ -79,5 +79,116 @@
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
 
+<script>
+    var error_alert = $("#error_alert");
+    var loader = $("#loader");
+
+    function show_alert(alert_text) {
+        loader.hide();
+        error_alert.text(alert_text);
+        error_alert.show();
+    }
+    $(document).read(function () {
+        $.ajax({
+            type: 'post',
+            url: '/run_log/batch/count',
+            data: JSON.stringify({
+                'from_time': '',
+                'to_time':'',
+            }),
+            contentType: 'application/json; charset=utf-8',
+            dataType:'json',
+            success: function (response) {
+                if (!response.success){
+                    show_alert('获取批次日志失败！');
+                }else if (response.res == 0){
+                    show_alert('无数据')
+                }else{
+                    var total_batch_run_log = response.res;
+                    var page_num = window.location.pathname.split("/").pop();
+                    var total_page = Math.ceil(total_batch_run_log / 50);
+                    if (total_page == 1) {
+                        previous_page.addClass('disabled');
+                        next_page.addClass('disabled')
+                    }
+                    else if (page_num == 1) {
+                        previous_page.addClass('disabled');
+                        next_page.find('.page-link').attr('href', '/batch_run_log/' + (Number(page_num) + 1))
+                    } else if (page_num == total_page) {
+                        next_page.addClass('disabled');
+                        previous_page.find('.page-link').attr('href', '/batch_run_log/' + (Number(page_num) - 1))
+                    } else {
+                        next_page.find('.page-link').attr('href', '/batch_run_log/' + (Number(page_num) + 1));
+                        previous_page.find('.page-link').attr('href', '/batch_run_log/' + (Number(page_num) - 1))
+                    }
+                    var page_item_string = '';
+                    for (var i = 1; i <= total_page; i++) {
+                        if (i == page_num) {
+                            page_item_string += '<li class="page-item active"><a class="page-link" href="/batch_run_log/' + i + '">' + i + '</a></li>'
+                        } else {
+                            page_item_string += '<li class="page-item"><a class="page-link" href="/batch_run_log/' + i + '">' + i + '</a></li>'
+                        }
+                    }
+                    previous_page.after(page_item_string);
+                    $.ajax({
+                        type: 'post',
+                        url: '/run_log/batch/info',
+                        data:JSON.stringify({
+                            'pageSize': 30,
+                            'pageIndex': page_num
+                        }),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType:'json',
+                        success: function (response) {
+                            loader.hide();
+                            if (!response.success){
+                                show_alert('获取数据失败')
+                            }else {
+                                $("#run_log_table").show();
+                                var batch_run_log_list = response.res;
+                                $.each(batch_run_log_list, function (i, batch_run_log) {
+                                    var start_time = moment(batch_run_log.start_time).format('YYYY-MM-DD_HH:mm');
+                                    console.log(start_time)
+                                    var button_col = '<div class="btn-group btn-group-sm" role="group">'+
+                                        '<a class="btn btn-info" href="/batch_run_log/detail/' +
+                                        start_time+'/' + batch_run_log.id + '" role="button">详情</a></button>';
+                                    var is_pass_string = '';
+                                    if (batch_run_log.is_pass) {
+                                        is_pass_string = '<td>是</td>';
+                                    } else{
+                                        is_pass_string = '<td style="color: red; font-weight: bold;">否</td>';
+                                    }
+                                    var start_time = "";
+                                    var end_time = "";
+                                    if (!batch_run_log.start_time) {
+                                        start_time = "";
+                                    } else{
+                                        start_time = moment(batch_run_log.start_time).format("YYYY/MM/DD HH:mm");
+                                    }
+                                    if (!use_case_run_log.end_time) {
+                                        end_time = '';
+                                    } else{
+                                        end_time = moment(batch_run_log.end_time).format("YYYY/MM/DD HH:mm");
+                                    }
+                                    $("#run_log_table").find('tbody').
+                                    append('<tr>'+
+                                        '<th scope="row">' + (30 * (page_num - 1 ) + i + 1) + '</th>' +
+                                        '<td>' + batch_run_log.batch_name + '</td>' +
+                                        is_pass_string +
+                                        '<td>' + start_time + '</td>' +
+                                        '<td>' + end_time + '</td>' +
+                                        '<td>' + batch_run_log.cost_time + '</td>' +
+                                        '<td>' + button_col + '</td></tr>')
+                                });
+                            }
+                        }
+                    })
+                }
+
+            }
+        })
+    })
+</script>
+
 </body>
 </html>

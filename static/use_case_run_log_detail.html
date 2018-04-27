@@ -102,13 +102,12 @@
     $(document).ready(function() {
         var pathname = window.location.pathname.split("/");
         var use_case_run_log_id = pathname.pop();
-        var start_time = pathname.pop();
-        console.log(start_time)
+        var start_time = pathname.pop().replace('_', ' ') + ':00';
         $.ajax({
             type: 'post',
             url: '/run_log/interface/info',
             data: JSON.stringify({
-                'to_time': start_time + ' 00:00:00',
+                'to_time': start_time,
                 'use_case_run_log_id': use_case_run_log_id
             }),
             contentType: "application/json; charset=utf-8",
@@ -127,7 +126,8 @@
                         var str_res =
                             "r_header: " + interface_run_log.r_header + '<br/><br/>'
                             + "r_payload: " + interface_run_log.r_payload;
-                        if (!interface_run_log.err_message){
+
+                        if (interface_run_log.err_message){
                              str_res = str_res + '<br/>'+ 'error_message: "' + interface_run_log.error_message + '"<br/>'
                         }
                         var start_time = interface_run_log.start_time;
@@ -163,8 +163,6 @@
     $(document).ready(function () {
         $("#interface_run_log_table").on('click', '.test', function () {
             var button = $(this).find('button');
-            console.log(button);
-            console.log(button.data('value'));
             if (button.data('value') == 'open') {
                 button.closest('tr').after('<tr><td colspan="7">' + button.data('json') + '</td></tr>');
                 button.data('value', 'close');

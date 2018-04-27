@@ -158,7 +158,8 @@
                                         $("#run_log_table").show();
                                         var use_case_run_log_list = response.res;
                                         $.each(use_case_run_log_list, function (i, use_case_run_log) {
-                                            var start_time = moment(use_case_run_log.start_time).format('YYYY-MM-DD')
+                                            var start_time = moment(use_case_run_log.start_time).format('YYYY-MM-DD_HH:mm');
+                                            console.log(start_time)
                                             var button_col = '<div class="btn-group btn-group-sm" role="group">'+
                                                 '<a class="btn btn-info" href="/use_case_run_log/detail/' +
                                                  start_time+'/' + use_case_run_log.id + '" role="button">详情</a></button>';
