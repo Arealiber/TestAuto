@@ -49,7 +49,10 @@ def use_case_exception_update_batch_log(batch_log_id, use_case_count, batch_star
     if batch_log['pass_rate'] != -1:
         return
     use_case_run_logs = RunLogAPI.get_use_case_run_log(batch_run_log_id=batch_log_id)
-    finished_use_case = len(use_case_run_logs)
+    finished_use_case = 0
+    for use_case_log in use_case_run_logs:
+        if use_case_log['cost_time'] != 0.0:
+            finished_use_case += 1
     if finished_use_case == use_case_count:
         batch_end_timer = timeit.default_timer()
         success_count = 0
@@ -359,7 +362,10 @@ def run_use_case_callback(obj):
         return
     use_case_count = result['use_case_count']
     use_case_run_logs = RunLogAPI.get_use_case_run_log(batch_run_log_id=batch_log_id)
-    finished_use_case = len(use_case_run_logs)
+    finished_use_case = 0
+    for use_case_log in use_case_run_logs:
+        if use_case_log['cost_time'] != 0.0:
+            finished_use_case += 1
     if finished_use_case == use_case_count:
         batch_start_timer = result['batch_start_timer']
         batch_end_timer = timeit.default_timer()
