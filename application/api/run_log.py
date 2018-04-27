@@ -147,7 +147,8 @@ def get_use_case_run_log(**kwargs):
             sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
         if limit:
             sql = sql.limit(limit)
-        ret += exec_query(sql, is_list=True)
+        ret = exec_query(sql, is_list=True)
+        ret += ret
     return ret
 
 

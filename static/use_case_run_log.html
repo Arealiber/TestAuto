@@ -83,7 +83,6 @@
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
 <script src="/component/js/moment.min.js"></script>
-<script src="/component/js/bootstrap-datetimepicker.min.js"></script>
 
 
 <script>
@@ -158,8 +157,7 @@
                                         $("#run_log_table").show();
                                         var use_case_run_log_list = response.res;
                                         $.each(use_case_run_log_list, function (i, use_case_run_log) {
-                                            var start_time = moment(use_case_run_log.start_time).format('YYYY-MM-DD_HH:mm');
-                                            console.log(start_time)
+                                            var start_time = use_case_run_log.start_time.substring(0, 23).replace(' ', '_');
                                             var button_col = '<div class="btn-group btn-group-sm" role="group">'+
                                                 '<a class="btn btn-info" href="/use_case_run_log/detail/' +
                                                  start_time+'/' + use_case_run_log.id + '" role="button">详情</a></button>';
@@ -174,12 +172,12 @@
                                             if (!use_case_run_log.start_time) {
                                                 start_time = "";
                                             } else{
-                                                start_time = moment(use_case_run_log.start_time).format("YYYY/MM/DD HH:mm");
+                                                start_time = use_case_run_log.start_time.substring(0, 23);
                                             }
                                             if (!use_case_run_log.end_time) {
                                                 end_time = '';
                                             } else{
-                                                end_time = moment(use_case_run_log.end_time).format("YYYY/MM/DD HH:mm");
+                                                end_time = use_case_run_log.end_time.substring(0, 23);
                                             }
                                             $("#run_log_table").find('tbody').
                                             append('<tr>'+
