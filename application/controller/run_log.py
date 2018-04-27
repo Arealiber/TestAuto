@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+from datetime import datetime
+from application.config.default import QUERY_TIME_FMT
 from flask import request, jsonify
 from application.api import run_log as RunLogAPI
 from application.api import use_case as UseCaseAPI
@@ -91,6 +93,11 @@ def get_use_case_run_log():
         use_case_info = UseCaseAPI.get_single_use_case(use_case_id)
         use_case_name = use_case_info.get('use_case_name')
         use_case_run_log_dict.update({'use_case_name': use_case_name})
+        start_time = use_case_run_log_dict.get('start_time')
+        end_time = use_case_run_log_dict.get('end_time')
+        use_case_run_log_dict.update({'start_time': datetime.strftime(start_time, QUERY_TIME_FMT)})
+        if end_time:
+            use_case_run_log_dict.update({'end_time': datetime.strftime(end_time, QUERY_TIME_FMT)})
     return jsonify({'success': True, 'res': result})
 
 
@@ -125,4 +132,9 @@ def get_interface_run_log():
             return jsonify({'success': False, 'res': str(e)})
         interface_name = interface_info.get('interface_name')
         interface_run_log_dict.update({'interface_name': interface_name})
+        start_time = interface_run_log_dict.get('start_time')
+        end_time = interface_run_log_dict.get('end_time')
+        interface_run_log_dict.update({'start_time': datetime.strftime(start_time, QUERY_TIME_FMT)})
+        if end_time:
+            interface_run_log_dict.update({'end_time': datetime.strftime(end_time, QUERY_TIME_FMT)})
     return jsonify({'success': True, 'res': result})

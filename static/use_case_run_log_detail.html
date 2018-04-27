@@ -102,7 +102,8 @@
     $(document).ready(function() {
         var pathname = window.location.pathname.split("/");
         var use_case_run_log_id = pathname.pop();
-        var start_time = pathname.pop().replace('_', ' ') + ':00';
+        var start_time = pathname.pop().replace('_', ' ');
+        console.log(start_time);
         $.ajax({
             type: 'post',
             url: '/run_log/interface/info',
@@ -113,6 +114,7 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
+                console.log(response);
                 if (!response.success) {
                     show_alert("获取用例接口运行日志失败");
                 }else {
@@ -130,11 +132,12 @@
                         if (interface_run_log.err_message){
                              str_res = str_res + '<br/>'+ 'error_message: "' + interface_run_log.error_message + '"<br/>'
                         }
-                        var start_time = interface_run_log.start_time;
+                        var start_time = interface_run_log.start_time.substring(0, 23);
+                        console.log(start_time);
                         if (!start_time){
                             start_time = ''
                         }else {
-                            start_time = moment(start_time).format("YYYY/MM/DD HH:mm")
+                            start_time = moment(start_time).format('YYYY-MM-DD HH:mm:ss.SSS')
                         }
                         var is_pass = interface_run_log.is_pass;
                         if (!is_pass){

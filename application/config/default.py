@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
 import os
 
-TIME_FMT = '%Y-%m-%d %H:%M:%S GMT'
-QUERY_TIME_FMT = '%Y-%m-%d %H:%M:%S'
+TIME_FMT = '%Y-%m-%d %H:%M:%S.%f GMT'
+QUERY_TIME_FMT = '%Y-%m-%d %H:%M:%S.%f'
 TABLE_TIME_FMT = '%Y-%m-%d'
 CONSTANT_LEN = 10  # 7 按月分表
 
