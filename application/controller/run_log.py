@@ -55,7 +55,6 @@ def get_batch_run_log_count():
     """
     :return:
     """
-    print(request.get_json())
     try:
         result = RunLogAPI.get_batch_run_log_count(**request.get_json())
     except Exception as e:
@@ -68,7 +67,6 @@ def add_use_case_run_log():
     """
     :return:
     """
-    print(request.get_json())
     try:
         RunLogAPI.add_use_case_run_log(**request.get_json())
     except Exception as e:
@@ -86,7 +84,6 @@ def get_use_case_run_log_count():
         result = RunLogAPI.get_use_case_run_log_count(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
-    print(111111111, result)
     return jsonify({'success': True, 'res': result})
 
 
