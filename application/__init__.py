@@ -1,7 +1,7 @@
 import os
 from contextlib import contextmanager
 from flask import Flask
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, exc
 from sqlalchemy.orm import sessionmaker
 
 from application.config import default
@@ -23,7 +23,8 @@ engine = create_engine(app.config['DB_URI'] + '?charset=utf8',
                        convert_unicode=True,
                        pool_recycle=app.config['DB_POOL_RECYCLE'],
                        pool_size=app.config['DB_POOL_SIZE'],
-                       echo=app.config['DB_ECHO'])
+                       echo=app.config['DB_ECHO'],
+                       pool_pre_ping=True)
 
 
 # SQLAlchemy session
