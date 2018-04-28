@@ -114,6 +114,7 @@
             type: 'get',
             url: '/interface/count',
             success: function (response) {
+                var page_size = 20;
                 if (!response.success) {
                     show_alert('获取接口失败');
                 } else if (response.res == 0) {
@@ -121,9 +122,10 @@
                 } else {
                     var total_interface = response.res;
                     var page_num = window.location.pathname.split('/').pop();
-                    var total_page = Math.ceil(total_interface / 10);
+                    var total_page = Math.ceil(total_interface / page_size);
                     if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
                         show_alert('无此页数据');
+                        $(".pagination").hide()
                     } else {
                         var previous_page = $('li[id="previous_page"]');
                         var next_page = $('li[id="next_page"]');
@@ -155,19 +157,27 @@
                                 page_item_string += '<li class="page-item"><a class="page-link" href="/interface/' + i + '">' + i + '</a></li>'
                             }
                         }
-                        if (pre_page_item_string){
-                            page_item_string = page_item_string + pre_page_item_string
+                        var first_page_disabled_str = '';
+                        var last_page_disabled_str = '';
+                        if (page_num == 1) {
+                            first_page_disabled_str = 'disabled';
+                            if (page_num == total_page) {
+                                last_page_disabled_str = 'disabled'
+                            }
+                        }else if (page_num == total_page){
+                            last_page_disabled_str = 'disabled'
                         }
-                        if (after_page_item_string){
-                            page_item_string = after_page_item_string + page_item_string
-                        }
+                        var first_page_string = '<li class="page-item '+ first_page_disabled_str +'" id="first_page"><a class="page-link" href="/interface/1">首页</a></li>';
+                        var last_page_string = '<li class="page-item '+ last_page_disabled_str +'" id="last_page"><a class="page-link" href="/interface/' + total_page +'">尾页</a></li>';
+                        previous_page.before(first_page_string);
                         previous_page.after(page_item_string);
+                        next_page.after(last_page_string);
 
                         $.ajax({
                             type: 'post',
                             url: '/interface/info',
                             data: JSON.stringify({
-                                'pageSize': 10,
+                                'pageSize': page_size,
                                 'pageIndex': page_num
                             }),
                             contentType: "application/json; charset=utf-8",
@@ -185,7 +195,7 @@
                                             '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + interface.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                                         $("#interface_table").find('tbody')
                                             .append('<tr>' +
-                                                '<th scope="row">' + (10 * (page_num - 1) + i + 1) + '</th>' +
+                                                '<th scope="row">' + (page_size * (page_num - 1) + i + 1) + '</th>' +
                                                 '<td>' + interface.interface_name + '</td>' +
                                                 '<td>' + interface.interface_entry + '</td>' +
                                                 '<td>' + interface.create_by + '</td>' +

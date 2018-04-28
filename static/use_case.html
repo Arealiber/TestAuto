@@ -156,6 +156,7 @@
             type: 'get',
             url: '/use_case/count',
             success: function (response) {
+                var pagesize = 20;
                 if (!response.success) {
                     show_alert('获取用例失败');
                 } else if (response.res == 0) {
@@ -163,7 +164,7 @@
                 } else {
                     var total_use_case = response.res;
                     var page_num = window.location.pathname.split('/').pop();
-                    var total_page = Math.ceil(total_use_case / 10);
+                    var total_page = Math.ceil(total_use_case / pagesize);
                     if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
                         show_alert('无此页数据');
                     } else {
@@ -223,7 +224,7 @@
                             type: 'post',
                             url: '/use_case/list',
                             data: JSON.stringify({
-                                'pageSize': 10,
+                                'pageSize': pagesize,
                                 'pageIndex': page_num
                             }),
                             contentType: "application/json; charset=utf-8",
@@ -243,7 +244,7 @@
                                             '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                                         $("#use_case_table").find('tbody')
                                             .append('<tr>' +
-                                                '<th scope="row">' + (10 * (page_num - 1) + i + 1) + '</th>' +
+                                                '<th scope="row">' + (pagesize * (page_num - 1) + i + 1) + '</th>' +
                                                 '<td>' + use_case.use_case_name + '</td>' +
                                                 '<td>' + use_case.desc + '</td>' +
                                                 '<td>' + use_case.create_by + '</td>' +

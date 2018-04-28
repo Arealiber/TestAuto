@@ -118,9 +118,10 @@
                 } else if (response.res == 0) {
                     show_alert("没有参数数据，请新增");
                 } else {
+                    var pageSize = 20;
                     var total_param = response.res;
                     var page_num = window.location.pathname.split("/").pop();
-                    var total_page = Math.ceil(total_param / 10);
+                    var total_page = Math.ceil(total_param / pageSize);
                     if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
                         show_alert("无此页数据");
                     } else {
@@ -180,7 +181,7 @@
                             type: 'post',
                             url: '/parameter/info',
                             data: JSON.stringify({
-                                'pageSize': 10,
+                                'pageSize': pageSize,
                                 'pageIndex': page_num
                             }),
                             contentType: "application/json; charset=utf-8",
@@ -198,7 +199,7 @@
                                             '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + parameter.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                                         $("#parameter_table").find('tbody')
                                             .append('<tr>' +
-                                                '<th scope="row">' + (10 * (page_num - 1 ) + i + 1) + '</th>' +
+                                                '<th scope="row">' + (pageSize * (page_num - 1 ) + i + 1) + '</th>' +
                                                 '<td>' + parameter.parameter_name + '</td>' +
                                                 '<td>' + parameter.value + '</td>' +
                                                 '<td>' + parameter.create_by + '</td>' +

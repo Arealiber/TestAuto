@@ -11,7 +11,7 @@ def add_interface(**kwargs):
 
 def get_interface(**kwargs):
     with session_scope() as session:
-        query = session.query(Interface).filter_by(**kwargs).filter_by(status=1)
+        query = session.query(Interface).filter_by(**kwargs).filter_by(status=1).order_by(Interface.update_time.desc())
     interface_list = [interface.to_dict() for interface in query]
     return interface_list
 
