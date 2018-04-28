@@ -93,6 +93,7 @@
 
     function show_alert(alert_text) {
         loader.hide();
+        $(".pagination").hide();
         error_alert.text(alert_text);
         error_alert.show();
     }
@@ -108,7 +109,7 @@
                 if (!response.success) {
                     show_alert('获取数据失败');
                 } else if (response.res == 0) {
-                    show_alert('无数据')
+                    show_alert('无数据');
                 } else {
                     var total_use_case_run_log = response.res;
                     console.log(window.location.pathname);

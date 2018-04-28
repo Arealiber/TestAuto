@@ -124,6 +124,7 @@
                     var total_page = Math.ceil(total_interface / 10);
                     if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
                         show_alert('无此页数据');
+                        $(".pagination").hide()
                     } else {
                         var previous_page = $('li[id="previous_page"]');
                         var next_page = $('li[id="next_page"]');

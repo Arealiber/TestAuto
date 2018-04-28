@@ -13,7 +13,7 @@ def add_parameter(**kwargs):
 
 def get_parameter(**kwargs):
     with session_scope() as session:
-        query = session.query(Parameter).filter_by(**kwargs)
+        query = session.query(Parameter).filter_by(**kwargs).order_by(Parameter.update_time.desc())
     parameter_list = [param.to_dict() for param in query]
     return parameter_list
 

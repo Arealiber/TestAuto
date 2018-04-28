@@ -106,7 +106,8 @@
                 if (!response.success) {
                     show_alert('获取批次日志失败！');
                 } else if (response.res == 0) {
-                    show_alert('无数据')
+                    show_alert('无数据');
+                    $(".pagination").hide()
                 } else {
                     console.log(response)
                     var total_batch_run_log = response.res;
@@ -183,7 +184,7 @@
                                         console.log(start_time);
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
                                             '<a class="btn btn-info" href="/batch_run_log/detail/' +
-                                            start_time + '/' + batch_run_log.id + '" role="button">详情</a></button>';
+                                            start_time + '/' + batch_run_log.id + '/1" role="button">详情</a></button>';
                                         var str_batch_pass_rate = batch_run_log.pass_rate;
                                         if (str_batch_pass_rate > 80) {
                                             str_batch_pass_rate = '<td style="color: green; font-weight: bold;">' + str_batch_pass_rate +'%</td>'
