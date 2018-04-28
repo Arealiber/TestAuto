@@ -14,6 +14,7 @@ from application.api import parameter as ParameterAPI
 from application.api import batch as BatchAPI
 from application.api import use_case as UseCaseAPI
 from application.api import encryption as EncryptionAPI
+from application import engine
 
 executor = ProcessPoolExecutor()
 
@@ -36,7 +37,9 @@ def use_case_exception_log_update(use_case_log_id, use_case_start):
     })
 
 
-def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None):
+def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None, async=False):
+    if async:
+        engine.dispose()
     exec_result_list = []
     interface_count = 1
     # 获取用例信息以及用例下接口信息
@@ -364,10 +367,10 @@ def run_use_case_callback(obj):
 
 def run_use_case_async(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None):
     if batch_log_id:
-        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer).\
+        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer, True).\
             add_done_callback(run_use_case_callback)
     else:
-        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer)
+        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer, True)
 
 
 def run_batch(batch_id):
