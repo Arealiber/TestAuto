@@ -1,8 +1,9 @@
 certifi >= 2018.4.16
 Flask >= 0.12.2
+mysqlclient >= 1.3.12
 python-dateutil >= 2.7.0
 PyMySQL >= 0.8.0
 requests >= 2.18.4
 SQLAlchemy >= 1.2.5
 voluptuous >= 0.11.1
-pytz
+pytz >= 2018.4
