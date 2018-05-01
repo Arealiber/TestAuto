@@ -65,7 +65,7 @@
                 <li class="page-item" id="previous_page"><a class="page-link" href="#">上一页</a></li>
                 <li class="page-item" id="next_page"><a class="page-link" href="#">下一页</a></li>
                 <input id="input_page" value=""/>
-                <button id="jump_page" class="btn btn-primary btn-sm">跳转</button>
+                <button id="jump_page" class="btn btn-primary btn-sm" data-page_num="" data-time_url="">跳转</button>
             </ul>
         </nav>
 
@@ -196,6 +196,7 @@
                         var last_page_string = '<li class="page-item'+ last_page_disabled_str +'" id="last_page"><a class="page-link" href="/batch/'+ total_page +'">尾页</a></li>';
                         previous_page.before(first_page_string);
                         next_page.after(last_page_string);
+                        $('#jump_page').attr('data-page_num', page_num);
                         var page_item_string = '';
                         for (var i=1; i<= total_page; i++) {
                             if (i == page_num){

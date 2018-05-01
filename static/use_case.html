@@ -65,7 +65,7 @@
                 <li class="page-item" id="previous_page"><a class="page-link" href="#">上一页</a></li>
                 <li class="page-item" id="next_page"><a class="page-link" href="#">下一页</a></li>
                 <input id="input_page" value=""/>
-                <button id="jump_page" class="btn btn-primary btn-sm">跳转</button>
+                <button id="jump_page" class="btn btn-primary btn-sm" data-page_num="" data-time_url="">跳转</button>
             </ul>
         </nav>
 
@@ -216,9 +216,12 @@
                         }
                         var first_page_string = '<li class="page-item'+ first_page_disabled_str +'" id="first_page"><a class="page-link" href="/use_case/1">首页</a></li>';
                         var last_page_string = '<li class="page-item'+ last_page_disabled_str +'" id="last_page"><a class="page-link" href="/use_case/'+ total_page +'">尾页</a></li>';
+                        var data_page_string = '<button class="page-item disabled'+'" data-page-text="">第'+page_num+'页/共'+ total_page +'页</button>';
                         previous_page.before(first_page_string);
                         previous_page.after(page_item_string);
+                        next_page.after(data_page_string);
                         next_page.after(last_page_string);
+                        $('#jump_page').attr('data-page_num', page_num);
 
                         $.ajax({
                             type: 'post',
