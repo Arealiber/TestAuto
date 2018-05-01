@@ -131,7 +131,7 @@
                 if (!response.success) {
                     show_alert('获取批次日志失败！');
                 } else if (response.res == 0) {
-                    show_alert('无数据');
+                    show_alert('今日（指定时间段）无日志数据，请确认指定日期数据是否存在！');
                     $(".pagination").hide()
                 } else {
                     var total_batch_run_log = response.res;
@@ -173,7 +173,12 @@
                         }
                         if (page_num == 1) {
                             var first_page_string = '<li class="page-item disabled" id="first_page"><a class="page-link" href="/batch_run_log/1?from_time='+ from_time + "&to_time=" + to_time+'">首页</a></li>';
-                            var last_page_string = '<li class="page-item" id="last_page"><a class="page-link" href="/batch_run_log/'+total_page+"?from_time="+ from_time + "&to_time=" + to_time+'">尾页</a></li>'
+                            if (page_num == total_page) {
+                                var last_page_string = '<li class="page-item disabled" id="last_page"><a class="page-link" href="/batch_run_log/'+total_page+"?from_time="+ from_time + "&to_time=" + to_time+'">尾页</a></li>'
+                            }
+                            else {
+                                var last_page_string = '<li class="page-item" id="last_page"><a class="page-link" href="/batch_run_log/'+total_page+"?from_time="+ from_time + "&to_time=" + to_time+'">尾页</a></li>'
+                            }
                         }else if (page_num == total_page){
                             var first_page_string = '<li class="page-item" id="first_page"><a class="page-link" href="/batch_run_log/1?from_time='+ from_time + "&to_time=" + to_time+'">首页</a></li>';
                             var last_page_string = '<li class="page-item disabled" id="last_page"><a class="page-link" href="/batch_run_log/'+total_page+"?from_time="+ from_time + "&to_time=" + to_time+'">尾页</a></li>'
@@ -209,13 +214,7 @@
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
                                             '<a class="btn btn-info" href="/batch_run_log/detail/' +
                                             start_time + '/' + batch_run_log.id + '/1" role="button">详情</a></button>';
-                                        var str_batch_pass_rate = batch_run_log.pass_rate;
-                                        if (str_batch_pass_rate > 80) {
-                                            str_batch_pass_rate = '<td style="color: green; font-weight: bold;">' + str_batch_pass_rate +'%</td>'
-                                        } else {
-                                            str_batch_pass_rate = '<td style="color: red; font-weight: bold;">' +
-                                                str_batch_pass_rate + '%</td>'
-                                        }
+
                                         if (!start_time) {
                                             start_time = "";
                                         } else {
@@ -229,6 +228,13 @@
                                         var cost_time = batch_run_log.cost_time;
                                         if (!cost_time){
                                             cost_time = 0
+                                        }
+                                        var str_batch_pass_rate = batch_run_log.pass_rate;
+                                        if (str_batch_pass_rate > 80) {
+                                            str_batch_pass_rate = '<td style="color: green; font-weight: bold;">' + str_batch_pass_rate +'%</td>'
+                                        } else {
+                                            if (str_batch_pass_rate == -1 && cost_time==0)
+                                            str_batch_pass_rate = '<td style="color: green; font-weight: bold;">运行中...</td>'
                                         }
                                         $("#batch_run_log_table").find('tbody').append('<tr>' +
                                             '<th scope="row">' + (30 * (page_num - 1) + i + 1) + '</th>' +

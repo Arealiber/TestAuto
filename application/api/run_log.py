@@ -125,6 +125,7 @@ def get_use_case_run_log(**kwargs):
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
     batch_run_log_id = kwargs.get('batch_run_log_id')
+    print(from_time, to_time)
     ret = []
     for table_name in table_name_fix_lst:
         table = get_use_case_run_log_table(table_name)
