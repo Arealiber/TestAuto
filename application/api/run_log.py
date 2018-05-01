@@ -132,15 +132,15 @@ def get_use_case_run_log(**kwargs):
         sql = table.select()
         use_case_list = [use_case_id] if not isinstance(use_case_id, list) else use_case_id
         if len(table_name_fix_lst) == 1 and to_time:
-            sql = sql.where(table.c.end_time.__le__(to_time))
+            sql = sql.where(table.c.start_time.__le__(to_time))
             if from_time:
-                sql = sql.where(table.c.end_time.__ge__(from_time))
+                sql = sql.where(table.c.start_time.__ge__(from_time))
 
         elif table_name == table_name_fix_lst[0] and from_time:
-            sql = sql.where(table.c.end_time.__ge__(from_time))
+            sql = sql.where(table.c.start_time.__ge__(from_time))
 
         elif table_name == table_name_fix_lst[-1] and to_time:
-            sql = sql.where(table.c.end_time.__le__(to_time))
+            sql = sql.where(table.c.start_time.__le__(to_time))
 
         if use_case_id:
             sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(desc(table.c.start_time))

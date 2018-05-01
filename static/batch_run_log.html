@@ -60,7 +60,7 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">批次名称</th>
-                <th scope="col">测试通过率</th>
+                <th scope="col">测试通过率(%)</th>
                 <th scope="col">开始时间</th>
                 <th scope="col">结束时间</th>
                 <th scope="col">耗时</th>
@@ -231,10 +231,15 @@
                                         }
                                         var str_batch_pass_rate = batch_run_log.pass_rate;
                                         if (str_batch_pass_rate > 80) {
-                                            str_batch_pass_rate = '<td style="color: green; font-weight: bold;">' + str_batch_pass_rate +'%</td>'
+                                            str_batch_pass_rate = '<td style="color: green; font-weight: bold;">' + str_batch_pass_rate +'</td>'
                                         } else {
-                                            if (str_batch_pass_rate == -1 && cost_time==0)
-                                            str_batch_pass_rate = '<td style="color: green; font-weight: bold;">运行中...</td>'
+                                            if (str_batch_pass_rate == -1 && cost_time==0){
+                                                str_batch_pass_rate = '<td style="color: red;">未结束</td>'
+                                            }
+                                            else {
+                                                str_batch_pass_rate = '<td style="color: red; front-weight:bold">'+str_batch_pass_rate+'</td>'
+                                            }
+
                                         }
                                         $("#batch_run_log_table").find('tbody').append('<tr>' +
                                             '<th scope="row">' + (30 * (page_num - 1) + i + 1) + '</th>' +
