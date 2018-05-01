@@ -140,8 +140,6 @@ def get_use_case_run_log(**kwargs):
         elif table_name == table_name_fix_lst[-1] and to_time:
             sql = table.select().where(table.c.end_time.__le__(to_time))
 
-        else:
-            sql = table.select()
         if use_case_id:
             sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(desc(table.c.start_time))
         else:
@@ -150,8 +148,7 @@ def get_use_case_run_log(**kwargs):
             sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
         if limit:
             sql = sql.limit(limit)
-        ret = exec_query(sql, is_list=True)
-        ret += ret
+        ret += exec_query(sql, is_list=True)
     return ret
 
 
