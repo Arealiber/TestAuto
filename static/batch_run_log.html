@@ -205,6 +205,7 @@
                                     show_alert('获取数据失败')
                                 } else {
                                     loader.hide();
+                                    console.log(response);
                                     $("#batch_run_log_table").show();
                                     var batch_run_log_list = response.res;
                                     $.each(batch_run_log_list, function (i, batch_run_log) {
@@ -212,8 +213,7 @@
                                         var end_time = batch_run_log.end_time
 
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
-                                            '<a class="btn btn-info" href="/batch_run_log/detail/' +
-                                            start_time + '/' + batch_run_log.id + '/1" role="button">详情</a></button>';
+                                            '<a class="btn btn-info" href="/batch_run_log/detail/' + batch_run_log.id +'/1'+ time_url +'" role="button">详情</a></button>';
 
                                         if (!start_time) {
                                             start_time = "";

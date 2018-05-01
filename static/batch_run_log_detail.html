@@ -112,16 +112,28 @@
         error_alert.show();
     }
     $(document).ready(function() {
-        var pathname = window.location.pathname.split("/");
-        var page_num = pathname.pop();
-        var batch_run_log_id = pathname.pop();
-        var start_time = pathname.pop();
-        var to_time = start_time.replace('_', ' ');
-        var batch_url = '/batch_run_log/detail/'+start_time+'/'+batch_run_log_id + '/';
+        var urlpath = window.location.pathname.split("/");
+        var page_num = urlpath.pop();
+        var batch_run_log_id = urlpath.pop();
+        var base_url = '/'+urlpath.pop()+'/';
+        var time_string = new URLSearchParams(window.location.search);
+        var from_time = time_string.get('from_time');
+        var to_time = time_string.get('to_time');
+        var time_url = '';
+        if (from_time){
+            time_url = "?from_time="+ from_time;
+            from_time += ':00.000'
+        }
+        if (to_time){
+            time_url += "&to_time=" + to_time;
+            to_time += ':00.000'
+        }
+
         $.ajax({
             type: 'post',
             url: '/run_log/use_case/count',
             data: JSON.stringify({
+                'from_time': from_time,
                 'to_time': to_time,
                 'batch_run_log_id': batch_run_log_id
             }),
@@ -146,26 +158,26 @@
                         }
                         else if (page_num == 1) {
                             previous_page.addClass('disabled');
-                            next_page.find('.page-link').attr('href', batch_url + (Number(page_num) + 1))
+                            next_page.find('.page-link').attr('href', base_url + (Number(page_num) + 1), time_url)
                         } else if (page_num == total_page) {
                             next_page.addClass('disabled');
-                            previous_page.find('.page-link').attr('href', batch_url +  (Number(page_num) - 1))
+                            previous_page.find('.page-link').attr('href', base_url +  (Number(page_num) - 1), time_url)
                         } else {
-                            next_page.find('.page-link').attr('href', batch_url +  (Number(page_num) + 1));
-                            previous_page.find('.page-link').attr('href', batch_url + (Number(page_num) - 1))
+                            next_page.find('.page-link').attr('href', base_url +  (Number(page_num) + 1), time_url);
+                            previous_page.find('.page-link').attr('href', base_url + (Number(page_num) - 1), time_url)
                         }
                         var page_item_string = '';
                         var after_page_item_string = '';
                         var before_page_item_string = '';
                         for (var i = 1; i <= total_page; i++) {
                             if (i == page_num) {
-                                page_item_string += '<li class="page-item active"><a class="page-link" href="' +batch_url+ i + '">' + i + '</a></li>'
+                                page_item_string += '<li class="page-item active"><a class="page-link" href="'+ base_url + i + time_url + '">' + i + '</a></li>'
                             } else if (i>page_num && i-page_num >3){
-                                after_page_item_string = '<li class="page-item"><a class="page-link" href="'+batch_url+ (Number(page_num)+4)+'">...</a></li>';
+                                after_page_item_string = '<li class="page-item"><a class="page-link" href="'+ base_url + (Number(page_num)+4) + time_url+ '">...</a></li>';
                             } else if ( i < page_num && page_num - i >3 ){
-                                before_page_item_string = '<li class="page-item"><a class="page-link" href="'+batch_url+ (Number(page_num)-4)+'">...</a></li>'
+                                before_page_item_string = '<li class="page-item"><a class="page-link" href="'+ base_url + (Number(page_num)-4) + time_url +'">...</a></li>'
                             } else {
-                                page_item_string += '<li class="page-item"><a class="page-link" href="' + batch_url + i + '">' + i + '</a></li>'
+                                page_item_string += '<li class="page-item"><a class="page-link" href="' +base_url + i  + time_url + '">' + i + '</a></li>'
                             }
                         }
                         if (before_page_item_string){
@@ -184,8 +196,8 @@
                         }else if (page_num == total_page){
                             last_page_disabled_str = 'disabled'
                         }
-                        var first_page_string = '<li class="page-item '+ first_page_disabled_str +'" id="first_page"><a class="page-link" href="' + batch_url + '1">首页</a></li>';
-                        var last_page_string = '<li class="page-item '+ last_page_disabled_str +'" id="last_page"><a class="page-link" href="'+ batch_url + total_page +'">尾页</a></li>';
+                        var first_page_string = '<li class="page-item '+ first_page_disabled_str +'" id="first_page"><a class="page-link" href="' + base_url + '1'+ time_url+'">首页</a></li>';
+                        var last_page_string = '<li class="page-item '+ last_page_disabled_str +'" id="last_page"><a class="page-link" href="'+ base_url + total_page + time_url+'">尾页</a></li>';
                         previous_page.before(first_page_string);
                         previous_page.after(page_item_string);
                         next_page.after(last_page_string);
@@ -194,7 +206,9 @@
                             url: '/run_log/use_case/info',
                             data: JSON.stringify({
                                 'pageSize': page_size,
-                                'pageIndex': page_num
+                                'pageIndex': page_num,
+                                'from_time':from_time,
+                                'to_time': to_time
                             }),
                             contentType:'application/json; charset=utf-8',
                             dataType:'json',
@@ -210,10 +224,8 @@
                                         show_alert("无用例运行日志，请确认批次用例是否运行")
                                     }
                                     $.each(use_case_run_log_list, function (i, use_case_run_log) {
-                                        var start_time = use_case_run_log.start_time.substring(0, 23).replace(' ', '_');
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">'+
-                                                '<a class="btn btn-info" href="/use_case_run_log/detail/' +
-                                                 start_time+'/' + use_case_run_log.id + '" role="button">详情</a></button>';
+                                                '<a class="btn btn-info" href="/use_case_run_log/detail/' +use_case_run_log.id + time_url +'" role="button">详情</a></button>';
                                         var is_pass_string = '';
                                         if (use_case_run_log.is_pass) {
                                             is_pass_string = '<td>是</td>';

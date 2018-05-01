@@ -100,15 +100,24 @@
         error_alert.show();
     }
     $(document).ready(function() {
+        var time_string = new URLSearchParams(window.location.search);
+        console.log(time_string);
         var pathname = window.location.pathname.split("/");
         var use_case_run_log_id = pathname.pop();
-        var start_time = pathname.pop().replace('_', ' ');
-        console.log(start_time);
+        var from_time = time_string.get('from_time');
+        var to_time = time_string.get('to_time');
+        if (from_time){
+            from_time += ':00.000'
+        }
+        if (to_time){
+            to_time += ':00.000'
+        }
         $.ajax({
             type: 'post',
             url: '/run_log/interface/info',
             data: JSON.stringify({
-                'to_time': start_time,
+                'from_time': from_time,
+                'to_time': to_time,
                 'use_case_run_log_id': use_case_run_log_id
             }),
             contentType: "application/json; charset=utf-8",

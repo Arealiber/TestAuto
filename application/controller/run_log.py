@@ -48,6 +48,7 @@ def get_multi_batch_run_log_info():
         if batch_run_log:
             batch_run_log = batch_run_log[0]
         else:
+            batch_run_log_dict['batch_name'] = '批次不存在'
             continue
         batch_run_log_dict['batch_name'] = batch_run_log.get('batch_name')
         start_time = utc_to_shanghai_timezone(batch_run_log_dict.get('start_time'))
