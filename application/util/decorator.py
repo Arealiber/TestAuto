@@ -17,10 +17,10 @@ def table_decorator(func):
         if not('from_time' in kwargs or 'to_time' in kwargs):
             kwargs.update({'table_name_fix_lst': [fmt_str[:CONSTANT_LEN]]})
         else:
-            from_time = kwargs.get('from_time').strip() if kwargs.get('from_time') is not None else None
+            from_time = kwargs.get('from_time').strip() if kwargs.get('from_time') else None
             to_time = kwargs.get('to_time').strip() if kwargs.get('to_time') is not None else fmt_str.strip()
             table_to_time = to_time[:CONSTANT_LEN]
-            if from_time is None:
+            if not from_time:
                 table_from_time = table_to_time
             else:
                 table_from_time = from_time[:CONSTANT_LEN]

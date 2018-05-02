@@ -19,7 +19,6 @@ def get_multi_batch_run_log_info(**kwargs):
     limit = kwargs.get('limit')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
-    print(type(from_time), type(to_time))
     ret = []
     for table_name in table_name_fix_lst:
         table = get_batch_run_log_table(table_name)

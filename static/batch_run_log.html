@@ -127,6 +127,7 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             success: function (response) {
+                console.log(response)
                 if (!response.success) {
                     show_alert('获取批次日志失败！');
                 } else if (response.res == 0) {

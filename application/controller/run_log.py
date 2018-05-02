@@ -65,6 +65,7 @@ def get_batch_run_log_count():
     """
     from_time = request.get_json().get('from_time', None)
     to_time = request.get_json().get('to_time', None)
+    print(from_time, to_time, QUERY_TIME_FMT)
     if from_time:
         from_time = shanghai_to_utc_timezone(datetime.strptime(from_time, QUERY_TIME_FMT))
         request.get_json().update({"from_time":from_time.strftime(QUERY_TIME_FMT)})
@@ -74,7 +75,9 @@ def get_batch_run_log_count():
     try:
         result = RunLogAPI.get_batch_run_log_count(**request.get_json())
     except Exception as e:
+        print(e)
         return jsonify({'success': False, 'res': str(e)})
+    print(result)
     return jsonify({'success': True, 'res': result})
 
 
