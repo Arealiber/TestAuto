@@ -148,4 +148,9 @@ body {
 #input_page{
     width: 5%;
     min-width: 50px;
+    height: 35px;
 }
+.page-data{
+    margin-top: 0.6%;
+}
+

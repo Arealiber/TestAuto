@@ -7,7 +7,9 @@ $(document).ready(function () {
         var index = link_url.lastIndexOf("\/");
         link_url = link_url.substring(0, index+1);
         if (page_num > max_num || !page_num){
-            window.location.href= link_url + max_num + time_url
+            if (page_num){
+                window.location.href= link_url + max_num + time_url
+            }
         }else {
             window.location.href= link_url + page_num + time_url
         }

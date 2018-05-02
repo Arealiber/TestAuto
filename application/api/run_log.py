@@ -48,12 +48,15 @@ def get_multi_batch_run_log_info(**kwargs):
 
 @table_decorator
 def get_batch_run_log_count(**kwargs):
+    print(1)
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
     count = 0
+    print(table_name_fix_lst)
     for table_name in table_name_fix_lst:
         table = get_batch_run_log_table(table_name)
+        print(table)
         sql = select([func.count()]).select_from(table)
 
         if len(table_name_fix_lst) == 1 and to_time:
@@ -93,6 +96,7 @@ def get_use_case_run_log_count(**kwargs):
     count = 0
     for table_name in table_name_fix_lst:
         table = get_use_case_run_log_table(table_name)
+        print(table)
         sql = select([func.count()]).select_from(table)
         if len(table_name_fix_lst) == 1 and to_time:
             sql = sql.where(table.c.start_time.__le__(to_time))
