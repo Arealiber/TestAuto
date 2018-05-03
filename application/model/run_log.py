@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from datetime import datetime
 from application import engine
-from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean
+from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TEXT
 from sqlalchemy.dialects.mysql import TIMESTAMP
 
 
@@ -59,7 +59,7 @@ def get_interface_run_log_table(table_name):
                       Column('interface_id', Integer, nullable=False),
                       Column('r_code', String(1000)),
                       Column('r_header', String(1000)),
-                      Column('r_payload', String(10000)),
+                      Column('r_payload', TEXT),
                       Column('is_pass', Boolean, nullable=False),
                       Column('cost_time', Float, nullable=False),
                       Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),

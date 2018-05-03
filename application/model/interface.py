@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from enum import Enum
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, TEXT
 from sqlalchemy.ext.declarative import declarative_base
 
 from application import engine
@@ -45,7 +45,7 @@ class Interface(Base):
     interface_url = Column(String(255), nullable=False)
     interface_method = Column(String(20), nullable=False)
     interface_header = Column(String(255))
-    interface_json_payload = Column(String(10000))
+    interface_json_payload = Column(TEXT)
     body_type = Column(Integer, nullable=False, default=0)  # 消息体类型， 0为json， 1为form
     create_by = Column(Integer, nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
