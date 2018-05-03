@@ -16,47 +16,68 @@ def get_multi_batch_run_log_info(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     batch_id = kwargs.get('batch_id')
     batch_run_log_id = kwargs.get('id')
-    limit = kwargs.get('limit')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
+    page_index = int(kwargs.get('pageIndex'))
+    page_size = int(kwargs.get('pageSize'))
+    index = (page_index-1)*page_size
     ret = []
+    total_count = 0
     for table_name in table_name_fix_lst:
         table = get_batch_run_log_table(table_name)
         batch_list = [batch_id] if not isinstance(batch_id, list) else batch_id
-
+        count_sql = select([func.count()]).select_from(table)
         if len(table_name_fix_lst) == 1 and to_time:
             sql = table.select().where(table.c.start_time.__le__(to_time))
+            count_sql = count_sql.where(table.c.start_time.__le__(to_time))
             if from_time:
                 sql = sql.where(table.c.start_time.__ge__(from_time))
+                count_sql = count_sql.where(table.c.start_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[0] and from_time:
             sql = table.select().where(table.c.start_time.__ge__(from_time))
+            count_sql = count_sql.where(table.c.start_time.__ge__(from_time))
         elif table_name == table_name_fix_lst[-1] and to_time:
             sql = table.select().where(table.c.start_time.__le__(to_time))
+            count_sql = count_sql.where(table.c.start_time.__le__(to_time))
         else:
             sql = table.select()
         if batch_id:
             sql = sql.where(table.c.batch_id.in_(batch_list))
+            count_sql = count_sql.where(table.c.batch_id.in_(batch_list))
         if batch_run_log_id:
             sql = sql.where(table.c.id == batch_run_log_id).order_by(desc(table.c.start_time))
+            count_sql = count_sql.where(table.c.id == batch_run_log_id)
         else:
             sql = sql.order_by(desc(table.c.start_time))
-        if limit:
-            sql = sql.limit(limit)
+
+        count = exec_query(count_sql, is_list=True)[0]['count_1']
+        total_count += count
+        limit = page_size - len(ret)
+        if limit == 0:
+            break
+        if index >= total_count:
+            continue
+        elif index >= total_count - count - 1:
+            offset_num = count - (total_count - index)
+            index += total_count - index
+        else:
+            offset_num = 0
+            sql = sql.offset(offset_num).limit(limit)
+            ret += exec_query(sql, is_list=True)
+            break
+        sql = sql.offset(offset_num).limit(limit)
         ret += exec_query(sql, is_list=True)
     return ret
 
 
 @table_decorator
 def get_batch_run_log_count(**kwargs):
-    print(1)
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
     count = 0
-    print(table_name_fix_lst)
     for table_name in table_name_fix_lst:
         table = get_batch_run_log_table(table_name)
-        print(table)
         sql = select([func.count()]).select_from(table)
 
         if len(table_name_fix_lst) == 1 and to_time:
@@ -110,6 +131,7 @@ def get_use_case_run_log_count(**kwargs):
             sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
 
         count += exec_query(sql, is_list=True)[0]['count_1']
+    print(count)
     return count
 
 
@@ -125,35 +147,61 @@ def modify_use_case_run_log(**kwargs):
 def get_use_case_run_log(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     use_case_id = kwargs.get('use_case_id')
-    limit = kwargs.get('limit')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
     batch_run_log_id = kwargs.get('batch_run_log_id')
-    print(from_time, to_time)
+    page_index = int(kwargs.get('pageIndex'))
+    page_size = int(kwargs.get('pageSize'))
+    index = (page_index - 1) * page_size
+    total_count = 0
     ret = []
+    print(table_name_fix_lst)
     for table_name in table_name_fix_lst:
+        print('start select')
         table = get_use_case_run_log_table(table_name)
         sql = table.select()
+        count_sql = select([func.count()]).select_from(table)
         use_case_list = [use_case_id] if not isinstance(use_case_id, list) else use_case_id
         if len(table_name_fix_lst) == 1 and to_time:
             sql = sql.where(table.c.start_time.__le__(to_time))
+            count_sql = count_sql.where(table.c.start_time.__le__(to_time))
             if from_time:
                 sql = sql.where(table.c.start_time.__ge__(from_time))
+                count_sql = count_sql.where(table.c.start_time.__ge__(from_time))
 
         elif table_name == table_name_fix_lst[0] and from_time:
             sql = sql.where(table.c.start_time.__ge__(from_time))
+            count_sql = count_sql.where(table.c.start_time.__ge__(from_time))
 
         elif table_name == table_name_fix_lst[-1] and to_time:
             sql = sql.where(table.c.start_time.__le__(to_time))
+            count_sql = count_sql.where(table.c.start_time.__le__(to_time))
 
         if use_case_id:
             sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(desc(table.c.start_time))
+            count_sql = count_sql.where(table.c.start_time.__le__(to_time))
         else:
             sql = sql.order_by(desc(table.c.start_time))
         if batch_run_log_id:
             sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
-        if limit:
-            sql = sql.limit(limit)
+            count_sql = count_sql.where(table.c.batch_run_log_id == batch_run_log_id)
+        count = exec_query(count_sql, is_list=True)[0]['count_1']
+        total_count += count
+        print(count)
+        limit = page_size - len(ret)
+        if limit == 0:
+            break
+        if index >= total_count:
+            continue
+        elif index >= total_count - count - 1:
+            offset_num = count - (total_count - index)
+            index += total_count - index
+        else:
+            offset_num = 0
+            sql = sql.offset(offset_num).limit(limit)
+            ret += exec_query(sql, is_list=True)
+            break
+        sql = sql.offset(offset_num).limit(limit)
         ret += exec_query(sql, is_list=True)
     return ret
 

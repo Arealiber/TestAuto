@@ -35,13 +35,13 @@ def get_multi_batch_run_log_info():
         to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, QUERY_TIME_FMT))
         request.get_json().update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
     param_json = request.get_json()
-    page_index = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
-    page_size = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
+    '' if 'pageIndex' in param_json else param_json.update({'pageIndex': 1})
+    '' if 'pageSize' in param_json else param_json.update({'pageSize': 10})
     try:
         result = RunLogAPI.get_multi_batch_run_log_info(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
-    result = result[(page_index - 1) * page_size:page_index * page_size]
+    result = result
     for batch_run_log_dict in result:
         batch_run_log = BatchAPI.get_batch(id=batch_run_log_dict.get('batch_id'))
         if batch_run_log:
@@ -123,15 +123,13 @@ def get_use_case_run_log():
     if to_time:
         to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, QUERY_TIME_FMT))
         request.get_json().update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
-    param_json = request.get_json()
-    page_index = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
-    page_size = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
-
+    '' if 'pageIndex' in request.get_json() else request.get_json().update({'pageIndex': 1})
+    '' if 'pageSize' in request.get_json() else request.get_json().update({'pageSize': 10})
     try:
         result = RunLogAPI.get_use_case_run_log(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
-    result = result[(page_index - 1) * page_size:page_index * page_size]
+    result = result
     for use_case_run_log_dict in result:
         use_case_id = use_case_run_log_dict.get('use_case_id')
         use_case_info = UseCaseAPI.get_single_use_case(use_case_id)
