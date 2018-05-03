@@ -220,7 +220,6 @@
                                     show_alert('获取数据失败')
                                 }else {
                                     var use_case_run_log_list = response.res;
-                                    console.log(use_case_run_log_list);
                                     $("#batch_run_log_detail_table").show();
                                     if (!use_case_run_log_list) {
                                         show_alert("无用例运行日志，请确认批次用例是否运行")

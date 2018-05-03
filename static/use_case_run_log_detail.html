@@ -101,7 +101,6 @@
     }
     $(document).ready(function() {
         var time_string = new URLSearchParams(window.location.search);
-        console.log(time_string);
         var pathname = window.location.pathname.split("/");
         var use_case_run_log_id = pathname.pop();
         var from_time = time_string.get('from_time');
@@ -123,7 +122,6 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                console.log(response);
                 if (!response.success) {
                     show_alert("获取用例接口运行日志失败");
                 }else {
@@ -142,7 +140,6 @@
                              str_res = str_res + '<br/>'+ 'error_message: "' + interface_run_log.error_message + '"<br/>'
                         }
                         var start_time = interface_run_log.start_time.substring(0, 23);
-                        console.log(start_time);
                         if (!start_time){
                             start_time = ''
                         }else {

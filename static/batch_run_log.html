@@ -128,7 +128,6 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             success: function (response) {
-                console.log(response)
                 if (!response.success) {
                     show_alert('获取批次日志失败！');
                 } else if (response.res == 0) {
@@ -216,7 +215,6 @@
                                     show_alert('获取数据失败')
                                 } else {
                                     loader.hide();
-                                    console.log(response);
                                     $("#batch_run_log_table").show();
                                     var batch_run_log_list = response.res;
                                     $.each(batch_run_log_list, function (i, batch_run_log) {
