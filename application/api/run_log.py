@@ -117,7 +117,6 @@ def get_use_case_run_log_count(**kwargs):
     count = 0
     for table_name in table_name_fix_lst:
         table = get_use_case_run_log_table(table_name)
-        print(table)
         sql = select([func.count()]).select_from(table)
         if len(table_name_fix_lst) == 1 and to_time:
             sql = sql.where(table.c.start_time.__le__(to_time))
@@ -131,7 +130,6 @@ def get_use_case_run_log_count(**kwargs):
             sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
 
         count += exec_query(sql, is_list=True)[0]['count_1']
-    print(count)
     return count
 
 
@@ -155,9 +153,7 @@ def get_use_case_run_log(**kwargs):
     index = (page_index - 1) * page_size
     total_count = 0
     ret = []
-    print(table_name_fix_lst)
     for table_name in table_name_fix_lst:
-        print('start select')
         table = get_use_case_run_log_table(table_name)
         sql = table.select()
         count_sql = select([func.count()]).select_from(table)
@@ -187,7 +183,6 @@ def get_use_case_run_log(**kwargs):
             count_sql = count_sql.where(table.c.batch_run_log_id == batch_run_log_id)
         count = exec_query(count_sql, is_list=True)[0]['count_1']
         total_count += count
-        print(count)
         limit = page_size - len(ret)
         if limit == 0:
             break
