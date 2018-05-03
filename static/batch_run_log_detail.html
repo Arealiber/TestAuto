@@ -112,10 +112,10 @@
         error_alert.show();
     }
     $(document).ready(function() {
-        var urlpath = window.location.pathname.split("/");
-        var page_num = urlpath.pop();
-        var batch_run_log_id = urlpath.pop();
-        var base_url = '/'+urlpath.pop()+'/';
+        var url_path = window.location.pathname.split("/");
+        var page_num = url_path.pop();
+        var batch_run_log_id = url_path.pop();
+        var base_url =  window.location.pathname.substring(0, -1);
         var time_string = new URLSearchParams(window.location.search);
         var from_time = time_string.get('from_time');
         var to_time = time_string.get('to_time');
