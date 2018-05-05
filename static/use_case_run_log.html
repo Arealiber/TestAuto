@@ -5,6 +5,7 @@
     <title></title>
 
     <link href="/component/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/component/css/treeview.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
     <link href="/css/loader.css" rel="stylesheet">
     <link href="/component/css/jquery.datetimepicker.min.css" rel="stylesheet">
@@ -16,29 +17,7 @@
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
             <li class="sidebar-brand"><a href="/">自动巡检测试系统</a></li>
-
-            <li><a href="/parameter/1">参数管理</a></li>
-
-            <li><a href="/interface/1">接口管理</a></li>
-
-            <li><a href="/use_case/1">用例管理</a></li>
-
-            <li><a href="/batch/1">批次管理</a></li>
-
-            <li><a href="/use_case_run_log/1">运行日志</a></li>
-
-            <li>
-                <ul>
-                    <li><a style="font-size: 0.9rem; text-indent: 0; line-height: 15px;" href="/use_case_run_log/1">用例运行日志</a>
-                    </li>
-                    <li><a style="font-size: 0.9rem; text-indent: 0; line-height: 15px;"
-                           href="/batch_run_log/1">批次运行日志</a></li>
-                </ul>
-            </li>
-
-            <li><a href="#">报表</a></li>
-
-            <li><a href="#">注销</a></li>
+            <li id="menu_tree"></li>
         </ul>
     </div>
 
@@ -91,6 +70,7 @@
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
 <script src="/component/js/moment.min.js"></script>
+<script src="/component/js/treeview.min.js"></script>
 <script src="/js/cmm.js"></script>
 <script src="/component/js/jquery.datetimepicker.full.min.js"></script>
 
@@ -269,6 +249,42 @@
     jQuery('#datetimepicker_end').datetimepicker({
         format:'Y-m-d H:i',
     });
+
+
+    $(document).ready(function () {
+        var tree_data = getTree();
+        tree_data[4]['nodes'] = [
+            {
+                text: "用例运行日志",
+                tags: ['available'],
+                color: "#ffffff",
+                backColor: "transparent",
+                href: "/use_case_run_log/1",
+                state:{
+                    expanded:true
+                }
+            },
+            {
+                text: "批次运行日志",
+                tags: ['available'],
+                color: "#8f9baa",
+                backColor: "transparent",
+                href: "/batch_run_log/1",
+                state:{
+                    expanded:true
+                }
+            }
+        ];
+        $('#menu_tree').treeview({
+            data: tree_data,
+            onNodeSelected: function (event, data) {
+                if (data.text != '运行日志') {
+                    getMapfromUrl(data);
+                }
+
+            },
+        });
+    })
 
 </script>
 

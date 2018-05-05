@@ -5,6 +5,7 @@
     <title></title>
 
     <link href="/component/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/component/css/treeview.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
     <link href="/css/loader.css" rel="stylesheet">
 
@@ -15,20 +16,7 @@
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
             <li class="sidebar-brand"><a href="/">自动巡检测试系统</a></li>
-
-            <li><a href="/parameter/1">参数管理</a></li>
-
-            <li><a href="/interface/1">接口管理</a></li>
-
-            <li><a href="/use_case/1">用例管理</a></li>
-
-            <li><a href="/batch/1">批次管理</a></li>
-
-            <li><a href="/use_case_run_log/1">运行日志</a></li>
-
-            <li><a href="#">报表</a></li>
-
-            <li><a href="#">注销</a></li>
+            <li id="menu_tree"><a href="/parameter/1">参数管理</a></li>
         </ul>
     </div>
 
@@ -97,6 +85,7 @@
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
 <script src="/component/js/moment.min.js"></script>
+<script src="/component/js/treeview.min.js"></script>
 <script src="/js/cmm.js"></script>
 
 <script>
@@ -242,7 +231,22 @@
                 }
             })
         })
+    });
+
+    $(document).ready(function () {
+        $('#menu_tree').treeview({
+            data: getTree(),
+            onNodeSelected: function (event, data) {
+                if (data.text != '接口管理'){
+                    $('#menu_tree').treeview('collapseNode', [data.nodeId, { silent: true }]);
+                    getMapfromUrl(data);
+                }else if(data.state.selected){
+                    getMapfromUrl(data);
+                }
+            }
+        });
     })
+
 </script>
 
 </body>
