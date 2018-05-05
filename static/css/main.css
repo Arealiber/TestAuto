@@ -61,9 +61,10 @@ body {
 }
 
 .sidebar-nav > .sidebar-brand {
-    height: 65px;
+    height: 40px;
     font-size: 20px;
     line-height: 20px;
+    margin-top: 20px;
 }
 
 .sidebar-nav > .sidebar-brand a {

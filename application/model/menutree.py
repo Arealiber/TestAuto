@@ -15,6 +15,7 @@ class BusinessLine(Base):
 
     id = Column(Integer, primary_key=True)
     business_name = Column(String(100), nullable=False)
+    status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):
         return {
@@ -33,6 +34,7 @@ class SystemLine(Base):
     id = Column(Integer, primary_key=True)
     business_line_id = Column(Integer, nullable=False)
     system_name = Column(String(100), nullable=False)
+    status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):
         return {
@@ -50,13 +52,14 @@ class FunctionLine(Base):
     }
 
     id = Column(Integer, primary_key=True)
-    business_line_id = Column(Integer, nullable=False)
+    system_line_id = Column(Integer, nullable=False)
     function_name = Column(String(100), nullable=False)
+    status = Column(Integer, default=1, nullable=False)
 
     def to_dict(self):
         return {
             'id': self.id,
-            'system_line_id': self.business_line_id,
+            'system_line_id': self.system_line_id,
             'function_name': self.function_name,
         }
 

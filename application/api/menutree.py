@@ -48,9 +48,13 @@ def query_function_line(**kwargs):
     return function_line_list
 
 
-def query_function_line_of_system_line(system_line_id=None):
+def query_all_line_relation(**kwargs):
     with session_scope() as session:
-        query = session.query()
+        system_info = session.query(SystemLine).filter_by(**kwargs).filter_by(status=1)
+        function_line_list = [system_line.to_dict() for system_line in system_info]
+
+
+
 
 
 
