@@ -104,7 +104,7 @@ function treeview_ajax() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            let menu_tree = response.res;
+            var menu_tree = response.res;
             treeview_data = getTree();
             treeview_data[2]['nodes'] = [];
             $.each(menu_tree, function (i, business_info) {
@@ -129,8 +129,13 @@ function treeview_ajax() {
                         });
                         if (system_info.function_line.length > 0) {
                             $.each(system_info.function_line, function (k, function_info) {
+                                var function_text = function_info.function_name;
+                                case_num = function_info.use_case_list.length;
+                                if (case_num > 0) {
+                                    function_text = function_text + '(' + case_num + ')'
+                                }
                                 treeview_data[2]['nodes'][i]['nodes'][j]['nodes'].push({
-                                    text: function_info.function_name,
+                                    text: function_text,
                                     tags: ['available'],
                                     color: "#8f9baa",
                                     backColor: "transparent",
@@ -138,9 +143,9 @@ function treeview_ajax() {
                                     nodes: []
                                 });
                                 $.each(function_info.use_case_list, function(x, use_case){
-                                    console.log(use_case)
+                                    var use_case_text = x + 1 + '.' + use_case;
                                     treeview_data[2]['nodes'][i]['nodes'][j]['nodes'][k]['nodes'].push({
-                                        text: use_case,
+                                        text: use_case_text,
                                         tags: ['available'],
                                         color: "black",
                                         backColor: "white",
