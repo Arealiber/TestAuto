@@ -22,6 +22,7 @@ class UseCase(Base):
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)
+    function_id = Column(Integer, nullable=False)
 
     def to_dict(self):
         return {
@@ -30,7 +31,8 @@ class UseCase(Base):
             'desc': self.desc,
             'create_by': self.create_by,
             'create_time': self.create_time,
-            'update_time': self.update_time
+            'update_time': self.update_time,
+            'function_id': self.function_id
         }
 
 

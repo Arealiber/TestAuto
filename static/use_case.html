@@ -14,7 +14,9 @@
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
             <li class="sidebar-brand"><a href="/">自动巡检测试系统</a></li>
-            <li id="menu_tree"></li>
+            <li id="menu_tree">
+                <span id="case_list"></span>
+            </li>
         </ul>
     </div>
 
@@ -363,21 +365,41 @@
         })
     });
 
-
-    $(document).ready(function () {
-        $('#menu_tree').treeview({
-            data: getTree(),
-            onNodeSelected : function(event, data) {
-                if (data.text != '用例管理'){
-                    $('#menu_tree').treeview('collapseNode', [data.nodeId, { silent: true }]);
+    $.when(treeview_ajax()).then(function () {
+        console.log(treeview_data);
+        var tree_selector = $('#menu_tree');
+        tree_selector.treeview({
+            data: treeview_data,
+            onNodeSelected: function (event, data) {
+                console.log(treeview_data);
+                if (data.text != '用例管理' && data.levels==1) {
                     getMapfromUrl(data);
-                }else if(data.state.selected){
+                }else if (data.text == '用例管理'){
                     getMapfromUrl(data);
                 }
-
+                var parentNode = tree_selector.treeview('getParent', data.nodeId);
+                if (data.state.expanded){
+                    tree_selector.treeview('collapseNode', [data.nodeId]);
+                }else {
+                    tree_selector.treeview('expandNode', [parentNode.nodeId]);
+                    tree_selector.treeview('expandNode', [data.nodeId]);
+                    // if (data.levels>3 && data.nodes && data.nodes.length > 0){
+                    //     tree_selector.treeview('toggleNodeSelected', [data.nodeId]);
+                    // }
+                }
+                console.log(data);
+                if (data.nodes && data.nodes.length > 0){
+                    tree_selector.treeview('toggleNodeSelected', [data.nodeId]);
+                }
+            },
+            onNodeCollapsed: function (event, data) {
+                // if (data.levels > 3 && data.nodes && data.nodes.length > 0) {
+                //     tree_selector.treeview('deleteNode', data.nodes)
+                // }
             }
         });
-    })
+    });
+
 
 
 </script>

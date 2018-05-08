@@ -5,19 +5,18 @@ $(document).ready(function () {
         var page_num = $("#input_page").val();
         var link_url = window.location.href;
         var index = link_url.lastIndexOf("\/");
-        link_url = link_url.substring(0, index+1);
-        if (page_num > max_num || !page_num){
-            if (page_num){
-                window.location.href= link_url + max_num + time_url
+        link_url = link_url.substring(0, index + 1);
+        if (page_num > max_num || !page_num) {
+            if (page_num) {
+                window.location.href = link_url + max_num + time_url
             }
-        }else {
-            window.location.href= link_url + page_num + time_url
+        } else {
+            window.location.href = link_url + page_num + time_url
         }
     })
 });
-
 function getTree() {
-    var tree = [
+    return [
         {
             text: "参数管理",
             tags: ['available'],
@@ -41,6 +40,9 @@ function getTree() {
             backColor: "transparent",
             href: "/use_case/1",
             levels: 1,
+            state:{
+                expanded: true
+            }
         },
         {
             text: "批次管理",
@@ -72,34 +74,88 @@ function getTree() {
             color: "#8f9baa",
             backColor: "transparent",
             href: "/#",
-            levels: 1,
-            state:{
-                checked:false,
-                disabled:false,
-                expanded:false,
-                selected:false
-            }
-        },
-    ];
-    return tree
-};
+            levels: 1
+        }]
+
+}
+
 
 function getBaseUrl() {
-        var url = window.location.href;
-        var url_list = url.split('/');
-        var base_url = url_list[0] + '//' + url_list[1] + url_list[2];
-        return base_url
+    var url = window.location.href;
+    var url_list = url.split('/');
+    return url_list[0] + '//' + url_list[1] + url_list[2];
 }
+
 function getMapfromUrl(data) {
     var base_url = getBaseUrl();
-    url = base_url+data.href;
+    url = base_url + data.href;
     if (data.state.selected) {
+        data.state.selected = true;
         window.location.href = url;
     }
 
 }
-
-// $('#menu_tree').treeview({data:getTree()});
+var treeview_data = '';
+function treeview_ajax() {
+    return $.ajax({
+        type: 'post',
+        url: '/menu_tree/info',
+        data: JSON.stringify({}),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            let menu_tree = response.res;
+            treeview_data = getTree();
+            treeview_data[2]['nodes'] = [];
+            $.each(menu_tree, function (i, business_info) {
+                treeview_data[2]['nodes'].push({
+                    text: business_info.business_line.business_name,
+                    tags: ['available'],
+                    color: "#8f9baa",
+                    backColor: "transparent",
+                    levels: 2,
+                    nodes: []
+                });
+                if (business_info.business_line.system_line.length > 0) {
+                    $.each(business_info.business_line.system_line, function (j, system_info) {
+                        treeview_data[2]['nodes'][i]['nodes'].push({
+                            text: system_info.system_name,
+                            tags: ['available'],
+                            color: "#8f9baa",
+                            backColor: "transparent",
+                            levels: 3,
+                            select_node:'',
+                            nodes: []
+                        });
+                        if (system_info.function_line.length > 0) {
+                            $.each(system_info.function_line, function (k, function_info) {
+                                treeview_data[2]['nodes'][i]['nodes'][j]['nodes'].push({
+                                    text: function_info.function_name,
+                                    tags: ['available'],
+                                    color: "#8f9baa",
+                                    backColor: "transparent",
+                                    levels: 4,
+                                    nodes: []
+                                });
+                                $.each(function_info.use_case_list, function(x, use_case){
+                                    console.log(use_case)
+                                    treeview_data[2]['nodes'][i]['nodes'][j]['nodes'][k]['nodes'].push({
+                                        text: use_case,
+                                        tags: ['available'],
+                                        color: "black",
+                                        backColor: "white",
+                                        levels: 4,
+                                        nodes: []
+                                    })
+                                })
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
 
 
 

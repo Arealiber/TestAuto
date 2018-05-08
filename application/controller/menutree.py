@@ -3,6 +3,7 @@ from flask import request, jsonify
 
 from application import app
 from application.api import menutree as MenuTreeAPI
+from application.api import use_case as Case_API
 
 
 @app.route('/menu_tree/system_line/info', methods=['POST'])
@@ -70,9 +71,20 @@ def get_menu_tree():
             for function_line in re_function:
                 if not system_line_id == function_line.get('system_line_id'):
                     continue
-                function_line.pop('id')
+                print(function_line)
+                function_id = function_line.get('id')
                 function_line.pop('system_line_id')
+                case_menu_tree = []
+                use_case_list = Case_API.get_use_case(**{'function_id': function_id})
+                for use_case_info in use_case_list:
+                    print(use_case_info)
+                    if use_case_info.get('function_id') and function_id != use_case_info.get('function_id'):
+                        continue
+                    case_menu_tree.append(use_case_info.get('use_case_name'))
+                function_line.update({'use_case_list': case_menu_tree})
                 sys_line['function_line'].append(function_line)
             business_line['system_line'].append(sys_line)
         menu_tree.append({'business_line': business_line})
+    from pprint import pprint
+    pprint(menu_tree)
     return jsonify({'success': True, 'res': menu_tree})

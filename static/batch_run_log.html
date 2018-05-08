@@ -267,7 +267,7 @@
                 href: "/use_case_run_log/1",
                 state:{
                     expanded:true
-                }
+                },
             },
             {
                 text: "批次运行日志",
@@ -277,14 +277,14 @@
                 href: "/batch_run_log/1",
                 state:{
                     expanded:true
-                }
+                },
             }
         ];
         $('#menu_tree').treeview({
             data: tree_data,
             onNodeSelected: function (event, data) {
                 $('#menu_tree').treeview('collapseAll', {silent: true});
-                if (data.text != '批次管理') {
+                if (data.text != '运行日志' && data.levels==1) {
                     $('#menu_tree').treeview('collapseNode', [data.nodeId, {silent: true}]);
                     getMapfromUrl(data);
                 } else if (data.state.selected) {
