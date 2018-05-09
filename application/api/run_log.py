@@ -73,6 +73,37 @@ def get_multi_batch_run_log_info(**kwargs):
 
 
 @table_decorator
+def get_batch_run_log_info(**kwargs):
+    table_name_fix_lst = kwargs.pop('table_name_fix_lst')
+    batch_id = kwargs.get('batch_id')
+    batch_run_log_id = kwargs.get('id')
+    from_time = kwargs.get('from_time')
+    to_time = kwargs.get('to_time')
+    ret = []
+    for table_name in table_name_fix_lst:
+        table = get_batch_run_log_table(table_name)
+        batch_list = [batch_id] if not isinstance(batch_id, list) else batch_id
+        if len(table_name_fix_lst) == 1 and to_time:
+            sql = table.select().where(table.c.start_time.__le__(to_time))
+            if from_time:
+                sql = sql.where(table.c.start_time.__ge__(from_time))
+        elif table_name == table_name_fix_lst[0] and from_time:
+            sql = table.select().where(table.c.start_time.__ge__(from_time))
+        elif table_name == table_name_fix_lst[-1] and to_time:
+            sql = table.select().where(table.c.start_time.__le__(to_time))
+        else:
+            sql = table.select()
+        if batch_id:
+            sql = sql.where(table.c.batch_id.in_(batch_list))
+        if batch_run_log_id:
+            sql = sql.where(table.c.id == batch_run_log_id).order_by(desc(table.c.start_time))
+        else:
+            sql = sql.order_by(desc(table.c.start_time))
+        ret += exec_query(sql, is_list=True)
+    return ret
+
+
+@table_decorator
 def get_batch_run_log_count(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     from_time = kwargs.get('from_time')
@@ -152,9 +183,10 @@ def get_use_case_run_log(**kwargs):
     batch_run_log_id = kwargs.get('batch_run_log_id')
     page_index = kwargs.get('pageIndex')
     page_size = kwargs.get('pageSize')
-    page_index = page_index if page_index else 1
-    page_size = page_size if page_size else 10
-    index = (page_index - 1) * page_size
+    page_index = int(page_index) if page_index else None
+    page_size = int(page_size) if page_size else None
+    if page_size:
+        index = (page_index - 1) * page_size
     total_count = 0
     ret = []
     for table_name in table_name_fix_lst:
@@ -185,6 +217,9 @@ def get_use_case_run_log(**kwargs):
         if batch_run_log_id:
             sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
             count_sql = count_sql.where(table.c.batch_run_log_id == batch_run_log_id)
+        if not page_size:
+            ret += exec_query(sql, is_list=True)
+            continue
         count = exec_query(count_sql, is_list=True)[0]['count_1']
         total_count += count
         limit = page_size - len(ret)
@@ -202,6 +237,7 @@ def get_use_case_run_log(**kwargs):
             break
         sql = sql.offset(offset_num).limit(limit)
         ret += exec_query(sql, is_list=True)
+    print(ret)
     return ret
 
 
