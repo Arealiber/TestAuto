@@ -61,17 +61,24 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
     use_case_start = timeit.default_timer()
     run_pass = True
     use_case_id = use_case_info['id']
+    use_case_log_info = {
+        'use_case_id': use_case_id,
+        'start_time': start_time
+    }
     if batch_log_id:
-        use_case_log_id = RunLogAPI.add_use_case_run_log(**{
-            'use_case_id': use_case_id,
-            'start_time': start_time,
-            'batch_run_log_id': batch_log_id
-        })
-    else:
-        use_case_log_id = RunLogAPI.add_use_case_run_log(**{
-            'use_case_id': use_case_id,
-            'start_time': start_time,
-        })
+        use_case_log_info['batch_run_log_id'] = batch_log_id
+    use_case_log_id =  RunLogAPI.add_use_case_run_log(**use_case_log_info)
+    # if batch_log_id:
+    #     use_case_log_id = RunLogAPI.add_use_case_run_log(**{
+    #         'use_case_id': use_case_id,
+    #         'start_time': start_time,
+    #         'batch_run_log_id': batch_log_id
+    #     })
+    # else:
+    #     use_case_log_id = RunLogAPI.add_use_case_run_log(**{
+    #         'use_case_id': use_case_id,
+    #         'start_time': start_time,
+    #     })
 
     try:
         use_case_info['interface_list'] = []
