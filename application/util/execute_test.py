@@ -323,7 +323,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
 def run_use_case_callback(obj):
     result = obj.result()
     batch_log_id = result['batch_log_id']
-    batch_log = RunLogAPI.get_multi_batch_run_log_info(id=batch_log_id)[0]
+    batch_log = RunLogAPI.get_batch_run_log_info(id=batch_log_id)[0]
     if batch_log['pass_rate'] != -1:
         return
     use_case_count = result['use_case_count']

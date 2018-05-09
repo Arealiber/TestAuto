@@ -128,6 +128,7 @@ def get_use_case_run_log():
     try:
         result = RunLogAPI.get_use_case_run_log(**request.get_json())
     except Exception as e:
+        print(e)
         return jsonify({'success': False, 'res': str(e)})
     result = result
     for use_case_run_log_dict in result:
