@@ -67,7 +67,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
     }
     if batch_log_id:
         use_case_log_info['batch_run_log_id'] = batch_log_id
-    use_case_log_id =  RunLogAPI.add_use_case_run_log(**use_case_log_info)
+    use_case_log_id = RunLogAPI.add_use_case_run_log(**use_case_log_info)
     # if batch_log_id:
     #     use_case_log_id = RunLogAPI.add_use_case_run_log(**{
     #         'use_case_id': use_case_id,
