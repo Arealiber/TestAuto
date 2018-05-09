@@ -59,7 +59,7 @@ def get_menu_tree():
         return jsonify({'success': False, 'res': str(e)})
     menu_tree = []
     for business_line in re_business:
-        business_line_id = business_line.pop('id')
+        business_line_id = business_line.get('id')
         business_line['business_name'] = business_line.pop('business_name')
         business_line['system_line'] = []
         for sys_line in re_system:
