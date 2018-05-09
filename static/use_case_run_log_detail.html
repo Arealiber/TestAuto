@@ -113,9 +113,13 @@
                         show_alert("无接口运行日志，请确认用例是否运行")
                     }
                     $.each(interface_run_log_list, function (i, interface_run_log) {
+                        console.log()
                         var str_res =
-                            "r_header: " + interface_run_log.r_header + '<br/><br/>'
-                            + "r_payload: " + interface_run_log.r_payload;
+                            '返回状态码: ' + interface_run_log.r_code + '<br/><br/>' +
+                            '返回包头: ' + interface_run_log.r_header + '<br/><br/>' +
+                            '返回消息体: ' + interface_run_log.r_payload + '<br/><br/>' +
+                            '请求包头: ' + interface_run_log.s_header + '<br/><br/>' +
+                            '请求消息体: ' + interface_run_log.s_payload;
 
                         if (interface_run_log.error_message){
                              str_res = str_res + '<br/>'+ 'error_message: "' + interface_run_log.error_message + '"<br/>'
