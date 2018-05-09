@@ -219,7 +219,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             'timeout': 10
         }
         interface_log_dict['s_header'] = header if header else ''
-        interface_log_dict['s_payload'] = json.dumps(json_payload) if json_payload else ''
+        interface_log_dict['s_payload'] = json.dumps(json_payload, ensure_ascii=False) if json_payload else ''
         if header:
             request_kwargs['headers'] = json.loads(header)
         if json_payload:
@@ -242,8 +242,8 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'json_response': json_response
             }
             interface_log_dict['r_code'] = r.status_code
-            interface_log_dict['r_header'] = json.dumps(result['header'])
-            interface_log_dict['r_payload'] = json.dumps(result['json_response'])
+            interface_log_dict['r_header'] = json.dumps(result['header'], ensure_ascii=False)
+            interface_log_dict['r_payload'] = json.dumps(result['json_response'], ensure_ascii=False)
         except Exception as e:
             # 数据处理以及日志记录
             interface_log_dict['is_pass'] = False
