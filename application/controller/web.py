@@ -28,7 +28,7 @@ def interface_detail_page(interface_id):
 
 @app.route('/use_case/<page_num>')
 def use_case_page(page_num):
-    return app.send_static_file('use_case.html')
+    return app.send_static_file('use_case_detail.html')
 
 
 @app.route('/use_case_detail/<use_case_id>')

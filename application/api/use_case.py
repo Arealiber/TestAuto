@@ -26,9 +26,9 @@ def get_single_use_case(use_case_id):
     return use_case_info
 
 
-def query_use_case_count():
+def query_use_case_count(**kwargs):
     with session_scope() as session:
-        use_case_count = session.query(UseCase).filter_by(status=1).count()
+        use_case_count = session.query(UseCase).filter_by(status=1).filter_by(**kwargs).count()
     return use_case_count
 
 

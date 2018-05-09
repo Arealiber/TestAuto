@@ -9,186 +9,180 @@
 </head>
 <body>
 <div id="wrapper">
-    <div id="sidebar-wrapper">
+    <div id="sidebar-wrapper" >
         <ul class="sidebar-nav">
-            <li class="sidebar-brand"><a href="/">自动巡检测试系统</a></li>
-
-            <li><a href="/parameter/1">参数管理</a></li>
-
-            <li><a href="/interface/1">接口管理</a></li>
-
-            <li><a href="/use_case/1">用例管理</a></li>
-
-            <li><a href="/batch/1">批次管理</a></li>
-
-            <li><a href="/use_case_run_log/1">运行日志</a></li>
-
-            <li><a href="#">报表</a></li>
-
-            <li><a href="#">注销</a></li>
+            <li class="sidebar-brand" style="width: auto"><a href="/">自动巡检测试系统</a></li>
+            <li id="menu_tree">
+                <span id="case_list"></span>
+            </li>
         </ul>
     </div>
 
     <div id="page-content-wrapper">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/use_case/1">用例管理</a></li>
-                <li class="breadcrumb-item active" aria-current="page">自动化用例</li>
-            </ol>
-        </nav>
-        <HR>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/use_case/1">用例管理</a></li>
+            <li class="breadcrumb-item active" aria-current="page">自动化用例</li>
+        </ol>
+    </nav>
+    <HR>
 
-        <div id="loader"></div>
-        <div id="error_alert" class="alert alert-danger" role="alert"></div>
+    <div id="loader"></div>
+    <div id="error_alert" class="alert alert-danger" role="alert"></div>
 
-        <!--用例基础信息form-->
-        <form id="use_case_form" class="detail_form">
-            <div class="form-group">
-                <label for="use_case_id" style="display: none;">接口id</label>
-                <input style="display: none;" type="text" class="form-control" id="use_case_id" placeholder=""
-                       readonly>
-            </div>
-            <div class="form-group">
-                <label for="use_case_name">名称</label>
-                <input type="text" class="form-control" id="use_case_name" placeholder="用例名称" value="">
-            </div>
-            <div class="form-group">
-                <label for="use_case_desc">描述</label>
-                <input type="text" class="form-control" id="use_case_desc" placeholder="用例描述" value="">
-            </div>
-        </form>
-        <button class="btn btn-primary detail_submit" id="submit_use_case">提交</button>
+    <!--用例基础信息form-->
+    <form id="use_case_form" class="detail_form">
+        <div class="form-group">
+            <label for="use_case_id" style="display: none;">接口id</label>
+            <input style="display: none;" type="text" class="form-control" id="use_case_id" placeholder=""
+                   readonly>
+        </div>
+        <div class="form-group">
+            <label for="use_case_name">名称</label>
+            <input type="text" class="form-control" id="use_case_name" placeholder="用例名称" value="">
+        </div>
+        <div class="form-group">
+            <label for="use_case_desc">描述</label>
+            <input type="text" class="form-control" id="use_case_desc" placeholder="用例描述" value="">
+        </div>
+    </form>
+    <button class="btn btn-primary detail_submit" id="submit_use_case">提交</button>
 
-        <HR>
-        <h6 id="interface_list_title" style="margin: 0 25%">
-            用例接口列表
-            <span class="badge badge-info float-right" data-toggle="modal"
-                  data-target="#how_to_parameter">如何传递参数?</span>
-            <span class="badge badge-info float-right" data-toggle="modal" data-target="#how_to_eval">如何验证接口?</span>
-        </h6>
+    <HR>
+    <h6 id="interface_list_title" style="margin: 0 25%">
+        用例接口列表
+        <span class="badge badge-info float-right" data-toggle="modal"
+              data-target="#how_to_parameter">如何传递参数?</span>
+        <span class="badge badge-info float-right" data-toggle="modal" data-target="#how_to_eval">如何验证接口?</span>
+    </h6>
 
-        <button id="add_interface_button" style="margin: 10px 25%;" type="button" class="btn btn-primary btn-sm"
-                data-toggle="modal"
-                data-target="#addInterfaceModal">
-            新增接口
-        </button>
+    <button id="add_interface_button" style="margin: 10px 25%;" type="button" class="btn btn-primary btn-sm"
+            data-toggle="modal"
+            data-target="#addInterfaceModal">
+        新增接口
+    </button>
 
-        <div id="interface_alert" class="alert alert-danger" role="alert"></div>
+    <div id="interface_alert" class="alert alert-danger" role="alert"></div>
 
-        <!--用例包含接口列表-->
-        <div class="accordion" id="use_case_interface_list"></div>
+    <!--用例包含接口列表-->
+    <div class="accordion" id="use_case_interface_list"></div>
 
-        <!--添加接口弹出框-->
-        <div class="modal fade" id="addInterfaceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">添加接口</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="text" id="interface_search" onkeyup="interfaceSearch()" placeholder="搜索接口">
-                        <!--所有接口列表-->
-                        <ul class="list-group" id="interfaceUL" style="max-height: 300px; overflow-y:scroll;"></ul>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                        <button type="button" name="add_interface" class="btn btn-primary">添加</button>
-                    </div>
+    <!--添加接口弹出框-->
+    <div class="modal fade" id="addInterfaceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">添加接口</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="interface_search" onkeyup="interfaceSearch()" placeholder="搜索接口">
+                    <!--所有接口列表-->
+                    <ul class="list-group" id="interfaceUL" style="max-height: 300px; overflow-y:scroll;"></ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" name="add_interface" class="btn btn-primary">添加</button>
                 </div>
             </div>
         </div>
-
-        <!--删除接口弹出确认框-->
-        <div class="modal fade" id="deleteInterfaceModal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">删除接口</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>确认要删除吗？</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-danger" name="delete-confirm-btn" value="">确认删除</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!--参数说明弹出-->
-        <div class="modal fade" id="how_to_parameter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="whatever">参数说明</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>共有3种方式给用例中的接口指定预留参数进行替换:</p>
-                        <p>1. &nbsp 固定值. 直接填入固定参数值, 如string_value1, 123</p>
-                        <p>2. &nbsp 预先通过参数管理加入系统的固定参数. 通过${param|参数名}的方式表示, 如${param|username}表示预定义的叫username的参数</p>
-                        <p>3. &nbsp 用例中其他接口的返回数据, 通过<br>
-                            ${接口序号|接口数据}数据过滤<br>
-                            表达. 接口数据支持status_code(状态码), header(包头), json_payload(json消息体)三种. <br>
-                            如第二个接口返回{"head": {"a": 1}, "body": {"ret": 0}} 希望选择其消息体中ret参数传入, 则填写<br>
-                            ${2|json_payload}["body"]["ret"]</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!--验证说明弹出-->
-        <div class="modal fade" id="how_to_eval" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="whatever_eval">验证说明</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>接口返回验证方法为填入布朗表达式, 让后台根据填入的布朗表达式进行验证</p>
-                        <p>布朗表达式中可使用${status_code}, ${header}, ${json_payload}分别指代返回的状态码, 包头, json消息体</p>
-                        <p>布朗表达式中也可以使用各种布朗运算符, 如==(等于), !=(不等于), >=(大于等于), and, not, or等一切Python支持的布朗运算符</p>
-                        <p>比如接口返回消息体为{"head": {"a": 1}, "body": {"ret": 0}}<br>
-                            现希望确认此接口返回的状态码为200并且消息体中ret为0, 则可填写:<br>
-                            ${status_code} == 200 and ${json_payload}["body"]["ret"] == 0</p>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
+
+    <!--删除接口弹出确认框-->
+    <div class="modal fade" id="deleteInterfaceModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">删除接口</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>确认要删除吗？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" name="delete-confirm-btn" value="">确认删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--参数说明弹出-->
+    <div class="modal fade" id="how_to_parameter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="whatever">参数说明</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>共有3种方式给用例中的接口指定预留参数进行替换:</p>
+                    <p>1. &nbsp 固定值. 直接填入固定参数值, 如string_value1, 123</p>
+                    <p>2. &nbsp 预先通过参数管理加入系统的固定参数. 通过${param|参数名}的方式表示, 如${param|username}表示预定义的叫username的参数</p>
+                    <p>3. &nbsp 用例中其他接口的返回数据, 通过<br>
+                        ${接口序号|接口数据}数据过滤<br>
+                        表达. 接口数据支持status_code(状态码), header(包头), json_payload(json消息体)三种. <br>
+                        如第二个接口返回{"head": {"a": 1}, "body": {"ret": 0}} 希望选择其消息体中ret参数传入, 则填写<br>
+                        ${2|json_payload}["body"]["ret"]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--验证说明弹出-->
+    <div class="modal fade" id="how_to_eval" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="whatever_eval">验证说明</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>接口返回验证方法为填入布朗表达式, 让后台根据填入的布朗表达式进行验证</p>
+                    <p>布朗表达式中可使用${status_code}, ${header}, ${json_payload}分别指代返回的状态码, 包头, json消息体</p>
+                    <p>布朗表达式中也可以使用各种布朗运算符, 如==(等于), !=(不等于), >=(大于等于), and, not, or等一切Python支持的布朗运算符</p>
+                    <p>比如接口返回消息体为{"head": {"a": 1}, "body": {"ret": 0}}<br>
+                        现希望确认此接口返回的状态码为200并且消息体中ret为0, 则可填写:<br>
+                        ${status_code} == 200 and ${json_payload}["body"]["ret"] == 0</p>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 </div>
 
 <script src="/component/js/jquery-3.3.1.min.js"></script>
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
+<script src="/component/js/moment.min.js"></script>
+<script src="/component/js/treeview.min.js"></script>
+<script src="/js/cmm.js"></script>
 
 <script>
     // 警告内容
     var error_alert = $("#error_alert");
     var loader = $("#loader");
+    var selector_list = $("#page-content-wrapper");
+    selector_list.hide();
 
     function show_alert(alert_text) {
         loader.hide();
@@ -210,8 +204,60 @@
         });
     }
 
+    $.when(treeview_ajax()).then(function () {
+        console.log(treeview_data);
+        var tree_selector = $('#menu_tree');
+        tree_selector.treeview({
+            data: treeview_data,
+            onNodeSelected: function (event, data) {
+                console.log(treeview_data);
+                if (data.text != '用例管理' && data.levels==1) {
+                    getMapfromUrl(data);
+                }else if (data.text == '用例管理'){
+                    getMapfromUrl(data);
+                }
+                var parentNode = tree_selector.treeview('getParent', data.nodeId);
+                if (data.state.expanded){
+                    tree_selector.treeview('collapseNode', [data.nodeId]);
+                }else {
+                    tree_selector.treeview('expandNode', [parentNode.nodeId]);
+                    tree_selector.treeview('expandNode', [data.nodeId]);
+                }
+                console.log(data);
+                if (data.nodes && data.nodes.length > 0){
+                    tree_selector.treeview('toggleNodeSelected', [data.nodeId]);
+                }
+                selector_list.hide();
+                switch (data.levels){
+                    case 1:
+                        console.log(data.levels);
+                        break;
+                    case 2:
+                        console.log(data.levels);
+                        break;
+                    case 3:
+                        console.log(data.levels);
+                        break;
+                    case 4:
+                        console.log(data.levels);
+
+                        break;
+                    case 5:
+                        selector_list.show();
+                        get_use_case_detail(data.use_case_id);
+                        break;
+                }
+            },
+            onNodeCollapsed: function (event, data) {
+                // if (data.levels > 3 && data.nodes && data.nodes.length > 0) {
+                //     tree_selector.treeview('deleteNode', data.nodes)
+                // }
+            }
+        });
+    });
+
     // 读取用例信息并展示
-    $(document).ready(function () {
+    /**$(document).ready(function () {
         var use_case_id = window.location.pathname.split('/').pop();
         if (use_case_id != 'new') {
             $.ajax({
@@ -306,7 +352,7 @@
             $("#submit_use_case").html('新增');
             $("#submit_use_case").show();
         }
-    });
+    });**/
 
     // 获取所有接口列表并放入接口添加列表
     $(document).ready(function () {
@@ -350,6 +396,98 @@
                 }
             }
         }
+    }
+
+    function get_use_case_detail(use_case_id) {
+
+        $.ajax({
+            type: 'post',
+            url: '/use_case/detail',
+            data: JSON.stringify({
+                'id': use_case_id
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                loader.hide();
+                console.log(111, response);
+                if (!response.success) {
+                    show_alert('获取数据失败');
+                } else {
+                    var use_case_detail = response.res;
+                    $("#use_case_id").attr('placeholder', use_case_detail.id);
+                    $("#use_case_name").val(use_case_detail.use_case_name);
+                    $("#use_case_desc").val(use_case_detail.desc);
+
+                    var interface_list = use_case_detail.interface_list;
+                    if (interface_list.length == 0) {
+                        $("#interface_alert").text('此用例目前没有接口，请添加。');
+                        $("#use_case_interface_list").empty();
+                        $("#interface_alert").show()
+                    } else {
+                        $("#interface_alert").hide()
+                        $("#use_case_interface_list").empty();
+                        $.each(interface_list, function (i, interface) {
+                            var move_up_class = 'btn btn-info';
+                            var move_down_class = 'btn btn-info';
+                            if (interface.order == 1) {
+                                move_up_class = 'btn btn-secondary disabled'
+                            }
+                            if (interface.order == interface_list.length) {
+                                move_down_class = 'btn btn-secondary disabled'
+                            }
+                            var interface_card = "<div class=\"card\">\n" +
+                                "                <div class=\"card-header\" data-value=\"" + interface.id + "\" id=\"heading_" + interface.id + "\">\n" +
+                                "                    <h5 class=\"mb-0\">\n" +
+                                "                        <button class=\"btn btn-link collapsed\" type=\"button\" data-toggle=\"collapse\"\n" +
+                                "                                data-target=\"#collapse_" + interface.id + "\" aria-expanded=\"false\" aria-controls=\"collapse_" + interface.id + "\">\n" +
+                                "                            " + (i+1) + ". " + interface.interface_name + "\n" +
+                                "                        </button>\n" +
+                                "                    </h5>\n" +
+                                "                    <div class=\"btn-group btn-group-sm float-right\" data-order=\"" + interface.order + "\" role=\"group\" aria-label=\"Basic example\">\n" +
+                                "                        <button type=\"button\" name=\"move_up\" class=\"move_up " + move_up_class + "\">上移</button>\n" +
+                                "                        <button type=\"button\" name=\"move_down\" class=\"move_down " + move_down_class + "\">下移</button>\n" +
+                                "                        <button type=\"button\" name=\"delete_interface\" class=\"btn btn-info delete_interface\" data-toggle=\"modal\" data-target=\"#deleteInterfaceModal\">删除</button>\n" +
+                                "                    </div>" +
+                                "                </div>\n" +
+                                "                <div id=\"collapse_" + interface.id + "\" class=\"collapse\" aria-labelledby=\"heading_" + interface.id + "\" data-parent=\"#accordion\">\n" +
+                                "                    <div class=\"card-body\">\n" +
+                                "                        <form class='param_form'></form>" +
+                                "                    </div>\n" +
+                                "                </div>\n" +
+                                "            </div>";
+                            $("#use_case_interface_list").append(interface_card);
+                            var param_list = interface.param_list;
+                            $.each(param_list, function (i, param) {
+                                if (param_list.length != 0) {
+                                    var param_string = "<div class=\"form-group row\">\n" +
+                                        "                                <label for=\"param_" + param.id + "\" class=\"col-sm-2 col-form-label\">" + param.parameter_name + "</label>\n" +
+                                        "                                <div class=\"col-sm-10\">\n" +
+                                        "                                    <input class=\"param_input\" type=\"text\" data-value=\"" + param.id + "\" class=\"form-control param_input\" id=\"param_" + param.id + "\" value='" + escapeHtml(param.parameter_value) + "'>\n" +
+                                        "                                </div>\n" +
+                                        "                            </div>";
+                                    $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').append(param_string);
+                                }
+                            });
+                            var eval_string = "<div class=\"form-group row\">\n" +
+                                "                                <label for=\"eval_" + interface.id + "\" class=\"col-sm-2 col-form-label\">验证</label>\n" +
+                                "                                <div class=\"col-sm-10\">\n" +
+                                "                                    <input class=\"eval_input\" type=\"text\" data-value=\"" + interface.id + "\" class=\"form-control param_input\" id=\"eval_" + interface.id + "\" value='" + interface.eval_string + "'>\n" +
+                                "                                </div>\n" +
+                                "                            </div>";
+                            $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').append(eval_string);
+                            var button_string = "<button class=\"btn btn-sm btn-primary param_submit\" id=\"submit_param\">更新</button>";
+                            $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').after(button_string);
+                        })
+                    }
+
+                    $("#use_case_form").show();
+                    $("#submit_use_case").html('更新');
+                    $("#submit_use_case").show();
+                }
+            }
+        })
+
     }
 
     // 接口添加列表点击选中功能

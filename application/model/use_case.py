@@ -22,7 +22,7 @@ class UseCase(Base):
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)
-    function_id = Column(Integer, nullable=False)
+    function_id = Column(Integer, default=0, nullable=False)
 
     def to_dict(self):
         return {

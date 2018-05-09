@@ -130,7 +130,7 @@ function treeview_ajax() {
                         if (system_info.function_line.length > 0) {
                             $.each(system_info.function_line, function (k, function_info) {
                                 var function_text = function_info.function_name;
-                                case_num = function_info.use_case_list.length;
+                                var case_num = function_info.use_case_list.length;
                                 if (case_num > 0) {
                                     function_text = function_text + '(' + case_num + ')'
                                 }
@@ -140,16 +140,18 @@ function treeview_ajax() {
                                     color: "#8f9baa",
                                     backColor: "transparent",
                                     levels: 4,
+                                    function_id: function_info.id,
                                     nodes: []
                                 });
                                 $.each(function_info.use_case_list, function(x, use_case){
-                                    var use_case_text = x + 1 + '.' + use_case;
+                                    var use_case_text = x + 1 + '.' + use_case.use_case_name;
                                     treeview_data[2]['nodes'][i]['nodes'][j]['nodes'][k]['nodes'].push({
                                         text: use_case_text,
                                         tags: ['available'],
                                         color: "black",
                                         backColor: "white",
-                                        levels: 4,
+                                        levels: 5,
+                                        use_case_id: use_case.id,
                                         nodes: []
                                     })
                                 })

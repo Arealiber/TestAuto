@@ -71,20 +71,33 @@ def get_menu_tree():
             for function_line in re_function:
                 if not system_line_id == function_line.get('system_line_id'):
                     continue
-                print(function_line)
                 function_id = function_line.get('id')
                 function_line.pop('system_line_id')
                 case_menu_tree = []
                 use_case_list = Case_API.get_use_case(**{'function_id': function_id})
                 for use_case_info in use_case_list:
-                    print(use_case_info)
                     if use_case_info.get('function_id') and function_id != use_case_info.get('function_id'):
                         continue
-                    case_menu_tree.append(use_case_info.get('use_case_name'))
+                    case_menu_tree.append({'use_case_name': use_case_info.get('use_case_name'),
+                                           'id': use_case_info.get('id')})
                 function_line.update({'use_case_list': case_menu_tree})
                 sys_line['function_line'].append(function_line)
             business_line['system_line'].append(sys_line)
         menu_tree.append({'business_line': business_line})
-    from pprint import pprint
-    pprint(menu_tree)
     return jsonify({'success': True, 'res': menu_tree})
+
+
+@app.route('/menu_tree/use_case/count', methods=['POST'])
+def get_use_case_count_from_function_id():
+    """
+    查询功能模块用例个数
+    :param:function_id
+    :return:
+    """
+    print()
+    try:
+        result = Case_API.query_use_case_count(**request.get_json())
+    except Exception as e:
+        return jsonify({'success': False, 'res': str(e)})
+    print(result)
+    return jsonify({'success': True, 'res': result})
