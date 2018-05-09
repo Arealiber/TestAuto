@@ -20,6 +20,10 @@ executor = ProcessPoolExecutor()
 
 
 def interface_log_insert(interface_log_dict):
+    """
+    记录接口请求日志
+    :param interface_log_dict:      接口请求信息
+    """
     interface_end_time = datetime.utcnow()
     interface_stop = timeit.default_timer()
 
