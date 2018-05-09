@@ -18,8 +18,10 @@ def get_multi_batch_run_log_info(**kwargs):
     batch_run_log_id = kwargs.get('id')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
-    page_index = int(kwargs.get('pageIndex'))
-    page_size = int(kwargs.get('pageSize'))
+    page_index = kwargs.get('pageIndex')
+    page_size = kwargs.get('pageSize')
+    page_index = int(page_index) if page_index else 1
+    page_size = int(page_size) if page_size else 10
     index = (page_index-1)*page_size
     ret = []
     total_count = 0
@@ -148,8 +150,10 @@ def get_use_case_run_log(**kwargs):
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
     batch_run_log_id = kwargs.get('batch_run_log_id')
-    page_index = int(kwargs.get('pageIndex'))
-    page_size = int(kwargs.get('pageSize'))
+    page_index = kwargs.get('pageIndex')
+    page_size = kwargs.get('pageSize')
+    page_index = page_index if page_index else 1
+    page_size = page_size if page_size else 10
     index = (page_index - 1) * page_size
     total_count = 0
     ret = []
