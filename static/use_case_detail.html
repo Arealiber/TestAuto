@@ -11,7 +11,7 @@
 <div id="wrapper">
     <div id="sidebar-wrapper" >
         <ul class="sidebar-nav">
-            <li class="sidebar-brand" style="width: auto"><a href="/">自动巡检测试系统</a></li>
+            <li class="sidebar-brand"><a href="/">自动巡检测试系统</a></li>
             <li id="menu_tree">
                 <span id="case_list"></span>
             </li>
@@ -30,6 +30,7 @@
         <div id="loader"></div>
         <div id="error_alert" class="alert alert-danger" role="alert"></div>
 
+
         <!--用例基础信息form-->
         <form id="use_case_form" class="detail_form">
             <div class="form-group">
@@ -46,7 +47,13 @@
                 <input type="text" class="form-control" id="use_case_desc" placeholder="用例描述" value="">
             </div>
         </form>
-        <button class="btn btn-primary detail_submit" id="submit_use_case">提交</button>
+        <div style="margin-left: 25%">
+            <button class="btn btn-primary" id="submit_use_case">提交</button>
+            <button class="btn btn-danger" id="delete_run_use_case" data-toggle="modal" data-target="#delete_confirm">删除</button>
+            <button class="btn btn-success" id="run_use_case" data-toggle="modal" data-target="#execute_result">运行</button>
+            <button class="btn btn-info" id="async_run_use_case" data-toggle="modal" data-target="#execute_background">异步运行</button>
+
+        </div>
 
         <HR>
         <h6 id="interface_list_title" style="margin: 0 25%">
@@ -190,6 +197,7 @@
         </div>
     </div>
 
+
     <!--执行结果-->
     <div class="modal fade" id="execute_result" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -246,6 +254,8 @@
     var error_alert = $("#error_alert");
     var loader = $("#loader");
     var selector_list = $("#page-content-wrapper");
+    var sidebar_selector = $('#sidebar-wrapper');
+
     selector_list.hide();
 
     function show_alert(alert_text) {
@@ -270,10 +280,12 @@
 
     $.when(treeview_ajax()).then(function () {
         var tree_selector = $('#menu_tree');
+        var use_case_table_selector = $('#use_case_table');
+        $('.add-use-case').hide();
+        use_case_table_selector.hide();
         tree_selector.treeview({
             data: treeview_data,
             onNodeSelected: function (event, data) {
-                console.log(treeview_data);
                 if (data.text != '用例管理' && data.levels==1) {
                     getMapfromUrl(data);
                 }else if (data.text == '用例管理'){
@@ -281,28 +293,30 @@
                 }
                 var parentNode = tree_selector.treeview('getParent', data.nodeId);
                 if (data.state.expanded){
-                    tree_selector.treeview('collapseNode', [data.nodeId]);
+                    tree_selector.treeview('collapseNode', [data.nodeId, { silent: true }]);
                 }else {
                     tree_selector.treeview('expandNode', [parentNode.nodeId]);
-                    tree_selector.treeview('expandNode', [data.nodeId]);
+                    tree_selector.treeview('expandNode', [data.nodeId, { silent: true }]);
                 }
                 if (data.nodes && data.nodes.length > 0){
                     tree_selector.treeview('toggleNodeSelected', [data.nodeId]);
                 }
                 selector_list.hide();
+                changewraperstyle(data, parentNode);
                 switch (data.levels){
                     case 1:
-                        console.log(data.levels);
                         break;
                     case 2:
+                        // get_use_case_of_menu_tree(data);
                         console.log(data.levels);
+                        var result = getallfunctionnodes(data);
+                        console.log(result);
                         break;
                     case 3:
                         console.log(data.levels);
                         break;
                     case 4:
                         console.log(data.levels);
-
                         break;
                     case 5:
                         selector_list.show();
@@ -318,104 +332,6 @@
             }
         });
     });
-
-    // 读取用例信息并展示
-    /**$(document).ready(function () {
-        var use_case_id = window.location.pathname.split('/').pop();
-        if (use_case_id != 'new') {
-            $.ajax({
-                type: 'post',
-                url: '/use_case/detail',
-                data: JSON.stringify({
-                    'id': use_case_id
-                }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    loader.hide();
-                    if (!response.success) {
-                        show_alert('获取数据失败');
-                    } else {
-                        var use_case_detail = response.res;
-                        $("#use_case_id").attr('placeholder', use_case_detail.id);
-                        $("#use_case_name").val(use_case_detail.use_case_name);
-                        $("#use_case_desc").val(use_case_detail.desc);
-
-                        var interface_list = use_case_detail.interface_list;
-                        if (interface_list.length == 0) {
-                            $("#interface_alert").text('此用例目前没有接口，请添加。')
-                            $("#interface_alert").show()
-                        } else {
-                            $.each(interface_list, function (i, interface) {
-                                var move_up_class = 'btn btn-info';
-                                var move_down_class = 'btn btn-info';
-                                if (interface.order == 1) {
-                                    move_up_class = 'btn btn-secondary disabled'
-                                }
-                                if (interface.order == interface_list.length) {
-                                    move_down_class = 'btn btn-secondary disabled'
-                                }
-                                var interface_card = "<div class=\"card\">\n" +
-                                    "                <div class=\"card-header\" data-value=\"" + interface.id + "\" id=\"heading_" + interface.id + "\">\n" +
-                                    "                    <h5 class=\"mb-0\">\n" +
-                                    "                        <button class=\"btn btn-link collapsed\" type=\"button\" data-toggle=\"collapse\"\n" +
-                                    "                                data-target=\"#collapse_" + interface.id + "\" aria-expanded=\"false\" aria-controls=\"collapse_" + interface.id + "\">\n" +
-                                    "                            " + (i+1) + ". " + interface.interface_name + "\n" +
-                                    "                        </button>\n" +
-                                    "                    </h5>\n" +
-                                    "                    <div class=\"btn-group btn-group-sm float-right\" data-order=\"" + interface.order + "\" role=\"group\" aria-label=\"Basic example\">\n" +
-                                    "                        <button type=\"button\" name=\"move_up\" class=\"move_up " + move_up_class + "\">上移</button>\n" +
-                                    "                        <button type=\"button\" name=\"move_down\" class=\"move_down " + move_down_class + "\">下移</button>\n" +
-                                    "                        <button type=\"button\" name=\"delete_interface\" class=\"btn btn-info delete_interface\" data-toggle=\"modal\" data-target=\"#deleteInterfaceModal\">删除</button>\n" +
-                                    "                    </div>" +
-                                    "                </div>\n" +
-                                    "                <div id=\"collapse_" + interface.id + "\" class=\"collapse\" aria-labelledby=\"heading_" + interface.id + "\" data-parent=\"#accordion\">\n" +
-                                    "                    <div class=\"card-body\">\n" +
-                                    "                        <form class='param_form'></form>" +
-                                    "                    </div>\n" +
-                                    "                </div>\n" +
-                                    "            </div>";
-                                $("#use_case_interface_list").append(interface_card);
-                                var param_list = interface.param_list;
-                                $.each(param_list, function (i, param) {
-                                    if (param_list.length != 0) {
-                                        var param_string = "<div class=\"form-group row\">\n" +
-                                            "                                <label for=\"param_" + param.id + "\" class=\"col-sm-2 col-form-label\">" + param.parameter_name + "</label>\n" +
-                                            "                                <div class=\"col-sm-10\">\n" +
-                                            "                                    <input class=\"param_input\" type=\"text\" data-value=\"" + param.id + "\" class=\"form-control param_input\" id=\"param_" + param.id + "\" value='" + escapeHtml(param.parameter_value) + "'>\n" +
-                                            "                                </div>\n" +
-                                            "                            </div>";
-                                        $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').append(param_string);
-                                    }
-                                });
-                                var eval_string = "<div class=\"form-group row\">\n" +
-                                    "                                <label for=\"eval_" + interface.id + "\" class=\"col-sm-2 col-form-label\">验证</label>\n" +
-                                    "                                <div class=\"col-sm-10\">\n" +
-                                    "                                    <input class=\"eval_input\" type=\"text\" data-value=\"" + interface.id + "\" class=\"form-control param_input\" id=\"eval_" + interface.id + "\" value='" + interface.eval_string + "'>\n" +
-                                    "                                </div>\n" +
-                                    "                            </div>";
-                                $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').append(eval_string);
-                                var button_string = "<button class=\"btn btn-sm btn-primary param_submit\" id=\"submit_param\">更新</button>";
-                                $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').after(button_string);
-                            })
-                        }
-
-                        $("#use_case_form").show();
-                        $("#submit_use_case").html('更新');
-                        $("#submit_use_case").show();
-                    }
-                }
-            })
-        } else {
-            $("#interface_list_title").hide();
-            $("#add_interface_button").hide();
-            $("#use_case_interface_list").hide();
-            loader.hide();
-            $("#use_case_form").show();
-            $("#submit_use_case").html('新增');
-            $("#submit_use_case").show();
-        }
-    });**/
 
     // 获取所有接口列表并放入接口添加列表
     $(document).ready(function () {
@@ -760,8 +676,8 @@
 
     // 预删除动作
     $(document).ready(function () {
-        $("#use_case_table").on('click', '.delete-button', function () {
-            var to_delete = $(this).val();
+        $("#delete_run_use_case").click(function () {
+            var to_delete = $('#use_case_id').attr('placeholder');
             var delete_button = $('button[name="delete-confirm-btn"]');
             delete_button.val(to_delete)
         })
@@ -770,7 +686,7 @@
     // 确认删除
     $(document).ready(function () {
         $('button[name="delete-confirm-btn"]').click(function () {
-            var id_to_delete = $(this).val();
+            var id_to_delete = $('#use_case_id').attr('placeholder');
             $.ajax({
                 type: 'post',
                 url: '/use_case/delete',
@@ -802,12 +718,12 @@
 
     // 执行
     $(document).ready(function () {
-        $("#use_case_table").on('click', '.execute-button', function () {
+        $("#run_use_case").click(function () {
             var execute_result_display = $("#execute_result_display");
             execute_result_display.empty();
             $("#execute_loader").show();
             $("#execute_alert").hide();
-            var use_case_id = $(this).val();
+            var use_case_id = $('#use_case_id').attr('placeholder');
             $.ajax({
                 type: 'post',
                 url: '/use_case/execute',
@@ -853,8 +769,8 @@
 
     // 提交异步执行
     $(document).ready(function () {
-        $("#use_case_table").on('click', '.execute-background', function () {
-            var use_case_id = $(this).val();
+        $("#async_run_use_case").click(function () {
+            var use_case_id = $('#use_case_id').attr('placeholder');
             $.ajax({
                 type: 'post',
                 url: '/use_case/execute/background',
@@ -869,6 +785,142 @@
             })
         })
     });
+
+    //用例列表展示
+    function get_use_case_of_menu_tree(data) {
+        $.ajax({
+            type: 'get',
+            url: '/use_case/count',
+            success: function (response) {
+                var pagesize = 20;
+                if (!response.success) {
+                    show_alert('获取用例失败');
+                } else if (response.res == 0) {
+                    show_alert('没有用例数据，请新增')
+                } else {
+                    var total_use_case = response.res;
+                    var page_num = window.location.pathname.split('/').pop();
+                    var total_page = Math.ceil(total_use_case / pagesize);
+                    if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
+                        show_alert('无此页数据');
+                    } else {
+                        var previous_page = $('li[id="previous_page"]');
+                        var next_page = $('li[id="next_page"]');
+                        if (total_page == 1) {
+                            previous_page.addClass('disabled');
+                            next_page.addClass('disabled')
+                        }
+                        else if (page_num == 1) {
+                            previous_page.addClass('disabled');
+                            next_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) + 1))
+                        } else if (page_num == total_page) {
+                            next_page.addClass('disabled');
+                            previous_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) - 1))
+                        } else {
+                            next_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) + 1));
+                            previous_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) - 1))
+                        }
+                        var page_item_string = '';
+                        var pre_page_item_string = '';
+                        var after_page_item_string = '';
+                        for (var i = 1; i <= total_page; i++) {
+                            if (i == page_num) {
+                                page_item_string += '<li class="page-item active"><a class="page-link" href="/use_case/' + i + '">' + i + '</a></li>'
+                            } else if (i>page_num && i-page_num >3){
+                                pre_page_item_string = '<li class="page-item"><a class="page-link" href="/use_case/'+(Number(page_num)+4)+'">...</a></li>';
+                            } else if ( i < page_num && page_num - i >3 ){
+                                after_page_item_string = '<li class="page-item"><a class="page-link" href="/use_case/'+(Number(page_num)-4)+'">...</a></li>'
+                            } else {
+                                page_item_string += '<li class="page-item"><a class="page-link" href="/use_case/' + i + '">' + i + '</a></li>'
+                            }
+                        }
+                        if (pre_page_item_string){
+                            page_item_string = page_item_string + pre_page_item_string
+                        }
+                        if (after_page_item_string){
+                            page_item_string = after_page_item_string + page_item_string
+                        }
+                        var first_page_disabled_str = '';
+                        var last_page_disabled_str = '';
+                        if (page_num == 1) {
+                            first_page_disabled_str = ' disabled';
+                            if (page_num == total_page) {
+                                last_page_disabled_str = ' disabled'
+                            }
+                        }else if (page_num == total_page){
+                            last_page_disabled_str = 'disabled'
+                        }
+                        var first_page_string = '<li class="page-item'+ first_page_disabled_str +'" id="first_page"><a class="page-link" href="/use_case/1">首页</a></li>';
+                        var last_page_string = '<li class="page-item'+ last_page_disabled_str +'" id="last_page"><a class="page-link" href="/use_case/'+ total_page +'">尾页</a></li>';
+                        var data_page_string = '<p class="page-data" data-page-text="">第'+page_num+'页/共'+ total_page +'页</p>';
+                        previous_page.before(first_page_string);
+                        previous_page.after(page_item_string);
+                        next_page.after(data_page_string);
+                        next_page.after(last_page_string);
+                        $('#jump_page').attr('data-page_num', page_num);
+
+                        $.ajax({
+                            type: 'post',
+                            url: '/use_case/list',
+                            data: JSON.stringify({
+                                'pageSize': pagesize,
+                                'pageIndex': page_num
+                            }),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (response) {
+                                loader.hide();
+                                if (!response.success) {
+                                    show_alert('获取数据失败')
+                                } else {
+                                    $("#use_case_table").show();
+                                    var use_case_list = response.res;
+                                    $.each(use_case_list, function (i, use_case) {
+                                        var button_col = '<div class="btn-group btn-group-sm" role="group">' +
+                                            '<a class="btn btn-info" href="/use_case_detail/' + use_case.id + '" role="button">详情</a>' +
+                                            '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
+                                            '<button type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
+                                            '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
+                                        $("#use_case_table").find('tbody')
+                                            .append('<tr>' +
+                                                '<th scope="row">' + (pagesize * (page_num - 1) + i + 1) + '</th>' +
+                                                '<td>' + use_case.use_case_name + '</td>' +
+                                                '<td>' + use_case.desc + '</td>' +
+                                                '<td>' + use_case.create_by + '</td>' +
+                                                '<td>' + moment(use_case.create_time).format("YYYY/MM/DD HH:mm") + '</td>' +
+                                                '<td>' + moment(use_case.update_time).format("YYYY/MM/DD HH:mm") + '</td>' +
+                                                '<td>' + button_col + '</td></tr>')
+                                    })
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+        })
+    }
+
+    function getallfunctionnodes(data) {
+        console.log(11111, data);
+        if (data.levels && data.levels > 3) {
+                return data.nodes
+        }else if (!data.levels) {
+            return []
+        }
+        return [].push(getallfunctionnodes(data.nodes))
+    }
+    function changewraperstyle(data, parentNode) {
+        if (data.levels && data.levels > 3 && !data.state.expanded) {
+            sidebar_selector.attr('style',"width: 28%; max-width: 400px");
+            selector_list.find('ol').attr('style', 'margin-left:20%');
+        } else if (!parentNode.state.expanded) {
+            sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
+            selector_list.find('ol').removeAttr('style', 'margin-left:20%');
+        } else if (data.levels == 4 && data.state.expanded) {
+            sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
+            selector_list.find('ol').removeAttr('style', 'margin-left:20%');
+        }
+    }
 
 
 </script>

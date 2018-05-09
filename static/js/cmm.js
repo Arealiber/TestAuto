@@ -108,7 +108,6 @@ function treeview_ajax() {
             treeview_data = getTree();
             treeview_data[2]['nodes'] = [];
             $.each(menu_tree, function (i, business_info) {
-                console.log(business_info);
                 treeview_data[2]['nodes'].push({
                     text: business_info.business_line.business_name,
                     tags: ['available'],
@@ -152,7 +151,7 @@ function treeview_ajax() {
                                         text: use_case_text,
                                         tags: ['available'],
                                         color: "black",
-                                        backColor: "white",
+                                        backColor: "#8f9baa",
                                         levels: 5,
                                         use_case_id: use_case.id,
                                         nodes: []
