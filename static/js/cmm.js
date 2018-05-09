@@ -108,12 +108,14 @@ function treeview_ajax() {
             treeview_data = getTree();
             treeview_data[2]['nodes'] = [];
             $.each(menu_tree, function (i, business_info) {
+                console.log(business_info);
                 treeview_data[2]['nodes'].push({
                     text: business_info.business_line.business_name,
                     tags: ['available'],
                     color: "#8f9baa",
                     backColor: "transparent",
                     levels: 2,
+                    business_id:business_info.business_line.id,
                     nodes: []
                 });
                 if (business_info.business_line.system_line.length > 0) {
@@ -125,6 +127,7 @@ function treeview_ajax() {
                             backColor: "transparent",
                             levels: 3,
                             select_node:'',
+                            system_id:system_info.id,
                             nodes: []
                         });
                         if (system_info.function_line.length > 0) {
