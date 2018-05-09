@@ -309,8 +309,6 @@
                     case 2:
                         // get_use_case_of_menu_tree(data);
                         console.log(data.levels);
-                        var result = getallfunctionnodes(data);
-                        console.log(result);
                         break;
                     case 3:
                         console.log(data.levels);
@@ -900,15 +898,6 @@
         })
     }
 
-    function getallfunctionnodes(data) {
-        console.log(11111, data);
-        if (data.levels && data.levels > 3) {
-                return data.nodes
-        }else if (!data.levels) {
-            return []
-        }
-        return [].push(getallfunctionnodes(data.nodes))
-    }
     function changewraperstyle(data, parentNode) {
         if (data.levels && data.levels > 3 && !data.state.expanded) {
             sidebar_selector.attr('style',"width: 28%; max-width: 400px");
