@@ -57,9 +57,11 @@ def get_interface_run_log_table(table_name):
                       Column('id', Integer, primary_key=True),
                       Column('use_case_run_log_id', Integer, nullable=False),
                       Column('interface_id', Integer, nullable=False),
-                      Column('r_code', String(1000)),
-                      Column('r_header', String(1000)),
-                      Column('r_payload', TEXT),
+                      Column('s_header', TEXT),  # 发送的header
+                      Column('s_payload', TEXT),  # 发送的payload
+                      Column('r_code', String(10)),  # 返回的HTTP code
+                      Column('r_header', TEXT),  # 返回的HTTP header
+                      Column('r_payload', TEXT),  # 返回的json
                       Column('is_pass', Boolean, nullable=False),
                       Column('cost_time', Float, nullable=False),
                       Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),

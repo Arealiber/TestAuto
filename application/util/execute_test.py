@@ -19,6 +19,30 @@ from application import engine
 executor = ProcessPoolExecutor()
 
 
+def interface_log_insert(interface_log_dict):
+    """
+    记录接口请求日志
+    :param interface_log_dict:      接口请求信息
+    """
+    interface_end_time = datetime.utcnow()
+    interface_stop = timeit.default_timer()
+
+    RunLogAPI.add_interface_run_log(**{
+        'use_case_run_log_id': interface_log_dict['use_case_run_log_id'],
+        'interface_id': interface_log_dict['interface_id'],
+        'is_pass': interface_log_dict['is_pass'],
+        'cost_time': interface_stop - interface_log_dict['interface_start'],
+        'start_time': interface_log_dict['interface_start_time'],
+        'end_time': interface_end_time,
+        'error_message': interface_log_dict['error_message'] if 'error_message' in interface_log_dict else '',
+        's_header': interface_log_dict['s_header'] if 's_header' in interface_log_dict else '',
+        's_payload': interface_log_dict['s_payload'] if 's_payload' in interface_log_dict else '',
+        'r_code': interface_log_dict['r_code'] if 'r_code' in interface_log_dict else '',
+        'r_header': interface_log_dict['r_header'] if 'r_header' in interface_log_dict else '',
+        'r_payload': interface_log_dict['r_payload'] if 'r_payload' in interface_log_dict else ''
+    })
+
+
 def use_case_exception_log_update(use_case_log_id, use_case_start):
     """
     用例执行过程中抛出异常时
@@ -61,17 +85,13 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
     use_case_start = timeit.default_timer()
     run_pass = True
     use_case_id = use_case_info['id']
+    use_case_log_info = {
+        'use_case_id': use_case_id,
+        'start_time': start_time
+    }
     if batch_log_id:
-        use_case_log_id = RunLogAPI.add_use_case_run_log(**{
-            'use_case_id': use_case_id,
-            'start_time': start_time,
-            'batch_run_log_id': batch_log_id
-        })
-    else:
-        use_case_log_id = RunLogAPI.add_use_case_run_log(**{
-            'use_case_id': use_case_id,
-            'start_time': start_time,
-        })
+        use_case_log_info['batch_run_log_id'] = batch_log_id
+    use_case_log_id = RunLogAPI.add_use_case_run_log(**use_case_log_info)
 
     try:
         use_case_info['interface_list'] = []
@@ -113,6 +133,12 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
     for interface in interface_list:
         interface_start_time = datetime.utcnow()
         interface_start = timeit.default_timer()
+        interface_log_dict = {
+            'interface_start_time': interface_start_time,
+            'interface_start': interface_start,
+            'use_case_run_log_id': use_case_log_id,
+            'interface_id': interface['id']
+        }
         try:
             request_method = interface['interface_method']
             to_rephrase_list = [interface['interface_url'],
@@ -150,17 +176,9 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             json_payload = result_list[2]
         except Exception as e:
             # 数据处理以及日志记录
-            interface_end_time = datetime.utcnow()
-            interface_stop = timeit.default_timer()
-            RunLogAPI.add_interface_run_log(**{
-                'use_case_run_log_id': use_case_log_id,
-                'interface_id': interface['id'],
-                'is_pass': False,
-                'cost_time': interface_stop - interface_start,
-                'start_time': interface_start_time,
-                'end_time': interface_end_time,
-                'error_message': '参数替换: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-            })
+            interface_log_dict['is_pass'] = False
+            interface_log_dict['error_message'] = '参数替换: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+            interface_log_insert(interface_log_dict)
             # 用例运行日志记录
             use_case_exception_log_update(use_case_log_id, use_case_start)
             return {'success': False,
@@ -182,17 +200,9 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     json_payload = method(json_payload)
         except Exception as e:
             # 数据处理以及日志记录
-            interface_end_time = datetime.utcnow()
-            interface_stop = timeit.default_timer()
-            RunLogAPI.add_interface_run_log(**{
-                'use_case_run_log_id': use_case_log_id,
-                'interface_id': interface['id'],
-                'is_pass': False,
-                'cost_time': interface_stop - interface_start,
-                'start_time': interface_start_time,
-                'end_time': interface_end_time,
-                'error_message': 'json处理或加密: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-            })
+            interface_log_dict['is_pass'] = False
+            interface_log_dict['error_message'] = 'json处理或加密: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+            interface_log_insert(interface_log_dict)
             # 用例运行日志记录
             use_case_exception_log_update(use_case_log_id, use_case_start)
             return {'success': False,
@@ -204,18 +214,20 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     'batch_start_timer': batch_start_timer
                     }
 
+        # 请求接口
+        request_kwargs = {
+            'timeout': 10
+        }
+        interface_log_dict['s_header'] = header if header else ''
+        interface_log_dict['s_payload'] = json.dumps(json_payload) if json_payload else ''
+        if header:
+            request_kwargs['headers'] = json.loads(header)
+        if json_payload:
+            if interface['body_type'] == 0:
+                request_kwargs['json'] = json_payload
+            else:
+                request_kwargs['data'] = json_payload
         try:
-            # 请求接口
-            request_kwargs = {
-                'timeout': 10
-            }
-            if header:
-                request_kwargs['headers'] = json.loads(header)
-            if json_payload:
-                if interface['body_type'] == 0:
-                    request_kwargs['json'] = json_payload
-                else:
-                    request_kwargs['data'] = json_payload
             if request_method.upper() == 'GET':
                 r = session.get(url, **request_kwargs)
             elif request_method.upper() == 'POST':
@@ -229,19 +241,14 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'header': dict(r.headers),
                 'json_response': json_response
             }
+            interface_log_dict['r_code'] = r.status_code
+            interface_log_dict['r_header'] = json.dumps(result['header'])
+            interface_log_dict['r_payload'] = json.dumps(result['json_response'])
         except Exception as e:
             # 数据处理以及日志记录
-            interface_end_time = datetime.utcnow()
-            interface_stop = timeit.default_timer()
-            RunLogAPI.add_interface_run_log(**{
-                'use_case_run_log_id': use_case_log_id,
-                'interface_id': interface['id'],
-                'is_pass': False,
-                'cost_time': interface_stop - interface_start,
-                'start_time': interface_start_time,
-                'end_time': interface_end_time,
-                'error_message': '请求: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-            })
+            interface_log_dict['is_pass'] = False
+            interface_log_dict['error_message'] = '请求: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+            interface_log_insert(interface_log_dict)
             # 用例运行日志记录
             use_case_exception_log_update(use_case_log_id, use_case_start)
             return {'success': False,
@@ -270,19 +277,8 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             run_pass = run_pass and eval_success
             exec_result_list.append(result)
             # 数据处理以及日志记录
-            interface_end_time = datetime.utcnow()
-            interface_stop = timeit.default_timer()
-            RunLogAPI.add_interface_run_log(**{
-                'use_case_run_log_id': use_case_log_id,
-                'interface_id': interface['id'],
-                'r_code': result['status_code'],
-                'r_header': json.dumps(result['header']),
-                'r_payload': json.dumps(result['json_response']),
-                'is_pass': result['success'],
-                'cost_time': interface_stop - interface_start,
-                'start_time': interface_start_time,
-                'end_time': interface_end_time
-            })
+            interface_log_dict['is_pass'] = result['success']
+            interface_log_insert(interface_log_dict)
 
             if not result['success']:
                 run_pass = False
@@ -291,20 +287,9 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             result['success'] = False
             exec_result_list.append(result)
             # 数据处理以及日志记录
-            interface_end_time = datetime.utcnow()
-            interface_stop = timeit.default_timer()
-            RunLogAPI.add_interface_run_log(**{
-                'use_case_run_log_id': use_case_log_id,
-                'interface_id': interface['id'],
-                'r_code': result['status_code'],
-                'r_header': json.dumps(result['header']),
-                'r_payload': json.dumps(result['json_response']),
-                'is_pass': result['success'],
-                'cost_time': interface_stop - interface_start,
-                'start_time': interface_start_time,
-                'end_time': interface_end_time,
-                'error_message': '验证: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-            })
+            interface_log_dict['is_pass'] = result['success']
+            interface_log_dict['error_message'] = '验证: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+            interface_log_insert(interface_log_dict)
             # 用例运行日志记录
             use_case_exception_log_update(use_case_log_id, use_case_start)
             return {'success': False,
