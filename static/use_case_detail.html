@@ -125,7 +125,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                        <button type="button" name="add_interface" class="btn btn-primary">添加</button>
+                        <button type="button" name="add_interface" class="btn btn-primary" data-dismiss="modal">添加</button>
                     </div>
                 </div>
             </div>
@@ -146,7 +146,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-danger" name="delete-interface-confirm-btn" value="">确认删除</button>
+                        <button type="button" class="btn btn-danger" name="delete-interface-confirm-btn" data-dismiss="modal" value="">确认删除</button>
                     </div>
                 </div>
             </div>
@@ -381,7 +381,7 @@
                     case 5:
                         selector_list.show();
                         selector_list.find('#loader').show();
-                        get_use_case_detail(data);
+                        get_use_case_detail(data.use_case_id);
                         use_case_table_selector.hide();
                         select_button_append(data.function_id);
                         break;
@@ -433,8 +433,7 @@
             }
         }
     }
-    function get_use_case_detail(data) {
-        var use_case_id = data.use_case_id;
+    function get_use_case_detail(use_case_id) {
         $.ajax({
             type: 'post',
             url: '/use_case/detail',
@@ -471,7 +470,7 @@
                             if (interface.order == interface_list.length) {
                                 move_down_class = 'btn btn-secondary disabled'                            }
                             var interface_card = "<div class=\"card\">\n" +
-                                "                <div class=\"card-header\" data-value=\"" + interface.id + "\" id=\"heading_" + interface.id + "\">\n" +
+                                "                <div class=\"card-header\" data-value=\"" + interface.id + "\" id=\"heading_" + interface.id + '\" data-use_case_id=\"' + use_case_id + "\">\n" +
                                 "                    <h5 class=\"mb-0\">\n" +
                                 "                        <button class=\"btn btn-link collapsed\" type=\"button\" data-toggle=\"collapse\"\n" +
                                 "                                data-target=\"#collapse_" + interface.id + "\" aria-expanded=\"false\" aria-controls=\"collapse_" + interface.id + "\">\n" +
@@ -484,7 +483,7 @@
                                 "                        <button type=\"button\" name=\"delete_interface\" class=\"btn btn-info delete_interface\" data-toggle=\"modal\" data-target=\"#deleteInterfaceModal\">删除</button>\n" +
                                 "                    </div>" +
                                 "                </div>\n" +
-                                "                <div id=\"collapse_" + interface.id + "\" class=\"collapse\" aria-labelledby=\"heading_" + interface.id + "\" data-parent=\"#accordion\">\n" +
+                                "                <div id=\"collapse_" + interface.id + "\" class=\"collapse\" aria-labelledby=\"heading_" + interface.id + "\" data-parent=\"#accordion\" + a+\n" +
                                 "                    <div class=\"card-body\">\n" +
                                 "                        <form class='param_form'></form>" +
                                 "                    </div>\n" +
@@ -560,7 +559,7 @@
                             show_alert('更新数据失败')
                         } else {
                             show_alert('添加成功');
-                            location.reload();
+                            get_use_case_detail(use_case_id);
                         }
                     }
                 })
@@ -664,6 +663,7 @@
     $(document).ready(function () {
         $('button[name="delete-interface-confirm-btn"]').click(function () {
             var id_to_delete = $(this).val();
+            var use_case_id = $("#use_case_interface_list").find('.card-header').data('use_case_id');
             $.ajax({
                 type: 'post',
                 url: '/use_case/relation/delete',
@@ -676,7 +676,7 @@
                     if (!response.success) {
                         show_alert('删除失败')
                     } else {
-                        location.reload()
+                        get_use_case_detail(use_case_id);
                     }
                 }
             })
@@ -689,6 +689,8 @@
             if (!$(this).hasClass('disabled')) {
                 var relation_id = $(this).closest('.card-header').data('value');
                 var current_order = $(this).closest('.btn-group').data('order');
+                var use_case_id = $(this).closest('.card-header').data('use_case_id');
+                console.log('use_case_id',relation_id, use_case_id);
                 $.ajax({
                     type: 'post',
                     url: '/use_case/relation/reorder',
@@ -702,7 +704,7 @@
                         if (!response.success) {
                             show_alert('更新数据失败')
                         } else {
-                            location.reload()
+                            get_use_case_detail(use_case_id)
                         }
                     }
                 })
@@ -716,6 +718,7 @@
             if (!$(this).hasClass('disabled')) {
                 var relation_id = $(this).closest('.card-header').data('value');
                 var current_order = $(this).closest('.btn-group').data('order');
+                var use_case_id = $(this).closest('.card-header').data('use_case_id');
                 $.ajax({
                     type: 'post',
                     url: '/use_case/relation/reorder',
@@ -729,7 +732,7 @@
                         if (!response.success) {
                             show_alert('更新数据失败')
                         } else {
-                            location.reload()
+                            get_use_case_detail(use_case_id)
                         }
                     }
                 })
@@ -868,14 +871,14 @@
             var use_case_list = use_case_info.use_case_list[0];
             $.each(use_case_list, function (i, use_case) {
                 var button_col = '<div class="btn-group btn-group-sm" role="group">' +
-                    // '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
+                    '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
                     // '<button type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
                     '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                 $("#use_case_table").find('tbody')
                     .append('<tr>' +
                         '<th scope="row">' + (i + 1) + '</th>' +
-                        '<td>' + use_case.text + '</td>' +
-                        '<td>' + use_case_info.text + '</td>' +
+                        '<td>' + use_case.text.split('.')[1] + '</td>' +
+                        '<td>' + use_case_info.text.split('(')[0] + '</td>' +
                         '<td>' + button_col + '</td></tr>')
             })
         }
