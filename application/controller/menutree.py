@@ -13,7 +13,7 @@ def get_system_line():
     :return:
     """
     try:
-        result = MenuTreeAPI.query_system_line(**jsonify())
+        result = MenuTreeAPI.query_system_line(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
     return jsonify({'success': True, 'res': result})
@@ -26,7 +26,7 @@ def get_business_line():
     :return:
     """
     try:
-        result = MenuTreeAPI.query_business_line(**jsonify())
+        result = MenuTreeAPI.query_business_line(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
     return jsonify({'success': True, 'res': result})
@@ -39,7 +39,7 @@ def get_function_line():
     :return:
     """
     try:
-        result = MenuTreeAPI.query_function_line(**jsonify())
+        result = MenuTreeAPI.query_function_line(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
     return jsonify({'success': True, 'res': result})
@@ -66,7 +66,7 @@ def get_menu_tree():
             if not business_line_id == sys_line.get('business_line_id'):
                 continue
             sys_line.pop('business_line_id')
-            system_line_id = sys_line.pop('id')
+            system_line_id = sys_line.get('id')
             sys_line['function_line'] = []
             for function_line in re_function:
                 if not system_line_id == function_line.get('system_line_id'):
@@ -101,3 +101,4 @@ def get_use_case_count_from_function_id():
         return jsonify({'success': False, 'res': str(e)})
     print(result)
     return jsonify({'success': True, 'res': result})
+
