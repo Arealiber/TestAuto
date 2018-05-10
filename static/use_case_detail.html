@@ -25,7 +25,7 @@
                 <li class="breadcrumb-item active" aria-current="page">自动化用例</li>
             </ol>
         </nav>
-        <button id="add_use_case" class="btn btn-primary" role="button" style="margin-bottom: 20px;">新增用例</button>
+        <button id="add_use_case" class="btn btn-primary btn-sm" role="button" style="margin-bottom: 20px;">新增用例</button>
         <HR>
 
         <div id="loader-copy"></div>
@@ -75,8 +75,8 @@
             </div>
             <div class="form-group">
                 <label for="function_name">功能名称</label>
-                <select style="display: none;" class="form-control" id="function_name">
-                    <option value="0"></option>
+                <select class="form-control" id="function_name">
+                    <!--<option value="0"></option>-->
                 </select>
             </div>
         </form>
@@ -311,6 +311,19 @@
         });
     }
 
+    function change_wraper_style(data, parentNode) {
+        if (data.levels && data.levels > 3 && !data.state.expanded) {
+            sidebar_selector.attr('style',"width: 28%; max-width: 400px");
+            selector_list.find('ol').attr('style', 'margin-left:20%');
+        } else if (!parentNode.state.expanded) {
+            sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
+            selector_list.find('ol').removeAttr('style', 'margin-left:20%');
+        } else if (data.levels == 4 && data.state.expanded) {
+            sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
+            selector_list.find('ol').removeAttr('style', 'margin-left:20%');
+        }
+    }
+
     $.when(treeview_ajax()).then(function () {
         var tree_selector = $('#menu_tree');
         var use_case_table_selector = $('#use_case-wrapper');
@@ -318,7 +331,10 @@
         tree_selector.treeview({
             data: treeview_data,
             onNodeSelected: function (event, data) {
-                use_case_table_selector.hide();
+                $('#use_case_form').hide();
+                $("#interface_list_title").show();
+                $("#add_interface_button").show();
+                $("#use_case_interface_list").show();
                 if (data.text != '用例管理' && data.levels==1) {
                     getMapfromUrl(data);
                 }else if (data.text == '用例管理'){
@@ -335,12 +351,11 @@
                     tree_selector.treeview('toggleNodeSelected', [data.nodeId]);
                 }
                 selector_list.hide();
-                changewraperstyle(data, parentNode);
+                change_wraper_style(data, parentNode);
                 switch (data.levels){
                     case 1:
                         break;
                     case 2:
-                        // get_use_case_of_menu_tree(data);
                         let result = get_use_case_info(data);
                         console.log(result);
                         break;
@@ -349,18 +364,17 @@
                         break;
                     case 4:
                         console.log(data.levels);
+                        use_case_table_selector.hide();
                         break;
                     case 5:
                         selector_list.show();
                         selector_list.find('#loader').show();
-                        get_use_case_detail(data.use_case_id);
+                        get_use_case_detail(data);
+                        use_case_table_selector.hide();
+
+                        select_button_append(data.function_id);
                         break;
                 }
-            },
-            onNodeCollapsed: function (event, data) {
-                // if (data.levels > 3 && data.nodes && data.nodes.length > 0) {
-                //     tree_selector.treeview('deleteNode', data.nodes)
-                // }
             }
         });
     });
@@ -408,8 +422,9 @@
             }
         }
     }
-
-    function get_use_case_detail(use_case_id) {
+    function get_use_case_detail(data) {
+        console.log(data);
+        var use_case_id = data.use_case_id;
         $.ajax({
             type: 'post',
             url: '/use_case/detail',
@@ -442,8 +457,7 @@
                                 move_up_class = 'btn btn-secondary disabled'
                             }
                             if (interface.order == interface_list.length) {
-                                move_down_class = 'btn btn-secondary disabled'
-                            }
+                                move_down_class = 'btn btn-secondary disabled'                            }
                             var interface_card = "<div class=\"card\">\n" +
                                 "                <div class=\"card-header\" data-value=\"" + interface.id + "\" id=\"heading_" + interface.id + "\">\n" +
                                 "                    <h5 class=\"mb-0\">\n" +
@@ -546,11 +560,15 @@
     //添加或更新用例基本信息
     $(document).ready(function () {
         $("#submit_use_case").click(function () {
+            var function_id = $("#function_name").val();
             var use_case_dict = {
                 'use_case_name': $("#use_case_name").val(),
                 'desc': $("#use_case_desc").val(),
-                'function_id':$("#function_name").val()
+                'function_id': function_id
             };
+            if (function_id ==0) {
+
+            }
             var use_case_id = $("#use_case_id").attr('placeholder');
             if (!use_case_id) {
                 var url = '/use_case/add';
@@ -819,11 +837,40 @@
         })
     });
 
+
+    function get_use_case_info(data) {
+        let use_case_list = [];
+        let nodes_info = data.nodes;
+        if (nodes_info.length < 1)
+            return nodes_info;
+        let start_case = data.levels + 1;
+        switch (start_case) {
+            case 3:
+                $.each(nodes_info, function (i, node) {
+                    if (node.nodes.length > 0) {
+                        $.each(node.nodes, function (j, child_node) {
+                            if (child_node.nodes.length > 0) {
+                                use_case_list.push(child_node.nodes)
+                            }
+                        })
+                    }
+                });
+                break;
+            case 4:
+                $.each(nodes_info, function (i, node) {
+                    if (node.nodes.length > 0) {
+                        use_case_list.push(node.nodes)
+                    }
+                });
+                break;
+        }
+        return {'use_case_list': use_case_list, 'text': data.text}
+
     //用例列表展示
     function get_use_case_of_menu_tree(data) {
-        let use_case_list = get_use_case_info(data);
+        let tree_info = get_use_case_info(data);
         let pagesize = 20;
-        if (use_case_list.length <= 0) {
+        if (tree_info.use_case_list.length <= 0) {
             show_alert('没有用例数据，请新增')
         } else {
             var total_use_case = use_case_list.length;
@@ -904,46 +951,7 @@
         }
     }
 
-    function changewraperstyle(data, parentNode) {
-        if (data.levels && data.levels > 3 && !data.state.expanded) {
-            sidebar_selector.attr('style',"width: 28%; max-width: 400px");
-            selector_list.find('ol').attr('style', 'margin-left:20%');
-        } else if (!parentNode.state.expanded) {
-            sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
-            selector_list.find('ol').removeAttr('style', 'margin-left:20%');
-        } else if (data.levels == 4 && data.state.expanded) {
-            sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
-            selector_list.find('ol').removeAttr('style', 'margin-left:20%');
-        }
-    }
 
-    function get_use_case_info(data) {
-        let use_case_list = [];
-        let nodes_info = data.nodes;
-        if (nodes_info.length < 1)
-            return nodes_info;
-        let start_case = data.levels + 1;
-        switch (start_case) {
-            case 3:
-                $.each(nodes_info, function (i, node) {
-                    if (node.nodes.length > 0) {
-                        $.each(node.nodes, function (j, child_node) {
-                            if (child_node.nodes.length > 0) {
-                                use_case_list.push(child_node.nodes)
-                            }
-                        })
-                    }
-                });
-                break;
-            case 4:
-                $.each(nodes_info, function (i, node) {
-                    if (node.nodes.length > 0) {
-                        use_case_list.push(node.nodes)
-                    }
-                });
-                break;
-        }
-        return use_case_list
 
     }
     $(document).ready(function () {
@@ -958,26 +966,41 @@
             $("#use_case_form").show();
             $("#submit_use_case").html('新增用例');
             $("#submit_use_case").show();
-            $.ajax({
-                type: 'post',
-                url: '/menu_tree/function_line/info',
-                data: JSON.stringify({}),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    var function_list = response.res;
-                    if (function_list.length > 0) {
-                        console.log(111111111);
-                        $.each(function_list, function (i, function_info) {
-                            $("#function_name").append('<option value="' + function_info.id + '">' + function_info.function_name + '</option>')
-                        })
-                    }
-                }
-            });
+            select_button_append();
             $("#function_name").show();
 
         })
-    })
+    });
+
+    function select_button_append(function_line_id=null) {
+        $("#function_name").empty();
+        $.ajax({
+            type: 'post',
+            url: '/menu_tree/function_line/info',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var function_list = response.res;
+                var append_str = '<option value="0"></option>';
+                if (function_line_id) {
+                    append_str = '';
+                }
+                console.log(function_list)
+                if (function_list.length > 0) {
+                    $.each(function_list, function (i, function_info) {
+                        if (!function_line_id || function_line_id != function_info.id) {
+                            append_str += '<option value="' + function_info.id + '">' + function_info.function_name + '</option>'
+                        } else {
+                            append_str = '<option value="' + function_info.id + '">' + function_info.function_name + '</option>' + append_str
+                        }
+                    });
+                    $("#function_name").append(append_str)
+                }
+            }
+        });
+        $("#function_name").show();
+    }
 
     function reflesh_use_case_table(data) {
         let use_case_list = get_use_case_info();
@@ -1077,8 +1100,8 @@
                                     var use_case_list = response.res;
                                     $.each(use_case_list, function (i, use_case) {
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
-                                            '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
-                                            '<button type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
+                                            // '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
+                                            // '<button type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
                                             '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                                         $("#use_case_table").find('tbody')
                                             .append('<tr>' +

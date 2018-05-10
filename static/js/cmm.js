@@ -154,6 +154,7 @@ function treeview_ajax() {
                                         backColor: "#8f9baa",
                                         levels: 5,
                                         use_case_id: use_case.id,
+                                        function_id: function_info.id,
                                         nodes: []
                                     })
                                 })
