@@ -66,11 +66,25 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
         engine.dispose()
     exec_result_list = []
     interface_count = 1
+
+    # 信息初始化
+    start_time = datetime.utcnow()
+    use_case_start = timeit.default_timer()
+    run_pass = True
+    use_case_log_info = {
+        'use_case_id': use_case_id,
+        'start_time': start_time
+    }
+    if batch_log_id:
+        use_case_log_info['batch_run_log_id'] = batch_log_id
+    use_case_log_id = RunLogAPI.add_use_case_run_log(**use_case_log_info)
+
     # 获取用例信息以及用例下接口信息
     try:
         use_case_info = Case_API.get_use_case(id=use_case_id)[0]
         interface_list = Case_API.get_relation(use_case_id=use_case_id)
     except Exception as e:
+        use_case_exception_log_update(use_case_log_id, use_case_start)
         return {'success': False,
                 'error_str': '接口{0}数据库'.format(interface_count),
                 'res': exec_result_list,
@@ -79,19 +93,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'use_case_count': use_case_count,
                 'batch_start_timer': batch_start_timer
                 }
-
-    # 信息初始化
-    start_time = datetime.utcnow()
-    use_case_start = timeit.default_timer()
-    run_pass = True
-    use_case_id = use_case_info['id']
-    use_case_log_info = {
-        'use_case_id': use_case_id,
-        'start_time': start_time
-    }
-    if batch_log_id:
-        use_case_log_info['batch_run_log_id'] = batch_log_id
-    use_case_log_id = RunLogAPI.add_use_case_run_log(**use_case_log_info)
 
     try:
         use_case_info['interface_list'] = []
@@ -368,6 +369,8 @@ def run_batch(batch_id):
         'start_time': start_time
     })
 
+    counter = 0
     for relation in relation_list:
+        counter += 1
         use_case = UseCaseAPI.get_use_case(id=relation['use_case_id'])[0]
         run_use_case_async(use_case['id'], batch_log_id, use_case_count, start_timer)
