@@ -115,6 +115,7 @@ function treeview_ajax() {
                     backColor: "transparent",
                     levels: 2,
                     business_id:business_info.business_line.id,
+                    use_case_num: 0,
                     nodes: []
                 });
                 if (business_info.business_line.system_line.length > 0) {
@@ -127,6 +128,7 @@ function treeview_ajax() {
                             levels: 3,
                             select_node:'',
                             system_id:system_info.id,
+                            use_case_num: 0,
                             nodes: []
                         });
                         if (system_info.function_line.length > 0) {
@@ -134,7 +136,9 @@ function treeview_ajax() {
                                 var function_text = function_info.function_name;
                                 var case_num = function_info.use_case_list.length;
                                 if (case_num > 0) {
-                                    function_text = function_text + '(' + case_num + ')'
+                                    function_text = function_text + '(' + case_num + ')';
+                                    treeview_data[2]['nodes'][i]['nodes'][j].use_case_num += case_num;
+                                    treeview_data[2]['nodes'][i].use_case_num +=case_num;
                                 }
                                 treeview_data[2]['nodes'][i]['nodes'][j]['nodes'].push({
                                     text: function_text,
@@ -143,6 +147,7 @@ function treeview_ajax() {
                                     backColor: "transparent",
                                     levels: 4,
                                     function_id: function_info.id,
+                                    use_case_num: case_num,
                                     nodes: []
                                 });
                                 $.each(function_info.use_case_list, function(x, use_case){
@@ -157,11 +162,18 @@ function treeview_ajax() {
                                         function_id: function_info.id,
                                         nodes: []
                                     })
-                                })
+                                });
                             });
+                        }
+                        if (treeview_data[2]['nodes'][i]['nodes'][j].use_case_num > 0) {
+                            treeview_data[2]['nodes'][i]['nodes'][j].text += '(' + treeview_data[2]['nodes'][i]['nodes'][j].use_case_num + ')';
                         }
                     });
                 }
+                if (treeview_data[2]['nodes'][i].use_case_num > 0) {
+                    treeview_data[2]['nodes'][i].text += '(' + treeview_data[2]['nodes'][i].use_case_num + ')';
+                }
+
             });
         }
     });
