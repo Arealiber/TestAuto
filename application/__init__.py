@@ -1,5 +1,4 @@
 import os
-import gc
 from contextlib import contextmanager
 from flask import Flask
 from sqlalchemy import create_engine
