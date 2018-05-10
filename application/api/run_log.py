@@ -237,7 +237,6 @@ def get_use_case_run_log(**kwargs):
             break
         sql = sql.offset(offset_num).limit(limit)
         ret += exec_query(sql, is_list=True)
-    print(ret)
     return ret
 
 
