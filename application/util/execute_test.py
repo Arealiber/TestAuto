@@ -31,7 +31,7 @@ def interface_log_insert(interface_log_dict):
         'use_case_run_log_id': interface_log_dict['use_case_run_log_id'],
         'interface_id': interface_log_dict['interface_id'],
         'is_pass': interface_log_dict['is_pass'],
-        'cost_time': interface_stop - interface_log_dict['interface_start'],
+        'cost_time': interface_stop - interface_log_dict['interface_start'] if 'interface_start' in interface_log_dict else 0,
         'start_time': interface_log_dict['interface_start_time'],
         'end_time': interface_end_time,
         'error_message': interface_log_dict['error_message'] if 'error_message' in interface_log_dict else '',
