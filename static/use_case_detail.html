@@ -25,11 +25,11 @@
                 <li class="breadcrumb-item active" aria-current="page">自动化用例</li>
             </ol>
         </nav>
-        <button id="add_use_case" class="btn btn-primary btn-sm" role="button" style="margin-bottom: 20px;">新增用例</button>
+        <button id="add_use_case" class="btn btn-primary btn-sm" role="button" style="margin-bottom: 20px; margin-left: 1%">新增用例</button>
         <HR>
 
-        <div id="loader-copy"></div>
-        <div id="error_alert_copy" class="alert alert-danger" role="alert"></div>
+        <div id="loader_use_case"></div>
+        <div id="error_alert_use_case" class="alert alert-danger" role="alert"></div>
 
         <table class="table" id="use_case_table">
             <thead>
@@ -82,7 +82,7 @@
         </form>
         <div style="margin-left: 25%">
             <button class="btn btn-primary" id="submit_use_case">提交</button>
-            <button class="btn btn-danger" id="delete_run_use_case" data-toggle="modal" data-target="#delete_confirm">删除</button>
+            <button class="btn btn-danger" id="delete_use_case" data-toggle="modal" data-target="#delete_confirm">删除</button>
             <button class="btn btn-success" id="run_use_case" data-toggle="modal" data-target="#execute_result">运行</button>
             <button class="btn btn-info" id="async_run_use_case" data-toggle="modal" data-target="#execute_background">异步运行</button>
 
@@ -146,7 +146,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-danger" name="delete-confirm-btn" value="">确认删除</button>
+                        <button type="button" class="btn btn-danger" name="delete-interface-confirm-btn" value="">确认删除</button>
                     </div>
                 </div>
             </div>
@@ -224,7 +224,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-danger" name="delete-confirm-btn" value="">确认删除</button>
+                    <button type="button" class="btn btn-danger" name="delete-use-case-confirm-btn" value="">确认删除</button>
                 </div>
             </div>
         </div>
@@ -286,8 +286,12 @@
     // 警告内容
     var error_alert = $("#error_alert");
     var loader = $("#loader");
+    var error_alert_use_case = $("#error_alert_use_case");
+    var loader_use_case = $("#loader_use_case");
     var selector_list = $("#page-content-wrapper");
     var sidebar_selector = $('#sidebar-wrapper');
+    var tree_selector = $('#menu_tree');
+    var use_case_table_selector = $('#use_case-wrapper');
 
     selector_list.hide();
 
@@ -295,6 +299,11 @@
         loader.hide();
         error_alert.text(alert_text);
         error_alert.show();
+    }
+    function show_alert_use_case(alert_text) {
+        loader_use_case.hide();
+        error_alert_use_case.text(alert_text);
+        error_alert_use_case.show();
     }
 
     function escapeHtml(string) {
@@ -312,21 +321,23 @@
     }
 
     function change_wraper_style(data, parentNode) {
-        if (data.levels && data.levels > 3 && !data.state.expanded) {
+        if (data.levels && data.levels > 3 && !data.state.expanded || data.levels >4) {
             sidebar_selector.attr('style',"width: 28%; max-width: 400px");
             selector_list.find('ol').attr('style', 'margin-left:20%');
+            $('#use_case-wrapper').attr('style', 'margin-left:20%');
         } else if (!parentNode.state.expanded) {
             sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
             selector_list.find('ol').removeAttr('style', 'margin-left:20%');
+            $('#use_case-wrapper').removeAttr('style', 'margin-left:20%');
         } else if (data.levels == 4 && data.state.expanded) {
             sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
             selector_list.find('ol').removeAttr('style', 'margin-left:20%');
+            $('#use_case-wrapper').removeAttr('style', 'margin-left:20%');
         }
     }
 
     $.when(treeview_ajax()).then(function () {
-        var tree_selector = $('#menu_tree');
-        var use_case_table_selector = $('#use_case-wrapper');
+
         $('.add-use-case').hide();
         tree_selector.treeview({
             data: treeview_data,
@@ -352,6 +363,10 @@
                 }
                 selector_list.hide();
                 change_wraper_style(data, parentNode);
+                if (data.levels < 5) {
+                    filter_use_case_table(data);
+                    use_case_table_selector.show()
+                }
                 switch (data.levels){
                     case 1:
                         break;
@@ -364,14 +379,12 @@
                         break;
                     case 4:
                         console.log(data.levels);
-                        use_case_table_selector.hide();
                         break;
                     case 5:
                         selector_list.show();
                         selector_list.find('#loader').show();
                         get_use_case_detail(data);
                         use_case_table_selector.hide();
-
                         select_button_append(data.function_id);
                         break;
                 }
@@ -423,7 +436,6 @@
         }
     }
     function get_use_case_detail(data) {
-        console.log(data);
         var use_case_id = data.use_case_id;
         $.ajax({
             type: 'post',
@@ -544,7 +556,6 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
-                        console.log(response)
                         if (!response.success) {
                             show_alert('更新数据失败')
                         } else {
@@ -585,6 +596,7 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
+                    console.log(response);
                     if (!response.success) {
                         show_alert('更新数据失败');
                     } else {
@@ -643,14 +655,14 @@
     $(document).ready(function () {
         $("#use_case_interface_list").on('click', '.delete_interface', function () {
             var to_delete = $(this).closest('.card-header').data('value');
-            var delete_button = $('button[name="delete-confirm-btn"]');
+            var delete_button = $('button[name="delete-interface-confirm-btn"]');
             delete_button.val(to_delete)
         })
     });
 
     // 删除接口
     $(document).ready(function () {
-        $('button[name="delete-confirm-btn"]').click(function () {
+        $('button[name="delete-interface-confirm-btn"]').click(function () {
             var id_to_delete = $(this).val();
             $.ajax({
                 type: 'post',
@@ -727,16 +739,16 @@
 
     // 预删除动作
     $(document).ready(function () {
-        $("#delete_run_use_case").click(function () {
+        $("#delete_use_case").click(function () {
             var to_delete = $('#use_case_id').attr('placeholder');
-            var delete_button = $('button[name="delete-confirm-btn"]');
+            var delete_button = $('button[name="delete-use-case-confirm-btn"]');
             delete_button.val(to_delete)
         })
     });
 
     // 确认删除
     $(document).ready(function () {
-        $('button[name="delete-confirm-btn"]').click(function () {
+        $('button[name="delete-use-case-confirm-btn"]').click(function () {
             var id_to_delete = $('#use_case_id').attr('placeholder');
             $.ajax({
                 type: 'post',
@@ -838,6 +850,36 @@
     });
 
 
+    function filter_use_case_table(data) {
+        error_alert_use_case.hide();
+        let use_case_info = get_use_case_info(data);
+        $("#use_case_table").find('tbody').empty();
+        if (use_case_info.length <= 0) {
+            $("#use_case_table").hide();
+            show_alert_use_case('没有找到相关用例')
+        }
+        else if (use_case_info.use_case_list.length <= 0) {
+            $("#use_case_table").hide();
+            show_alert_use_case('没有找到相关用例')
+        } else {
+            $("#use_case_table").show();
+            var use_case_list = use_case_info.use_case_list[0];
+            $.each(use_case_list, function (i, use_case) {
+                var button_col = '<div class="btn-group btn-group-sm" role="group">' +
+                    // '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
+                    // '<button type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
+                    '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
+                $("#use_case_table").find('tbody')
+                    .append('<tr>' +
+                        '<th scope="row">' + (i + 1) + '</th>' +
+                        '<td>' + use_case.text + '</td>' +
+                        '<td>' + use_case_info.text + '</td>' +
+                        '<td>' + button_col + '</td></tr>')
+            })
+        }
+    }
+
+
     function get_use_case_info(data) {
         let use_case_list = [];
         let nodes_info = data.nodes;
@@ -863,6 +905,9 @@
                     }
                 });
                 break;
+            case 5:
+                use_case_list.push(nodes_info);
+                break
         }
         return {'use_case_list': use_case_list, 'text': data.text}
 
@@ -956,6 +1001,9 @@
     }
     $(document).ready(function () {
         $('#add_use_case').click(function () {
+            $('#delete_use_case').hide();
+            $('#run_use_case').hide();
+            $('#async_run_use_case').hide();
             $('#use_case-wrapper').hide();
             selector_list.show();
             selector_list.find('#loader').show();
@@ -986,7 +1034,6 @@
                 if (function_line_id) {
                     append_str = '';
                 }
-                console.log(function_list)
                 if (function_list.length > 0) {
                     $.each(function_list, function (i, function_info) {
                         if (!function_line_id || function_line_id != function_info.id) {
@@ -1000,14 +1047,6 @@
             }
         });
         $("#function_name").show();
-    }
-
-    function reflesh_use_case_table(data) {
-        let use_case_list = get_use_case_info();
-        $("#use_case_table").find('tbody').empty();
-        $.each(use_case_list, function (i, use_case) {
-
-        })
     }
 
     $(document).ready(function () {
