@@ -82,7 +82,7 @@
         </form>
         <div style="margin-left: 25%">
             <button class="btn btn-primary" id="submit_use_case">提交</button>
-            <button class="btn btn-danger" id="delete_use_case" data-toggle="modal" data-target="#delete_confirm">删除</button>
+            <button class="btn btn-danger" id="delete_use_case" data-toggle="modal" data-target="#delete_confirm" value="">删除</button>
             <button class="btn btn-success" id="run_use_case" data-toggle="modal" data-target="#execute_result">运行</button>
             <button class="btn btn-info" id="async_run_use_case" data-toggle="modal" data-target="#execute_background">异步运行</button>
 
@@ -451,6 +451,7 @@
                 } else {
                     var use_case_detail = response.res;
                     $("#use_case_id").attr('placeholder', use_case_detail.id);
+                    $("#delete_use_case").val(use_case_detail.id);
                     $("#use_case_name").val(use_case_detail.use_case_name);
                     $("#use_case_desc").val(use_case_detail.desc);
 
@@ -739,8 +740,9 @@
 
     // 预删除动作
     $(document).ready(function () {
-        $("#delete_use_case").click(function () {
-            var to_delete = $('#use_case_id').attr('placeholder');
+        $("#wrapper").on('click', 'button', function () {
+            var to_delete = $(this).val();
+            console.log(to_delete);
             var delete_button = $('button[name="delete-use-case-confirm-btn"]');
             delete_button.val(to_delete)
         })
