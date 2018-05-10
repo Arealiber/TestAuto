@@ -18,6 +18,33 @@
         </ul>
     </div>
 
+    <div id="use_case-wrapper">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/use_case/1">用例管理</a></li>
+                <li class="breadcrumb-item active" aria-current="page">自动化用例</li>
+            </ol>
+        </nav>
+        <button id="add_use_case" class="btn btn-primary" role="button" style="margin-bottom: 20px;">新增用例</button>
+        <HR>
+
+        <div id="loader-copy"></div>
+        <div id="error_alert_copy" class="alert alert-danger" role="alert"></div>
+
+        <table class="table" id="use_case_table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">用例名称</th>
+                <th scope="col">模块名称</th>
+                <th scope="col">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
     <div id="page-content-wrapper">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -45,6 +72,12 @@
             <div class="form-group">
                 <label for="use_case_desc">描述</label>
                 <input type="text" class="form-control" id="use_case_desc" placeholder="用例描述" value="">
+            </div>
+            <div class="form-group">
+                <label for="function_name">功能名称</label>
+                <select style="display: none;" class="form-control" id="function_name">
+                    <option value="0"></option>
+                </select>
             </div>
         </form>
         <div style="margin-left: 25%">
@@ -176,7 +209,7 @@
 
     </div>
 
-        <!--删除确认-->
+    <!--删除确认-->
     <div class="modal fade" id="delete_confirm" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -280,12 +313,12 @@
 
     $.when(treeview_ajax()).then(function () {
         var tree_selector = $('#menu_tree');
-        var use_case_table_selector = $('#use_case_table');
+        var use_case_table_selector = $('#use_case-wrapper');
         $('.add-use-case').hide();
-        use_case_table_selector.hide();
         tree_selector.treeview({
             data: treeview_data,
             onNodeSelected: function (event, data) {
+                use_case_table_selector.hide();
                 if (data.text != '用例管理' && data.levels==1) {
                     getMapfromUrl(data);
                 }else if (data.text == '用例管理'){
@@ -308,7 +341,8 @@
                         break;
                     case 2:
                         // get_use_case_of_menu_tree(data);
-                        console.log(data.levels);
+                        let result = get_use_case_info(data);
+                        console.log(result);
                         break;
                     case 3:
                         console.log(data.levels);
@@ -514,7 +548,8 @@
         $("#submit_use_case").click(function () {
             var use_case_dict = {
                 'use_case_name': $("#use_case_name").val(),
-                'desc': $("#use_case_desc").val()
+                'desc': $("#use_case_desc").val(),
+                'function_id':$("#function_name").val()
             };
             var use_case_id = $("#use_case_id").attr('placeholder');
             if (!use_case_id) {
@@ -786,6 +821,173 @@
 
     //用例列表展示
     function get_use_case_of_menu_tree(data) {
+        let use_case_list = get_use_case_info(data);
+        let pagesize = 20;
+        if (use_case_list.length <= 0) {
+            show_alert('没有用例数据，请新增')
+        } else {
+            var total_use_case = use_case_list.length;
+            var page_num = 1;
+            var total_page = Math.ceil(total_use_case / pagesize);
+            if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
+                show_alert('无此页数据');
+            } else {
+                var previous_page = $('li[id="previous_page"]');
+                var next_page = $('li[id="next_page"]');
+                if (total_page == 1) {
+                    previous_page.addClass('disabled');
+                    next_page.addClass('disabled')
+                }
+                else if (page_num == 1) {
+                    previous_page.addClass('disabled');
+                    next_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) + 1))
+                } else if (page_num == total_page) {
+                    next_page.addClass('disabled');
+                    previous_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) - 1))
+                } else {
+                    next_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) + 1));
+                    previous_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) - 1))
+                }
+                var page_item_string = '';
+                var pre_page_item_string = '';
+                var after_page_item_string = '';
+                for (var i = 1; i <= total_page; i++) {
+                    if (i == page_num) {
+                        page_item_string += '<li class="page-item active"><a class="page-link" href="/use_case/' + i + '">' + i + '</a></li>'
+                    } else if (i>page_num && i-page_num >3){
+                        pre_page_item_string = '<li class="page-item"><a class="page-link" href="/use_case/'+(Number(page_num)+4)+'">...</a></li>';
+                    } else if ( i < page_num && page_num - i >3 ){
+                        after_page_item_string = '<li class="page-item"><a class="page-link" href="/use_case/'+(Number(page_num)-4)+'">...</a></li>'
+                    } else {
+                        page_item_string += '<li class="page-item"><a class="page-link" href="/use_case/' + i + '">' + i + '</a></li>'
+                    }
+                }
+                if (pre_page_item_string){
+                    page_item_string = page_item_string + pre_page_item_string
+                }
+                if (after_page_item_string){
+                    page_item_string = after_page_item_string + page_item_string
+                }
+                var first_page_disabled_str = '';
+                var last_page_disabled_str = '';
+                if (page_num == 1) {
+                    first_page_disabled_str = ' disabled';
+                    if (page_num == total_page) {
+                        last_page_disabled_str = ' disabled'
+                    }
+                }else if (page_num == total_page){
+                    last_page_disabled_str = 'disabled'
+                }
+                var first_page_string = '<li class="page-item'+ first_page_disabled_str +'" id="first_page"><a class="page-link" href="/use_case/1">首页</a></li>';
+                var last_page_string = '<li class="page-item'+ last_page_disabled_str +'" id="last_page"><a class="page-link" href="/use_case/'+ total_page +'">尾页</a></li>';
+                var data_page_string = '<p class="page-data" data-page-text="">第'+page_num+'页/共'+ total_page +'页</p>';
+                previous_page.before(first_page_string);
+                previous_page.after(page_item_string);
+                next_page.after(data_page_string);
+                next_page.after(last_page_string);
+                $('#jump_page').attr('data-page_num', page_num);
+
+                loader.hide();
+                if (!response.success) {
+                    show_alert('获取数据失败')
+                } else {
+                    $("#use_case_table").show();
+                    $.each(use_case_list, function (i, use_case) {
+                        $("#use_case_table").find('tbody')
+                            .append('<tr>' +
+                                '<th scope="row">' + (pagesize * (page_num - 1) + i + 1) + '</th>' +
+                                '<td>' + use_case.use_case_name + '</td>' +
+                                '</tr>')
+                    })
+                }
+            }
+        }
+    }
+
+    function changewraperstyle(data, parentNode) {
+        if (data.levels && data.levels > 3 && !data.state.expanded) {
+            sidebar_selector.attr('style',"width: 28%; max-width: 400px");
+            selector_list.find('ol').attr('style', 'margin-left:20%');
+        } else if (!parentNode.state.expanded) {
+            sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
+            selector_list.find('ol').removeAttr('style', 'margin-left:20%');
+        } else if (data.levels == 4 && data.state.expanded) {
+            sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
+            selector_list.find('ol').removeAttr('style', 'margin-left:20%');
+        }
+    }
+
+    function get_use_case_info(data) {
+        let use_case_list = [];
+        let nodes_info = data.nodes;
+        if (nodes_info.length < 1)
+            return nodes_info;
+        let start_case = data.levels + 1;
+        switch (start_case) {
+            case 3:
+                $.each(nodes_info, function (i, node) {
+                    if (node.nodes.length > 0) {
+                        $.each(node.nodes, function (j, child_node) {
+                            if (child_node.nodes.length > 0) {
+                                use_case_list.push(child_node.nodes)
+                            }
+                        })
+                    }
+                });
+                break;
+            case 4:
+                $.each(nodes_info, function (i, node) {
+                    if (node.nodes.length > 0) {
+                        use_case_list.push(node.nodes)
+                    }
+                });
+                break;
+        }
+        return use_case_list
+
+    }
+    $(document).ready(function () {
+        $('#add_use_case').click(function () {
+            $('#use_case-wrapper').hide();
+            selector_list.show();
+            selector_list.find('#loader').show();
+            $("#interface_list_title").hide();
+            $("#add_interface_button").hide();
+            $("#use_case_interface_list").hide();
+            loader.hide();
+            $("#use_case_form").show();
+            $("#submit_use_case").html('新增用例');
+            $("#submit_use_case").show();
+            $.ajax({
+                type: 'post',
+                url: '/menu_tree/function_line/info',
+                data: JSON.stringify({}),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var function_list = response.res;
+                    if (function_list.length > 0) {
+                        console.log(111111111);
+                        $.each(function_list, function (i, function_info) {
+                            $("#function_name").append('<option value="' + function_info.id + '">' + function_info.function_name + '</option>')
+                        })
+                    }
+                }
+            });
+            $("#function_name").show();
+
+        })
+    })
+
+    function reflesh_use_case_table(data) {
+        let use_case_list = get_use_case_info();
+        $("#use_case_table").find('tbody').empty();
+        $.each(use_case_list, function (i, use_case) {
+
+        })
+    }
+
+    $(document).ready(function () {
         $.ajax({
             type: 'get',
             url: '/use_case/count',
@@ -875,7 +1077,6 @@
                                     var use_case_list = response.res;
                                     $.each(use_case_list, function (i, use_case) {
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
-                                            '<a class="btn btn-info" href="/use_case_detail/' + use_case.id + '" role="button">详情</a>' +
                                             '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
                                             '<button type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
                                             '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
@@ -883,10 +1084,7 @@
                                             .append('<tr>' +
                                                 '<th scope="row">' + (pagesize * (page_num - 1) + i + 1) + '</th>' +
                                                 '<td>' + use_case.use_case_name + '</td>' +
-                                                '<td>' + use_case.desc + '</td>' +
-                                                '<td>' + use_case.create_by + '</td>' +
-                                                '<td>' + moment(use_case.create_time).format("YYYY/MM/DD HH:mm") + '</td>' +
-                                                '<td>' + moment(use_case.update_time).format("YYYY/MM/DD HH:mm") + '</td>' +
+                                                '<td>用例管理</td>' +
                                                 '<td>' + button_col + '</td></tr>')
                                     })
                                 }
@@ -896,20 +1094,7 @@
                 }
             }
         })
-    }
-
-    function changewraperstyle(data, parentNode) {
-        if (data.levels && data.levels > 3 && !data.state.expanded) {
-            sidebar_selector.attr('style',"width: 28%; max-width: 400px");
-            selector_list.find('ol').attr('style', 'margin-left:20%');
-        } else if (!parentNode.state.expanded) {
-            sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
-            selector_list.find('ol').removeAttr('style', 'margin-left:20%');
-        } else if (data.levels == 4 && data.state.expanded) {
-            sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
-            selector_list.find('ol').removeAttr('style', 'margin-left:20%');
-        }
-    }
+    });
 
 
 </script>
