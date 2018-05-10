@@ -25,7 +25,7 @@ def interface_log_insert(interface_log_dict):
     :param interface_log_dict:      接口请求信息
     """
     interface_end_time = datetime.utcnow()
-    interface_stop = timeit.default_timer()
+    interface_stop = interface_log_dict['interface_stop'] if 'interface_stop' in interface_log_dict else timeit.default_timer()
 
     RunLogAPI.add_interface_run_log(**{
         'use_case_run_log_id': interface_log_dict['use_case_run_log_id'],
@@ -131,11 +131,8 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
 
         # 将接口未替换的参数全部替换
     for interface in interface_list:
-        interface_start_time = datetime.utcnow()
-        interface_start = timeit.default_timer()
         interface_log_dict = {
-            'interface_start_time': interface_start_time,
-            'interface_start': interface_start,
+            'interface_start_time': datetime.utcnow(),
             'use_case_run_log_id': use_case_log_id,
             'interface_id': interface['id']
         }
@@ -227,6 +224,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 request_kwargs['json'] = json_payload
             else:
                 request_kwargs['data'] = json_payload
+        interface_log_dict['interface_start'] = timeit.default_timer()
         try:
             if request_method.upper() == 'GET':
                 r = session.get(url, **request_kwargs)
@@ -236,6 +234,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 json_response = r.json()
             except Exception as e:
                 json_response = {}
+            interface_log_dict['interface_stop'] = timeit.default_timer()
             result = {
                 'status_code': r.status_code,
                 'header': dict(r.headers),
