@@ -292,7 +292,6 @@
     var sidebar_selector = $('#sidebar-wrapper');
     var tree_selector = $('#menu_tree');
     var use_case_table_selector = $('#use_case-wrapper');
-
     selector_list.hide();
 
     function show_alert(alert_text) {
@@ -337,7 +336,6 @@
     }
 
     $.when(treeview_ajax()).then(function () {
-
         $('.add-use-case').hide();
         tree_selector.treeview({
             data: treeview_data,
@@ -449,6 +447,7 @@
                 if (!response.success) {
                     show_alert('获取数据失败');
                 } else {
+                    error_alert.hide();
                     var use_case_detail = response.res;
                     $("#use_case_id").attr('placeholder', use_case_detail.id);
                     $("#delete_use_case").val(use_case_detail.id);
@@ -751,7 +750,7 @@
     // 确认删除
     $(document).ready(function () {
         $('button[name="delete-use-case-confirm-btn"]').click(function () {
-            var id_to_delete = $('#use_case_id').attr('placeholder');
+            var id_to_delete = $(this).val();
             $.ajax({
                 type: 'post',
                 url: '/use_case/delete',
@@ -761,6 +760,7 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
+                    console.log(response);
                     if (!response.success) {
                         show_alert('删除接口失败');
                     } else {
@@ -1063,7 +1063,7 @@
                     show_alert('没有用例数据，请新增')
                 } else {
                     var total_use_case = response.res;
-                    var page_num = window.location.pathname.split('/').pop();
+                    var page_num = 1;
                     var total_page = Math.ceil(total_use_case / pagesize);
                     if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
                         show_alert('无此页数据');
