@@ -80,7 +80,7 @@
                 </select>
             </div>
         </form>
-        <div style="margin-left: 25%">
+        <div id="use_case-option" style="margin-left: 25%">
             <button class="btn btn-primary" id="submit_use_case">提交</button>
             <button class="btn btn-danger" id="delete_use_case" data-toggle="modal" data-target="#delete_confirm" value="">删除</button>
             <button class="btn btn-success" id="run_use_case" data-toggle="modal" data-target="#execute_result">运行</button>
@@ -224,7 +224,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-danger" name="delete-use-case-confirm-btn" value="">确认删除</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" name="delete-use-case-confirm-btn" value="">确认删除</button>
                 </div>
             </div>
         </div>
@@ -284,6 +284,7 @@
 
 <script>
     // 警告内容
+    var menu_tree_data = null;
     var error_alert = $("#error_alert");
     var loader = $("#loader");
     var error_alert_use_case = $("#error_alert_use_case");
@@ -340,6 +341,9 @@
         tree_selector.treeview({
             data: treeview_data,
             onNodeSelected: function (event, data) {
+                if (data.levels < 5) {
+                    menu_tree_data = data;
+                }
                 $('#use_case_form').hide();
                 $("#interface_list_title").show();
                 $("#add_interface_button").show();
@@ -434,6 +438,14 @@
         }
     }
     function get_use_case_detail(use_case_id) {
+        $('#delete_use_case').show();
+        $('#run_use_case').show();
+        $('#async_run_use_case').show();
+        $('#use_case-wrapper').show();
+
+        $("#interface_list_title").show();
+        $("#add_interface_button").show();
+        $("#use_case_interface_list").show();
         $.ajax({
             type: 'post',
             url: '/use_case/detail',
@@ -767,7 +779,11 @@
                     if (!response.success) {
                         show_alert('删除接口失败');
                     } else {
-                        window.location.href = '/use_case/1'
+                        console.log(menu_tree_data);
+                        if (!menu_tree_data) {
+                            window.location.href = '/use_case/1'
+                        }
+                        filter_use_case_table(menu_tree_data, id_to_delete)
                     }
                 }
             })
@@ -855,7 +871,8 @@
     });
 
 
-    function filter_use_case_table(data) {
+    function filter_use_case_table(data, del_use_case_id=null) {
+        console.log(del_use_case_id);
         error_alert_use_case.hide();
         let use_case_info = get_use_case_info(data);
         $("#use_case_table").find('tbody').empty();
@@ -873,16 +890,18 @@
             $("#use_case_table").show();
             var use_case_list = use_case_info.use_case_list[0];
             $.each(use_case_list, function (i, use_case) {
-                var button_col = '<div class="btn-group btn-group-sm" role="group">' +
-                    '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
-                    // '<button type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
-                    '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
-                $("#use_case_table").find('tbody')
-                    .append('<tr>' +
-                        '<th scope="row">' + (i + 1) + '</th>' +
-                        '<td>' + use_case.text.split('.')[1] + '</td>' +
-                        '<td>' + use_case_info.text.split('(')[0] + '</td>' +
-                        '<td>' + button_col + '</td></tr>')
+                if (use_case.use_case_id != del_use_case_id) {
+                    var button_col = '<div class="btn-group btn-group-sm" role="group">' +
+                        '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
+                        // '<button type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
+                        '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
+                    $("#use_case_table").find('tbody')
+                        .append('<tr>' +
+                            '<th scope="row">' + (i + 1) + '</th>' +
+                            '<td>' + use_case.text.split('.')[1] + '</td>' +
+                            '<td>' + use_case_info.text.split('(')[0] + '</td>' +
+                            '<td>' + button_col + '</td></tr>')
+                }
             })
         }
     }
