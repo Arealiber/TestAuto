@@ -16,6 +16,7 @@ from application.api import use_case as UseCaseAPI
 from application.api import encryption as EncryptionAPI
 from application import engine
 
+# 多进程执行器
 executor = ProcessPoolExecutor()
 
 
@@ -59,10 +60,6 @@ def use_case_exception_log_update(use_case_log_id, use_case_start):
         'end_time': end_time,
         'cost_time': use_case_stop - use_case_start
     })
-
-
-def log_report():
-    pass
 
 
 def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None, async=False, auto_run=False):
