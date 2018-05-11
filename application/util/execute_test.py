@@ -61,6 +61,10 @@ def use_case_exception_log_update(use_case_log_id, use_case_start):
     })
 
 
+def log_report():
+    pass
+
+
 def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None, async=False, auto_run=False):
     if async:
         engine.dispose()
@@ -117,7 +121,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             use_case_info['interface_list'].append(interface_info)
 
         interface_list = use_case_info['interface_list']
-        session = requests.Session()
     except Exception as e:
         # 用例运行日志记录
         use_case_exception_log_update(use_case_log_id, use_case_start)
@@ -130,178 +133,179 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 'batch_start_timer': batch_start_timer
                 }
 
-        # 将接口未替换的参数全部替换
-    for interface in interface_list:
-        interface_log_dict = {
-            'interface_start_time': datetime.utcnow(),
-            'use_case_run_log_id': use_case_log_id,
-            'interface_id': interface['id']
-        }
-        try:
-            request_method = interface['interface_method']
-            to_rephrase_list = [interface['interface_url'],
-                                interface['interface_header'],
-                                interface['interface_json_payload']]
-            result_list = []
-            param_define_list = interface['param_define_list']
-            for item_to_rephrase in to_rephrase_list:
-                param_list = ParameterUtil.search_parameter(item_to_rephrase)
-                if param_list:
-                    for item in param_list:
-                        param_value = next((param for param in param_define_list if param["parameter_name"] == item))['parameter_value']
-                        value_to_rephrase = ParameterUtil.search_parameter(param_value)
-                        if value_to_rephrase:
-                            for value_info in value_to_rephrase:
-                                order = int(value_info.split('|')[0])
-                                name = value_info.split('|')[1]
-                                if name == 'status_code':
-                                    temp_string = 'exec_result_list[{0}]["status_code"]'.format(str(order - 1))
-                                elif name == 'header':
-                                    temp_string = 'exec_result_list[{0}]["header"]'.format(str(order - 1))
-                                else:
-                                    temp_string = 'exec_result_list[{0}]["json_response"]'.format(str(order - 1))
-                                param_value = param_value.replace('${{{0}}}'.format(value_info), temp_string)
-                            a = []
-                            exec_string = 'a.append({0})'.format(param_value)
-                            exec(exec_string, locals(), locals())
-                            new_param_value = '"{0}"'.format(a[0])
-                            item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), new_param_value)
-                        else:
-                            item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '"{0}"'.format(param_value))
-                result_list.append(item_to_rephrase)
-            url = result_list[0]
-            header = result_list[1]
-            json_payload = result_list[2]
-        except Exception as e:
-            # 数据处理以及日志记录
-            interface_log_dict['is_pass'] = False
-            interface_log_dict['error_message'] = '参数替换: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-            interface_log_insert(interface_log_dict)
-            # 用例运行日志记录
-            use_case_exception_log_update(use_case_log_id, use_case_start)
-            return {'success': False,
-                    'error_str': '接口{0}参数替换'.format(interface_count),
-                    'res': exec_result_list,
-                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
-                    'batch_log_id': batch_log_id,
-                    'use_case_count': use_case_count,
-                    'batch_start_timer': batch_start_timer
-                    }
-
-        try:
-            # 加密
-            if json_payload:
-                json_payload = json.loads(json_payload)
-                if interface['interface_encryption'] != 0:
-                    encryption_method = EncryptionAPI.get_encryption_method(interface['interface_encryption'])
-                    method = getattr(Encryption, encryption_method)
-                    json_payload = method(json_payload)
-        except Exception as e:
-            # 数据处理以及日志记录
-            interface_log_dict['is_pass'] = False
-            interface_log_dict['error_message'] = 'json处理或加密: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-            interface_log_insert(interface_log_dict)
-            # 用例运行日志记录
-            use_case_exception_log_update(use_case_log_id, use_case_start)
-            return {'success': False,
-                    'error_str': '接口{0} json处理或加密'.format(interface_count),
-                    'res': exec_result_list,
-                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
-                    'batch_log_id': batch_log_id,
-                    'use_case_count': use_case_count,
-                    'batch_start_timer': batch_start_timer
-                    }
-
-        # 请求接口
-        request_kwargs = {
-            'timeout': 10
-        }
-        interface_log_dict['s_header'] = header if header else ''
-        interface_log_dict['s_payload'] = json.dumps(json_payload, ensure_ascii=False) if json_payload else ''
-        if header:
-            request_kwargs['headers'] = json.loads(header)
-        if json_payload:
-            if interface['body_type'] == 0:
-                request_kwargs['json'] = json_payload
-            else:
-                request_kwargs['data'] = json_payload
-        interface_log_dict['interface_start'] = timeit.default_timer()
-        try:
-            if request_method.upper() == 'GET':
-                r = session.get(url, **request_kwargs)
-            elif request_method.upper() == 'POST':
-                r = session.post(url, **request_kwargs)
-            try:
-                json_response = r.json()
-            except Exception as e:
-                json_response = {}
-            interface_log_dict['interface_stop'] = timeit.default_timer()
-            result = {
-                'status_code': r.status_code,
-                'header': dict(r.headers),
-                'json_response': json_response
+    with requests.Session() as session:
+        for interface in interface_list:
+            interface_log_dict = {
+                'interface_start_time': datetime.utcnow(),
+                'use_case_run_log_id': use_case_log_id,
+                'interface_id': interface['id']
             }
-            interface_log_dict['r_code'] = r.status_code
-            interface_log_dict['r_header'] = json.dumps(result['header'], ensure_ascii=False)
-            interface_log_dict['r_payload'] = json.dumps(result['json_response'], ensure_ascii=False)
-        except Exception as e:
-            # 数据处理以及日志记录
-            interface_log_dict['is_pass'] = False
-            interface_log_dict['error_message'] = '请求: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-            interface_log_insert(interface_log_dict)
-            # 用例运行日志记录
-            use_case_exception_log_update(use_case_log_id, use_case_start)
-            return {'success': False,
-                    'error_str': '接口{0}请求'.format(interface_count),
-                    'res': exec_result_list,
-                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
-                    'batch_log_id': batch_log_id,
-                    'use_case_count': use_case_count,
-                    'batch_start_timer': batch_start_timer
-                    }
+            try:
+                # 将接口未替换的参数全部替换
+                request_method = interface['interface_method']
+                to_rephrase_list = [interface['interface_url'],
+                                    interface['interface_header'],
+                                    interface['interface_json_payload']]
+                result_list = []
+                param_define_list = interface['param_define_list']
+                for item_to_rephrase in to_rephrase_list:
+                    param_list = ParameterUtil.search_parameter(item_to_rephrase)
+                    if param_list:
+                        for item in param_list:
+                            param_value = next((param for param in param_define_list if param["parameter_name"] == item))['parameter_value']
+                            value_to_rephrase = ParameterUtil.search_parameter(param_value)
+                            if value_to_rephrase:
+                                for value_info in value_to_rephrase:
+                                    order = int(value_info.split('|')[0])
+                                    name = value_info.split('|')[1]
+                                    if name == 'status_code':
+                                        temp_string = 'exec_result_list[{0}]["status_code"]'.format(str(order - 1))
+                                    elif name == 'header':
+                                        temp_string = 'exec_result_list[{0}]["header"]'.format(str(order - 1))
+                                    else:
+                                        temp_string = 'exec_result_list[{0}]["json_response"]'.format(str(order - 1))
+                                    param_value = param_value.replace('${{{0}}}'.format(value_info), temp_string)
+                                a = []
+                                exec_string = 'a.append({0})'.format(param_value)
+                                exec(exec_string, locals(), locals())
+                                new_param_value = '"{0}"'.format(a[0])
+                                item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), new_param_value)
+                            else:
+                                item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '"{0}"'.format(param_value))
+                    result_list.append(item_to_rephrase)
+                url = result_list[0]
+                header = result_list[1]
+                json_payload = result_list[2]
+            except Exception as e:
+                # 数据处理以及日志记录
+                interface_log_dict['is_pass'] = False
+                interface_log_dict['error_message'] = '参数替换: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+                interface_log_insert(interface_log_dict)
+                # 用例运行日志记录
+                use_case_exception_log_update(use_case_log_id, use_case_start)
+                return {'success': False,
+                        'error_str': '接口{0}参数替换'.format(interface_count),
+                        'res': exec_result_list,
+                        'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
+                        'batch_log_id': batch_log_id,
+                        'use_case_count': use_case_count,
+                        'batch_start_timer': batch_start_timer
+                        }
 
-        try:
-            # 验证接口返回
-            eval_string = interface['eval_string']
-            if eval_string:
-                eval_string = eval_string.replace('${status_code}', 'result["status_code"]') \
-                    .replace('${header}', 'result["header"]') \
-                    .replace('${json_payload}', 'result["json_response"]')
-                a = []
-                exec_string = 'a.append({0})'.format(eval_string)
-                exec(exec_string)
-                eval_success = a[0]
-            else:
-                eval_success = True
-            result['success'] = eval_success
-            run_pass = run_pass and eval_success
-            exec_result_list.append(result)
-            # 数据处理以及日志记录
-            interface_log_dict['is_pass'] = result['success']
-            interface_log_insert(interface_log_dict)
+            try:
+                # 加密
+                if json_payload:
+                    json_payload = json.loads(json_payload)
+                    if interface['interface_encryption'] != 0:
+                        encryption_method = EncryptionAPI.get_encryption_method(interface['interface_encryption'])
+                        method = getattr(Encryption, encryption_method)
+                        json_payload = method(json_payload)
+            except Exception as e:
+                # 数据处理以及日志记录
+                interface_log_dict['is_pass'] = False
+                interface_log_dict['error_message'] = 'json处理或加密: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+                interface_log_insert(interface_log_dict)
+                # 用例运行日志记录
+                use_case_exception_log_update(use_case_log_id, use_case_start)
+                return {'success': False,
+                        'error_str': '接口{0} json处理或加密'.format(interface_count),
+                        'res': exec_result_list,
+                        'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
+                        'batch_log_id': batch_log_id,
+                        'use_case_count': use_case_count,
+                        'batch_start_timer': batch_start_timer
+                        }
 
-            if not result['success']:
-                run_pass = False
-                break
-        except Exception as e:
-            result['success'] = False
-            exec_result_list.append(result)
-            # 数据处理以及日志记录
-            interface_log_dict['is_pass'] = result['success']
-            interface_log_dict['error_message'] = '验证: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-            interface_log_insert(interface_log_dict)
-            # 用例运行日志记录
-            use_case_exception_log_update(use_case_log_id, use_case_start)
-            return {'success': False,
-                    'error_str': '接口{0}验证'.format(interface_count),
-                    'res': exec_result_list,
-                    'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
-                    'batch_log_id': batch_log_id,
-                    'use_case_count': use_case_count,
-                    'batch_start_timer': batch_start_timer
-                    }
+            # 请求接口
+            request_kwargs = {
+                'timeout': 10
+            }
+            interface_log_dict['s_header'] = header if header else ''
+            interface_log_dict['s_payload'] = json.dumps(json_payload, ensure_ascii=False) if json_payload else ''
+            if header:
+                request_kwargs['headers'] = json.loads(header)
+            if json_payload:
+                if interface['body_type'] == 0:
+                    request_kwargs['json'] = json_payload
+                else:
+                    request_kwargs['data'] = json_payload
+            interface_log_dict['interface_start'] = timeit.default_timer()
+            try:
+                if request_method.upper() == 'GET':
+                    r = session.get(url, **request_kwargs)
+                elif request_method.upper() == 'POST':
+                    r = session.post(url, **request_kwargs)
+                try:
+                    json_response = r.json()
+                except Exception as e:
+                    json_response = {}
+                interface_log_dict['interface_stop'] = timeit.default_timer()
+                result = {
+                    'status_code': r.status_code,
+                    'header': dict(r.headers),
+                    'json_response': json_response
+                }
+                interface_log_dict['r_code'] = r.status_code
+                interface_log_dict['r_header'] = json.dumps(result['header'], ensure_ascii=False)
+                interface_log_dict['r_payload'] = json.dumps(result['json_response'], ensure_ascii=False)
+            except Exception as e:
+                # 数据处理以及日志记录
+                interface_log_dict['is_pass'] = False
+                interface_log_dict['error_message'] = '请求: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+                interface_log_insert(interface_log_dict)
+                # 用例运行日志记录
+                use_case_exception_log_update(use_case_log_id, use_case_start)
+                return {'success': False,
+                        'error_str': '接口{0}请求'.format(interface_count),
+                        'res': exec_result_list,
+                        'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
+                        'batch_log_id': batch_log_id,
+                        'use_case_count': use_case_count,
+                        'batch_start_timer': batch_start_timer
+                        }
 
-        interface_count += 1
+            try:
+                # 验证接口返回
+                eval_string = interface['eval_string']
+                if eval_string:
+                    eval_string = eval_string.replace('${status_code}', 'result["status_code"]') \
+                        .replace('${header}', 'result["header"]') \
+                        .replace('${json_payload}', 'result["json_response"]')
+                    a = []
+                    exec_string = 'a.append({0})'.format(eval_string)
+                    exec(exec_string)
+                    eval_success = a[0]
+                else:
+                    eval_success = True
+                result['success'] = eval_success
+                run_pass = run_pass and eval_success
+                exec_result_list.append(result)
+                # 数据处理以及日志记录
+                interface_log_dict['is_pass'] = result['success']
+                interface_log_insert(interface_log_dict)
+
+                if not result['success']:
+                    run_pass = False
+                    break
+            except Exception as e:
+                result['success'] = False
+                exec_result_list.append(result)
+                # 数据处理以及日志记录
+                interface_log_dict['is_pass'] = result['success']
+                interface_log_dict['error_message'] = '验证: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+                interface_log_insert(interface_log_dict)
+                # 用例运行日志记录
+                use_case_exception_log_update(use_case_log_id, use_case_start)
+                return {'success': False,
+                        'error_str': '接口{0}验证'.format(interface_count),
+                        'res': exec_result_list,
+                        'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
+                        'batch_log_id': batch_log_id,
+                        'use_case_count': use_case_count,
+                        'batch_start_timer': batch_start_timer
+                        }
+
+            interface_count += 1
 
     # 用例运行日志记录
     use_case_stop = timeit.default_timer()
