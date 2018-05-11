@@ -12,6 +12,11 @@ def get_system_line():
     查询所有系统菜单
     :return:
     """
+    param_args = request.get_json()
+    id = param_args.get('id')
+    system_line_id = param_args.get('business_line_id')
+    param_args.pop('business_line_id') if 'business_line_id' in param_args and system_line_id is None else None
+    param_args.pop('id') if 'id' in param_args and id is None else None
     try:
         result = MenuTreeAPI.query_system_line(**request.get_json())
     except Exception as e:
@@ -56,10 +61,13 @@ def get_menu_tree():
     查询所有菜单
     :return:
     """
+    import time
+    start_time = time.time()
     try:
         re_system = MenuTreeAPI.query_system_line(**request.get_json())
         re_business = MenuTreeAPI.query_business_line(**request.get_json())
         re_function = MenuTreeAPI.query_function_line(**request.get_json())
+        use_case_list = Case_API.get_use_case(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
     menu_tree = []
@@ -79,7 +87,6 @@ def get_menu_tree():
                 function_id = function_line.get('id')
                 function_line.pop('system_line_id')
                 case_menu_tree = []
-                use_case_list = Case_API.get_use_case(**{'function_id': function_id})
                 for use_case_info in use_case_list:
                     if use_case_info.get('function_id') and function_id != use_case_info.get('function_id'):
                         continue
@@ -89,6 +96,7 @@ def get_menu_tree():
                 sys_line['function_line'].append(function_line)
             business_line['system_line'].append(sys_line)
         menu_tree.append({'business_line': business_line})
+    print(time.time() - start_time)
     return jsonify({'success': True, 'res': menu_tree})
 
 
