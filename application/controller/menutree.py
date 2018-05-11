@@ -38,8 +38,13 @@ def get_function_line():
     查询所有功能模块菜单
     :return:
     """
+    param_args = request.get_json()
+    id = param_args.get('id')
+    system_line_id = param_args.get('system_line_id')
+    param_args.pop('system_line_id') if 'system_line_id' in param_args and system_line_id is None else None
+    param_args.pop('id') if 'id' in param_args and id is None else None
     try:
-        result = MenuTreeAPI.query_function_line(**request.get_json())
+        result = MenuTreeAPI.query_function_line(**param_args)
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
     return jsonify({'success': True, 'res': result})

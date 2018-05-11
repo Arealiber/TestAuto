@@ -73,10 +73,19 @@
                 <label for="use_case_desc">描述</label>
                 <input type="text" class="form-control" id="use_case_desc" placeholder="用例描述" value="">
             </div>
+            <div id="business_line" class="form-group" style="display: none">
+                <label for="business_line">业务线</label>
+                <select class="form-control" id="business_name">
+                </select>
+            </div>
+            <div id="system_line" class="form-group" style="display: none">
+                <label for="system_name">系统名称</label>
+                <select class="form-control" id="system_name">
+                </select>
+            </div>
             <div class="form-group">
                 <label for="function_name">功能名称</label>
                 <select class="form-control" id="function_name">
-                    <!--<option value="0"></option>-->
                 </select>
             </div>
         </form>
@@ -376,7 +385,7 @@
                         selector_list.find('#loader').show();
                         get_use_case_detail(data.use_case_id);
                         use_case_table_selector.hide();
-                        select_button_append(data.function_id);
+                        select_function_line_append(data.function_id);
                         break;
                 }
             }
@@ -435,6 +444,8 @@
         $("#interface_list_title").show();
         $("#add_interface_button").show();
         $("#use_case_interface_list").show();
+        $("#business_line").hide();
+        $("#system_line").hide();
         $.ajax({
             type: 'post',
             url: '/use_case/detail',
@@ -1041,19 +1052,24 @@
             $("#use_case_form").show();
             $("#submit_use_case").html('提交');
             $("#submit_use_case").show();
-            select_button_append();
+            select_function_line_append();
             $("#function_name").show();
             loader.hide();
-            $("#interface_alert").hide()
+            $("#interface_alert").hide();
+
+            // $("#business_line").show();
+            // $("#system_line").show();
         })
     });
 
-    function select_button_append(function_line_id=null) {
+    function select_function_line_append(function_line_id=null, system_line_id=null) {
         $("#function_name").empty();
         $.ajax({
             type: 'post',
             url: '/menu_tree/function_line/info',
-            data: JSON.stringify({}),
+            data: JSON.stringify({
+                system_line_id: system_line_id
+            }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
@@ -1068,7 +1084,7 @@
                             append_str += '<option value="' + function_info.id + '">' + function_info.function_name + '</option>'
                         } else {
                             append_str = '<option value="' + function_info.id + '">' + function_info.function_name + '</option>' +
-                                '<option value="0">用例管理</option>' + append_str
+                                '<option value="0"> 用例管理 </option>' + append_str
                         }
                     });
                     $("#function_name").append(append_str)
