@@ -867,6 +867,8 @@
             $("#use_case_table").hide();
             show_alert_use_case('没有找到相关用例')
         } else {
+            $("#use_case_name").val(null);
+            $("#use_case_desc").val(null);
             $("#use_case_id").attr('placeholder', '');
             $("#use_case_table").show();
             var use_case_list = use_case_info.use_case_list[0];
@@ -1015,15 +1017,15 @@
             $("#interface_list_title").hide();
             $("#add_interface_button").hide();
             $("#use_case_interface_list").hide();
-            loader.hide();
             selector_list.show();
             selector_list.find('#loader').show();
             $("#use_case_form").show();
-            $("#submit_use_case").html('新增用例');
+            $("#submit_use_case").html('提交');
             $("#submit_use_case").show();
             select_button_append();
             $("#function_name").show();
-
+            loader.hide();
+            $("#interface_alert").hide()
         })
     });
 
