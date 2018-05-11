@@ -341,9 +341,6 @@
         tree_selector.treeview({
             data: treeview_data,
             onNodeSelected: function (event, data) {
-                if (data.levels < 5) {
-                    menu_tree_data = data;
-                }
                 $('#use_case_form').hide();
                 $("#interface_list_title").show();
                 $("#add_interface_button").show();
@@ -365,22 +362,14 @@
                 }
                 selector_list.hide();
                 change_wraper_style(data, parentNode);
-                if (data.levels < 5) {
-                    filter_use_case_table(data);
-                    use_case_table_selector.show()
-                }
                 switch (data.levels){
                     case 1:
-                        break;
                     case 2:
-                        let result = get_use_case_info(data);
-                        console.log(result);
-                        break;
                     case 3:
-                        console.log(data.levels);
-                        break;
                     case 4:
-                        console.log(data.levels);
+                        menu_tree_data = data;
+                        filter_use_case_table(data);
+                        use_case_table_selector.show();
                         break;
                     case 5:
                         selector_list.show();
@@ -756,7 +745,6 @@
     $(document).ready(function () {
         $("#wrapper").on('click', 'button', function () {
             var to_delete = $(this).val();
-            console.log(to_delete);
             var delete_button = $('button[name="delete-use-case-confirm-btn"]');
             delete_button.val(to_delete)
         })
@@ -800,79 +788,91 @@
         execute_alert.show();
     }
 
-    // 执行
     $(document).ready(function () {
-        $("#run_use_case").click(function () {
-            var execute_result_display = $("#execute_result_display");
-            execute_result_display.empty();
-            $("#execute_loader").show();
-            $("#execute_alert").hide();
-            var use_case_id = $('#use_case_id').attr('placeholder');
-            $.ajax({
-                type: 'post',
-                url: '/use_case/execute',
-                data: JSON.stringify({
-                    'id': use_case_id
-                }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    $("#execute_loader").hide();
-                    if (!response.success) {
-                        show_execute_alert(response.error_str + '执行失败', 'alert-danger');
-                        execute_result_display.append('<h5>错误信息：</h5>');
-                        execute_result_display.append('<p>' + response.error + '</p>')
-                        var execute_result_list = response.res;
-                        $.each(execute_result_list, function (i, result) {
-                            execute_result_display.append('<h5>接口' + (i+1) + '</h5>');
-                            execute_result_display.append('<p>成功：' + result.success  + '</p>');
-                            execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
-                            execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
-                            execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
-                        })
-                    } else {
-                        $("#execute_loader").hide();
-                        if (response.res.pass) {
-                            show_execute_alert('执行通过', 'alert-success');
-                        } else {
-                            show_execute_alert('执行不通过', 'alert-warning')
-                        }
-                        var execute_result_list = response.res.res;
-                        $.each(execute_result_list, function (i, result) {
-                            execute_result_display.append('<h5>接口' + (i+1) + '</h5>');
-                            execute_result_display.append('<p>成功：' + result.success  + '</p>');
-                            execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
-                            execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
-                            execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
-                        })
-                    }
+        $("#wrapper").on('click', 'button', function () {
+            var use_case_id = '';
+            if (this.name == 'table_run_use_case' || this.id == 'run_use_case'){
+                use_case_id = this.value;
+                if (this.id == 'run_use_case') {
+                    use_case_id = $('#use_case_id').attr('placeholder');
                 }
-            })
+                run_use_case(use_case_id)
+            } else if(this.name == 'table_async_run_use_case' || this.id == 'async_run_use_case') {
+                use_case_id = this.value;
+                if (this.id == 'async_run_use_case') {
+                    use_case_id = $('#use_case_id').attr('placeholder');
+                }
+                asyc_run_use_case(use_case_id)
+            }
         })
     });
+
+    // 执行
+    function run_use_case(use_case_id){
+        var execute_result_display = $("#execute_result_display");
+        execute_result_display.empty();
+        $("#execute_loader").show();
+        $("#execute_alert").hide();
+        $.ajax({
+            type: 'post',
+            url: '/use_case/execute',
+            data: JSON.stringify({
+                'id': use_case_id
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#execute_loader").hide();
+                if (!response.success) {
+                    show_execute_alert(response.error_str + '执行失败', 'alert-danger');
+                    execute_result_display.append('<h5>错误信息：</h5>');
+                    execute_result_display.append('<p>' + response.error + '</p>')
+                    var execute_result_list = response.res;
+                    $.each(execute_result_list, function (i, result) {
+                        execute_result_display.append('<h5>接口' + (i+1) + '</h5>');
+                        execute_result_display.append('<p>成功：' + result.success  + '</p>');
+                        execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
+                        execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
+                        execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
+                    })
+                } else {
+                    $("#execute_loader").hide();
+                    if (response.res.pass) {
+                        show_execute_alert('执行通过', 'alert-success');
+                    } else {
+                        show_execute_alert('执行不通过', 'alert-warning')
+                    }
+                    var execute_result_list = response.res.res;
+                    $.each(execute_result_list, function (i, result) {
+                        execute_result_display.append('<h5>接口' + (i+1) + '</h5>');
+                        execute_result_display.append('<p>成功：' + result.success  + '</p>');
+                        execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
+                        execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
+                        execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
+                    })
+                }
+            }
+        })
+    }
 
     // 提交异步执行
-    $(document).ready(function () {
-        $("#async_run_use_case").click(function () {
-            var use_case_id = $('#use_case_id').attr('placeholder');
-            $.ajax({
-                type: 'post',
-                url: '/use_case/execute/background',
-                data: JSON.stringify({
-                    'id': use_case_id
-                }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success:function () {
-
-                }
-            })
+    function asyc_run_use_case(use_case_id) {
+        $.ajax({
+            type: 'post',
+            url: '/use_case/execute/background',
+            data: JSON.stringify({
+                'id': use_case_id
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function () {
+            }
         })
-    });
+
+    }
 
 
     function filter_use_case_table(data, del_use_case_id=null) {
-        console.log(del_use_case_id);
         error_alert_use_case.hide();
         let use_case_info = get_use_case_info(data);
         $("#use_case_table").find('tbody').empty();
@@ -892,9 +892,9 @@
             $.each(use_case_list, function (i, use_case) {
                 if (use_case.use_case_id != del_use_case_id) {
                     var button_col = '<div class="btn-group btn-group-sm" role="group">' +
-                        '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
-                        // '<button type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
-                        '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
+                        '<button name="table_run_use_case" type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
+                        '<button name="table_async_run_use_case" type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
+                        '<button name="delete_use_case_in_table" type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                     $("#use_case_table").find('tbody')
                         .append('<tr>' +
                             '<th scope="row">' + (i + 1) + '</th>' +
@@ -1067,7 +1067,8 @@
                         if (!function_line_id || function_line_id != function_info.id) {
                             append_str += '<option value="' + function_info.id + '">' + function_info.function_name + '</option>'
                         } else {
-                            append_str = '<option value="' + function_info.id + '">' + function_info.function_name + '</option>' + append_str
+                            append_str = '<option value="' + function_info.id + '">' + function_info.function_name + '</option>' +
+                                '<option value="0">用例管理</option>' + append_str
                         }
                     });
                     $("#function_name").append(append_str)
@@ -1167,9 +1168,9 @@
                                     var use_case_list = response.res;
                                     $.each(use_case_list, function (i, use_case) {
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
-                                            // '<button type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
-                                            // '<button type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
-                                            '<button type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
+                                            '<button name="table_run_use_case" type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
+                                            '<button name="table_async_run_use_case" type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
+                                            '<button name="delete_use_case_in_table"  type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
                                         $("#use_case_table").find('tbody')
                                             .append('<tr>' +
                                                 '<th scope="row">' + (pagesize * (page_num - 1) + i + 1) + '</th>' +
