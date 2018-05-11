@@ -183,6 +183,8 @@ def add_case_parameter_relation(**kwargs):
     with session_scope() as session:
         use_case_parameter = UseCaseParameterRelation(**kwargs)
         session.add(use_case_parameter)
+        session.flush()
+        return use_case_parameter.id
 
 
 def get_case_parameter_relation(**kwargs):
