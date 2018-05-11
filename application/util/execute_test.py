@@ -61,7 +61,7 @@ def use_case_exception_log_update(use_case_log_id, use_case_start):
     })
 
 
-def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None, async=False):
+def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None, async=False, auto_run=False):
     if async:
         engine.dispose()
     exec_result_list = []
@@ -350,15 +350,15 @@ def run_use_case_callback(obj):
         return
 
 
-def run_use_case_async(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None):
+def run_use_case_async(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None, auto_run=False):
     if batch_log_id:
-        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer, True).\
+        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer, True, auto_run).\
             add_done_callback(run_use_case_callback)
     else:
-        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer, True)
+        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer, True, auto_run)
 
 
-def run_batch(batch_id):
+def run_batch(batch_id, auto_run=False):
     start_timer = timeit.default_timer()
     relation_list = BatchAPI.get_batch_use_case_relation(batch_id=batch_id)
     use_case_count = len(relation_list)
@@ -373,4 +373,4 @@ def run_batch(batch_id):
     for relation in relation_list:
         counter += 1
         use_case = UseCaseAPI.get_use_case(id=relation['use_case_id'])[0]
-        run_use_case_async(use_case['id'], batch_log_id, use_case_count, start_timer)
+        run_use_case_async(use_case['id'], batch_log_id, use_case_count, start_timer, auto_run)

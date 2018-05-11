@@ -165,5 +165,5 @@ def batch_execute():
 def batch_auto_run():
     batch_list = BatchAPI.get_batch(auto_run=True)
     for batch in batch_list:
-        Exec.run_batch(batch['id'])
+        Exec.run_batch(batch['id'], True)
     return jsonify({'success': True})
