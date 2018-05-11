@@ -61,8 +61,6 @@ def get_menu_tree():
     查询所有菜单
     :return:
     """
-    import time
-    start_time = time.time()
     try:
         re_system = MenuTreeAPI.query_system_line(**request.get_json())
         re_business = MenuTreeAPI.query_business_line(**request.get_json())
@@ -96,7 +94,6 @@ def get_menu_tree():
                 sys_line['function_line'].append(function_line)
             business_line['system_line'].append(sys_line)
         menu_tree.append({'business_line': business_line})
-    print(time.time() - start_time)
     return jsonify({'success': True, 'res': menu_tree})
 
 
@@ -112,6 +109,5 @@ def get_use_case_count_from_function_id():
         result = Case_API.query_use_case_count(**request.get_json())
     except Exception as e:
         return jsonify({'success': False, 'res': str(e)})
-    print(result)
     return jsonify({'success': True, 'res': result})
 
