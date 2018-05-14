@@ -4,6 +4,8 @@ import timeit
 import re
 from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime
+from requests.adapters import HTTPAdapter, DEFAULT_POOLSIZE, DEFAULT_RETRIES, DEFAULT_POOLBLOCK
+from requests.exceptions import ConnectionError, ConnectTimeout
 
 from application.util import encryption as Encryption
 from application.util import parameter as ParameterUtil
@@ -18,6 +20,22 @@ from application import engine
 
 # 多进程执行器
 executor = ProcessPoolExecutor()
+
+
+# http dns解析adapter，讲请求发往指定ip，类似改host
+class DNSResolverHTTPSAdapter(HTTPAdapter):
+    def __init__(self, common_name, host, pool_connections=DEFAULT_POOLSIZE, pool_maxsize=DEFAULT_POOLSIZE, max_retries=DEFAULT_RETRIES, pool_block=DEFAULT_POOLBLOCK):
+        self.__common_name = common_name
+        self.__host = host
+        super(DNSResolverHTTPSAdapter, self).__init__(pool_connections=pool_connections, pool_maxsize=pool_maxsize, max_retries=max_retries, pool_block=pool_block)
+
+    def get_connection(self, url, proxies=None):
+        redirected_url = url.replace(self.__common_name, self.__host)
+        return super(DNSResolverHTTPSAdapter, self).get_connection(redirected_url, proxies=proxies)
+
+    def init_poolmanager(self, connections, maxsize, block=DEFAULT_POOLBLOCK, **pool_kwargs):
+        pool_kwargs['assert_hostname'] = self.__common_name
+        super(DNSResolverHTTPSAdapter, self).init_poolmanager(connections, maxsize, block=block, **pool_kwargs)
 
 
 def interface_log_insert(interface_log_dict):
@@ -245,6 +263,10 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 interface_log_dict['r_code'] = r.status_code
                 interface_log_dict['r_header'] = json.dumps(result['header'], ensure_ascii=False)
                 interface_log_dict['r_payload'] = json.dumps(result['json_response'], ensure_ascii=False)
+            except ConnectTimeout:
+                pass
+            except ConnectionError:
+                pass
             except Exception as e:
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = False
@@ -260,6 +282,8 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                         'use_case_count': use_case_count,
                         'batch_start_timer': batch_start_timer
                         }
+            finally:
+                pass
 
             try:
                 # 验证接口返回
