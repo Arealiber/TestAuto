@@ -235,8 +235,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             request_kwargs = {
                 'timeout': 10
             }
-            interface_log_dict['s_header'] = header if header else ''
-            interface_log_dict['s_payload'] = json.dumps(json_payload, ensure_ascii=False) if json_payload else ''
             if header:
                 request_kwargs['headers'] = json.loads(header)
             if json_payload:
@@ -244,7 +242,11 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     request_kwargs['json'] = json_payload
                 else:
                     request_kwargs['data'] = json_payload
+
+            interface_log_dict['s_header'] = header if header else ''
+            interface_log_dict['s_payload'] = json.dumps(json_payload, ensure_ascii=False) if json_payload else ''
             interface_log_dict['interface_start'] = timeit.default_timer()
+
             request_exception = False
             try:
                 if request_method.upper() == 'GET':
