@@ -3,7 +3,7 @@ import gc
 from contextlib import contextmanager
 from flask import Flask
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import sessionmaker
 
 from application.config import default
 
@@ -28,15 +28,14 @@ engine = create_engine(app.config['DB_URI'] + '?charset=utf8',
                        pool_pre_ping=True)
 
 # SQLAlchemy session
-session_maker = scoped_session(sessionmaker(bind=engine))
+session_factory = sessionmaker(bind=engine)
 
 
 @contextmanager
 def session_scope():
-    session = session_maker()
+    session = session_factory()
     try:
         yield session
-        session.expunge_all()
         session.commit()
     except:
         session.rollback()
