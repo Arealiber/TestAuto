@@ -295,6 +295,7 @@
 <script>
     // 警告内容
     var menu_tree_data = null;
+    var use_case_selected_data = null;
     var error_alert = $("#error_alert");
     var loader = $("#loader");
     var error_alert_use_case = $("#error_alert_use_case");
@@ -391,12 +392,12 @@
                         use_case_table_selector.show();
                         break;
                     case 5:
+                        use_case_selected_data = data;
                         selector_list.show();
                         selector_list.find('#loader').show();
                         get_use_case_detail(data.use_case_id);
                         use_case_table_selector.hide();
                         select_function_line_append(data.function_id);
-                        console.log(data)
                         break;
                 }
             }
@@ -798,8 +799,8 @@
                     if (!response.success) {
                         show_alert('删除接口失败');
                     } else {
-                        console.log(menu_tree_data);
-                        if (!menu_tree_data) {
+                        treeview_ajax();
+                        if (use_case_selected_data.levels > 4) {
                             window.location.href = '/use_case/1'
                         }
                         filter_use_case_table(menu_tree_data, id_to_delete)
