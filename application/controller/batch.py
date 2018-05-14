@@ -4,7 +4,6 @@ from flask import request, jsonify
 from application import app
 from application.api import batch as BatchAPI
 from application.api import use_case as UseCaseAPI
-from application.schema import schema
 from application.util import execute_test as Exec
 
 
