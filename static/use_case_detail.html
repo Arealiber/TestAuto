@@ -1274,7 +1274,7 @@
                             type: 'post',
                             url: '/use_case/list',
                             data: JSON.stringify({
-                                'pageSize': pagesize,
+                                'pageSize': 0, // 表示查询所有
                                 'pageIndex': page_num
                             }),
                             contentType: "application/json; charset=utf-8",

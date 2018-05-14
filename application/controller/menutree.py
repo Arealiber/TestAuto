@@ -86,7 +86,8 @@ def get_menu_tree():
                 function_line.pop('system_line_id')
                 case_menu_tree = []
                 for use_case_info in use_case_list:
-                    if use_case_info.get('function_id') and function_id != use_case_info.get('function_id'):
+                    function_id_of_use_case = use_case_info.get('function_id')
+                    if function_id != function_id_of_use_case:
                         continue
                     case_menu_tree.append({'use_case_name': use_case_info.get('use_case_name'),
                                            'id': use_case_info.get('id')})
