@@ -1,4 +1,5 @@
 import os
+import gc
 from contextlib import contextmanager
 from flask import Flask
 from sqlalchemy import create_engine
@@ -42,3 +43,4 @@ def session_scope():
         raise
     finally:
         session.close()
+        gc.collect()
