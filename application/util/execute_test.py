@@ -245,6 +245,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 else:
                     request_kwargs['data'] = json_payload
             interface_log_dict['interface_start'] = timeit.default_timer()
+            request_exception = False
             try:
                 if request_method.upper() == 'GET':
                     r = session.get(url, **request_kwargs)
@@ -263,27 +264,31 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 interface_log_dict['r_code'] = r.status_code
                 interface_log_dict['r_header'] = json.dumps(result['header'], ensure_ascii=False)
                 interface_log_dict['r_payload'] = json.dumps(result['json_response'], ensure_ascii=False)
-            except ConnectTimeout:
-                pass
-            except ConnectionError:
-                pass
+            except ConnectTimeout as e:
+                request_exception = True
+                error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+            except ConnectionError as e:
+                request_exception = True
+                error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
             except Exception as e:
-                # 数据处理以及日志记录
-                interface_log_dict['is_pass'] = False
-                interface_log_dict['error_message'] = '请求: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-                interface_log_insert(interface_log_dict)
-                # 用例运行日志记录
-                use_case_exception_log_update(use_case_log_id, use_case_start)
-                return {'success': False,
-                        'error_str': '接口{0}请求'.format(interface_count),
-                        'res': exec_result_list,
-                        'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
-                        'batch_log_id': batch_log_id,
-                        'use_case_count': use_case_count,
-                        'batch_start_timer': batch_start_timer
-                        }
+                request_exception = True
+                error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
             finally:
-                pass
+                if request_exception:
+                    # 数据处理以及日志记录
+                    interface_log_dict['is_pass'] = False
+                    interface_log_dict['error_message'] = '请求: {0}'.format(error_string)
+                    interface_log_insert(interface_log_dict)
+                    # 用例运行日志记录
+                    use_case_exception_log_update(use_case_log_id, use_case_start)
+                    return {'success': False,
+                            'error_str': '接口{0}请求'.format(interface_count),
+                            'res': exec_result_list,
+                            'error': error_string,
+                            'batch_log_id': batch_log_id,
+                            'use_case_count': use_case_count,
+                            'batch_start_timer': batch_start_timer
+                            }
 
             try:
                 # 验证接口返回
