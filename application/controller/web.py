@@ -64,3 +64,13 @@ def use_case_run_log_detail(run_log_id):
 @app.route('/batch_run_log/detail/<run_log_id>/<page_num>')
 def batch_run_log_detail(run_log_id, page_num):
     return app.send_static_file('batch_run_log_detail.html')
+
+
+@app.route('/environment/manage')
+def environment_mange():
+    return app.send_static_file('environment.html')
+
+
+@app.route('/environment/detail')
+def environment_detail():
+    return app.send_static_file('environment_detail.html')

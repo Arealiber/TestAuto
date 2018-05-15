@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
@@ -22,6 +23,8 @@ class EnvironmentLine(Base):
         return {
             'id': self.id,
             'environment_name': self.environment_name,
+            'create_time': self.create_time,
+            'update_time': self.update_time
         }
 
 
@@ -32,7 +35,7 @@ class EnvironmentInfo(Base):
         "mysql_charset": "utf8"
     }
     id = Column(Integer, primary_key=True)
-    environment_id = Column(Integer, primary_key=True)
+    environment_id = Column(Integer, nullable=False)
     url = Column(String(100), nullable=False)
     map_ip = Column(String(100), nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
@@ -44,6 +47,8 @@ class EnvironmentInfo(Base):
             'environment_id': self.environment_id,
             'url': self.url,
             'map_ip': self.map_ip,
+            'create_time': self.create_time,
+            'update_time': self.update_time
         }
 
 
