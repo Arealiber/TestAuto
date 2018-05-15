@@ -7,21 +7,21 @@ from application.api import interface as InterfaceAPI
 from application.api import batch as BatchAPI
 from application import app
 from application.util import *
+from application.util.exception import try_except
 
 
 @app.route('/run_log/batch/add', methods=['POST'])
+@try_except
 def add_batch_run_log():
     """
     :return:
     """
-    try:
-        result = RunLogAPI.add_batch_run_log(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    result = RunLogAPI.add_batch_run_log(**request.get_json())
     return jsonify({'success': True, 'res': str(result)})
 
 
 @app.route('/run_log/batch/info', methods=['POST'])
+@try_except
 def get_multi_batch_run_log_info():
     """
     :return:
@@ -37,10 +37,7 @@ def get_multi_batch_run_log_info():
     param_json = request.get_json()
     '' if 'pageIndex' in param_json else param_json.update({'pageIndex': 1})
     '' if 'pageSize' in param_json else param_json.update({'pageSize': 10})
-    try:
-        result = RunLogAPI.get_multi_batch_run_log_info(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    result = RunLogAPI.get_multi_batch_run_log_info(**request.get_json())
     result = result
     for batch_run_log_dict in result:
         batch_run_log = BatchAPI.get_batch(id=batch_run_log_dict.get('batch_id'))
@@ -59,6 +56,7 @@ def get_multi_batch_run_log_info():
 
 
 @app.route('/run_log/batch/count', methods=['POST'])
+@try_except
 def get_batch_run_log_count():
     """
     :return:
@@ -71,26 +69,22 @@ def get_batch_run_log_count():
     if to_time:
         to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, QUERY_TIME_FMT))
         request.get_json().update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
-    try:
-        result = RunLogAPI.get_batch_run_log_count(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    result = RunLogAPI.get_batch_run_log_count(**request.get_json())
     return jsonify({'success': True, 'res': result})
 
 
 @app.route('/run_log/use_case/add', methods=['POST'])
+@try_except
 def add_use_case_run_log():
     """
     :return:
     """
-    try:
-        RunLogAPI.add_use_case_run_log(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    RunLogAPI.add_use_case_run_log(**request.get_json())
     return jsonify({'success': True})
 
 
 @app.route('/run_log/use_case/count', methods=['POST'])
+@try_except
 def get_use_case_run_log_count():
     """
     :return:
@@ -103,14 +97,12 @@ def get_use_case_run_log_count():
     if to_time:
         to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, QUERY_TIME_FMT))
         request.get_json().update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
-    try:
-        result = RunLogAPI.get_use_case_run_log_count(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    result = RunLogAPI.get_use_case_run_log_count(**request.get_json())
     return jsonify({'success': True, 'res': result})
 
 
 @app.route('/run_log/use_case/info', methods=['POST'])
+@try_except
 def get_use_case_run_log():
     """
     :return:
@@ -125,11 +117,7 @@ def get_use_case_run_log():
         request.get_json().update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
     '' if 'pageIndex' in request.get_json() else request.get_json().update({'pageIndex': 1})
     '' if 'pageSize' in request.get_json() else request.get_json().update({'pageSize': 10})
-    try:
-        result = RunLogAPI.get_use_case_run_log(**request.get_json())
-    except Exception as e:
-        print(e)
-        return jsonify({'success': False, 'res': str(e)})
+    result = RunLogAPI.get_use_case_run_log(**request.get_json())
     result = result
     for use_case_run_log_dict in result:
         use_case_id = use_case_run_log_dict.get('use_case_id')
@@ -145,18 +133,17 @@ def get_use_case_run_log():
 
 
 @app.route('/run_log/use_case/add', methods=['POST'])
+@try_except
 def add_interface_run_log():
     """
     :return:
     """
-    try:
-        RunLogAPI.add_interface_run_log(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    RunLogAPI.add_interface_run_log(**request.get_json())
     return jsonify({'success': True})
 
 
 @app.route('/run_log/interface/info', methods=['POST'])
+@try_except
 def get_interface_run_log():
     """
     :param: 必须需要传入use_case_run_log_id
@@ -170,16 +157,10 @@ def get_interface_run_log():
     if to_time:
         to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, QUERY_TIME_FMT))
         request.get_json().update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
-    try:
-        result = RunLogAPI.get_interface_run_log(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    result = RunLogAPI.get_interface_run_log(**request.get_json())
     for interface_run_log_dict in result:
         interface_id = interface_run_log_dict.get('interface_id')
-        try:
-            interface_info = InterfaceAPI.query_single_interface(interface_id)
-        except Exception as e:
-            return jsonify({'success': False, 'res': str(e)})
+        interface_info = InterfaceAPI.query_single_interface(interface_id)
         interface_name = interface_info.get('interface_name')
         interface_run_log_dict.update({'interface_name': interface_name})
         start_time = utc_to_shanghai_timezone(interface_run_log_dict.get('start_time'))

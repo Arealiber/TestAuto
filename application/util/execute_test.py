@@ -235,8 +235,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             request_kwargs = {
                 'timeout': 10
             }
-            interface_log_dict['s_header'] = header if header else ''
-            interface_log_dict['s_payload'] = json.dumps(json_payload, ensure_ascii=False) if json_payload else ''
             if header:
                 request_kwargs['headers'] = json.loads(header)
             if json_payload:
@@ -244,8 +242,34 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     request_kwargs['json'] = json_payload
                 else:
                     request_kwargs['data'] = json_payload
+
+            interface_log_dict['s_header'] = header if header else ''
+            interface_log_dict['s_payload'] = json.dumps(json_payload, ensure_ascii=False) if json_payload else ''
             interface_log_dict['interface_start'] = timeit.default_timer()
+
             request_exception = False
+            # 获取域名对应的服务名
+            get_server_name_dict = {
+                "_head": {
+                    "_version": "0.01",
+                    "_msgType": "request",
+                    "_timestamps": "",
+                    "_invokeId": "",
+                    "_callerServiceId": "",
+                    "_groupNo": "",
+                    "_interface": "get_server_name",
+                    "_remark": ""
+                },
+                "_params": {
+                    "strUrl": url
+                }
+            }
+            try:
+                response = requests.post('http://123.207.51.243:8000/base_server', json=get_server_name_dict)
+                server_name = response.json()['_data']['retInfo']['serverName']
+            except:
+                server_name = '获取服务名失败'
+
             try:
                 if request_method.upper() == 'GET':
                     r = session.get(url, **request_kwargs)
@@ -275,6 +299,10 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
             finally:
                 if request_exception:
+                    if auto_run:
+                        # TODO 请求错误日志上报
+                        pass
+
                     # 数据处理以及日志记录
                     interface_log_dict['is_pass'] = False
                     interface_log_dict['error_message'] = '请求: {0}'.format(error_string)
@@ -310,10 +338,18 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 interface_log_dict['is_pass'] = result['success']
                 interface_log_insert(interface_log_dict)
 
+                if auto_run:
+                    # TODO 验证成功或失败日志上报
+                    pass
+
                 if not result['success']:
                     run_pass = False
                     break
             except Exception as e:
+                if auto_run:
+                    # TODO 验证异常日志上报
+                    pass
+
                 result['success'] = False
                 exec_result_list.append(result)
                 # 数据处理以及日志记录
@@ -376,8 +412,6 @@ def run_use_case_callback(obj):
             'end_time': datetime.utcnow(),
             'cost_time': batch_end_timer - batch_start_timer
         })
-    else:
-        return
 
 
 def run_use_case_async(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None, auto_run=False):

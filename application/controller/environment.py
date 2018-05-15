@@ -77,7 +77,7 @@ def del_environment_line_info():
     return jsonify({'success': True, 'res': environment_info_id})
 
 
-@app.route('/environment/line/detail', methods=['POST'])
+@app.route('/environment/line/delete', methods=['POST'])
 def get_environment_line():
     """
     查询environment_line
@@ -90,7 +90,7 @@ def get_environment_line():
     return jsonify({'success': True, 'res': environment_line_list})
 
 
-@app.route('/environment/line_info/detail', methods=['POST'])
+@app.route('/environment/line_info/delete', methods=['POST'])
 def get_environment_line_info():
     """
     查询environment_line_info
