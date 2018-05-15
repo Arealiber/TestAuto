@@ -36,3 +36,11 @@ def request_log(target_name, target_id, interface, code, cost_time):
     )
     LOGGER.log_report(url_param_string)
 
+
+def exception_log(error_str):
+    """
+    记录error log
+    :param error_str:               异常内容
+    :return:
+    """
+    LOGGER.log_error(error_str)
