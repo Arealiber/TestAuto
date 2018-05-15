@@ -16,6 +16,7 @@ class UseCase(Base):
     }
 
     id = Column(Integer, primary_key=True)
+    environment_id = Column(Integer, nullable=False)
     use_case_name = Column(String(100), nullable=False)
     desc = Column(String(1000))
     create_by = Column(Integer, nullable=False)
@@ -27,6 +28,7 @@ class UseCase(Base):
     def to_dict(self):
         return {
             'id': self.id,
+            'environment_id': self.environment_id,
             'use_case_name': self.use_case_name,
             'desc': self.desc,
             'create_by': self.create_by,

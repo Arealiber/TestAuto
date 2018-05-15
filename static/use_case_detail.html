@@ -89,6 +89,11 @@
                 <select class="form-control" id="function_name">
                 </select>
             </div>
+            <div class="form-group">
+                <label for="environment_name">环境路线</label>
+                <select class="form-control" id="environment_name">
+                </select>
+            </div>
         </form>
         <div id="use_case-option" style="margin-left: 25%">
             <button class="btn btn-primary" id="submit_use_case">提交</button>
@@ -473,6 +478,9 @@
                 } else {
                     error_alert.hide();
                     var use_case_detail = response.res;
+                    console.log(use_case_detail)
+                    select_environment_line_append(use_case_detail.environment_id);
+
                     $("#use_case_id").attr('placeholder', use_case_detail.id);
                     $("#delete_use_case").val(use_case_detail.id);
                     $("#use_case_name").val(use_case_detail.use_case_name);
@@ -598,10 +606,12 @@
             var business_id = $("#business_name").val();
             var system_id = $("#system_name").val();
             var function_id = $("#function_name").val();
+            var environment_id = $("#environment_name").val();
             var use_case_dict = {
                 'use_case_name': $("#use_case_name").val(),
                 'desc': $("#use_case_desc").val(),
-                'function_id': function_id
+                'function_id': function_id,
+                'environment_id': environment_id
             };
             if (business_id || system_id) {
                 if (!function_id) {
@@ -1081,6 +1091,7 @@
             select_business_line_append();
             select_function_line_append();
             select_system_line_append();
+            select_environment_line_append();
 
             $("#function_name").show();
             loader.hide();
@@ -1152,9 +1163,39 @@
         $("#system_name").show();
     }
 
+    function select_environment_line_append(environment_id) {
+        console.log(environment_id);
+        $("#environment_name").empty();
+        $.ajax({
+            type: 'post',
+            url: '/environment/line/detail',
+            data: JSON.stringify({
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var environment_list = response.res;
+                var append_str = '<option value="0"></option>';
+                if (environment_id) {
+                    append_str = '';
+                }
+                if (environment_list.length > 0) {
+                    $.each(environment_list, function (i, environment_info) {
+                        if (!environment_id || environment_id != environment_info.id) {
+                            append_str += '<option value="' + environment_info.id + '">' + environment_info.environment_name + '</option>'
+                        } else {
+                            append_str = '<option value="' + environment_info.id + '">' + environment_info.environment_name + '</option>' +
+                                '<option value="0">无</option>' + append_str
+                        }
+                    });
+                    $("#environment_name").append(append_str)
+                }
+            }
+        });
+        $("#environment_name").show();
+    }
 
     function select_function_line_append(function_line_id=null, system_line_id=null) {
-
         $("#function_name").empty();
         $.ajax({
             type: 'post',
