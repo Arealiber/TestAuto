@@ -1,4 +1,5 @@
-import time
+from datetime import datetime
+
 from application.util import hsbpythonlog as LOGGER
 
 
@@ -24,7 +25,7 @@ def request_log(target_name, target_id, interface, code, cost_time):
     """
     url_param_string = LOG_FORMAT_STRING.format(
         '1',
-        str(int(time.time())),
+        datetime.now().strftime('%Y%m%d'),
         'InspectSys',
         HOSTNAME,
         target_name,
