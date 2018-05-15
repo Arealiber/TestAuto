@@ -22,8 +22,12 @@
 
         <div id="page-content-wrapper">
             <h4>主页内容</h4>
+            <div>
+                <li class="breadcrumb-item"><a href="/environment/manage">线路管理</a></li>
+            </div>
             <HR>
         </div>
+
     </div>
 
     <script src="/component/js/jquery-3.3.1.min.js"></script>
@@ -32,8 +36,7 @@
     <script src="/component/js/treeview.min.js"></script>
     <script src="/js/cmm.js"></script>
 
-<script>
-    $(document).ready(function () {
+    <script>
         $(document).ready(function () {
             $('#menu_tree').treeview({
                 data: getTree(),
@@ -42,8 +45,8 @@
                 }
             })
         });
-    });
-</script>
+
+    </script>
 
 </body>
 </html>
