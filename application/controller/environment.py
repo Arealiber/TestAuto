@@ -83,6 +83,7 @@ def get_environment_line():
     查询environment_line
     :return:返回一个environment_line列表
     """
+
     try:
         environment_line_list = EnvironmentAPI.get_environment_line(**request.get_json())
     except Exception as e:
