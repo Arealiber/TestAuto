@@ -4,9 +4,11 @@ from flask import request, jsonify
 from application import app
 from application.api import menutree as MenuTreeAPI
 from application.api import use_case as Case_API
+from application.util.exception import try_except
 
 
 @app.route('/menu_tree/system_line/info', methods=['POST'])
+@try_except
 def get_system_line():
     """
     查询所有系统菜单
@@ -17,27 +19,23 @@ def get_system_line():
     system_line_id = param_args.get('business_line_id')
     param_args.pop('business_line_id') if 'business_line_id' in param_args and system_line_id is None else None
     param_args.pop('id') if 'id' in param_args and id is None else None
-    try:
-        result = MenuTreeAPI.query_system_line(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    result = MenuTreeAPI.query_system_line(**request.get_json())
     return jsonify({'success': True, 'res': result})
 
 
 @app.route('/menu_tree/business_line/info', methods=['POST'])
+@try_except
 def get_business_line():
     """
     查询所有业务菜单
     :return:
     """
-    try:
-        result = MenuTreeAPI.query_business_line(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    result = MenuTreeAPI.query_business_line(**request.get_json())
     return jsonify({'success': True, 'res': result})
 
 
 @app.route('/menu_tree/function_line/info', methods=['POST'])
+@try_except
 def get_function_line():
     """
     查询所有功能模块菜单
@@ -48,26 +46,21 @@ def get_function_line():
     system_line_id = param_args.get('system_line_id')
     param_args.pop('system_line_id') if 'system_line_id' in param_args and system_line_id is None else None
     param_args.pop('id') if 'id' in param_args and id is None else None
-    try:
-        result = MenuTreeAPI.query_function_line(**param_args)
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    result = MenuTreeAPI.query_function_line(**param_args)
     return jsonify({'success': True, 'res': result})
 
 
 @app.route('/menu_tree/info', methods=['POST'])
+@try_except
 def get_menu_tree():
     """
     查询所有菜单
     :return:
     """
-    try:
-        re_system = MenuTreeAPI.query_system_line(**request.get_json())
-        re_business = MenuTreeAPI.query_business_line(**request.get_json())
-        re_function = MenuTreeAPI.query_function_line(**request.get_json())
-        use_case_list = Case_API.get_use_case(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    re_system = MenuTreeAPI.query_system_line(**request.get_json())
+    re_business = MenuTreeAPI.query_business_line(**request.get_json())
+    re_function = MenuTreeAPI.query_function_line(**request.get_json())
+    use_case_list = Case_API.get_use_case(**request.get_json())
     menu_tree = []
     for business_line in re_business:
         business_line_id = business_line.get('id')
@@ -99,16 +92,13 @@ def get_menu_tree():
 
 
 @app.route('/menu_tree/use_case/count', methods=['POST'])
+@try_except
 def get_use_case_count_from_function_id():
     """
     查询功能模块用例个数
     :param:function_id
     :return:
     """
-    print()
-    try:
-        result = Case_API.query_use_case_count(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    result = Case_API.query_use_case_count(**request.get_json())
     return jsonify({'success': True, 'res': result})
 

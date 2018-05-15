@@ -6,6 +6,7 @@ from application.api import interface as InterfaceAPI
 from application.api import use_case as Case_API
 from application.util.parameter import *
 from application.util import execute_test as Exec
+from application.util.exception import try_except
 
 """
 用例
@@ -14,22 +15,21 @@ from application.util import execute_test as Exec
 
 
 @app.route('/use_case/add', methods=['POST'])
+@try_except
 def add_use_case():
     """
     功能描述: 添加use_case，只包含用例基础信息
     :return:
     """
-    try:
-        # TODO 接入权限系统后移除写死创建人
-        use_case_json = request.get_json()
-        use_case_json['create_by'] = 1
-        use_case_id = Case_API.add_use_case(**use_case_json)
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    # TODO 接入权限系统后移除写死创建人
+    use_case_json = request.get_json()
+    use_case_json['create_by'] = 1
+    use_case_id = Case_API.add_use_case(**use_case_json)
     return jsonify({'success': True, 'res': use_case_id})
 
 
 @app.route('/use_case/list', methods=['POST'])
+@try_except
 def use_case_list():
     """
     获取use_case列表，不需要获取与use_case关联的interface
@@ -38,10 +38,7 @@ def use_case_list():
     param_json = request.get_json()
     page_index = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
     page_size = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
-    try:
-        result = Case_API.get_use_case(**param_json)
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    result = Case_API.get_use_case(**param_json)
     if page_size == 0:
         return jsonify({'success': True, 'res': result})
     if not(page_index and page_size):
@@ -50,19 +47,18 @@ def use_case_list():
 
 
 @app.route('/use_case/count', methods=['GET'])
+@try_except
 def use_case_count():
     """
     获取use_case的总个数
     :return:
     """
-    try:
-        result = Case_API.query_use_case_count()
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    result = Case_API.query_use_case_count()
     return jsonify({'success': True, 'res': result})
 
 
 @app.route('/use_case/detail', methods=['POST'])
+@try_except
 def use_case_detail():
     """
     功能描述: 获取某个use_case的详细信息，包括其包含的interface列表
@@ -72,15 +68,9 @@ def use_case_detail():
     4. 信息整理并返回
     :return:
     """
-    try:
-        use_case_info = Case_API.get_use_case(**request.get_json())[0]
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    use_case_info = Case_API.get_use_case(**request.get_json())[0]
     use_case_info.update({'interface_list': []})
-    try:
-        relation_interface_list = Case_API.get_relation(use_case_id=use_case_info.get('id'))
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    relation_interface_list = Case_API.get_relation(use_case_id=use_case_info.get('id'))
     for relation_interface in relation_interface_list:
         relation_interface.pop('use_case_id')
         relation_interface.pop('create_time')
@@ -95,32 +85,29 @@ def use_case_detail():
 
 
 @app.route('/use_case/update', methods=['POST'])
+@try_except
 def update_use_case():
     """
     功能描述: 更新use_case内容，不更新与interface的关联
     :return:
     """
-    try:
-        use_case_id = Case_API.modify_use_case(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    use_case_id = Case_API.modify_use_case(**request.get_json())
     return jsonify({'success': True, 'res' : use_case_id})
 
 
 @app.route('/use_case/delete', methods=['POST'])
+@try_except
 def del_use_case():
     """
     功能描述: 删除use_case
     :return:
     """
-    try:
-        Case_API.del_use_case(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    Case_API.del_use_case(**request.get_json())
     return jsonify({'success': True})
 
 
 @app.route('/use_case/execute', methods=['POST'])
+@try_except
 def execute_use_case():
     """
     手动执行某个use_case, 前端等待执行完成返回
@@ -134,6 +121,7 @@ def execute_use_case():
 
 
 @app.route('/use_case/execute/background', methods=['POST'])
+@try_except
 def execute_use_case_background():
     """
     手动后台运行某个use_case, 不等待直接返回, 需要查看日志确认运行结果
@@ -145,6 +133,7 @@ def execute_use_case_background():
 
 
 @app.route('/use_case/relation/add', methods=['POST'])
+@try_except
 def add_relation():
     """
     功能描述: 将某个interface与某个use_case关联
@@ -153,11 +142,8 @@ def add_relation():
     :return:
     """
     interface_id = request.get_json().get('interface_id')
-    try:
-        relation_id = Case_API.add_relation(**request.get_json())
-        interface_list = InterfaceAPI.get_interface(id=interface_id)
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    relation_id = Case_API.add_relation(**request.get_json())
+    interface_list = InterfaceAPI.get_interface(id=interface_id)
     the_interface = interface_list[0]
     analysis_str = ''.join([the_interface.get('interface_header'),
                             the_interface.get('interface_json_payload'),
@@ -169,55 +155,47 @@ def add_relation():
 
 
 @app.route('/use_case/relation/update_eval', methods=['POST'])
+@try_except
 def update_eval():
     """
     更新eval_string的值
     :return:
     """
-    try:
-        Case_API.update_eval_relation(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    Case_API.update_eval_relation(**request.get_json())
     return jsonify({'success': True})
 
 
 @app.route('/use_case/relation/delete', methods=['POST'])
+@try_except
 def del_relation():
     """
     功能描述: 解除某个interface与use_case的关联
     :return:
     """
-    try:
-        id_to_delete = request.get_json()['id']
-        Case_API.del_relation(id_to_delete)
-    except Exception as e:
-        return jsonify({'success': False, 'res': str(e)})
+    id_to_delete = request.get_json()['id']
+    Case_API.del_relation(id_to_delete)
     return jsonify({'success': True})
 
 
 @app.route('/use_case/relation/reorder', methods=['POST'])
+@try_except
 def reorder_relation():
     """
     功能描述: 重新排序某个interface在use_case中的顺序
     :return:
     """
-    try:
-        relation_id = request.get_json()['id']
-        new_order = request.get_json()['new_order']
-        Case_API.reorder_relation(relation_id, new_order)
-    except Exception as e:
-        return jsonify({'success':False, 'res':str(e)})
+    relation_id = request.get_json()['id']
+    new_order = request.get_json()['new_order']
+    Case_API.reorder_relation(relation_id, new_order)
     return jsonify({'success': True})
 
 
 @app.route('/use_case/relation/parameter/modify', methods=['POST'])
+@try_except
 def relation_update_parameter():
     """
     功能描述: 更新某个use_case传给interface的参数的信息
     :return:
     """
-    try:
-        Case_API.modify_case_parameter_relation(**request.get_json())
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    Case_API.modify_case_parameter_relation(**request.get_json())
     return jsonify({'success': True})
