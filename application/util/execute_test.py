@@ -16,6 +16,7 @@ from application.api import parameter as ParameterAPI
 from application.api import batch as BatchAPI
 from application.api import use_case as UseCaseAPI
 from application.api import encryption as EncryptionAPI
+from application.api import environment as EnvironmentAPI
 from application import engine
 
 # 多进程执行器
@@ -149,6 +150,15 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 }
 
     with requests.Session() as session:
+        if not auto_run:
+            environment_id = use_case_info['environment_id']
+            environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
+            for element in environment_info:
+                url = element['url']
+                ip_address = element['map_ip']
+                base_url = 'https://{0}/'.format(url)
+                session.mount(base_url.lower(), DNSResolverHTTPSAdapter(url, ip_address))
+
         for interface in interface_list:
             interface_log_dict = {
                 'interface_start_time': datetime.utcnow(),
