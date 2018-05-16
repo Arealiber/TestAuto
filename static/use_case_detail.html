@@ -486,8 +486,15 @@
                     $("#delete_use_case").val(use_case_detail.id);
                     $("#use_case_name").val(use_case_detail.use_case_name);
                     $("#use_case_desc").val(use_case_detail.desc);
-                    var rows = use_case_detail.desc.length;
-                    $("#use_case_desc").attr('rows', rows/30 + 1);
+                    var num = 0;
+                    if (use_case_detail.desc.length > 0) {
+                        num = use_case_detail.desc.match(/\n/g || 0);
+                        if (!num) {
+                            num = 0;
+                        }
+                    }
+
+                    $("#use_case_desc").attr('rows', 1 + num);
 
                     var interface_list = use_case_detail.interface_list;
                     if (interface_list.length == 0) {
