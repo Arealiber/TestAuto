@@ -201,10 +201,28 @@
                                         show_alert("删除环境失败："+ response.error);
                                         $("#environment_line_form").hide()
                                     } else {
+                                        $.ajax({
+                                            type: 'post',
+                                            url: '/environment/line/delete',
+                                            data: JSON.stringify({
+                                                id: id_to_delete
+                                            }),
+                                            contentType: "application/json; charset:utf-8",
+                                            dataType: 'json',
+                                            success: function (response) {
+                                                if (!response.success) {
+                                                    show_alert("删除环境失败："+ response.error);
+                                                    $("#environment_line_form").hide()
+                                                } else {
+                                                    window.location.href = "/environment/manage"
+                                                }
+                                            }
+                                        });
                                         window.location.href = "/environment/manage"
                                     }
                                 }
-                            })
+                            });
+
                         }
                     }
                 })

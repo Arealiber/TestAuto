@@ -355,6 +355,8 @@
     }
 
     $.when(treeview_ajax()).then(function () {
+        menu_tree_data = treeview_data[2];
+        console.log(menu_tree_data)
         $('.add-use-case').hide();
         tree_selector.treeview({
             data: treeview_data,
@@ -613,40 +615,40 @@
                 'function_id': function_id,
                 'environment_id': environment_id
             };
-            if (business_id || system_id) {
-                if (!function_id) {
-                    show_alert('请选择功能线');
-                } else {
-                    $("#error_alert").hide();
-                    var use_case_id = $("#use_case_id").attr('placeholder');
-                    if (!use_case_id) {
-                        var url = '/use_case/add';
-                        var data = JSON.stringify(use_case_dict)
-                    } else {
-                        var url = '/use_case/update';
-                        use_case_dict.id = use_case_id;
-                        var data = JSON.stringify(use_case_dict)
+            $("#error_alert").hide();
+            var use_case_id = $("#use_case_id").attr('placeholder');
+            var re_flag = 0;
+            if (!use_case_id) {
+                var url = '/use_case/add';
+                var data = JSON.stringify(use_case_dict)
+                if (business_id || system_id) {
+                    if (!function_id) {
+                        re_flag = 1;
+                        show_alert('请选择功能线');
                     }
-                    $.ajax({
-                        type: 'post',
-                        url: url,
-                        data: data,
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (response) {
-                            console.log(response);
-                            if (!response.success) {
-                                show_alert('更新数据失败');
-                            } else {
-                                window.location.href = '/use_case_detail/' + response.res
-                            }
-                        }
-                    })
-
                 }
+            } else {
+                var url = '/use_case/update';
+                use_case_dict.id = use_case_id;
+                var data = JSON.stringify(use_case_dict)
             }
-
-
+            if (re_flag < 1) {
+                $.ajax({
+                    type: 'post',
+                    url: url,
+                    data: data,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        console.log(response);
+                        if (!response.success) {
+                            show_alert('更新数据失败');
+                        } else {
+                            window.location.href = '/use_case_detail/' + response.res
+                        }
+                    }
+                })
+            }
         })
     });
 
@@ -811,7 +813,7 @@
                         show_alert('删除接口失败');
                     } else {
                         treeview_ajax();
-                        if (use_case_selected_data.levels > 4) {
+                        if (use_case_selected_data && use_case_selected_data.levels > 4 || menu_tree_data.levels <= 1) {
                             window.location.href = '/use_case/1'
                         }
                         filter_use_case_table(menu_tree_data, id_to_delete)
@@ -982,95 +984,8 @@
                 break
         }
         return {'use_case_list': use_case_list, 'text': data.text}
-
-    //用例列表展示
-    function get_use_case_of_menu_tree(data) {
-        let tree_info = get_use_case_info(data);
-        let pagesize = 20;
-        if (tree_info.use_case_list.length <= 0) {
-            show_alert('没有用例数据，请新增')
-        } else {
-            var total_use_case = use_case_list.length;
-            var page_num = 1;
-            var total_page = Math.ceil(total_use_case / pagesize);
-            if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
-                show_alert('无此页数据');
-            } else {
-                var previous_page = $('li[id="previous_page"]');
-                var next_page = $('li[id="next_page"]');
-                if (total_page == 1) {
-                    previous_page.addClass('disabled');
-                    next_page.addClass('disabled')
-                }
-                else if (page_num == 1) {
-                    previous_page.addClass('disabled');
-                    next_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) + 1))
-                } else if (page_num == total_page) {
-                    next_page.addClass('disabled');
-                    previous_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) - 1))
-                } else {
-                    next_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) + 1));
-                    previous_page.find('.page-link').attr('href', '/use_case/' + (Number(page_num) - 1))
-                }
-                var page_item_string = '';
-                var pre_page_item_string = '';
-                var after_page_item_string = '';
-                for (var i = 1; i <= total_page; i++) {
-                    if (i == page_num) {
-                        page_item_string += '<li class="page-item active"><a class="page-link" href="/use_case/' + i + '">' + i + '</a></li>'
-                    } else if (i>page_num && i-page_num >3){
-                        pre_page_item_string = '<li class="page-item"><a class="page-link" href="/use_case/'+(Number(page_num)+4)+'">...</a></li>';
-                    } else if ( i < page_num && page_num - i >3 ){
-                        after_page_item_string = '<li class="page-item"><a class="page-link" href="/use_case/'+(Number(page_num)-4)+'">...</a></li>'
-                    } else {
-                        page_item_string += '<li class="page-item"><a class="page-link" href="/use_case/' + i + '">' + i + '</a></li>'
-                    }
-                }
-                if (pre_page_item_string){
-                    page_item_string = page_item_string + pre_page_item_string
-                }
-                if (after_page_item_string){
-                    page_item_string = after_page_item_string + page_item_string
-                }
-                var first_page_disabled_str = '';
-                var last_page_disabled_str = '';
-                if (page_num == 1) {
-                    first_page_disabled_str = ' disabled';
-                    if (page_num == total_page) {
-                        last_page_disabled_str = ' disabled'
-                    }
-                }else if (page_num == total_page){
-                    last_page_disabled_str = 'disabled'
-                }
-                var first_page_string = '<li class="page-item'+ first_page_disabled_str +'" id="first_page"><a class="page-link" href="/use_case/1">首页</a></li>';
-                var last_page_string = '<li class="page-item'+ last_page_disabled_str +'" id="last_page"><a class="page-link" href="/use_case/'+ total_page +'">尾页</a></li>';
-                var data_page_string = '<p class="page-data" data-page-text="">第'+page_num+'页/共'+ total_page +'页</p>';
-                previous_page.before(first_page_string);
-                previous_page.after(page_item_string);
-                next_page.after(data_page_string);
-                next_page.after(last_page_string);
-                $('#jump_page').attr('data-page_num', page_num);
-
-                loader.hide();
-                if (!response.success) {
-                    show_alert('获取数据失败')
-                } else {
-                    $("#use_case_table").show();
-                    $.each(use_case_list, function (i, use_case) {
-                        $("#use_case_table").find('tbody')
-                            .append('<tr>' +
-                                '<th scope="row">' + (pagesize * (page_num - 1) + i + 1) + '</th>' +
-                                '<td>' + use_case.use_case_name + '</td>' +
-                                '</tr>')
-                    })
-                }
-            }
-        }
     }
 
-
-
-    }
     $(document).ready(function () {
         $('#add_use_case').click(function () {
             $('#delete_use_case').hide();
@@ -1164,7 +1079,6 @@
     }
 
     function select_environment_line_append(environment_id) {
-        console.log(environment_id);
         $("#environment_name").empty();
         $.ajax({
             type: 'post',
