@@ -127,7 +127,7 @@
             //删除host映射
             $("#environment_form").on('click', 'button',function () {
                 if (!$(this).val() || $(this).val() == "") {
-
+                    $(this).parent('.input-group').empty()
                 }else {
                     $.ajax({
                         type: "post",
@@ -138,6 +138,7 @@
                         contentType:"application/json; charset=utf-8",
                         dataType: 'json',
                         success: function (response) {
+                            console.log(response)
                             if (!response.success) {
                                 show_alert('删除失败:' + response.error)
                             } else {

@@ -1185,7 +1185,7 @@
                             append_str += '<option value="' + environment_info.id + '">' + environment_info.environment_name + '</option>'
                         } else {
                             append_str = '<option value="' + environment_info.id + '">' + environment_info.environment_name + '</option>' +
-                                '<option value="0">无</option>' + append_str
+                                '<option value="0"></option>' + append_str
                         }
                     });
                     $("#environment_name").append(append_str)
