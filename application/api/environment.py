@@ -26,11 +26,12 @@ def del_environment_line(**kwargs):
 
 
 def del_environment_line_info(**kwargs):
-    info_id = kwargs.get('id')
-    if isinstance(info_id, list):
-        info_id = [info_id]
+    info_list = kwargs.get('id')
+    if not isinstance(info_list, list):
+        info_list = [info_list]
     with session_scope() as session:
-        session.query(EnvironmentInfo).filter(EnvironmentInfo.id.in_(info_id)).delete(synchronize_session=False)
+        for line_id in info_list:
+            session.query(EnvironmentInfo).filter_by(id=line_id).delete(synchronize_session=False)
 
 
 def get_environment_line(**kwargs):
