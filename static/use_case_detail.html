@@ -72,7 +72,7 @@
             </div>
             <div class="form-group">
                 <label for="use_case_desc">描述</label>
-                <input type="text" class="form-control" id="use_case_desc" placeholder="用例描述" value="">
+                <textarea type="text" class="form-control" id="use_case_desc" rows="1" placeholder="用例描述" value=""></textarea>
             </div>
             <div id="business_line" class="form-group" style="display: none">
                 <label for="business_line">业务线</label>
@@ -486,6 +486,8 @@
                     $("#delete_use_case").val(use_case_detail.id);
                     $("#use_case_name").val(use_case_detail.use_case_name);
                     $("#use_case_desc").val(use_case_detail.desc);
+                    var rows = use_case_detail.desc.length;
+                    $("#use_case_desc").attr('rows', rows/30 + 1);
 
                     var interface_list = use_case_detail.interface_list;
                     if (interface_list.length == 0) {
@@ -619,7 +621,7 @@
             var re_flag = 0;
             if (!use_case_id) {
                 var url = '/use_case/add';
-                var data = JSON.stringify(use_case_dict)
+                var data = JSON.stringify(use_case_dict);
                 if (business_id || system_id) {
                     if (!function_id) {
                         re_flag = 1;
