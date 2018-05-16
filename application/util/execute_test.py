@@ -25,9 +25,10 @@ executor = ProcessPoolExecutor()
 
 # http dns解析adapter，讲请求发往指定ip，类似改host
 class DNSResolverHTTPSAdapter(HTTPAdapter):
-    def __init__(self, common_name, host, pool_connections=DEFAULT_POOLSIZE, pool_maxsize=DEFAULT_POOLSIZE, max_retries=DEFAULT_RETRIES, pool_block=DEFAULT_POOLBLOCK):
+    def __init__(self, common_name, host, https,pool_connections=DEFAULT_POOLSIZE, pool_maxsize=DEFAULT_POOLSIZE, max_retries=DEFAULT_RETRIES, pool_block=DEFAULT_POOLBLOCK):
         self.__common_name = common_name
         self.__host = host
+        self.__https = https
         super(DNSResolverHTTPSAdapter, self).__init__(pool_connections=pool_connections, pool_maxsize=pool_maxsize, max_retries=max_retries, pool_block=pool_block)
 
     def get_connection(self, url, proxies=None):
@@ -35,7 +36,8 @@ class DNSResolverHTTPSAdapter(HTTPAdapter):
         return super(DNSResolverHTTPSAdapter, self).get_connection(redirected_url, proxies=proxies)
 
     def init_poolmanager(self, connections, maxsize, block=DEFAULT_POOLBLOCK, **pool_kwargs):
-        pool_kwargs['assert_hostname'] = self.__common_name
+        if self.__https:
+            pool_kwargs['assert_hostname'] = self.__common_name
         super(DNSResolverHTTPSAdapter, self).init_poolmanager(connections, maxsize, block=block, **pool_kwargs)
 
 
@@ -157,7 +159,9 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 url = element['url']
                 ip_address = element['map_ip']
                 base_url = 'https://{0}/'.format(url)
-                session.mount(base_url.lower(), DNSResolverHTTPSAdapter(url, ip_address))
+                session.mount(base_url.lower(), DNSResolverHTTPSAdapter(url, ip_address, True))
+                base_url = 'http://{0}/'.format(url)
+                session.mount(base_url.lower(), DNSResolverHTTPSAdapter(url, ip_address, False))
 
         for interface in interface_list:
             interface_log_dict = {
