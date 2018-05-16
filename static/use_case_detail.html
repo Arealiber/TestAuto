@@ -488,9 +488,11 @@
                     $("#use_case_desc").val(use_case_detail.desc);
                     var num = 0;
                     if (use_case_detail.desc.length > 0) {
-                        num = use_case_detail.desc.match(/\n/g || 0);
-                        if (!num) {
+                        var line_list = use_case_detail.desc.match(/\n/g || []);
+                        if (!line_list) {
                             num = 0;
+                        } else {
+                            num = line_list.length;
                         }
                     }
 
