@@ -360,7 +360,6 @@
 
     $.when(treeview_ajax()).then(function () {
         menu_tree_data = treeview_data[2];
-        console.log(menu_tree_data)
         $('.add-use-case').hide();
         tree_selector.treeview({
             data: treeview_data,
@@ -485,7 +484,6 @@
                 } else {
                     error_alert.hide();
                     var use_case_detail = response.res;
-                    console.log(use_case_detail.environment_id, 1111111111);
                     select_environment_line_append(use_case_detail.environment_id);
 
                     $("#use_case_id").attr('placeholder', use_case_detail.id);
@@ -647,7 +645,6 @@
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (response) {
-                            console.log(response);
                             if (!response.success) {
                                 show_alert('创建业务线失败：'+ response.error);
                                 success_flag = false
@@ -807,7 +804,6 @@
                 var relation_id = $(this).closest('.card-header').data('value');
                 var current_order = $(this).closest('.btn-group').data('order');
                 var use_case_id = $(this).closest('.card-header').data('use_case_id');
-                console.log('use_case_id',relation_id, use_case_id);
                 $.ajax({
                     type: 'post',
                     url: '/use_case/relation/reorder',
@@ -879,7 +875,6 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
-                    console.log(response);
                     if (!response.success) {
                         show_alert('删除接口失败');
                     } else {
@@ -1204,7 +1199,6 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                console.log(system_line_id, response);
                 var function_list = response.res;
                 var append_str = '<option data-function_id="0"  value=""></option>';
                 if (function_line_id) {
