@@ -76,22 +76,25 @@
             </div>
             <div id="business_line" class="form-group" style="display: none">
                 <label for="business_line">业务线</label>
-                <select class="form-control" id="business_name">
-                </select>
+                <input id="input_business_name" autocomplete="off" list="business_name" data-function_id="" class="form-control"  onchange="inputSelect(this)" value=""/>
+                <datalist class="form-control" id="business_name" style="display: none">
+                </datalist>
             </div>
             <div id="system_line" class="form-group" style="display: none">
                 <label for="system_name">系统名称</label>
-                <select class="form-control" id="system_name">
-                </select>
+                <input id="input_system_name" autocomplete="off" list="system_name" data-function_id="" class="form-control"  onchange="inputSelect(this)" value=""/>
+                <datalist id="system_name"  class="form-control" style="display: none">
+                </datalist>
             </div>
             <div class="form-group">
                 <label for="function_name">功能名称</label>
-                <select class="form-control" id="function_name">
-                </select>
+                <input id="input_function_name" autocomplete="off" list="function_name" data-function_id="" class="form-control"  onchange="inputSelect(this)" value=""/>
+                <datalist id="function_name" class="form-control" style="display: none">
+                </datalist>
             </div>
             <div class="form-group">
                 <label for="environment_name">环境路线</label>
-                <input id="input_environment" list="environment_name" class="form-control" value="" onchange="inputSelect(this)">
+                <input id="input_environment" autocomplete="off" list="environment_name" data-environment_id="" value="" class="form-control"  onchange="inputSelect(this)"/>
                 <datalist id="environment_name" style="display: none">
                 </datalist>
             </div>
@@ -412,12 +415,6 @@
         });
     });
 
-    //
-    $(document).ready(function () {
-        $("#input_environment").change(function () {
-            console.log(2222222, $(this).val())
-        })
-    });
 
     // 获取所有接口列表并放入接口添加列表
     $(document).ready(function () {
@@ -624,9 +621,9 @@
     //添加或更新用例基本信息
     $(document).ready(function () {
         $("#submit_use_case").click(function () {
-            var business_id = $("#business_name").val();
-            var system_id = $("#system_name").val();
-            var function_id = $("#function_name").val();
+            var business_id = $("#input_business_name").data('business_id');
+            var system_id = $("#input_system_name").data('system_id');
+            var function_id = $("#input_function_name").data('function_id');
             var environment_id = $("#input_environment").data("environment_id");
             var use_case_dict = {
                 'use_case_name': $("#use_case_name").val(),
@@ -637,31 +634,85 @@
             $("#error_alert").hide();
             var use_case_id = $("#use_case_id").attr('placeholder');
             var re_flag = 0;
+            var url = '/use_case/add';
+            var success_flag = true;
             if (!use_case_id) {
-                var url = '/use_case/add';
-                var data = JSON.stringify(use_case_dict);
-                if (business_id || system_id) {
-                    if (!function_id) {
-                        re_flag = 1;
-                        show_alert('请选择功能线');
-                    }
+                if (!business_id) {
+                    $.ajax({
+                        type: 'post',
+                        url: "/menu_tree/business_line/add",
+                        data: JSON.stringify({
+                            business_name: $("#input_business_name").val()
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            console.log(response);
+                            if (!response.success) {
+                                show_alert('创建业务线失败：'+ response.error);
+                                success_flag = false
+                            } else {
+                                business_id = response.res;
+                            }
+                        }
+                    })
+                }
+                if (!system_id && success_flag) {
+                    $.ajax({
+                        type: 'post',
+                        url: "/menu_tree/system_line/add",
+                        data: JSON.stringify({
+                            system_name: $("#input_system_name").val(),
+                            business_line_id: business_id
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (!response.success) {
+                                show_alert('创建系统线失败：'+ response.error);
+                                success_flag = false
+                            } else {
+                                system_id = response.res;
+                            }
+                        }
+                    })
+                }
+                if (!function_id && success_flag) {
+                    $.ajax({
+                        type: 'post',
+                        url: "/menu_tree/function_line/add",
+                        data: JSON.stringify({
+                            function_name: $("#input_function_name").val(),
+                            system_line_id: system_id
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (!response.success) {
+                                show_alert('创建功能线失败:'+ response.error);
+                                success_flag = false
+                            } else {
+                                function_id = response.res;
+                            }
+                        }
+                    })
                 }
             } else {
-                var url = '/use_case/update';
+                url = '/use_case/update';
                 use_case_dict.id = use_case_id;
-                var data = JSON.stringify(use_case_dict)
             }
-            if (re_flag < 1) {
+            if (re_flag < 1 && success_flag) {
                 $.ajax({
                     type: 'post',
                     url: url,
-                    data: data,
+                    data: JSON.stringify(
+                        use_case_dict
+                    ),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
-                        console.log(response);
                         if (!response.success) {
-                            show_alert('更新数据失败');
+                            show_alert('更新数据失败:' + response.error);
                         } else if (!use_case_id) {
                             window.location.href = '/use_case_detail/' + response.res
                         } else {
@@ -690,7 +741,6 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function () {
-
                     }
                 })
             });
@@ -1009,6 +1059,12 @@
 
     $(document).ready(function () {
         $('#add_use_case').click(function () {
+            $("#input_business_name").data("business_id", null);
+            $("#input_system_name").data("system_id", null);
+            $("#input_function_name").data("function_id", null);
+            $("#input_business_name").val("");
+            $("#input_system_name").val("");
+            $("#input_function_name").val("");
             $('#delete_use_case').hide();
             $('#run_use_case').hide();
             $('#async_run_use_case').hide();
@@ -1029,7 +1085,6 @@
             select_system_line_append();
             select_environment_line_append();
 
-            $("#function_name").show();
             loader.hide();
             $("#interface_alert").hide();
 
@@ -1049,27 +1104,31 @@
             dataType: "json",
             success: function (response) {
                 var business__info_list = response.res;
-                var append_str = '<option value="0"></option>';
+                var append_str = '<option data-business_id="0"></option>';
                 if (business_line_id) {
                     append_str = '';
+                    $("#input_business_name").val("");
+                    $("#input_business_name").data("environment_id", 0);
                 }
                 if (business__info_list.length > 0) {
                     $.each(business__info_list, function (i, business__info) {
-                        if (!business_line_id || business_line_id != business__info.id) {
-                            append_str += '<option value="' + business__info.id + '">' + business__info.business_name + '</option>'
-                        } else {
-                            append_str = '<option value="' + business__info.id + '">' + business__info.business_name + '</option>'
+                        append_str += '<option data-business_id="' + business__info.id + '">' + business__info.business_name + '</option>';
+                        if (business__info.id == business_line_id) {
+                            $("#input_business_name").data("business_id", business__info.id);
+                            $("#input_business_name").val(business__info.business_name);
                         }
                     });
                     $("#business_name").append(append_str)
                 }
             }
         });
-        $("#business_name").show();
     }
 
     function select_system_line_append(system_line_id=null, business_line_id=null) {
         $("#system_name").empty();
+        if (!business_line_id) {
+            return
+        }
         $.ajax({
             type: 'post',
             url: '/menu_tree/system_line/info',
@@ -1080,28 +1139,28 @@
             dataType: "json",
             success: function (response) {
                 var system__info_list = response.res;
-                var append_str = '<option value="0"></option>';
+                var append_str = '<option data-system_id="0"></option>';
                 if (system_line_id) {
                     append_str = '';
+                    $("#input_system_name").val("");
+                    $("#input_system_name").data("system_id", 0);
                 }
                 if (system__info_list.length > 0) {
                     $.each(system__info_list, function (i, system__info) {
-                        if (!system_line_id || system_line_id != system__info.id) {
-                            append_str += '<option value="' + system__info.id + '">' + system__info.system_name + '</option>'
-                        } else {
-                            append_str = '<option value="' + system__info.id + '">' + system__info.system_name + '</option>'
+                        append_str += '<option data-system_id="' + system__info.id + '">' + system__info.system_name + '</option>';
+                        if (system__info.id == system_line_id) {
+                            $("#input_system_name").data("system_id", system__info.id);
+                            $("#input_system_name").val(system__info.system_name);
                         }
                     });
                     $("#system_name").append(append_str)
                 }
             }
         });
-        $("#system_name").show();
     }
 
     function select_environment_line_append(environment_id) {
         $("#environment_name").empty();
-
         $.ajax({
             type: 'post',
             url: '/environment/line/detail',
@@ -1133,6 +1192,9 @@
 
     function select_function_line_append(function_line_id=null, system_line_id=null) {
         $("#function_name").empty();
+        if (!system_line_id && !function_line_id) {
+            return
+        }
         $.ajax({
             type: 'post',
             url: '/menu_tree/function_line/info',
@@ -1142,37 +1204,77 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
+                console.log(system_line_id, response);
                 var function_list = response.res;
-                var append_str = '<option value="0"></option>';
+                var append_str = '<option data-function_id="0"  value=""></option>';
                 if (function_line_id) {
                     append_str = '';
+                    $("#input_function_name").val("");
+                    $("#input_function_name").data("function_id", '0');
                 }
                 if (function_list.length > 0) {
                     $.each(function_list, function (i, function_info) {
-                        if (!function_line_id || function_line_id != function_info.id) {
-                            append_str += '<option value="' + function_info.id + '">' + function_info.function_name + '</option>'
-                        } else {
-                            append_str = '<option value="' + function_info.id + '">' + function_info.function_name + '</option>' +
-                                '<option value="0"> 用例管理 </option>' + append_str
+                        append_str += '<option data-function_id="' + function_info.id + '" value="'+ function_info.function_name +'">' + function_info.function_name + '</option>';
+                        if (function_info.id == function_line_id) {
+                            $("#input_function_name").data("function_id", function_info.id);
+                            $("#input_function_name").val(function_info.function_name);
                         }
                     });
                     $("#function_name").append(append_str)
                 }
             }
         });
-        $("#function_name").show();
     }
 
     $(document).ready(function () {
-        $("#system_name").change(function () {
-            var system_id = $("#system_name").val();
+        $("#input_system_name").dragDrop(function () {
+            console.log(1111111111111)
+        });
+        $("#input_system_name").change(function () {
+            var input_select=$(this).val();
+            var option_length=$("option").length;
+            var eq_flag = false;
+            for(var i=0;i<option_length;i++){
+                var option_id = $("option").eq(i).data();
+                var option_value = $("option").eq(i).val();
+                if(input_select==option_value){
+                    $(this).data(option_id);
+                    eq_flag = true;
+                    break;
+                }
+            }
+            if (!eq_flag) {
+                $(this).data('system_id', null);
+            }
+
+            var system_id = $("#input_system_name").data('system_id');
+            $("#input_function_name").val("");
+            $("#input_function_name").data("function_id", '0');
             select_function_line_append(null, system_id);
+
         })
     });
 
     $(document).ready(function () {
-        $("#business_name").change(function () {
-            var business_id = $("#business_name").val();
+        $("#input_business_name").change(function () {
+            var input_select=$(this).val();
+            var option_length=$("option").length;
+            var eq_flag = false;
+            for(var i=0;i<option_length;i++){
+                var option_id = $("option").eq(i).data();
+                var option_value = $("option").eq(i).val();
+                if(input_select==option_value){
+                    $(this).data(option_id);
+                    eq_flag = true;
+                    break;
+                }
+            }
+            if (!eq_flag) {
+                $(this).data('business_id', null);
+            }
+            var business_id = $("#input_business_name").data('business_id');
+            $("#input_system_name").val("");
+            $("#input_system_name").data("function_id", '0');
             select_system_line_append(null, business_id);
         })
     });

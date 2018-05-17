@@ -7,6 +7,39 @@ from application.api import use_case as Case_API
 from application.util.exception import try_except
 
 
+@app.route('/menu_tree/business_line/add', methods=['POST'])
+@try_except
+def create_business_line():
+    """
+    查询所有系统菜单
+    :return:
+    """
+    result = MenuTreeAPI.add_business_line(**request.get_json())
+    return jsonify({'success': True, 'res': result})
+
+
+@app.route('/menu_tree/system_line/add', methods=['POST'])
+@try_except
+def create_system_line():
+    """
+    查询所有系统菜单
+    :return:
+    """
+    result = MenuTreeAPI.add_system_line(**request.get_json())
+    return jsonify({'success': True, 'res': result})
+
+
+@app.route('/menu_tree/function_line/add', methods=['POST'])
+@try_except
+def create_function_line():
+    """
+    查询所有系统菜单
+    :return:
+    """
+    result = MenuTreeAPI.add_function_line(**request.get_json())
+    return jsonify({'success': True, 'res': result})
+
+
 @app.route('/menu_tree/system_line/info', methods=['POST'])
 @try_except
 def get_system_line():
