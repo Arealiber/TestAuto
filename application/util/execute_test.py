@@ -376,7 +376,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 if auto_run:
                     if not app.config['DEBUG']:
                         cost_time = interface_log_dict['interface_stop'] - interface_log_dict['interface_start']
-                        ret_code = '' if eval_success else ret_code = '1'
+                        ret_code = '' if eval_success else '1'
                         if not ret_code:
                             if 'body' in json_response:
                                 if 'ret' in json_response['body']:
