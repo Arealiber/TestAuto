@@ -100,6 +100,7 @@ body {
 
 .table {
     display: none;
+    width: 98%;
 }
 
 #fetch_fail_alert {
