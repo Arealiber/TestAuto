@@ -116,7 +116,9 @@ def get_menu_tree():
                     if function_id != function_id_of_use_case:
                         continue
                     case_menu_tree.append({'use_case_name': use_case_info.get('use_case_name'),
-                                           'id': use_case_info.get('id')})
+                                           'id': use_case_info.get('id'),
+                                           'create_by': use_case_info.get('create_by'),
+                                           'update_time': use_case_info.get('update_time')})
                 function_line.update({'use_case_list': case_menu_tree})
                 sys_line['function_line'].append(function_line)
             business_line['system_line'].append(sys_line)

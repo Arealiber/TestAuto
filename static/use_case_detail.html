@@ -37,6 +37,8 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">用例名称</th>
+                <th scope="col">创建者</th>
+                <th scope="col">更新时间</th>
                 <th scope="col">模块名称</th>
                 <th scope="col">操作</th>
             </tr>
@@ -1002,7 +1004,14 @@
             $("#use_case_id").attr('placeholder', '');
             $("#use_case_table").show();
             var use_case_list = use_case_info.use_case_list[0];
+            var create_by = '';
             $.each(use_case_list, function (i, use_case) {
+                create_by = use_case.create_by;
+                if (create_by == 1) {
+                    create_by = "admin"
+                } else {
+                    create_by = use_case.create_by;
+                }
                 if (use_case.use_case_id != del_use_case_id) {
                     var button_col = '<div class="btn-group btn-group-sm" role="group">' +
                         '<button name="table_run_use_case" type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
@@ -1012,6 +1021,8 @@
                         .append('<tr>' +
                             '<th scope="row">' + (i + 1) + '</th>' +
                             '<td>' + use_case.text.split('.')[1] + '</td>' +
+                            '<td>' + create_by + '</td>' +
+                            '<td>' + moment(use_case.update_time).format('YYYY/MM/DD HH:mm:ss') + '</td>' +
                             '<td>' + use_case_info.text.split('(')[0] + '</td>' +
                             '<td>' + button_col + '</td></tr>')
                 }
@@ -1359,6 +1370,10 @@
                                     $("#use_case_table").show();
                                     var use_case_list = response.res;
                                     $.each(use_case_list, function (i, use_case) {
+                                        var create_name = use_case.create_by;
+                                        if (create_name == 1) {
+                                            create_name = 'admin'
+                                        }
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
                                             '<button name="table_run_use_case" type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
                                             '<button name="table_async_run_use_case" type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
@@ -1367,6 +1382,8 @@
                                             .append('<tr>' +
                                                 '<th scope="row">' + (pagesize * (page_num - 1) + i + 1) + '</th>' +
                                                 '<td>' + use_case.use_case_name + '</td>' +
+                                                '<td>' + create_name + '</td>' +
+                                                '<td>' + moment(use_case.update_time).format('YYYY/MM/DD HH:mm:ss') + '</td>' +
                                                 '<td>用例管理</td>' +
                                                 '<td>' + button_col + '</td></tr>')
                                     })

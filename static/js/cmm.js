@@ -160,6 +160,8 @@ function treeview_ajax() {
                                         levels: 5,
                                         use_case_id: use_case.id,
                                         function_id: function_info.id,
+                                        create_by: use_case.create_by,
+                                        update_time: use_case.update_time,
                                         nodes: []
                                     })
                                 });
