@@ -7,6 +7,7 @@ from datetime import datetime
 from requests.adapters import HTTPAdapter, DEFAULT_POOLSIZE, DEFAULT_RETRIES, DEFAULT_POOLBLOCK
 from requests.exceptions import ConnectionError, ConnectTimeout
 
+from application import app
 from application.util import encryption as Encryption
 from application.util import parameter as ParameterUtil
 from application.api import run_log as RunLogAPI
@@ -18,6 +19,9 @@ from application.api import use_case as UseCaseAPI
 from application.api import encryption as EncryptionAPI
 from application.api import environment as EnvironmentAPI
 from application import engine
+
+if not app.config['DEBUG']:
+    from application.util import logger as LOGGER
 
 # 多进程执行器
 executor = ProcessPoolExecutor()
@@ -245,7 +249,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                         'batch_start_timer': batch_start_timer
                         }
 
-            # 请求接口
+            # 请求接口参数准备
             request_kwargs = {
                 'timeout': 10
             }
@@ -257,11 +261,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 else:
                     request_kwargs['data'] = json_payload
 
-            interface_log_dict['s_header'] = header if header else ''
-            interface_log_dict['s_payload'] = json.dumps(json_payload, ensure_ascii=False) if json_payload else ''
-            interface_log_dict['interface_start'] = timeit.default_timer()
-
-            request_exception = False
             # 获取域名对应的服务名
             get_server_name_dict = {
                 "_head": {
@@ -284,6 +283,24 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             except:
                 server_name = '获取服务名失败'
 
+            # 获取方法ID, 接口名
+            requested_interface = ''
+            if json_payload:
+                if 'head' in json_payload:
+                    if 'interface' in json_payload['head']:
+                        requested_interface = json_payload['head']['interface']
+                elif '_head' in json_payload:
+                    if '_interface' in json_payload['_head']:
+                        requested_interface = json_payload['_head']['_interface']
+            if not requested_interface:
+                requested_interface = url.split('//')[1].split('/')[1]
+
+            # 日志内容
+            interface_log_dict['s_header'] = header if header else ''
+            interface_log_dict['s_payload'] = json.dumps(json_payload, ensure_ascii=False) if json_payload else ''
+            interface_log_dict['interface_start'] = timeit.default_timer()
+
+            request_exception = False
             try:
                 if request_method.upper() == 'GET':
                     r = session.get(url, **request_kwargs)
@@ -305,17 +322,21 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             except ConnectTimeout as e:
                 request_exception = True
                 error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                log_report_code = '9991'
             except ConnectionError as e:
                 request_exception = True
                 error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                log_report_code = '9992'
             except Exception as e:
                 request_exception = True
                 error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                log_report_code = '9993'
             finally:
                 if request_exception:
                     if auto_run:
-                        # TODO 请求错误日志上报
-                        pass
+                        if not app.config['DEBUG']:
+                            cost_time = timeit.default_timer() - interface_log_dict['interface_start']
+                            LOGGER.request_log(server_name, server_name, requested_interface, log_report_code, str(cost_time))
 
                     # 数据处理以及日志记录
                     interface_log_dict['is_pass'] = False
@@ -353,16 +374,28 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 interface_log_insert(interface_log_dict)
 
                 if auto_run:
-                    # TODO 验证成功或失败日志上报
-                    pass
+                    if not app.config['DEBUG']:
+                        cost_time = interface_log_dict['interface_stop'] - interface_log_dict['interface_start']
+                        ret_code = '' if eval_success else '1'
+                        if not ret_code:
+                            if 'body' in json_response:
+                                if 'ret' in json_response['body']:
+                                    ret_code = json_response['body']['ret']
+                            elif '_data' in json_response:
+                                if '_ret' in json_response['_data']:
+                                    ret_code = json_response['_data']['_ret']
+                            else:
+                                ret_code = '0'
+                        LOGGER.request_log(server_name, server_name, requested_interface, ret_code, str(cost_time))
 
                 if not result['success']:
                     run_pass = False
                     break
             except Exception as e:
                 if auto_run:
-                    # TODO 验证异常日志上报
-                    pass
+                    if not app.config['DEBUG']:
+                        error_str = '参数验证出错，{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                        LOGGER.exception_log(error_str)
 
                 result['success'] = False
                 exec_result_list.append(result)
