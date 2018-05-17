@@ -127,7 +127,7 @@
             //删除host映射
             $("#environment_form").on('click', 'button',function () {
                 if (!$(this).val() || $(this).val() == "") {
-                    $(this).parent('.input-group').empty()
+                    $(this).parent('.input-group').remove()
                 }else {
                     $.ajax({
                         type: "post",
