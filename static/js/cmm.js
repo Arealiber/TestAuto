@@ -179,5 +179,16 @@ function treeview_ajax() {
     });
 }
 
-
+function inputSelect(selector){
+    var input_select=$(selector).val();
+    var option_length=$("option").length;
+    for(var i=0;i<option_length;i++){
+        var option_environment_id = $("option").eq(i).data();
+        var option_value = $("option").eq(i).val();
+        if(input_select==option_value){
+            $(selector).data(option_environment_id);
+            break;
+        }
+    }
+};
 

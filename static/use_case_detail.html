@@ -91,8 +91,9 @@
             </div>
             <div class="form-group">
                 <label for="environment_name">环境路线</label>
-                <select class="form-control" id="environment_name">
-                </select>
+                <input id="input_environment" list="environment_name" class="form-control" value="" onchange="inputSelect(this)">
+                <datalist id="environment_name" style="display: none">
+                </datalist>
             </div>
         </form>
         <div id="use_case-option" style="margin-left: 25%">
@@ -411,6 +412,13 @@
         });
     });
 
+    //
+    $(document).ready(function () {
+        $("#input_environment").change(function () {
+            console.log(2222222, $(this).val())
+        })
+    });
+
     // 获取所有接口列表并放入接口添加列表
     $(document).ready(function () {
         $.ajax({
@@ -480,6 +488,7 @@
                 } else {
                     error_alert.hide();
                     var use_case_detail = response.res;
+                    console.log(use_case_detail.environment_id, 1111111111);
                     select_environment_line_append(use_case_detail.environment_id);
 
                     $("#use_case_id").attr('placeholder', use_case_detail.id);
@@ -618,7 +627,7 @@
             var business_id = $("#business_name").val();
             var system_id = $("#system_name").val();
             var function_id = $("#function_name").val();
-            var environment_id = $("#environment_name").val();
+            var environment_id = $("#input_environment").data("environment_id");
             var use_case_dict = {
                 'use_case_name': $("#use_case_name").val(),
                 'desc': $("#use_case_desc").val(),
@@ -1092,6 +1101,7 @@
 
     function select_environment_line_append(environment_id) {
         $("#environment_name").empty();
+
         $.ajax({
             type: 'post',
             url: '/environment/line/detail',
@@ -1101,24 +1111,24 @@
             dataType: "json",
             success: function (response) {
                 var environment_list = response.res;
-                var append_str = '<option value="0"></option>';
-                if (environment_id) {
+                var append_str = '<option data-environment_id="0"></option>';
+                if (!environment_id) {
                     append_str = '';
+                    $("#input_environment").val("");
+                    $("#input_environment").data("environment_id", 0);
                 }
                 if (environment_list.length > 0) {
                     $.each(environment_list, function (i, environment_info) {
-                        if (!environment_id || environment_id != environment_info.id) {
-                            append_str += '<option value="' + environment_info.id + '">' + environment_info.environment_name + '</option>'
-                        } else {
-                            append_str = '<option value="' + environment_info.id + '">' + environment_info.environment_name + '</option>' +
-                                '<option value="0"></option>' + append_str
+                        append_str += '<option data-environment_id="' + environment_info.id + '">' + environment_info.environment_name + '</option>';
+                        if (environment_info.id == environment_id) {
+                            $("#input_environment").data('environment_id', environment_info.id);
+                            $("#input_environment").val(environment_info.environment_name);
                         }
                     });
                     $("#environment_name").append(append_str)
                 }
             }
         });
-        $("#environment_name").show();
     }
 
     function select_function_line_append(function_line_id=null, system_line_id=null) {
