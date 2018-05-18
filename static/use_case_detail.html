@@ -76,37 +76,29 @@
                 <label for="use_case_desc">描述</label>
                 <textarea type="text" class="form-control" id="use_case_desc" rows="1" placeholder="用例描述" value=""></textarea>
             </div>
-            <div id="business_line" class="form-group" style="display: none">
+            <div id="business_line" class="input-select" style="display: none">
                 <label for="business_line">业务线</label>
-                <div >
-                    <select id="business_name" class="select" onchange="input_value(this)">
-                    </select>
-                    <input id="input_business_name" class="input-text" type="text" data-business_id="" value=""/>
-                </div>
+                <select id="business_name" class="select" onchange="input_value(this)">
+                </select>
+                <input id="input_business_name" class="input-text" type="text" data-business_id="" value=""/>
             </div>
-            <div id="system_line" class="form-group" style="display: none">
+            <div id="system_line" class="input-select" style="display: none">
                 <label for="system_name">系统名称</label>
-                <div >
-                    <select id="system_name" class="select" onchange="input_value(this)">
-                    </select>
-                    <input id="input_system_name" class="input-text" type="text" data-system_id="" value=""/>
-                </div>
+                <select id="system_name" class="select" onchange="input_value(this)">
+                </select>
+                <input id="input_system_name" class="input-text" type="text" data-system_id="" value=""/>
             </div>
-            <div class="form-group">
+            <div class="input-select">
                 <label for="function_name">功能名称</label>
-                <div >
-                    <select id="function_name" class="select" onchange="input_value(this)">
-                    </select>
-                    <input id="input_function_name" class="input-text" type="text" data-function_id="" value=""/>
-                </div>
+                <select id="function_name" class="select" onchange="input_value(this)">
+                </select>
+                <input id="input_function_name" class="input-text" type="text" data-function_id="" value=""/>
             </div>
-            <div class="form-group">
+            <div class="input-select">
                 <label for="environment_name">环境路线</label>
-                <div >
-                    <select id="environment_name" class="select" onchange="input_value(this)">
-                    </select>
-                    <input id="input_environment" class="input-text" type="text" data-environment_id="" value=""/>
-                </div>
+                <select id="environment_name" class="select" onchange="input_value(this)">
+                </select>
+                <input id="input_environment" class="input-text" type="text" data-environment_id="" value=""/>
             </div>
         </form>
         <div id="use_case-option" style="margin-left: 25%">
