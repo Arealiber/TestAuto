@@ -766,7 +766,7 @@
                     if (!response.success) {
                         show_alert('更新数据失败');
                     } else {
-                        location.reload();
+                        get_use_case_detail($("#use_case_id").attr('placeholder'))
                     }
                 }
             })
