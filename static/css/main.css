@@ -163,3 +163,13 @@ body {
 #environment-wrapper{
     margin-left:280px;
 }
+.input-text{
+    width:97%;
+    position: relative;
+    height: 40px;
+    top: -40px
+}
+.select{
+    width:100%;
+    height: 40px
+}

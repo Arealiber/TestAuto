@@ -78,27 +78,35 @@
             </div>
             <div id="business_line" class="form-group" style="display: none">
                 <label for="business_line">业务线</label>
-                <input id="input_business_name" autocomplete="off" list="business_name" data-function_id="" class="form-control"  onchange="inputSelect(this)" value=""/>
-                <datalist class="form-control" id="business_name" style="display: none">
-                </datalist>
+                <div >
+                    <select id="business_name" class="select" onchange="input_value(this)">
+                    </select>
+                    <input id="input_business_name" class="input-text" type="text" data-business_id="" value=""/>
+                </div>
             </div>
             <div id="system_line" class="form-group" style="display: none">
                 <label for="system_name">系统名称</label>
-                <input id="input_system_name" autocomplete="off" list="system_name" data-function_id="" class="form-control"  onchange="inputSelect(this)" value=""/>
-                <datalist id="system_name"  class="form-control" style="display: none">
-                </datalist>
+                <div >
+                    <select id="system_name" class="select" onchange="input_value(this)">
+                    </select>
+                    <input id="input_system_name" class="input-text" type="text" data-system_id="" value=""/>
+                </div>
             </div>
             <div class="form-group">
                 <label for="function_name">功能名称</label>
-                <input id="input_function_name" autocomplete="off" list="function_name" data-function_id="" class="form-control"  onchange="inputSelect(this)" value=""/>
-                <datalist id="function_name" class="form-control" style="display: none">
-                </datalist>
+                <div >
+                    <select id="function_name" class="select" onchange="input_value(this)">
+                    </select>
+                    <input id="input_function_name" class="input-text" type="text" data-function_id="" value=""/>
+                </div>
             </div>
             <div class="form-group">
                 <label for="environment_name">环境路线</label>
-                <input id="input_environment" autocomplete="off" list="environment_name" data-environment_id="" value="" class="form-control"  onchange="inputSelect(this)"/>
-                <datalist id="environment_name" style="display: none">
-                </datalist>
+                <div >
+                    <select id="environment_name" class="select" onchange="input_value(this)">
+                    </select>
+                    <input id="input_environment" class="input-text" type="text" data-environment_id="" value=""/>
+                </div>
             </div>
         </form>
         <div id="use_case-option" style="margin-left: 25%">
@@ -106,7 +114,6 @@
             <button class="btn btn-danger" id="delete_use_case" data-toggle="modal" data-target="#delete_confirm" value="">删除</button>
             <button class="btn btn-success" id="run_use_case" data-toggle="modal" data-target="#execute_result">运行</button>
             <button class="btn btn-info" id="async_run_use_case" data-toggle="modal" data-target="#execute_background">异步运行</button>
-
         </div>
 
         <HR>
@@ -1113,16 +1120,11 @@
                 var append_str = '<option data-business_id="0"></option>';
                 if (business_line_id) {
                     append_str = '';
-                    $("#input_business_name").val("");
-                    $("#input_business_name").data("environment_id", 0);
                 }
                 if (business__info_list.length > 0) {
                     $.each(business__info_list, function (i, business__info) {
                         append_str += '<option data-business_id="' + business__info.id + '">' + business__info.business_name + '</option>';
-                        if (business__info.id == business_line_id) {
-                            $("#input_business_name").data("business_id", business__info.id);
-                            $("#input_business_name").val(business__info.business_name);
-                        }
+
                     });
                     $("#business_name").append(append_str)
                 }
@@ -1232,7 +1234,7 @@
     }
 
     $(document).ready(function () {
-        $("#input_system_name").change(function () {
+        $("#system_name").change(function () {
             var input_select=$(this).val();
             var option_length=$("option").length;
             var eq_flag = false;
@@ -1258,22 +1260,7 @@
     });
 
     $(document).ready(function () {
-        $("#input_business_name").change(function () {
-            var input_select=$(this).val();
-            var option_length=$("option").length;
-            var eq_flag = false;
-            for(var i=0;i<option_length;i++){
-                var option_id = $("option").eq(i).data();
-                var option_value = $("option").eq(i).val();
-                if(input_select==option_value){
-                    $(this).data(option_id);
-                    eq_flag = true;
-                    break;
-                }
-            }
-            if (!eq_flag) {
-                $(this).data('business_id', null);
-            }
+        $("#business_name").change(function () {
             var business_id = $("#input_business_name").data('business_id');
             $("#input_system_name").val("");
             $("#input_system_name").data("function_id", '0');
