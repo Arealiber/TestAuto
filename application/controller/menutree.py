@@ -137,3 +137,35 @@ def get_use_case_count_from_function_id():
     result = Case_API.query_use_case_count(**request.get_json())
     return jsonify({'success': True, 'res': result})
 
+
+@app.route('/menu_tree/use_case/add', methods=['POST'])
+@try_except
+def add_use_case_to_menu_tree():
+    """
+    创建用例的菜单
+    :param:function_id
+    :return:
+    """
+    param_args = request.get_json()
+    business_id = param_args.get('business_id')
+    system_id = param_args.get('system_id')
+    function_id = param_args.get('function_id')
+    if not business_id:
+        business_id = MenuTreeAPI.add_business_line(**{"business_name": param_args.get("business_name")})
+    if not system_id:
+        system_id = MenuTreeAPI.add_system_line(**{
+            "system_name": param_args.get("system_name"),
+            "business_line_id": business_id
+        })
+    if not function_id:
+        function_id = MenuTreeAPI.add_function_line(**{
+            "function_name": param_args.get("function_name"),
+            "system_line_id": system_id
+        })
+    param_args.update({
+        "business_id": business_id,
+        "system_id": system_id,
+        "function_id": function_id
+    })
+    return jsonify({'success': True, 'res': param_args})
+

@@ -194,3 +194,21 @@ function input_value(selector) {
         }
     }
 }
+
+function init_input_value(st=selector, id_name=null) {
+    var input_val = $(st).val();
+    var option_arr=$("option");
+    if ($.inArray(input_val, option_arr) > 0) {
+        for(var i=0;i<option_arr.length;i++){
+            var option_id = $("option").eq(i).data();
+            var option_value = $("option").eq(i).val();
+            if($(st).val()==option_value){
+                $(st).next().data(option_id);
+                break;
+            }
+        }
+    } else {
+        $(st).data(id_name, null);
+    }
+
+}
