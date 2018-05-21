@@ -636,71 +636,31 @@
             };
             $("#error_alert").hide();
             if (!use_case_id) {
-                if (!business_id) {
-                    $.ajax({
-                        type: 'post',
-                        url: "/menu_tree/business_line/add",
-                        data: JSON.stringify({
-                            business_name: $("#input_business_name").val()
-                        }),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (response) {
-                            if (!response.success) {
-                                show_alert('创建业务线失败：'+ response.error);
-                                success_flag = false
+                var init_menu_tree_data = {
+                    business_id: business_id,
+                    system_id: system_id,
+                    function_id: function_id,
+                    business_name: $("#input_business_name").val(),
+                    system_name: $("#input_system_name").val(),
+                    function_name: $("#input_function_name").val()
+                };
+                $.ajax({
+                    type: 'post',
+                    url: '/menu_tree/use_case/add',
+                    data:JSON.stringify(init_menu_tree_data),
+                    contentType: "application/json; charset:utf-8",
+                    dataType:"json",
+                    success: function (response) {
+                        if (!response.success) {
+                                show_alert('创建目录失败：'+ response.error);
                             } else {
-                                business_id = response.res;
-                                $("#input_business_name").data('business_id', business_id);
-                            }
+                            var result = response.res;
+                            use_case_dict.id = use_case_id;
+                            use_case_dict.function_id = result.function_id;
+                            add_update_use_case(url, use_case_dict)
                         }
-                    })
-                }
-                if (!system_id && success_flag) {
-                    $.ajax({
-                        type: 'post',
-                        url: "/menu_tree/system_line/add",
-                        data: JSON.stringify({
-                            system_name: $("#input_system_name").val(),
-                            business_line_id: business_id
-                        }),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (response) {
-                            if (!response.success) {
-                                show_alert('创建系统线失败：'+ response.error);
-                                success_flag = false
-                            } else {
-                                system_id = response.res;
-                                $("#input_system_name").data('system_id', system_id);
-                            }
-                        }
-                    })
-                }
-                if (!function_id && success_flag) {
-                    $.ajax({
-                        type: 'post',
-                        url: "/menu_tree/function_line/add",
-                        data: JSON.stringify({
-                            function_name: $("#input_function_name").val(),
-                            system_line_id: system_id
-                        }),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (response) {
-                            if (!response.success) {
-                                show_alert('创建功能线失败:'+ response.error);
-                                success_flag = false
-                            } else {
-                                function_id = response.res;
-                                $("#input_function_name").data('function_id', function_id);
-                            }
-                        }
-                    })
-                }
-                use_case_dict.id = use_case_id;
-                use_case_dict.function_id = function_id;
-                add_update_use_case(url, use_case_dict)
+                    }
+                })
             } else {
                 url = '/use_case/update';
                 add_update_use_case(url, use_case_dict)
