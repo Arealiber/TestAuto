@@ -80,25 +80,25 @@
                 <label for="business_line">业务线</label>
                 <select id="business_name" class="select" onchange="input_value(this)">
                 </select>
-                <input id="input_business_name" class="input-text" type="text" data-business_id="" value=""/>
+                <input id="input_business_name" class="input-text" type="text" onchange="init_input_value(st=this,id_name='business_id')" data-business_id="" value=""/>
             </div>
             <div id="system_line" class="input-select" style="display: none">
                 <label for="system_name">系统名称</label>
                 <select id="system_name" class="select" onchange="input_value(this)">
                 </select>
-                <input id="input_system_name" class="input-text" type="text" data-system_id="" value=""/>
+                <input id="input_system_name" class="input-text" type="text" onchange="init_input_value(st=this,id_name='system_id')" data-system_id="" value=""/>
             </div>
             <div class="input-select">
                 <label for="function_name">功能名称</label>
                 <select id="function_name" class="select" onchange="input_value(this)">
                 </select>
-                <input id="input_function_name" class="input-text" type="text" data-function_id="" value=""/>
+                <input id="input_function_name" class="input-text" type="text" onchange="init_input_value(st=this,id_name='function_id')" data-function_id="" value=""/>
             </div>
             <div class="input-select">
                 <label for="environment_name">环境路线</label>
                 <select id="environment_name" class="select" onchange="input_value(this)">
                 </select>
-                <input id="input_environment" class="input-text" type="text" data-environment_id="" value=""/>
+                <input id="input_environment" class="input-text" type="text" onchange="init_input_value(st=this,id_name='environment_id')" data-environment_id="" value=""/>
             </div>
         </form>
         <div id="use_case-option" style="margin-left: 25%">
@@ -624,17 +624,18 @@
             var system_id = $("#input_system_name").data('system_id');
             var function_id = $("#input_function_name").data('function_id');
             var environment_id = $("#input_environment").data("environment_id");
+            var use_case_id = $("#use_case_id").attr('placeholder');
+            var url = '/use_case/add';
+            var success_flag = true;
             var use_case_dict = {
+                'id': use_case_id,
                 'use_case_name': $("#use_case_name").val(),
                 'desc': $("#use_case_desc").val(),
                 'function_id': function_id,
                 'environment_id': environment_id
             };
             $("#error_alert").hide();
-            var use_case_id = $("#use_case_id").attr('placeholder');
-            var re_flag = 0;
-            var url = '/use_case/add';
-            var success_flag = true;
+
             if (!use_case_id) {
                 if (!business_id) {
                     $.ajax({
@@ -651,6 +652,7 @@
                                 success_flag = false
                             } else {
                                 business_id = response.res;
+                                $("#input_business_name").data('business_id', business_id);
                             }
                         }
                     })
@@ -671,6 +673,7 @@
                                 success_flag = false
                             } else {
                                 system_id = response.res;
+                                $("#input_system_name").data('system_id', system_id);
                             }
                         }
                     })
@@ -691,36 +694,39 @@
                                 success_flag = false
                             } else {
                                 function_id = response.res;
+                                $("#input_function_name").data('function_id', function_id);
                             }
                         }
                     })
                 }
+                use_case_dict.id = use_case_id;
+                use_case_dict.function_id = function_id;
+                add_update_use_case(url, use_case_dict)
             } else {
                 url = '/use_case/update';
-                use_case_dict.id = use_case_id;
-            }
-            if (re_flag < 1 && success_flag) {
-                $.ajax({
-                    type: 'post',
-                    url: url,
-                    data: JSON.stringify(
-                        use_case_dict
-                    ),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        if (!response.success) {
-                            show_alert('更新数据失败:' + response.error);
-                        } else if (!use_case_id) {
-                            window.location.href = '/use_case_detail/' + response.res
-                        } else {
-                            get_use_case_detail(use_case_id)
-                        }
-                    }
-                })
+                add_update_use_case(url, use_case_dict)
             }
         })
     });
+    function add_update_use_case(url, use_case_dict) {
+        $.ajax({
+            type: 'post',
+            url: url,
+            data: JSON.stringify(
+                use_case_dict
+            ),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                console.log(response);
+                if (!response.success) {
+                    show_alert('更新数据失败:' + response.error);
+                } else {
+                    get_use_case_detail(use_case_dict.use_case_id)
+                }
+            }
+        })
+    }
 
     // 更新用例传给接口的数据
     $(document).ready(function () {
