@@ -1,3 +1,5 @@
+import socket
+
 from datetime import datetime
 
 from application.util import hsbpythonlog as LOGGER
@@ -7,7 +9,7 @@ from application.util import hsbpythonlog as LOGGER
 LOG_FORMAT_STRING = '{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}'
 
 # 所在节点ID
-HOSTNAME = '10.29.20.12'
+HOSTNAME = socket.gethostname()
 
 LOGGER.log_initialize("InspectSys", False)
 
