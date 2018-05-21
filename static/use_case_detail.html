@@ -635,7 +635,6 @@
                 'environment_id': environment_id
             };
             $("#error_alert").hide();
-
             if (!use_case_id) {
                 if (!business_id) {
                     $.ajax({
@@ -1010,6 +1009,8 @@
             $("#use_case_table").show();
             var use_case_list = use_case_info.use_case_list[0];
             var create_by = '';
+            var del_flag = false;
+            var del_use_case_info = null;
             $.each(use_case_list, function (i, use_case) {
                 create_by = use_case.create_by;
                 if (create_by == 1) {
@@ -1030,8 +1031,14 @@
                             '<td>' + moment(use_case.update_time).format('YYYY/MM/DD HH:mm:ss') + '</td>' +
                             '<td>' + use_case_info.text.split('(')[0] + '</td>' +
                             '<td>' + button_col + '</td></tr>')
+                } else {
+                    del_flag = true;
+                    del_use_case_info = use_case;
                 }
-            })
+            });
+            if (del_flag && del_use_case_info) {
+                use_case_list.splice($.inArray(del_use_case_info,use_case_list),1)
+            }
         }
     }
 
