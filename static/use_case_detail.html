@@ -677,7 +677,6 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                console.log(response);
                 if (!response.success) {
                     show_alert('更新数据失败:' + response.error);
                 } else {
@@ -1082,14 +1081,13 @@
             dataType: "json",
             success: function (response) {
                 var business__info_list = response.res;
-                var append_str = '<option data-business_id="0"></option>';
+                var append_str = '<option data-business_id="0" selected="true"></option>';
                 if (business_line_id) {
                     append_str = '';
                 }
                 if (business__info_list.length > 0) {
                     $.each(business__info_list, function (i, business__info) {
                         append_str += '<option data-business_id="' + business__info.id + '">' + business__info.business_name + '</option>';
-
                     });
                     $("#business_name").append(append_str)
                 }
@@ -1120,10 +1118,12 @@
                 }
                 if (system__info_list.length > 0) {
                     $.each(system__info_list, function (i, system__info) {
-                        append_str += '<option data-system_id="' + system__info.id + '">' + system__info.system_name + '</option>';
                         if (system__info.id == system_line_id) {
                             $("#input_system_name").data("system_id", system__info.id);
                             $("#input_system_name").val(system__info.system_name);
+                            append_str += '<option data-system_id="' + system__info.id + '" selected="true">' + system__info.system_name + '</option>';
+                        } else {
+                            append_str += '<option data-system_id="' + system__info.id + '">' + system__info.system_name + '</option>';
                         }
                     });
                     $("#system_name").append(append_str)
@@ -1145,16 +1145,18 @@
                 var environment_list = response.res;
                 var append_str = '<option data-environment_id="0"></option>';
                 if (!environment_id) {
-                    append_str = '';
+                    append_str = '<option data-environment_id="0" selected="true"></option>';
                     $("#input_environment").val("");
                     $("#input_environment").data("environment_id", 0);
                 }
                 if (environment_list.length > 0) {
                     $.each(environment_list, function (i, environment_info) {
-                        append_str += '<option data-environment_id="' + environment_info.id + '">' + environment_info.environment_name + '</option>';
                         if (environment_info.id == environment_id) {
                             $("#input_environment").data('environment_id', environment_info.id);
                             $("#input_environment").val(environment_info.environment_name);
+                            append_str += '<option selected="selected" data-environment_id="' + environment_info.id + '"  selected="true">' + environment_info.environment_name + '</option>';
+                        } else {
+                            append_str += '<option data-environment_id="' + environment_info.id + '">' + environment_info.environment_name + '</option>';
                         }
                     });
                     $("#environment_name").append(append_str)
@@ -1186,10 +1188,12 @@
                 }
                 if (function_list.length > 0) {
                     $.each(function_list, function (i, function_info) {
-                        append_str += '<option data-function_id="' + function_info.id + '" value="'+ function_info.function_name +'">' + function_info.function_name + '</option>';
                         if (function_info.id == function_line_id) {
                             $("#input_function_name").data("function_id", function_info.id);
                             $("#input_function_name").val(function_info.function_name);
+                            append_str += '<option data-function_id="' + function_info.id + '" value="'+ function_info.function_name +'" selected="true">' + function_info.function_name + '</option>';
+                        } else {
+                            append_str += '<option data-function_id="' + function_info.id + '" value="'+ function_info.function_name +'">' + function_info.function_name + '</option>';
                         }
                     });
                     $("#function_name").append(append_str)
