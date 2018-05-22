@@ -905,7 +905,7 @@
                     execute_result_display.append('<p>' + response.error + '</p>')
                     var execute_result_list = response.res;
                     $.each(execute_result_list, function (i, result) {
-                        execute_result_display.append('<h5>接口' + (i+1) + '</h5>');
+                        execute_result_display.append('<h5>' + (i+1) + '.' +  result.interface_name +'</h5>');
                         execute_result_display.append('<p>成功：' + result.success  + '</p>');
                         execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
                         execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
@@ -920,7 +920,7 @@
                     }
                     var execute_result_list = response.res.res;
                     $.each(execute_result_list, function (i, result) {
-                        execute_result_display.append('<h5>接口' + (i+1) + '</h5>');
+                        execute_result_display.append('<h5>' + (i+1) + '.' +  result.interface_name +'</h5>');
                         execute_result_display.append('<p>成功：' + result.success  + '</p>');
                         execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
                         execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
