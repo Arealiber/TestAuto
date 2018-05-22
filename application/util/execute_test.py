@@ -255,6 +255,9 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             }
             if header:
                 request_kwargs['headers'] = json.loads(header)
+                request_kwargs['headers']['host'] = url.split('//')[1].split('/')[0]
+            else:
+                request_kwargs['headers'] = {'host': url.split('//')[1].split('/')[0]}
             if json_payload:
                 if interface['body_type'] == 0:
                     request_kwargs['json'] = json_payload
@@ -293,7 +296,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     if '_interface' in json_payload['_head']:
                         requested_interface = json_payload['_head']['_interface']
             if not requested_interface:
-                requested_interface = url.split('//')[1].split('/')[1]
+                requested_interface = url.split('//')[1].split('/')[0]
 
             # 日志内容
             interface_log_dict['s_header'] = header if header else ''
@@ -306,6 +309,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     r = session.get(url, **request_kwargs)
                 elif request_method.upper() == 'POST':
                     r = session.post(url, **request_kwargs)
+                    print(r.request.headers)
                 try:
                     json_response = r.json()
                 except Exception as e:
