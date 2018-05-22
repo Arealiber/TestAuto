@@ -913,7 +913,7 @@
                             color = 'red'
                         }
                         execute_result_display.append('<h5>' + (i+1) + '.' +  result.interface_name +'</h5>');
-                        execute_result_display.append('<p style="color:'+color+ ';font-weight: bolder">' + success  + '</p>');
+                        execute_result_display.append('<p style="color:'+color+ ';font-weight: bolder">运行结果：' + success  + '</p>');
                         execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
                         execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
                         execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
@@ -925,14 +925,15 @@
                     } else {
                         show_execute_alert('执行不通过', 'alert-warning')
                     }
-                    var execute_result_list = response.res.res;
+                    console.log(response);
+                    execute_result_list = response.res.res;
                     $.each(execute_result_list, function (i, result) {
                         if (!result.success) {
                             success = 'Fail';
                             color = 'red'
                         }
                         execute_result_display.append('<h5>' + (i+1) + '.' +  result.interface_name +'</h5>');
-                        execute_result_display.append('<p style="color:'+color+ ';font-weight: bolder">' +  success + '</p>');
+                        execute_result_display.append('<p style="color:'+color+ ';font-weight: bolder">运行结果：' +  success + '</p>');
                         execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
                         execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
                         execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
