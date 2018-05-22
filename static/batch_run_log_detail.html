@@ -120,16 +120,16 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
+                $(".pagination").hide();
                 if (!response.success) {
                     show_alert("获取用例运行日志失败");
                 } else {
                     var total_use_case_run_log = response.res;
                     var total_page = Math.ceil(total_use_case_run_log / page_size);
-
                     if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
                         show_alert("无此页数据");
-                        $(".pagination").hide()
                     } else {
+                        $(".pagination").show();
                         var previous_page = $('li[id="previous_page"]');
                         var next_page = $('li[id="next_page"]');
                         if (total_page == 1) {

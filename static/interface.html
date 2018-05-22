@@ -104,6 +104,7 @@
             url: '/interface/count',
             success: function (response) {
                 var page_size = 20;
+                $(".pagination").hide();
                 if (!response.success) {
                     show_alert('获取接口失败');
                 } else if (response.res == 0) {
@@ -114,8 +115,8 @@
                     var total_page = Math.ceil(total_interface / page_size);
                     if (page_num > total_page || page_num <= 0 || isNaN(page_num)) {
                         show_alert('无此页数据');
-                        $(".pagination").hide()
                     } else {
+                        $(".pagination").show();
                         var previous_page = $('li[id="previous_page"]');
                         var next_page = $('li[id="next_page"]');
                         if (total_page == 1) {
