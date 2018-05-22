@@ -899,14 +899,21 @@
             dataType: "json",
             success: function (response) {
                 $("#execute_loader").hide();
+                var success = 'Pass';
+                var color = 'green';
                 if (!response.success) {
                     show_execute_alert(response.error_str + '执行失败', 'alert-danger');
                     execute_result_display.append('<h5>错误信息：</h5>');
                     execute_result_display.append('<p>' + response.error + '</p>')
                     var execute_result_list = response.res;
+
                     $.each(execute_result_list, function (i, result) {
+                        if (!result.success) {
+                            success = 'Fail';
+                            color = 'red'
+                        }
                         execute_result_display.append('<h5>' + (i+1) + '.' +  result.interface_name +'</h5>');
-                        execute_result_display.append('<p>成功：' + result.success  + '</p>');
+                        execute_result_display.append('<p style="color:'+color+ ';font-weight: bolder">' + success  + '</p>');
                         execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
                         execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
                         execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
@@ -920,8 +927,12 @@
                     }
                     var execute_result_list = response.res.res;
                     $.each(execute_result_list, function (i, result) {
+                        if (!result.success) {
+                            success = 'Fail';
+                            color = 'red'
+                        }
                         execute_result_display.append('<h5>' + (i+1) + '.' +  result.interface_name +'</h5>');
-                        execute_result_display.append('<p>成功：' + result.success  + '</p>');
+                        execute_result_display.append('<p style="color:'+color+ ';font-weight: bolder">' +  success + '</p>');
                         execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
                         execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
                         execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
