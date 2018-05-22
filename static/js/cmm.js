@@ -190,6 +190,7 @@ function input_value(selector) {
         var option_value = $("option").eq(i).val();
         if($(selector).val()==option_value){
             $(selector).next().data(option_id);
+            $("option").eq(i).attr('select', true);
             break;
         }
     }

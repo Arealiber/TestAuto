@@ -1154,7 +1154,7 @@
                         if (environment_info.id == environment_id) {
                             $("#input_environment").data('environment_id', environment_info.id);
                             $("#input_environment").val(environment_info.environment_name);
-                            append_str += '<option selected="selected" data-environment_id="' + environment_info.id + '"  selected="true">' + environment_info.environment_name + '</option>';
+                            append_str += '<option selected="true" data-environment_id="' + environment_info.id + '">' + environment_info.environment_name + '</option>';
                         } else {
                             append_str += '<option data-environment_id="' + environment_info.id + '">' + environment_info.environment_name + '</option>';
                         }
