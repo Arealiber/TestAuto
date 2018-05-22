@@ -146,60 +146,61 @@
                         $("#interface_encryption").append('<option value="' + encryption.id + '">' + encryption.encryption_name + '</option>')
                     })
                 }
+                var interface_id = window.location.pathname.split('/').pop();
+                if (interface_id != 'new') {
+                    $.ajax({
+                        type: 'post',
+                        url: '/interface/info',
+                        data: JSON.stringify({
+                            'id': interface_id
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            loader.hide();
+                            if (!response.success) {
+                                show_alert('获取数据失败');
+                            } else {
+                                var interface_detail = response.res[0];
+                                $("#interface_id").attr('placeholder', interface_detail.id);
+                                $("#interface_name").val(interface_detail.interface_name);
+                                $("#interface_entry").val(interface_detail.interface_entry);
+                                $("#interface_url").val(interface_detail.interface_url);
+                                $("#interface_method").val(interface_detail.interface_method);
+                                $("#interface_header").val(interface_detail.interface_header);
+                                $("#interface_json_payload").val(interface_detail.interface_json_payload);
+                                if (interface_detail.interface_encryption != 0) {
+                                    var option_list = $("#interface_encryption").find('option');
+                                    $.each(option_list, function (i, option) {
+                                        if (option.value == interface_detail.interface_encryption) {
+                                            option.selected = true
+                                        }
+                                    })
+                                }
+
+                                if (interface_detail.body_type == 0) {
+                                    $("#form").removeClass('active');
+                                    $("#json").addClass('active');
+                                } else {
+                                    $("#json").removeClass('active');
+                                    $("#form").addClass('active');
+                                }
+
+                                $("#interface_form").show();
+                                $("#submit_interface").html('更新');
+                                $("#submit_interface").show();
+                            }
+                        }
+                    })
+                } else {
+                    loader.hide();
+                    $("#interface_form").show();
+                    $("#submit_interface").html('新增');
+                    $("#submit_interface").show();
+                }
             }
         });
-        var interface_id = window.location.pathname.split('/').pop();
-        if (interface_id != 'new') {
-            $.ajax({
-                type: 'post',
-                url: '/interface/info',
-                data: JSON.stringify({
-                    'id': interface_id
-                }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    loader.hide();
-                    if (!response.success) {
-                        show_alert('获取数据失败');
-                    } else {
-                        var interface_detail = response.res[0];
-                        $("#interface_id").attr('placeholder', interface_detail.id);
-                        $("#interface_name").val(interface_detail.interface_name);
-                        $("#interface_entry").val(interface_detail.interface_entry);
-                        $("#interface_url").val(interface_detail.interface_url);
-                        $("#interface_method").val(interface_detail.interface_method);
-                        $("#interface_header").val(interface_detail.interface_header);
-                        $("#interface_json_payload").val(interface_detail.interface_json_payload);
-                        if (interface_detail.interface_encryption != 0) {
-                            var option_list = $("#interface_encryption").find('option');
-                            $.each(option_list, function (i, option) {
-                                if (option.value == interface_detail.interface_encryption) {
-                                    option.selected = true
-                                }
-                            })
-                        }
 
-                        if (interface_detail.body_type == 0) {
-                            $("#form").removeClass('active');
-                            $("#json").addClass('active');
-                        } else {
-                            $("#json").removeClass('active');
-                            $("#form").addClass('active');
-                        }
-
-                        $("#interface_form").show();
-                        $("#submit_interface").html('更新');
-                        $("#submit_interface").show();
-                    }
-                }
-            })
-        } else {
-            loader.hide();
-            $("#interface_form").show();
-            $("#submit_interface").html('新增');
-            $("#submit_interface").show();
-        }
     });
 
     // 提交接口更新
