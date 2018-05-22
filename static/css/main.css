@@ -176,3 +176,9 @@ body {
 .input-select{
     height: 90px;
 }
+.param_input{
+    width: 60%;
+}
+.eval_input{
+    width: 60%;
+}

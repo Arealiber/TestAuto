@@ -168,6 +168,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 session.mount(base_url.lower(), DNSResolverHTTPSAdapter(url, ip_address, False))
 
         for interface in interface_list:
+            interface_name = interface.get('interface_name')
             interface_log_dict = {
                 'interface_start_time': datetime.utcnow(),
                 'use_case_run_log_id': use_case_log_id,
@@ -318,7 +319,8 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 result = {
                     'status_code': r.status_code,
                     'header': dict(r.headers),
-                    'json_response': json_response
+                    'json_response': json_response,
+                    'interface_name': interface_name
                 }
                 interface_log_dict['r_code'] = r.status_code
                 interface_log_dict['r_header'] = json.dumps(result['header'], ensure_ascii=False)
