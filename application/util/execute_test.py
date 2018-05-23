@@ -105,6 +105,7 @@ def use_case_exception_log_update(use_case_log_id, use_case_start):
 
 
 def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None, async=False, auto_run=False):
+    global DNS_CACHE
     DNS_CACHE = {}
 
     if async:
