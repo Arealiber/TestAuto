@@ -628,9 +628,7 @@
             var environment_id = $("#input_environment").data("environment_id");
             var use_case_id = $("#use_case_id").attr('placeholder');
             var url = '/use_case/add';
-            var success_flag = true;
             var use_case_dict = {
-                'id': use_case_id,
                 'use_case_name': $("#use_case_name").val(),
                 'desc': $("#use_case_desc").val(),
                 'function_id': function_id,
@@ -657,7 +655,6 @@
                                 show_alert('创建目录失败：'+ response.error);
                             } else {
                             var result = response.res;
-                            use_case_dict.id = use_case_id;
                             use_case_dict.function_id = result.function_id;
                             add_update_use_case(url, use_case_dict)
                         }
@@ -665,6 +662,7 @@
                 })
             } else {
                 url = '/use_case/update';
+                use_case_dict.id = use_case_id;
                 add_update_use_case(url, use_case_dict)
             }
         })
@@ -682,7 +680,12 @@
                 if (!response.success) {
                     show_alert('更新数据失败:' + response.error);
                 } else {
-                    get_use_case_detail(use_case_dict.use_case_id)
+                    if (url == '/use_case/add') {
+                        var use_case_id = response.res;
+                        get_use_case_detail(use_case_id)
+                    } else {
+                        get_use_case_detail(use_case_dict.id)
+                    }
                 }
             }
         })
@@ -927,7 +930,6 @@
                     } else {
                         show_execute_alert('执行不通过', 'alert-warning')
                     }
-                    console.log(response);
                     execute_result_list = response.res.res;
                     $.each(execute_result_list, function (i, result) {
                         if (!result.success) {
