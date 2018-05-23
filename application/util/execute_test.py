@@ -5,7 +5,6 @@ import re
 import socket
 from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime
-# from requests.adapters import HTTPAdapter, DEFAULT_POOLSIZE, DEFAULT_RETRIES, DEFAULT_POOLBLOCK
 from requests.exceptions import ConnectionError, ConnectTimeout
 
 from application import app
@@ -42,24 +41,6 @@ def new_getaddrinfo(*args):
 
 
 socket.getaddrinfo = new_getaddrinfo
-
-
-# http dns解析adapter，讲请求发往指定ip，类似改host
-# class DNSResolverHTTPSAdapter(HTTPAdapter):
-#     def __init__(self, common_name, host, https,pool_connections=DEFAULT_POOLSIZE, pool_maxsize=DEFAULT_POOLSIZE, max_retries=DEFAULT_RETRIES, pool_block=DEFAULT_POOLBLOCK):
-#         self.__common_name = common_name
-#         self.__host = host
-#         self.__https = https
-#         super(DNSResolverHTTPSAdapter, self).__init__(pool_connections=pool_connections, pool_maxsize=pool_maxsize, max_retries=max_retries, pool_block=pool_block)
-#
-#     def get_connection(self, url, proxies=None):
-#         redirected_url = url.replace(self.__common_name, self.__host)
-#         return super(DNSResolverHTTPSAdapter, self).get_connection(redirected_url, proxies=proxies)
-#
-#     def init_poolmanager(self, connections, maxsize, block=DEFAULT_POOLBLOCK, **pool_kwargs):
-#         if self.__https:
-#             pool_kwargs['assert_hostname'] = self.__common_name
-#         super(DNSResolverHTTPSAdapter, self).init_poolmanager(connections, maxsize, block=block, **pool_kwargs)
 
 
 def interface_log_insert(interface_log_dict):
@@ -183,10 +164,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                 url = element['url']
                 ip_address = element['map_ip']
                 DNS_CACHE[url] = ip_address
-            #     base_url = 'https://{0}/'.format(url)
-            #     session.mount(base_url.lower(), DNSResolverHTTPSAdapter(url, ip_address, True))
-            #     base_url = 'http://{0}/'.format(url)
-            #     session.mount(base_url.lower(), DNSResolverHTTPSAdapter(url, ip_address, False))
 
         for interface in interface_list:
             interface_name = interface.get('interface_name')
@@ -277,9 +254,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
             }
             if header:
                 request_kwargs['headers'] = json.loads(header)
-            #     request_kwargs['headers']['host'] = url.split('//')[1].split('/')[0]
-            # else:
-            #     request_kwargs['headers'] = {'host': url.split('//')[1].split('/')[0]}
             if json_payload:
                 if interface['body_type'] == 0:
                     request_kwargs['json'] = json_payload
