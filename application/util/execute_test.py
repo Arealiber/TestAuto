@@ -203,7 +203,7 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                                 new_param_value = '"{0}"'.format(a[0])
                                 item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), new_param_value)
                             else:
-                                if to_rephrase_list == interface['interface_url']:
+                                if item_to_rephrase == interface['interface_url']:
                                     item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '{0}'.format(param_value))
                                 else:
                                     item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '"{0}"'.format(param_value))
