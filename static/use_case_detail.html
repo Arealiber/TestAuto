@@ -698,6 +698,7 @@
         $("#use_case_interface_list").on('click', '.param_submit', function () {
             var card = $(this).closest('.card');
             var param_list = card.find(".param_input");
+            loader.show();
             $.each(param_list, function (i, param) {
                 var id_to_update = param.dataset.value;
                 $.ajax({
@@ -729,7 +730,8 @@
                     if (!response.success) {
                         show_alert('更新数据失败');
                     } else {
-                        get_use_case_detail($("#use_case_id").attr('placeholder'))
+                        loader.hide();
+                        // get_use_case_detail($("#use_case_id").attr('placeholder'))
                     }
                 }
             })
