@@ -511,6 +511,7 @@
                     } else {
                         $("#interface_alert").hide();
                         $("#use_case_interface_list").empty();
+                        loader.show();
                         $.each(interface_list, function (i, interface) {
                             var move_up_class = 'btn btn-info';
                             var move_down_class = 'btn btn-info';
@@ -562,6 +563,7 @@
                             var button_string = "<button class=\"btn btn-sm btn-primary param_submit\" id=\"submit_param\">更新</button>";
                             $("#use_case_interface_list").find('#collapse_' + interface.id).find('.param_form').after(button_string);
                         });
+                        loader.hide();
                     }
                     $("#use_case_form").show();
                     $("#submit_use_case").html('更新');
@@ -608,7 +610,7 @@
                         if (!response.success) {
                             show_alert('更新数据失败')
                         } else {
-                            show_alert('添加成功');
+                            loader.show();
                             get_use_case_detail(use_case_id);
                         }
                     }
