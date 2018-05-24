@@ -315,6 +315,7 @@
     var tree_selector = $('#menu_tree');
     var use_case_table_selector = $('#use_case-wrapper');
     var add_use_case_selector = $('#add_use_case');
+    var active_order = 0; //添加用例接口顺序参数
     selector_list.hide();
 
     function show_alert(alert_text) {
@@ -578,7 +579,7 @@
     // 接口添加列表点击选中功能
     $(document).ready(function () {
         var ul = $("#interfaceUL");
-        var active_order = 0;
+
         ul.on('click', 'li', function () {
             if(!$(this).hasClass("active")) {
                 $(this).addClass('active');
@@ -606,6 +607,7 @@
                     $(selected_interface).removeClass("active");
 
                 });
+                active_order = 0;
                 $.ajax({
                     type: 'post',
                     url: '/use_case/relation/add',
@@ -623,7 +625,7 @@
                             get_use_case_detail(use_case_id);
                         }
                     }
-                })
+                });
             }
         })
     });
