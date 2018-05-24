@@ -141,16 +141,24 @@ def add_relation():
     2. 查找interface内parameter信息, 用空值为每个参数在relation下生成记录
     :return:
     """
-    interface_id = request.get_json().get('interface_id')
-    relation_id = Case_API.add_relation(**request.get_json())
-    interface_list = InterfaceAPI.get_interface(id=interface_id)
-    the_interface = interface_list[0]
-    analysis_str = ''.join([the_interface.get('interface_header'),
-                            the_interface.get('interface_json_payload'),
-                            the_interface.get('interface_url')])
-    param_list = search_parameter(analysis_str)
-    for para in param_list:
-        Case_API.add_case_parameter_relation(relation_id=relation_id, parameter_name=para, parameter_value='')
+    param_dict = request.get_json()
+    interface_list = param_dict.get('interface_id')
+    if not isinstance(interface_list, list):
+        interface_list = [interface_list]
+    add_param_dict = {"use_case_id": param_dict.get("use_case_id"), "interface_id": ""}
+    for interface_id in interface_list:
+        if not interface_id:
+            continue
+        add_param_dict["interface_id"] = interface_id
+        relation_id = Case_API.add_relation(**add_param_dict)
+        interface_list = InterfaceAPI.get_interface(id=interface_id)
+        the_interface = interface_list[0]
+        analysis_str = ''.join([the_interface.get('interface_header'),
+                                the_interface.get('interface_json_payload'),
+                                the_interface.get('interface_url')])
+        param_list = search_parameter(analysis_str)
+        for para in param_list:
+            Case_API.add_case_parameter_relation(relation_id=relation_id, parameter_name=para, parameter_value='')
     return jsonify({'success': True})
 
 

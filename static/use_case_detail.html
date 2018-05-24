@@ -578,11 +578,14 @@
     // 接口添加列表点击选中功能
     $(document).ready(function () {
         var ul = $("#interfaceUL");
+        var active_order = 0;
         ul.on('click', 'li', function () {
             if(!$(this).hasClass("active")) {
                 $(this).addClass('active');
+                active_order +=1;
+                $(this).data("order", active_order);
             } else {
-                $(this).removeClass('active')
+                $(this).removeClass('active');
             }
         })
     });
@@ -591,31 +594,35 @@
     $(document).ready(function () {
         $('button[name="add_interface"]').click(function () {
             var selected_interface_list = $("#interfaceUL").find('.active');
-            if (selected_interface_list.length == 0) {
+            if (selected_interface_list.length < 1) {
                 location.reload();
             } else {
                 var use_case_id = $('#use_case_id').attr('placeholder');
+                var interface_arr = [];
                 $.each(selected_interface_list, function (i, selected_interface) {
                     var selected_interface_id = $(selected_interface).data('value');
+                    var order = $(selected_interface).data('order');
+                    interface_arr[order] = selected_interface_id;
                     $(selected_interface).removeClass("active");
-                    $.ajax({
-                        type: 'post',
-                        url: '/use_case/relation/add',
-                        data: JSON.stringify({
-                            'use_case_id': use_case_id,
-                            'interface_id': selected_interface_id
-                        }),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (response) {
-                            if (!response.success) {
-                                show_alert('更新数据失败')
-                            } else {
-                                loader.show();
-                                get_use_case_detail(use_case_id);
-                            }
+
+                });
+                $.ajax({
+                    type: 'post',
+                    url: '/use_case/relation/add',
+                    data: JSON.stringify({
+                        'use_case_id': use_case_id,
+                        'interface_id': interface_arr
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (!response.success) {
+                            show_alert('更新数据失败')
+                        } else {
+                            loader.show();
+                            get_use_case_detail(use_case_id);
                         }
-                    })
+                    }
                 })
             }
         })
