@@ -594,10 +594,10 @@
     $(document).ready(function () {
         $('button[name="add_interface"]').click(function () {
             var selected_interface_list = $("#interfaceUL").find('.active');
+            var use_case_id = $('#use_case_id').attr('placeholder');
             if (selected_interface_list.length < 1) {
-                location.reload();
+                get_use_case_detail(use_case_id);
             } else {
-                var use_case_id = $('#use_case_id').attr('placeholder');
                 var interface_arr = [];
                 $.each(selected_interface_list, function (i, selected_interface) {
                     var selected_interface_id = $(selected_interface).data('value');
