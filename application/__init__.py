@@ -17,6 +17,9 @@ app = Flask(
 )
 app.config.from_object(default)
 
+# for session
+app.secret_key = 'RFmoIw6P6B9LE5otg9ba7iyoXm5PkUM0s8KnV3cr'
+
 # SQLAlchemy engine
 engine = create_engine(app.config['DB_URI'] + '?charset=utf8',
                        encoding='utf-8',
