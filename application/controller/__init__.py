@@ -2,7 +2,7 @@ import requests
 import time
 
 from functools import wraps
-from flask import session, request, redirect, url_for
+from flask import session, request, redirect, url_for, jsonify
 from requests.exceptions import ConnectionError, ConnectTimeout
 
 from application import app
@@ -46,7 +46,7 @@ def login_required(f):
                         session['timestamp'] = str(int(time.time()))
                         return f(*args, **kwargs)
                     else:
-                        return redirect('http://api-amc.huishoubao.com.cn/login?system_id={0}&jump_url={1}'.format(app.config['SYSTEM_ID'], url_for('index')))
+                        return jsonify({'success': False, 'error': '登陆失败'})
                 except ConnectTimeout:
                     # 链接超时
                     pass
