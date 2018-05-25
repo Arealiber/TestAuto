@@ -21,7 +21,7 @@ def login_required(f):
         if user:
             return f(*args, **kwargs)
         else:
-            if 'login_toke' in request.args and 'user_id' in request.args:
+            if 'login_token' in request.args and 'user_id' in request.args:
                 login_token = request.args.get('login_token')
                 user_id = request.args.get('user_id')
                 params = {
@@ -43,8 +43,9 @@ def login_required(f):
                     if json_response['body']['ret'] == '0':
                         session['user_id'] = user_id
                         session['timestamp'] = str(int(time.time()))
+                        return f(*args, **kwargs)
                     else:
-                        return redirect('http://api-amc.huishoubao.com.cn/login?system_id={0}&jump_url=urlencode({1})'.format(app.config['SYSTEM_ID'], url_for('index')))
+                        return redirect('http://api-amc.huishoubao.com.cn/login?system_id={0}&jump_url={1}'.format(app.config['SYSTEM_ID'], url_for('index')))
                 except ConnectTimeout:
                     # 链接超时
                     pass
@@ -55,6 +56,6 @@ def login_required(f):
                     # 其他错误
                     pass
             else:
-                return redirect('http://api-amc.huishoubao.com.cn/login?system_id={0}&jump_url=urlencode({1})'.format(app.config['SYSTEM_ID'], request.url))
+                return redirect('http://api-amc.huishoubao.com.cn/login?system_id={0}&jump_url={1}'.format(app.config['SYSTEM_ID'], request.url))
 
     return decorated_function

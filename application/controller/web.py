@@ -1,7 +1,9 @@
 from application import app
+from application.controller import login_required
 
 
 @app.route('/')
+@login_required
 def index():
     return app.send_static_file('index.html')
 

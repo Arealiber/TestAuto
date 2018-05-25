@@ -20,4 +20,4 @@ DB_MAX_OVERFLOW = 10
 DB_ECHO = False
 
 # 内部权限系统
-SYSTEM_ID = '1'
+SYSTEM_ID = '106'
