@@ -1,5 +1,6 @@
 import requests
 import time
+import socket
 
 from functools import wraps
 from flask import session, request, redirect, url_for, jsonify
@@ -8,6 +9,24 @@ from requests.exceptions import ConnectionError, ConnectTimeout
 from application import app
 
 USER_INFO_URL = 'http://api-amc.huishoubao.com.cn/loginuserinfo'
+
+DNS = {
+    'api-amc.huishoubao.com.cn': '139.199.164.232'
+}
+
+old_getaddrinfo = socket.getaddrinfo
+
+
+def new_getaddrinfo(*args):
+    result = old_getaddrinfo(*args)[0]
+    dns_result = result[4]
+    if args[0] in DNS:
+        dns_result = (DNS[args[0]], dns_result[1])
+    modified_result = [(result[0], result[1], result[2], result[3], dns_result)]
+    return modified_result
+
+
+socket.getaddrinfo = new_getaddrinfo
 
 
 def cur_user():
