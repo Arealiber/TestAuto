@@ -36,7 +36,6 @@ def cur_user():
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        print(url_for('index'))
         user = cur_user()
         if user:
             return f(*args, **kwargs)
