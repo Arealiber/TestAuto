@@ -15,7 +15,7 @@ class BusinessLine(Base):
     }
 
     id = Column(Integer, primary_key=True)
-    business_name = Column(String(100), nullable=False)
+    business_name = Column(String(100), nullable=True)
     # create_time = Column(DateTime, default=datetime.utcnow)
     # update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)
@@ -35,8 +35,8 @@ class SystemLine(Base):
     }
 
     id = Column(Integer, primary_key=True)
-    business_line_id = Column(Integer, nullable=False)
-    system_name = Column(String(100), nullable=False)
+    business_line_id = Column(Integer, nullable=True)
+    system_name = Column(String(100), nullable=True)
     # create_time = Column(DateTime, default=datetime.utcnow)
     # update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)
@@ -57,8 +57,8 @@ class FunctionLine(Base):
     }
 
     id = Column(Integer, primary_key=True)
-    system_line_id = Column(Integer, nullable=False)
-    function_name = Column(String(100), nullable=False)
+    system_line_id = Column(Integer, nullable=True)
+    function_name = Column(String(100), nullable=True)
     # create_time = Column(DateTime, default=datetime.utcnow)
     # update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)

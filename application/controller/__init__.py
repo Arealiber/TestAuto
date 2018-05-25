@@ -3,16 +3,17 @@ import time
 import socket
 
 from functools import wraps
-from flask import session, request, redirect, url_for, jsonify
+from flask import session, request, redirect, jsonify
 from requests.exceptions import ConnectionError, ConnectTimeout
 
 from application import app
 
 USER_INFO_URL = 'http://api-amc.huishoubao.com.cn/loginuserinfo'
 
-DNS = {
-    'api-amc.huishoubao.com.cn': '139.199.164.232'
-}
+if not app.config['DEBUG']:
+    DNS = {'api-amc.huishoubao.com.cn': '139.199.164.232'}
+else:
+    DNS = {}
 
 old_getaddrinfo = socket.getaddrinfo
 
