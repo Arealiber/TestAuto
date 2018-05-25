@@ -17,6 +17,7 @@ def cur_user():
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        print(url_for('index'))
         user = cur_user()
         if user:
             return f(*args, **kwargs)
@@ -34,7 +35,7 @@ def login_required(f):
                     "params": {
                         "login_token": login_token,
                         "login_user_id": user_id,
-                        "login_system_id": "1"
+                        "login_system_id": app.config['SYSTEM_ID']
                     }
                 }
                 try:
