@@ -9,70 +9,84 @@ def index():
 
 
 @app.route('/parameter/<page_num>')
+@login_required
 def parameter_page(page_num):
     return app.send_static_file('parameter.html')
 
 
 @app.route('/parameter_detail/<parameter_id>')
+@login_required
 def parameter_detail_page(parameter_id):
     return app.send_static_file('parameter_detail.html')
 
 
 @app.route('/interface/<page_num>')
+@login_required
 def interface_page(page_num):
     return app.send_static_file('interface.html')
 
 
 @app.route('/interface_detail/<interface_id>')
+@login_required
 def interface_detail_page(interface_id):
     return app.send_static_file('interface_detail.html')
 
 
 @app.route('/use_case/<page_num>')
+@login_required
 def use_case_page(page_num):
     return app.send_static_file('use_case_detail.html')
 
 
 @app.route('/use_case_detail/<use_case_id>')
+@login_required
 def use_case_detail_page(use_case_id):
     return app.send_static_file('use_case_detail.html')
 
 
 @app.route('/batch/<page_num>')
+@login_required
 def batch_page(page_num):
     return app.send_static_file('batch.html')
 
 
 @app.route('/batch_detail/<batch_id>')
+@login_required
 def batch_detail_page(batch_id):
     return app.send_static_file('batch_detail.html')
 
 
 @app.route('/use_case_run_log/<page_num>')
+@login_required
 def use_case_run_log_page(page_num):
     return app.send_static_file('use_case_run_log.html')
 
 
 @app.route('/batch_run_log/<page_num>')
+@login_required
 def batch_run_log_page(page_num):
     return app.send_static_file('batch_run_log.html')
 
 
 @app.route('/use_case_run_log/detail/<run_log_id>')
+@login_required
 def use_case_run_log_detail(run_log_id):
     return app.send_static_file('use_case_run_log_detail.html')
 
 
 @app.route('/batch_run_log/detail/<run_log_id>/<page_num>')
+@login_required
 def batch_run_log_detail(run_log_id, page_num):
     return app.send_static_file('batch_run_log_detail.html')
 
 
 @app.route('/environment/manage')
+@login_required
 def environment_mange():
     return app.send_static_file('environment.html')
 
 
 @app.route('/environment/detail')
+@login_required
 def environment_detail():
     return app.send_static_file('environment_detail.html')

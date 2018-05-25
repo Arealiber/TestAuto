@@ -4,10 +4,12 @@ from flask import request, jsonify
 from application import app
 from application.api import parameter as ParameterAPI
 from application.util.exception import try_except
+from application.controller import login_required
 
 
 @app.route('/parameter/add', methods=['POST'])
 @try_except
+@login_required
 def add_parameter():
     """
     添加parameter
@@ -21,6 +23,7 @@ def add_parameter():
 
 @app.route('/parameter/info', methods=['POST'])
 @try_except
+@login_required
 def parameter_info():
     """
     获取parameter列表
@@ -38,6 +41,7 @@ def parameter_info():
 
 @app.route('/parameter/count', methods=['GET'])
 @try_except
+@login_required
 def parameter_count():
     """
     获取parameter总个数
@@ -48,6 +52,7 @@ def parameter_count():
 
 @app.route('/parameter/update', methods=['POST'])
 @try_except
+@login_required
 def update_parameter():
     """
     修改parameter
@@ -58,6 +63,7 @@ def update_parameter():
 
 @app.route('/parameter/delete', methods=['POST'])
 @try_except
+@login_required
 def delete_parameter():
     """
     删除parameter

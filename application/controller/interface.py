@@ -6,10 +6,12 @@ from application.api import interface as InterfaceAPI
 from application.api import use_case as UseCaseAPI
 from application.util.parameter import search_parameter
 from application.util.exception import try_except
+from application.controller import login_required
 
 
 @app.route('/interface/add', methods=['POST'])
 @try_except
+@login_required
 def add_interface():
     """
     添加interface
@@ -23,6 +25,7 @@ def add_interface():
 
 @app.route('/interface/info', methods=['POST'])
 @try_except
+@login_required
 def get_interface():
     """
     根据过滤规则获取interface列表, 无规则则返回所有interface
@@ -38,6 +41,7 @@ def get_interface():
 
 @app.route('/interface/count', methods=['GET'])
 @try_except
+@login_required
 def query_interface_count():
     """
     获取数据库中所有interface的总个数
@@ -48,6 +52,7 @@ def query_interface_count():
 
 @app.route('/interface/update', methods=['POST'])
 @try_except
+@login_required
 def modify_interface():
     """
     更新interface信息
@@ -88,6 +93,7 @@ def modify_interface():
 
 @app.route('/interface/delete', methods=['POST'])
 @try_except
+@login_required
 def delete_interface():
     """
     删除某个interface

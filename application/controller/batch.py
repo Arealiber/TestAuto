@@ -6,10 +6,12 @@ from application.api import batch as BatchAPI
 from application.api import use_case as UseCaseAPI
 from application.util import execute_test as Exec
 from application.util.exception import try_except
+from application.controller import login_required
 
 
 @app.route('/batch/add', methods=['POST'])
 @try_except
+@login_required
 def add_batch():
     """
     create batch for use case
@@ -25,6 +27,7 @@ def add_batch():
 
 @app.route('/batch/info', methods=['POST'])
 @try_except
+@login_required
 def get_batch():
     """
     query batch of use case
@@ -39,6 +42,7 @@ def get_batch():
 
 @app.route('/batch/detail', methods=['POST'])
 @try_except
+@login_required
 def batch_detail():
     """
 
@@ -59,6 +63,7 @@ def batch_detail():
 
 @app.route('/batch/count', methods=['GET'])
 @try_except
+@login_required
 def query_batch_count():
     """
     query batch count of use case
@@ -70,6 +75,7 @@ def query_batch_count():
 
 @app.route('/batch/update', methods=['POST'])
 @try_except
+@login_required
 def modify_batch():
     """
     create batch for use case
@@ -81,6 +87,7 @@ def modify_batch():
 
 @app.route('/batch/delete', methods=['POST'])
 @try_except
+@login_required
 def delete_batch():
     """
     删除用例批次，并解除批次关联的用例
@@ -92,6 +99,7 @@ def delete_batch():
 
 @app.route('/batch/relation/add', methods=['POST'])
 @try_except
+@login_required
 def add_batch_use_case_relation():
     """
     往某一个批次添加用例
@@ -105,6 +113,7 @@ def add_batch_use_case_relation():
 
 @app.route('/batch/relation/info', methods=['POST'])
 @try_except
+@login_required
 def get_batch_use_case_relation():
     """
     查询某一个批次已添加的用例列表
@@ -125,6 +134,7 @@ def get_batch_use_case_relation():
 
 @app.route('/batch/relation/delete', methods=['POST'])
 @try_except
+@login_required
 def del_batch_use_case_relation():
     """
     删除某一个批次已添加的用例列表
@@ -137,6 +147,7 @@ def del_batch_use_case_relation():
 
 @app.route('/batch/execute', methods=['POST'])
 @try_except
+@login_required
 def batch_execute():
     batch_id = request.get_json()['id']
     Exec.run_batch(batch_id)
