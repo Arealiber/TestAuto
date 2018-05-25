@@ -3,6 +3,7 @@ import time
 
 from functools import wraps
 from flask import session, request, redirect, url_for
+from requests.exceptions import ConnectionError, ConnectTimeout
 
 from application import app
 
@@ -37,14 +38,21 @@ def login_required(f):
                     }
                 }
                 try:
-                    r = requests.post(USER_INFO_URL, json=params)
+                    r = requests.post(USER_INFO_URL, json=params, timeout=5)
                     json_response = r.json()
                     if json_response['body']['ret'] == '0':
                         session['user_id'] = user_id
                         session['timestamp'] = str(int(time.time()))
                     else:
                         return redirect('http://api-amc.huishoubao.com.cn/login?system_id={0}&jump_url=urlencode({1})'.format(app.config['SYSTEM_ID'], url_for('index')))
+                except ConnectTimeout:
+                    # 链接超时
+                    pass
+                except ConnectionError:
+                    # 链接错误
+                    pass
                 except:
+                    # 其他错误
                     pass
             else:
                 return redirect('http://api-amc.huishoubao.com.cn/login?system_id={0}&jump_url=urlencode({1})'.format(app.config['SYSTEM_ID'], request.url))
