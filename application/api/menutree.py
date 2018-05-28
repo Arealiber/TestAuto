@@ -11,6 +11,16 @@ def add_business_line(**kwargs):
         return business_line.id
 
 
+def del_business_line(**kwargs):
+    business_id = kwargs.get('id')
+    if not isinstance(business_id, list):
+        business_id = [business_id]
+    with session_scope() as session:
+        query = session.query(BusinessLine)
+        query.filter(BusinessLine.id.in_(business_id)).delete(synchronize_session=False)
+    return business_id
+
+
 def add_system_line(**kwargs):
     with session_scope() as session:
         system_line = SystemLine(**kwargs)
@@ -19,12 +29,32 @@ def add_system_line(**kwargs):
         return system_line.id
 
 
+def del_system_line(**kwargs):
+    system_line_id = kwargs.get('id')
+    if not isinstance(system_line_id, list):
+        system_line_id = [system_line_id]
+    with session_scope() as session:
+        query = session.query(SystemLine)
+        query.filter(SystemLine.id.in_(system_line_id)).delete(synchronize_session=False)
+    return system_line_id
+
+
 def add_function_line(**kwargs):
     with session_scope() as session:
         function_line = FunctionLine(**kwargs)
         session.add(function_line)
         session.flush()
         return function_line.id
+
+
+def del_function_line(**kwargs):
+    function_id = kwargs.get('id')
+    if not isinstance(function_id, list):
+        function_id = [function_id]
+    with session_scope() as session:
+        query = session.query(FunctionLine)
+        query.filter(FunctionLine.id.in_(function_id)).delete(synchronize_session=False)
+    return function_id
 
 
 def query_business_line(**kwargs):

@@ -20,6 +20,19 @@ def create_business_line():
     return jsonify({'success': True, 'res': result})
 
 
+@app.route('/menu_tree/business_line/delete', methods=['POST'])
+@try_except
+@login_required
+def del_business_line():
+    """
+    删除指定系统菜单
+    :return:
+    :param: id 或list
+    """
+    result = MenuTreeAPI.del_business_line(**request.get_json())
+    return jsonify({'success': True, 'res': result})
+
+
 @app.route('/menu_tree/system_line/add', methods=['POST'])
 @try_except
 @login_required
@@ -32,6 +45,19 @@ def create_system_line():
     return jsonify({'success': True, 'res': result})
 
 
+@app.route('/menu_tree/system_line/delete', methods=['POST'])
+@try_except
+@login_required
+def del_system_line():
+    """
+    查询所有系统菜单
+    :return:
+    :param: id 或list
+    """
+    result = MenuTreeAPI.del_system_line(**request.get_json())
+    return jsonify({'success': True, 'res': result})
+
+
 @app.route('/menu_tree/function_line/add', methods=['POST'])
 @try_except
 @login_required
@@ -39,9 +65,23 @@ def create_function_line():
     """
     查询所有系统菜单
     :return:
+    :param: id 或list
     """
     result = MenuTreeAPI.add_function_line(**request.get_json())
     return jsonify({'success': True, 'res': result})
+
+
+@app.route('/menu_tree/function_line/delete', methods=['POST'])
+@try_except
+@login_required
+def del_function_line():
+    """
+    查询所有系统菜单
+    :return:
+    """
+    result = MenuTreeAPI.del_function_line(**request.get_json())
+    return jsonify({'success': True, 'res': result})
+
 
 
 @app.route('/menu_tree/system_line/info', methods=['POST'])
