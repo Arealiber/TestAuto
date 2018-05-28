@@ -655,22 +655,30 @@
                     system_name: $("#input_system_name").val(),
                     function_name: $("#input_function_name").val()
                 };
-                $.ajax({
-                    type: 'post',
-                    url: '/menu_tree/use_case/add',
-                    data:JSON.stringify(init_menu_tree_data),
-                    contentType: "application/json; charset:utf-8",
-                    dataType:"json",
-                    success: function (response) {
-                        if (!response.success) {
+                if (!init_menu_tree_data.business_name) {
+                    show_alert("业务目录不能为空!")
+                } else if (!init_menu_tree_data.system_name) {
+                    show_alert("系统目录不能为空!")
+                } else if (!init_menu_tree_data.function_name) {
+                    show_alert("功能目录不能为空!")
+                } else {
+                    $.ajax({
+                        type: 'post',
+                        url: '/menu_tree/use_case/add',
+                        data:JSON.stringify(init_menu_tree_data),
+                        contentType: "application/json; charset:utf-8",
+                        dataType:"json",
+                        success: function (response) {
+                            if (!response.success) {
                                 show_alert('创建目录失败：'+ response.error);
                             } else {
-                            var result = response.res;
-                            use_case_dict.function_id = result.function_id;
-                            add_update_use_case(url, use_case_dict)
+                                var result = response.res;
+                                use_case_dict.function_id = result.function_id;
+                                add_update_use_case(url, use_case_dict)
+                            }
                         }
-                    }
-                })
+                    })
+                }
             } else {
                 url = '/use_case/update';
                 use_case_dict.id = use_case_id;
