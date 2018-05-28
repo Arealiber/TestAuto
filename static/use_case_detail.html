@@ -461,6 +461,7 @@
         }
     }
     function get_use_case_detail(use_case_id) {
+        $('#page-content-wrapper').show();
         $('#delete_use_case').show();
         $('#run_use_case').show();
         $('#async_run_use_case').show();
@@ -905,6 +906,10 @@
                     use_case_id = $('#use_case_id').attr('placeholder');
                 }
                 asyc_run_use_case(use_case_id)
+            } else if (this.name == 'table_detail_use_case') {
+
+                console.log(this, this.value)
+                get_use_case_detail(this.value)
             }
         })
     });
@@ -1019,6 +1024,7 @@
                 }
                 if (use_case.use_case_id != del_use_case_id) {
                     var button_col = '<div class="btn-group btn-group-sm" role="group">' +
+                        '<button name="table_detail_use_case" type="button" class="btn btn-info btn-secondary" value="' + use_case.use_case_id + '" data-toggle="modal">详情</button>' +
                         '<button name="table_run_use_case" type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
                         '<button name="table_async_run_use_case" type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
                         '<button name="delete_use_case_in_table" type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
@@ -1371,6 +1377,7 @@
                                             create_name = 'admin'
                                         }
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
+                                            '<button name="table_detail_use_case" type="button" class="btn btn-info btn-secondary" value="' + use_case.id + '" data-toggle="modal">详情</button>' +
                                             '<button name="table_run_use_case" type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
                                             '<button name="table_async_run_use_case" type="button" class="btn btn-info btn-secondary execute-background" value="' + use_case.id + '" data-toggle="modal" data-target="#execute_background">异步执行</button>' +
                                             '<button name="delete_use_case_in_table"  type="button" class="btn btn-info btn-secondary delete-button" value="' + use_case.id + '" data-toggle="modal" data-target="#delete_confirm">删除</button>';
