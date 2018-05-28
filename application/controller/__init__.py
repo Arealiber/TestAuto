@@ -41,6 +41,7 @@ def login_required(f):
         if user:
             return f(*args, **kwargs)
         else:
+            print(request.args)
             if 'login_token' in request.args and 'user_id' in request.args:
                 login_token = request.args.get('login_token')
                 user_id = request.args.get('user_id')

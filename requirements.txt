@@ -7,3 +7,4 @@ SQLAlchemy >= 1.2.5
 voluptuous >= 0.11.1
 pytz >= 2018.4
 PyMySQL >= 0.8.0
+flask_cache
