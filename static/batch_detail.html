@@ -257,29 +257,35 @@
     $(document).ready(function () {
         var ul = $("#use_caseUL");
         ul.on('click', 'li', function () {
-            var li = ul.find('li');
-            $.each(li, function (i, li_item) {
-                li_item.classList.remove('active');
-            });
-            $(this).addClass('active');
+           if(!$(this).hasClass("active")) {
+                $(this).addClass('active');
+            } else {
+                $(this).removeClass('active');
+            }
         })
     });
 
     // 添加用例到批次
     $(document).ready(function () {
         $('button[name="add_use_case"]').click(function () {
-            var selected_use_case = $("#use_caseUL").find('.active');
-            if (selected_use_case.length == 0) {
+            var selected_use_case_list = $("#use_caseUL").find('.active');
+            if (selected_use_case_list.length <= 0) {
                 location.reload();
             } else {
-                var selected_use_case_id = selected_use_case.data('value');
                 var batch_id = window.location.pathname.split('/').pop();
+                var use_case_arr = [];
+                var selected_use_case_id = '';
+                $.each(selected_use_case_list, function (i, selected_use_case) {
+                    selected_use_case_id = $(selected_use_case).data('value');
+                    use_case_arr[i] = selected_use_case_id;
+                    $(selected_use_case).removeClass("active");
+                });
                 $.ajax({
                     type: 'post',
                     url: '/batch/relation/add',
                     data: JSON.stringify({
                         'batch_id': batch_id,
-                        'use_case_id': selected_use_case_id
+                        'use_case_id': use_case_arr
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",

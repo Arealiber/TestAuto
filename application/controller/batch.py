@@ -106,8 +106,12 @@ def add_batch_use_case_relation():
     :return:
     """
     batch_id = request.get_json()['batch_id']
-    use_case_id = request.get_json()['use_case_id']
-    BatchAPI.add_batch_use_case_relation(batch_id, use_case_id)
+    use_case_list = request.get_json()['use_case_id']
+    if not isinstance(use_case_list, list):
+        use_case_list = [use_case_list]
+    for use_case_id in use_case_list:
+        if use_case_id:
+            BatchAPI.add_batch_use_case_relation(batch_id, use_case_id)
     return jsonify({'success': True})
 
 
