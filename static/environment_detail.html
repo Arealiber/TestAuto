@@ -99,12 +99,10 @@
                         environment_id: $("#add_environment_detail").val(),
                     };
                     var url = "/environment/line_info/modify";
-                    console.log(input_selector.id);
                     if (!input_selector.id || input_selector.id == "") {
                         url = "/environment/line_info/add";
                         delete args['id'];
                     }
-                    console.log(args);
                     $.ajax({
                         type: "post",
                         url: url,
