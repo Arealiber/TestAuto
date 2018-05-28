@@ -90,3 +90,10 @@ def environment_mange():
 @login_required
 def environment_detail():
     return app.send_static_file('environment_detail.html')
+
+
+@app.route('/use_case/report')
+@login_required
+def use_case_report():
+    return app.send_static_file('report.html')
+
