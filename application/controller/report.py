@@ -30,6 +30,7 @@ def add_minutes_report():
     use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
 
     all_report_data = {}
+    single_report_data = {}
     for use_case_run_log in use_case_run_log_list:
         use_case_id = use_case_run_log.get('use_case_id')
         if all_report_data.get(use_case_id, None):
@@ -44,7 +45,8 @@ def add_minutes_report():
             if single_report_data['max_time'] < cost_time:
                 single_report_data['max_time'] = cost_time
         else:
-            single_report_data = {}
+            if single_report_data:
+                single_report_data = {}
             single_report_data['use_case_id'] = use_case_id
             single_report_data['run_count'] = 1
             if use_case_run_log.get('is_pass'):
@@ -57,12 +59,13 @@ def add_minutes_report():
             single_report_data['max_time'] = use_case_run_log.get('cost_time')
             single_report_data['function_id'] = use_case_info_dict[use_case_id].get('function_id')
             all_report_data[use_case_id] = single_report_data
-    all_report_list = all_report_data.values()
+    all_report_list = list(all_report_data.values())
     for report_data in all_report_list:
         average_time = report_data['sum_time'] / report_data['run_count']
         pass_rate = report_data['success_count'] / report_data['run_count']
         report_data['average_time'] = average_time
         report_data['pass_rate'] = pass_rate
+        report_data.pop('sum_time')
         ReportAPI.add_minutes_report(**report_data)
     return jsonify({'success': True})
 
