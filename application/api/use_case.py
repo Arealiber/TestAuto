@@ -19,6 +19,18 @@ def get_use_case(**kwargs):
     return use_case_list
 
 
+def get_multi_use_case(use_case_list):
+    with session_scope() as session:
+        query = session.query(UseCase).filter(UseCase.id.in_(use_case_list)).filter_by(status=1).\
+            order_by(UseCase.create_time.desc())
+    use_case_dict = {}
+    for use_case in query:
+        use_case_info = use_case.to_dict()
+        use_case_id = use_case_info['id']
+        use_case_dict[use_case_id] = use_case_info
+    return use_case_dict
+
+
 def get_single_use_case(use_case_id):
     with session_scope() as session:
         query = session.query(UseCase).filter_by(id=use_case_id)

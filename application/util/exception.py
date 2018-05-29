@@ -15,5 +15,7 @@ def try_except(fn):
             error_str = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
             if not app.config['DEBUG']:
                 LOGGER.exception_log(error_str)
+            else:
+                raise
             return jsonify({'success': False, 'error': str(e)})
     return wrapped

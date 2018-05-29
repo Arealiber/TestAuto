@@ -4,7 +4,10 @@ import os
 TIME_FMT = '%Y-%m-%d %H:%M:%S.%f GMT'
 QUERY_TIME_FMT = '%Y-%m-%d %H:%M:%S.%f'
 TABLE_TIME_FMT = '%Y-%m-%d'
-CONSTANT_LEN = 10  # 7 按月分表, 10按月分表
+MIN_TABLE_FMT = '%Y-%m-%d %H:%M'
+CONSTANT_LEN = 10  # 7 按月分表, 10按日分表
+
+MIN_TIME_LENGTH = 6000
 
 web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 

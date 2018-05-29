@@ -85,6 +85,36 @@ def query_all_line_relation(**kwargs):
         return function_line_list
 
 
+def query_line_relation():
+    with session_scope() as session:
+        busines_query = session.query(BusinessLine).filter_by(**kwargs).filter_by(status=1)
+        system_query = session.query(SystemLine).filter_by(**kwargs).filter_by(status=1)
+        function_query = session.query(FunctionLine).filter_by(**kwargs).filter_by(status=1)
+        business_line_dict = {}
+        for query in busines_query:
+            business_line_info = query.to_dict()
+            business_line_dict[business_line_info['id']] = business_line_info
+        system_line_dict = {}
+        for query in system_query:
+            system_line_info = query.to_dict()
+            system_line_dict[system_line_info['id']] = system_line_info
+        function_dict = {}
+        for function_obj in function_query:
+            function_info = function_obj.to_dict()
+            system_line_id = function_info['system_line_id']
+            business_line_id = system_line_dict[system_line_id].get('business_line_id')
+            business_name = business_line_dict[business_line_id].get('business_name')
+            system_name = system_line_dict[system_line_id].get('system_name')
+            function_name = function_info['function_name']
+            function_dict[function_info['id']] = {'business_name': business_name, 'system_name': system_name,
+                                                  'function_name': function_name}
+        return function_dict
+
+
+
+
+
+
 
 
 

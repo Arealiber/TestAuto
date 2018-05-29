@@ -185,6 +185,7 @@ def get_use_case_run_log(**kwargs):
     page_size = kwargs.get('pageSize')
     page_index = int(page_index) if page_index else None
     page_size = int(page_size) if page_size else None
+    print(from_time, to_time)
     if page_size:
         index = (page_index - 1) * page_size
     else:

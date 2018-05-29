@@ -1,13 +1,13 @@
 # -*- coding:utf-8 -*-
 from datetime import datetime
-from application.config.default import QUERY_TIME_FMT, TABLE_TIME_FMT, CONSTANT_LEN
+from application.config.default import *
 from dateutil.rrule import rrule, DAILY
 from functools import wraps
 from flask import make_response
 
 
 # 处理日志模块对于分表和按时间查询参数的装饰器
-def table_decorator(func):
+def run_log_table_decorator(func):
     def wrapper(**kwargs):
         """
         对被装饰的函数的参数进行类型处理
@@ -52,11 +52,34 @@ def multi_strptime(*args, str_format=QUERY_TIME_FMT):
     return tuple(dt_time)
 
 
-def no_cache(f):
-    @wraps(f)
+# 去掉浏览器缓存装饰器
+def no_cache(func):
+    @wraps(func)
     def wrapper(*args, **kwargs):
-        response = make_response(f(*args, **kwargs))
+        response = make_response(func(*args, **kwargs))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         return response
     return wrapper
+
+
+def min_table_decorator(func):
+    @wraps(func)
+    def wrapper(**kwargs):
+        fmt_str = (datetime.strftime(datetime.utcnow(), MIN_TABLE_FMT))
+        kwargs.update({'min_table_name': [fmt_str[:4]]})   # 按年分表
+        return func(**kwargs)
+    return wrapper
+
+
+
+
+
+
+
+
+
+
+
+
+
 
