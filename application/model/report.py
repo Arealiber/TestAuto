@@ -16,7 +16,7 @@ month_report_table = {}
 def get_minutes_report_table(table_name):
     table = minutes_report_table.get(table_name)
     if table is None:
-        table = Table('report_minutes_{0}'.format(table_name), meta,
+        table = Table('report_5min_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
                       Column('function_id', Integer, nullable=False),
                       Column('use_case_id', Integer, nullable=False),
@@ -27,7 +27,7 @@ def get_minutes_report_table(table_name):
                       Column('pass_rate', Integer, nullable=False),
                       Column('average_time', Float),
                       Column('max_time', Float),
-                      Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False)
+                      Column('create_time', default=datetime.utcnow, nullable=False)
                       )
         table.create(checkfirst=True)
         minutes_report_table[table_name] = table

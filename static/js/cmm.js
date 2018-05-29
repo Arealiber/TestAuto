@@ -65,7 +65,7 @@ function getTree() {
             tags: ['available'],
             color: "#8f9baa",
             backColor: "transparent",
-            href: "/#",
+            href: "/use_case/report",
             levels: 1,
         },
         {

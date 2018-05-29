@@ -4,14 +4,14 @@ from application.util.decorator import *
 from application.model.run_log import *
 
 
-@table_decorator
+@run_log_table_decorator
 def add_batch_run_log(**kwargs):
     table = get_batch_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     sql = table.insert(kwargs)
     return exec_change(sql).inserted_primary_key[0]
 
 
-@table_decorator
+@run_log_table_decorator
 def get_multi_batch_run_log_info(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     batch_id = kwargs.get('batch_id')
@@ -72,7 +72,7 @@ def get_multi_batch_run_log_info(**kwargs):
     return ret
 
 
-@table_decorator
+@run_log_table_decorator
 def get_batch_run_log_info(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     batch_id = kwargs.get('batch_id')
@@ -103,7 +103,7 @@ def get_batch_run_log_info(**kwargs):
     return ret
 
 
-@table_decorator
+@run_log_table_decorator
 def get_batch_run_log_count(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     from_time = kwargs.get('from_time')
@@ -126,7 +126,7 @@ def get_batch_run_log_count(**kwargs):
     return count
 
 
-@table_decorator
+@run_log_table_decorator
 def modify_batch_run_log(**kwargs):
     table = get_batch_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     id = kwargs.pop('id')
@@ -134,14 +134,14 @@ def modify_batch_run_log(**kwargs):
     return exec_change(sql)
 
 
-@table_decorator
+@run_log_table_decorator
 def add_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     sql = table.insert(kwargs)
     return exec_change(sql).inserted_primary_key[0]
 
 
-@table_decorator
+@run_log_table_decorator
 def get_use_case_run_log_count(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     batch_run_log_id = kwargs.get('batch_run_log_id')
@@ -166,7 +166,7 @@ def get_use_case_run_log_count(**kwargs):
     return count
 
 
-@table_decorator
+@run_log_table_decorator
 def modify_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     id = kwargs.pop('id')
@@ -174,7 +174,7 @@ def modify_use_case_run_log(**kwargs):
     return exec_change(sql)
 
 
-@table_decorator
+@run_log_table_decorator
 def get_use_case_run_log(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     use_case_id = kwargs.get('use_case_id')
@@ -187,6 +187,8 @@ def get_use_case_run_log(**kwargs):
     page_size = int(page_size) if page_size else None
     if page_size:
         index = (page_index - 1) * page_size
+    else:
+        index = -1
     total_count = 0
     ret = []
     for table_name in table_name_fix_lst:
@@ -240,14 +242,14 @@ def get_use_case_run_log(**kwargs):
     return ret
 
 
-@table_decorator
+@run_log_table_decorator
 def add_interface_run_log(**kwargs):
     table = get_interface_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     sql = table.insert(kwargs)
     return exec_change(sql).inserted_primary_key[0]
 
 
-@table_decorator
+@run_log_table_decorator
 def get_interface_run_log(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     interface_id = kwargs.get('interface_id')
@@ -284,7 +286,7 @@ def get_interface_run_log(**kwargs):
     return ret
 
 
-@table_decorator
+@run_log_table_decorator
 def modify_interface_run_log(**kwargs):
     table = get_interface_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     id = kwargs.pop('id')
