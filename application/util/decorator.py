@@ -2,6 +2,8 @@
 from datetime import datetime
 from application.config.default import QUERY_TIME_FMT, TABLE_TIME_FMT, CONSTANT_LEN
 from dateutil.rrule import rrule, DAILY
+from functools import wraps
+from flask import make_response
 
 
 # 处理日志模块对于分表和按时间查询参数的装饰器
@@ -49,4 +51,12 @@ def multi_strptime(*args, str_format=QUERY_TIME_FMT):
         dt_time.append(datetime.strptime(dt_arg, str_format))
     return tuple(dt_time)
 
+
+def no_cache(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        response = make_response(f(*args, **kwargs))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        return response
+    return wrapper
 
