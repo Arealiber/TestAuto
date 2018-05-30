@@ -12,7 +12,7 @@ from application.config.default import *
 
 @app.route('/report/minutes_report/add', methods=['GET'])
 @try_except
-# @login_required
+@login_required
 def add_minutes_report():
     """
     :return:
@@ -69,7 +69,7 @@ def add_minutes_report():
 
 @app.route('/report/minutes_report/info', methods=['POST'])
 @try_except
-# @login_required
+@login_required
 def query_minutes_report_info():
     """
     查询分钟报表数据
@@ -89,7 +89,7 @@ def query_minutes_report_info():
 
 @app.route('/report/day_report/add', methods=['GET'])
 @try_except
-# @login_required
+@login_required
 def add_day_report():
     """
     :return:
@@ -134,7 +134,7 @@ def add_day_report():
 
 @app.route('/report/day_report/info', methods=['POST'])
 @try_except
-# @login_required
+@login_required
 def query_day_report_info():
     """
     查询日报表数据，默认查询前4周数据
@@ -148,14 +148,13 @@ def query_day_report_info():
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
-    print(param_kwarg['from_time'], param_kwarg['to_time'])
     result = ReportAPI.get_day_report_info(**param_kwarg)
     return jsonify({'success': True, 'res': result})
 
 
 @app.route('/report/week_report/add', methods=['GET'])
 @try_except
-# @login_required
+@login_required
 def add_week_report():
     """
     :return:
@@ -165,7 +164,6 @@ def add_week_report():
     to_time = now_time_point.strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
     use_case_day_report_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
-    print(to_time, from_time, use_case_day_report_list)
     all_report_data = {}
     single_report_data = {}
     for use_case_report in use_case_day_report_list:
@@ -202,7 +200,7 @@ def add_week_report():
 
 @app.route('/report/week_report/info', methods=['POST'])
 @try_except
-# @login_required
+@login_required
 def query_week_report_info():
     """
     查询周报表数据，默认查询前4周数据
@@ -216,14 +214,13 @@ def query_week_report_info():
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
-    print(param_kwarg['from_time'], param_kwarg['to_time'])
     result = ReportAPI.get_week_report_info(**param_kwarg)
     return jsonify({'success': True, 'res': result})
 
 
 @app.route('/report/month_report/add', methods=['GET'])
 @try_except
-# @login_required
+@login_required
 def add_month_report():
     """
     :return:
@@ -233,7 +230,6 @@ def add_month_report():
     to_time = now_time_point.strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
     use_case_day_report_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
-    print(to_time, from_time, use_case_day_report_list)
     all_report_data = {}
     single_report_data = {}
     for use_case_report in use_case_day_report_list:
@@ -270,7 +266,7 @@ def add_month_report():
 
 @app.route('/report/month_report/info', methods=['POST'])
 @try_except
-# @login_required
+@login_required
 def query_month_report_info():
     """
     查询月报表数据，默认查询前12月数据
@@ -284,7 +280,6 @@ def query_month_report_info():
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
-    print(param_kwarg['from_time'], param_kwarg['to_time'])
     result = ReportAPI.get_month_report_info(**param_kwarg)
     return jsonify({'success': True, 'res': result})
 

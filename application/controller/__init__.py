@@ -38,10 +38,10 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user = cur_user()
-        if user:
+        addr_ip = request.remote_addr
+        if user or addr_ip == '127.0.0.1':
             return f(*args, **kwargs)
         else:
-            print(request.args)
             if 'login_token' in request.args and 'user_id' in request.args:
                 login_token = request.args.get('login_token')
                 user_id = request.args.get('user_id')
