@@ -4,6 +4,7 @@ from flask import request, jsonify
 from application.api import report as ReportAPI
 from application.api import run_log as RunLogAPI
 from application.api import use_case as UseCaseAPI
+from application.api import menutree as MenuTreeAPI
 from application import app
 from application.util.exception import try_except
 from application.controller import login_required
@@ -25,6 +26,7 @@ def add_minutes_report():
     use_case_run_log_list = RunLogAPI.get_use_case_run_log(from_time=from_time, to_time=to_time)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in use_case_run_log_list]))
     use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
+    print(use_case_info_dict)
 
     all_report_data = {}
     single_report_data = {}
@@ -54,7 +56,7 @@ def add_minutes_report():
                 single_report_data['fail_count'] = 1
             single_report_data['sum_time'] = use_case_run_log.get('cost_time')
             single_report_data['max_time'] = use_case_run_log.get('cost_time')
-            single_report_data['function_id'] = use_case_info_dict[use_case_id].get('function_id')
+            # single_report_data['function_id'] = use_case_info_dict[use_case_id].get('function_id')
             all_report_data[use_case_id] = single_report_data
     all_report_list = all_report_data.values()
     for report_data in all_report_list:
@@ -75,6 +77,7 @@ def query_minutes_report_info():
     :param: 时间格式：%Y-%m-%d %H:%M:%S
     :return:
     """
+    from pprint import pprint
     param_kwarg = request.get_json()
     now_time_point = datetime.utcnow() + timedelta(days=1)
     before_time_point = now_time_point - timedelta(days=DEFAULT_TIME_LENGTH)
@@ -82,8 +85,20 @@ def query_minutes_report_info():
         param_kwarg['to_time'] = now_time_point.strftime(MINUTE_TIME_FMT)
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(MINUTE_TIME_FMT)
-    result = ReportAPI.get_minutes_report_info(**param_kwarg)
-    return jsonify({'success': True, 'res': result})
+    report_info_list = ReportAPI.get_minutes_report_info(**param_kwarg)
+    use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
+    use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
+    menu_tree_info = MenuTreeAPI.query_line_relation()
+    use_case_menu_tree = {}
+    for use_case_info in use_case_info_dict.values():
+        function_id = use_case_info.get('function_id')
+        menu_tree_info[function_id]['use_case_name'] = use_case_info['use_case_name']
+        use_case_menu_tree[use_case_info['id']] = menu_tree_info[function_id]
+    for report_info in report_info_list:
+        report_info.pop('id')
+        use_case_id = report_info.pop('use_case_id')
+        report_info.update(use_case_menu_tree[use_case_id])
+    return jsonify({'success': True, 'res': report_info_list})
 
 
 @app.route('/report/day_report/add', methods=['GET'])
@@ -118,7 +133,7 @@ def add_day_report():
             single_report_data['success_count'] = use_case_report['success_count']
             single_report_data['fail_count'] = use_case_report['fail_count']
             single_report_data['max_time'] = use_case_report['max_time']
-            single_report_data['function_id'] = use_case_report['function_id']
+            # single_report_data['function_id'] = use_case_report['function_id']
             single_report_data['sum_time'] = use_case_report['sum_time']
             all_report_data[use_case_id] = single_report_data
     all_report_list = all_report_data.values()
@@ -183,7 +198,7 @@ def add_week_report():
             single_report_data['success_count'] = use_case_report['success_count']
             single_report_data['fail_count'] = use_case_report['fail_count']
             single_report_data['max_time'] = use_case_report['max_time']
-            single_report_data['function_id'] = use_case_report['function_id']
+            # single_report_data['function_id'] = use_case_report['function_id']
             single_report_data['sum_time'] = use_case_report['sum_time']
             all_report_data[use_case_id] = single_report_data
     all_report_list = list(all_report_data.values())
@@ -249,7 +264,7 @@ def add_month_report():
             single_report_data['success_count'] = use_case_report['success_count']
             single_report_data['fail_count'] = use_case_report['fail_count']
             single_report_data['max_time'] = use_case_report['max_time']
-            single_report_data['function_id'] = use_case_report['function_id']
+            # single_report_data['function_id'] = use_case_report['function_id']
             single_report_data['sum_time'] = use_case_report['sum_time']
             all_report_data[use_case_id] = single_report_data
     all_report_list = list(all_report_data.values())

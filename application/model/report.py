@@ -18,7 +18,6 @@ def get_minutes_report_table(table_name):
     if table is None:
         table = Table('report_minute_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
-                      Column('function_id', Integer, nullable=False),
                       Column('use_case_id', Integer, nullable=False),
                       Column('run_count', Integer, nullable=False),
                       Column('success_count', Integer, nullable=False),
@@ -40,7 +39,6 @@ def get_day_report_table(table_name):
     if table is None:
         table = Table('report_day_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
-                      Column('function_id', Integer, nullable=False),
                       Column('use_case_id', Integer, nullable=False),
                       Column('run_count', Integer, nullable=False),
                       Column('success_count', Integer, nullable=False),
@@ -62,7 +60,6 @@ def get_week_report_table(table_name):
     if table is None:
         table = Table('report_week_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
-                      Column('function_id', Integer, nullable=False),
                       Column('use_case_id', Integer, nullable=False),
                       Column('run_count', Integer, nullable=False),
                       Column('success_count', Integer, nullable=False),
@@ -83,7 +80,6 @@ def get_month_report_table(table_name):
     if table is None:
         table = Table('report_month_{0}'.format(table_name), meta,
                       Column('id', Integer, primary_key=True),
-                      Column('function_id', Integer, nullable=False),
                       Column('use_case_id', Integer, nullable=False),
                       Column('run_count', Integer, nullable=False),
                       Column('success_count', Integer, nullable=False),

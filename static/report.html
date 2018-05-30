@@ -38,25 +38,95 @@
         </div>
         <HR>
 
+        <div id="loader"></div>
+        <div id="error_alert" class="alert alert-danger" role="alert"></div>
+
+        <table class="table" id="report_table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">业务线</th>
+                <th scope="col">系统线</th>
+                <th scope="col">功能模块</th>
+                <th scope="col">用例名称</th>
+                <th scope="col">运行次数</th>
+                <th scope="col">失败次数</th>
+                <th scope="col">成功率(%)</th>
+                <th scope="col">平均时长(s)</th>
+                <th scope="col">最大时长(s)</th>
+                <th scope="col">备注</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
 
-    <script src="/component/js/jquery-3.3.1.min.js"></script>
-    <script src="/component/js/popper.min.js"></script>
-    <script src="/component/js/bootstrap.min.js"></script>
-    <script src="/component/js/treeview.min.js"></script>
-    <script src="/js/cmm.js"></script>
+</div>
 
-    <script>
-        $(document).ready(function () {
-            $('#menu_tree').treeview({
-                data: getTree(),
-                onNodeSelected : function(event, data) {
-                    getMapfromUrl(data);
+<script src="/component/js/jquery-3.3.1.min.js"></script>
+<script src="/component/js/popper.min.js"></script>
+<script src="/component/js/bootstrap.min.js"></script>
+<script src="/component/js/treeview.min.js"></script>
+<script src="/js/cmm.js"></script>
+
+<script>
+    var error_alert = $("#error_alert");
+    var loader = $("#loader");
+
+    function show_alert(alert_text) {
+        loader.hide();
+        error_alert.text(alert_text);
+        error_alert.show();
+    }
+
+    $(document).ready(function () {
+        $('#menu_tree').treeview({
+            data: getTree(),
+            onNodeSelected : function(event, data) {
+                getMapfromUrl(data);
+            }
+        })
+    });
+
+    $(document).ready(function () {
+        loader.hide();
+        $.ajax({
+            type: 'post',
+            url: '/report/minutes_report/info',
+            dataType: 'json',
+            contentType:'application/json; charset:utf-8',
+            data: JSON.stringify({
+                to_time: null,
+                from_time: null
+            }),
+            success: function (response) {
+                console.log(response);
+                if (!response.success) {
+                    show_alert('获取信息失败：' + response.error)
+                } else {
+                    $("#report_table").show();
+                    var report_list = response.res;
+                    console.log(report_list)
+                    $.each(report_list, function (i, report_info) {
+                        $("#report_table").find('tbody')
+                            .append('<tr>' +
+                                '<th scope="row">' + (i + 1) + '</th>' +
+                                '<td>' + report_info.business_name + '</td>' +
+                                '<td>' + report_info.system_name + '</td>' +
+                                '<td>' + report_info.function_name + '</td>' +
+                                '<td>' + report_info.use_case_name + '</td>' +
+                                '<td>' + report_info.run_count + '</td>' +
+                                '<td>' + report_info.fail_count + '</td>' +
+                                '<td>' + report_info.pass_rate * 100 + '</td>' +
+                                '<td>' + report_info.average_time.toFixed(3) + '</td>'+
+                                '<td>' + report_info.max_time.toFixed(3) + '</td></tr>')
+                    })
                 }
-            })
-        });
-
-    </script>
+            }
+        })
+    })
+</script>
 
 </body>
 </html>
