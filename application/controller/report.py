@@ -77,7 +77,6 @@ def query_minutes_report_info():
     :param: 时间格式：%Y-%m-%d %H:%M:%S
     :return:
     """
-    from pprint import pprint
     param_kwarg = request.get_json()
     now_time_point = datetime.utcnow() + timedelta(days=1)
     before_time_point = now_time_point - timedelta(days=DEFAULT_TIME_LENGTH)
@@ -86,6 +85,7 @@ def query_minutes_report_info():
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(MINUTE_TIME_FMT)
     report_info_list = ReportAPI.get_minutes_report_info(**param_kwarg)
+    print(report_info_list)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
     use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
     menu_tree_info = MenuTreeAPI.query_line_relation()

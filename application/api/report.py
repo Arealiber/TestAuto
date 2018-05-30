@@ -48,10 +48,10 @@ def get_minutes_report_info(**kwargs):
             count_sql = count_sql.where(table.c.create_time.__le__(to_time))
 
         if use_case_id:
-            sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(desc(table.c.create_time))
+            sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(desc(table.c.use_case_id))
             count_sql = count_sql.where(table.c.create_time.__le__(to_time))
         else:
-            sql = sql.order_by(desc(table.c.create_time))
+            sql = sql.order_by(desc(table.c.use_case_id))
         if not page_size:
             ret += exec_query(sql, is_list=True)
             continue
@@ -119,10 +119,10 @@ def get_day_report_info(**kwargs):
             count_sql = count_sql.where(table.c.create_time.__le__(to_time))
 
         if use_case_id:
-            sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(desc(table.c.create_time))
+            sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(desc(table.c.use_case_id))
             count_sql = count_sql.where(table.c.create_time.__le__(to_time))
         else:
-            sql = sql.order_by(desc(table.c.create_time))
+            sql = sql.order_by(desc(table.c.use_case_id))
         if not page_size:
             ret += exec_query(sql, is_list=True)
             continue
@@ -193,7 +193,7 @@ def get_week_report_info(**kwargs):
             sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(desc(table.c.use_case_id))
             count_sql = count_sql.where(table.c.create_time.__le__(to_time))
         else:
-            sql = sql.order_by(desc(table.c.create_time))
+            sql = sql.order_by(desc(table.c.use_case_id))
         if not page_size:
             ret += exec_query(sql, is_list=True)
             continue
@@ -264,7 +264,7 @@ def get_month_report_info(**kwargs):
             sql = sql.where(table.c.use_case_id.in_(use_case_list)).order_by(desc(table.c.create_time))
             count_sql = count_sql.where(table.c.create_time.__le__(to_time))
         else:
-            sql = sql.order_by(desc(table.c.create_time))
+            sql = sql.order_by(desc(table.c.use_case_id))
         if not page_size:
             ret += exec_query(sql, is_list=True)
             continue
