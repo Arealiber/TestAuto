@@ -16,7 +16,7 @@ MOUTH_TIME_LENGTH = 1
 web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 
 
-DEBUG = True
+DEBUG = False
 HOST = '0.0.0.0'
 PORT = 8000
 
@@ -26,5 +26,5 @@ DB_POOL_RECYCLE = 5
 DB_MAX_OVERFLOW = 10
 DB_ECHO = False
 
-# 内部权限系统
-SYSTEM_ID = '106'
+# 正式环境内部权限系统
+SYSTEM_ID = '42'
