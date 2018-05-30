@@ -268,10 +268,10 @@ def add_month_report():
     return jsonify({'success': True})
 
 
-@app.route('/report/week_report/info', methods=['POST'])
+@app.route('/report/month_report/info', methods=['POST'])
 @try_except
 # @login_required
-def query_week_report_info():
+def query_month_report_info():
     """
     查询月报表数据，默认查询前12月数据
     :param: 时间格式：%Y-%m-%d
