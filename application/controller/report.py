@@ -21,7 +21,6 @@ def add_minutes_report():
     before_time_point = now_time_point - timedelta(minutes=MINUTE_TIME_LENGTH)
     to_time = now_time_point.strftime(MINUTE_TIME_FMT)
     from_time = before_time_point.strftime(MINUTE_TIME_FMT)
-    print(from_time, to_time)
 
     use_case_run_log_list = RunLogAPI.get_use_case_run_log(from_time=from_time, to_time=to_time)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in use_case_run_log_list]))

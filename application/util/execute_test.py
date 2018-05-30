@@ -308,7 +308,6 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
                     r = session.get(url, **request_kwargs)
                 elif request_method.upper() == 'POST':
                     r = session.post(url, **request_kwargs)
-                    print(r.request.headers)
                 try:
                     json_response = r.json()
                 except Exception as e:
