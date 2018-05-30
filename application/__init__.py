@@ -1,6 +1,8 @@
 import os
+import sys
 import gc
 from contextlib import contextmanager
+from importlib import import_module
 from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -15,7 +17,12 @@ app = Flask(
     static_url_path="",
     template_folder=os.path.abspath(os.path.join(web_root, 'templates'))
 )
+
+# 设置加载
 app.config.from_object(default)
+if len(sys.argv) > 1:
+    extra_config = import_module('application.config.%s' % sys.argv[1])
+    app.config.from_object(extra_config)
 
 # for session
 app.secret_key = 'RFmoIw6P6B9LE5otg9ba7iyoXm5PkUM0s8KnV3cr'
