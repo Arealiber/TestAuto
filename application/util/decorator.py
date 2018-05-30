@@ -62,11 +62,11 @@ def no_cache(func):
     return wrapper
 
 
-def min_table_decorator(func):
+def report_table_decorator(func):
     @wraps(func)
     def wrapper(**kwargs):
-        fmt_str = (datetime.strftime(datetime.utcnow(), MIN_TABLE_FMT))
-        kwargs.update({'min_table_name': [fmt_str[:4]]})   # 按年分表
+        fmt_str = (datetime.strftime(datetime.utcnow(), TABLE_FMT))
+        kwargs.update({'table_name': [fmt_str]})   # 按年分表
         return func(**kwargs)
     return wrapper
 

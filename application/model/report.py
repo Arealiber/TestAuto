@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from datetime import datetime
 from application import engine
-from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TEXT
+from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TEXT, DateTime
 from sqlalchemy.dialects.mysql import TIMESTAMP
 
 
@@ -27,7 +27,7 @@ def get_minutes_report_table(table_name):
                       Column('sum_time', Float),
                       Column('average_time', Float),
                       Column('max_time', Float),
-                      Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False)
+                      Column('create_time', DateTime, default=datetime.utcnow, nullable=False)
                       )
         table.create(checkfirst=True)
         minutes_report_table[table_name] = table
@@ -42,14 +42,14 @@ def get_day_report_table(table_name):
                       Column('id', Integer, primary_key=True),
                       Column('function_id', Integer, nullable=False),
                       Column('use_case_id', Integer, nullable=False),
-                      Column('use_case_name', String(100), nullable=False),
                       Column('run_count', Integer, nullable=False),
                       Column('success_count', Integer, nullable=False),
                       Column('fail_count', Integer, nullable=False),
-                      Column('pass_rate', Integer, nullable=False),
+                      Column('pass_rate', Float, nullable=False),
+                      Column('sum_time', Float),
                       Column('average_time', Float),
                       Column('max_time', Float),
-                      Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False)
+                      Column('create_time', DateTime, default=datetime.utcnow, nullable=False)
                       )
         table.create(checkfirst=True)
         day_report_table[table_name] = table
@@ -64,14 +64,13 @@ def get_week_report_table(table_name):
                       Column('id', Integer, primary_key=True),
                       Column('function_id', Integer, nullable=False),
                       Column('use_case_id', Integer, nullable=False),
-                      Column('use_case_name', String(100), nullable=False),
                       Column('run_count', Integer, nullable=False),
                       Column('success_count', Integer, nullable=False),
                       Column('fail_count', Integer, nullable=False),
-                      Column('pass_rate', Integer, nullable=False),
+                      Column('pass_rate', Float, nullable=False),
                       Column('average_time', Float),
                       Column('max_time', Float),
-                      Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False)
+                      Column('create_time', DateTime, default=datetime.utcnow, nullable=False)
                       )
         table.create(checkfirst=True)
         week_report_table[table_name] = table
@@ -86,14 +85,13 @@ def get_month_report_table(table_name):
                       Column('id', Integer, primary_key=True),
                       Column('function_id', Integer, nullable=False),
                       Column('use_case_id', Integer, nullable=False),
-                      Column('use_case_name', String(100), nullable=False),
                       Column('run_count', Integer, nullable=False),
                       Column('success_count', Integer, nullable=False),
                       Column('fail_count', Integer, nullable=False),
-                      Column('pass_rate', Integer, nullable=False),
+                      Column('pass_rate', Float, nullable=False),
                       Column('average_time', Float),
                       Column('max_time', Float),
-                      Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False)
+                      Column('create_time', DateTime, default=datetime.utcnow, nullable=False)
                       )
         table.create(checkfirst=True)
         month_report_table[table_name] = table
