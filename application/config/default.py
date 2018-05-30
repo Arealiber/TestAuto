@@ -7,7 +7,11 @@ TABLE_TIME_FMT = '%Y-%m-%d'
 MIN_TABLE_FMT = '%Y-%m-%d %H:%M'
 CONSTANT_LEN = 10  # 7 按月分表, 10按日分表
 
-MIN_TIME_LENGTH = 6000
+# 报表计算时间间隔 分、天、周、月
+MINUTE_TIME_LENGTH = 5000
+DAY_TIME_LENGTH = 1
+WEEK_TIME_LENGTH = 5
+MOUTH_TIME_LENGTH = 1
 
 web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 
