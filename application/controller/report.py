@@ -85,7 +85,6 @@ def query_minutes_report_info():
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(MINUTE_TIME_FMT)
     report_info_list = ReportAPI.get_minutes_report_info(**param_kwarg)
-    print(report_info_list)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
     use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
     menu_tree_info = MenuTreeAPI.query_line_relation()
@@ -162,8 +161,23 @@ def query_day_report_info():
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
-    result = ReportAPI.get_day_report_info(**param_kwarg)
-    return jsonify({'success': True, 'res': result})
+
+    report_info_list = ReportAPI.get_day_report_info(**param_kwarg)
+    use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
+    use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
+    menu_tree_info = MenuTreeAPI.query_line_relation()
+
+    use_case_menu_tree = {}
+    for use_case_info in use_case_info_dict.values():
+        function_id = use_case_info.get('function_id')
+        menu_tree_info[function_id]['use_case_name'] = use_case_info['use_case_name']
+        use_case_menu_tree[use_case_info['id']] = menu_tree_info[function_id]
+    for report_info in report_info_list:
+        report_info.pop('id')
+        use_case_id = report_info.pop('use_case_id')
+        report_info.update(use_case_menu_tree[use_case_id])
+
+    return jsonify({'success': True, 'res': report_info_list})
 
 
 @app.route('/report/week_report/add', methods=['GET'])
@@ -228,8 +242,21 @@ def query_week_report_info():
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
-    result = ReportAPI.get_week_report_info(**param_kwarg)
-    return jsonify({'success': True, 'res': result})
+    report_info_list = ReportAPI.get_week_report_info(**param_kwarg)
+    use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
+    use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
+    menu_tree_info = MenuTreeAPI.query_line_relation()
+
+    use_case_menu_tree = {}
+    for use_case_info in use_case_info_dict.values():
+        function_id = use_case_info.get('function_id')
+        menu_tree_info[function_id]['use_case_name'] = use_case_info['use_case_name']
+        use_case_menu_tree[use_case_info['id']] = menu_tree_info[function_id]
+    for report_info in report_info_list:
+        report_info.pop('id')
+        use_case_id = report_info.pop('use_case_id')
+        report_info.update(use_case_menu_tree[use_case_id])
+    return jsonify({'success': True, 'res': report_info_list})
 
 
 @app.route('/report/month_report/add', methods=['GET'])
@@ -294,8 +321,21 @@ def query_month_report_info():
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
-    result = ReportAPI.get_month_report_info(**param_kwarg)
-    return jsonify({'success': True, 'res': result})
+    report_info_list = ReportAPI.get_month_report_info(**param_kwarg)
+    use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
+    use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
+    menu_tree_info = MenuTreeAPI.query_line_relation()
+
+    use_case_menu_tree = {}
+    for use_case_info in use_case_info_dict.values():
+        function_id = use_case_info.get('function_id')
+        menu_tree_info[function_id]['use_case_name'] = use_case_info['use_case_name']
+        use_case_menu_tree[use_case_info['id']] = menu_tree_info[function_id]
+    for report_info in report_info_list:
+        report_info.pop('id')
+        use_case_id = report_info.pop('use_case_id')
+        report_info.update(use_case_menu_tree[use_case_id])
+    return jsonify({'success': True, 'res': report_info_list})
 
 
 
