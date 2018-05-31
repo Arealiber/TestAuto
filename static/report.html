@@ -5,6 +5,7 @@
     <title></title>
     <link href="/component/css/jquery.dataTables.min.css" rel="stylesheet">
     <link href="/component/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/component/css/jquery.datetimepicker.min.css" rel="stylesheet">
     <link href="/component/css/treeview.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
     <link href="/css/loader.css" rel="stylesheet">
@@ -35,6 +36,12 @@
                 <a id="week_report" class="dropdown-item">周报表</a>
                 <a id="month_report" class="dropdown-item">月报表</a>
             </div>
+
+        </div>
+        <div class="datetimepicker">
+            <input id="datetimepicker_start" placeholder="开始" type="text" value="">
+            <input id="datetimepicker_end" placeholder="结束" type="text" value=""></label>
+            <button id="data-select" class="btn btn-info" style="margin-top: 0;height: 80%;">搜索</button>
         </div>
         <HR>
 
@@ -64,6 +71,7 @@
 
 <script src="/component/js/jquery-3.3.1.min.js"></script>
 <script src="/component/js/jquery.dataTables.min.js"></script>
+<script src="/component/js/jquery.datetimepicker.full.min.js"></script>
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
 <script src="/component/js/treeview.min.js"></script>
@@ -74,16 +82,19 @@
     var loader = $("#loader");
     var table_selector = $("#report_table");
     var wageSummaryTable;
-    // var data= [
-    //     ['平台线','销售系统','上架管理','新增前端测试用例', '1', '0', 100, '1.228','1.228'],
-    //     ['回收宝','销售系统1','上架管理1','新增前端', '2', '0', 80, '1.56','3.000']
-    // ];
+    var datetimepicker = $('.datetimepicker');
+    var report_type = $("#report_type");
 
     function show_alert(alert_text) {
         loader.hide();
+        datetimepicker.hide();
         table_selector.hide();
         error_alert.text(alert_text);
         error_alert.show();
+    }
+    function clear_datetime(){
+        $("#datetimepicker_start").val(null);
+        $("#datetimepicker_end").val(null);
     }
 
     $(document).ready(function () {
@@ -96,14 +107,15 @@
     });
     function get_report_info(url='/report/day_report/info', from_time=null, to_time=null) {
         loader.show();
+        datetimepicker.show();
         $.ajax({
             type: 'post',
             url: url,
             dataType: 'json',
             contentType:'application/json; charset:utf-8',
             data: JSON.stringify({
-                to_time: from_time,
-                from_time: to_time
+                to_time: to_time,
+                from_time: from_time
             }),
             success: function (response) {
                 if (!response.success) {
@@ -112,7 +124,11 @@
                     $("#report_table").show();
                     var report_list = response.res;
                     if (report_list.length <=0) {
-                        show_alert('没有日志报表数据')
+                        if (from_time || to_time) {
+                            show_alert(from_time +'~'+ to_time + ' 没有日志报表数据')
+                        } else {
+                            show_alert('没有日志报表数据')
+                        }
                     } else {
                         loader.hide();
                         table_selector.show();
@@ -151,24 +167,43 @@
 
     $('#day_report').on('click', function () {
         console.log(this.value);
-        $("#report_type").text(this.text);
+        report_type.text(this.text);
         wageSummaryTable.fnClearTable();
         wageSummaryTable.fnDestroy();
-        get_report_info('/report/day_report/info')
+        get_report_info('/report/day_report/info');
+        report_type.data('url', '/report/day_report/info');
+        clear_datetime()
     });
     $('#week_report').on('click', function () {
-        console.log(this.text, this);
-        $("#report_type").text(this.text);
+        report_type.text(this.text);
         wageSummaryTable.fnClearTable();
         wageSummaryTable.fnDestroy();
-        get_report_info('/report/week_report/info')
+        get_report_info('/report/week_report/info');
+        report_type.data('url', '/report/week_report/info');
+        clear_datetime()
     });
     $('#month_report').on('click', function () {
-        console.log(this.text, this);
-        $("#report_type").text(this.text);
+        report_type.text(this.text);
         wageSummaryTable.fnClearTable();
         wageSummaryTable.fnDestroy();
-        get_report_info('/report/month_report/info')
+        get_report_info('/report/month_report/info');
+        report_type.data('url', '/report/month_report/info');
+        clear_datetime()
+    });
+    $('#data-select').on('click', function () {
+        wageSummaryTable.fnClearTable();
+        wageSummaryTable.fnDestroy();
+        var url = $("#report_type").data('url');
+        var from_time = $("#datetimepicker_start").val();
+        var to_time = $("#datetimepicker_end").val();
+        get_report_info(url, from_time, to_time)
+    });
+
+    $('#datetimepicker_start').datetimepicker({
+        format:'Y-m-d H:i',
+    });
+    $('#datetimepicker_end').datetimepicker({
+        format:'Y-m-d H:i',
     });
 
 

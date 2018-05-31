@@ -9,6 +9,7 @@ from application import app
 from application.util.exception import try_except
 from application.controller import login_required
 from application.config.default import *
+from application.util import *
 
 
 @app.route('/report/minutes_report/add', methods=['GET'])
@@ -159,8 +160,19 @@ def query_day_report_info():
     before_time_point = now_time_point - timedelta(days=4*DEFAULT_TIME_LENGTH)
     if not param_kwarg.get('to_time', None):
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
+    else:
+        to_time = param_kwarg['to_time']
+        to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, '%Y-%m-%d %H:%M'))
+        to_time = to_time.strftime(DAY_TIME_FMT)
+        param_kwarg.update({"to_time": to_time})
+
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
+    else:
+        from_time = param_kwarg['from_time']
+        from_time = shanghai_to_utc_timezone(datetime.strptime(from_time, '%Y-%m-%d %H:%M'))
+        from_time = from_time.strftime(DAY_TIME_FMT)
+        param_kwarg.update({"from_time": from_time})
 
     report_info_list = ReportAPI.get_day_report_info(**param_kwarg)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
@@ -187,6 +199,7 @@ def add_week_report():
     """
     :return:
     """
+    print(request.get_json())
     now_time_point = datetime.utcnow() + timedelta(days=1)
     before_time_point = now_time_point - timedelta(weeks=WEEK_TIME_LENGTH)
     to_time = now_time_point.strftime(DAY_TIME_FMT)
@@ -254,7 +267,7 @@ def query_week_report_info():
         use_case_menu_tree[use_case_info['id']] = menu_tree_info[function_id]
     for report_info in report_info_list:
         report_info.pop('id')
-        use_case_id = report_info.pop('use_case_id')
+        use_case_id = report_info.get('use_case_id')
         report_info.update(use_case_menu_tree[use_case_id])
     return jsonify({'success': True, 'res': report_info_list})
 

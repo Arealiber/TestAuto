@@ -145,6 +145,7 @@ def add_use_case_run_log(**kwargs):
 def get_use_case_run_log_count(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name_fix_lst')
     batch_run_log_id = kwargs.get('batch_run_log_id')
+    use_case_id = kwargs.get('use_case_id')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
     count = 0
@@ -161,6 +162,8 @@ def get_use_case_run_log_count(**kwargs):
             sql = sql.where(table.c.start_time.__le__(to_time))
         if batch_run_log_id:
             sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
+        if use_case_id:
+            sql = sql.where(table.c.use_case_id == use_case_id)
 
         count += exec_query(sql, is_list=True)[0]['count_1']
     return count
