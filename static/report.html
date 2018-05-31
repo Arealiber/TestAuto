@@ -3,11 +3,11 @@
 
 <head>
     <title></title>
-
+    <link href="/component/css/jquery.dataTables.min.css" rel="stylesheet">
     <link href="/component/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/component/css/treeview.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
     <link href="/css/loader.css" rel="stylesheet">
-    <link href="/component/css/treeview.min.css" rel="stylesheet">
 
 </head>
 
@@ -36,14 +36,15 @@
                 <a id="month_report" class="dropdown-item">月报表</a>
             </div>
         </div>
+        <HR>
 
         <div id="loader"></div>
         <div id="error_alert" class="alert alert-danger" role="alert"></div>
 
-        <table class="table" id="report_table">
+        <table class="table" id="report_table" style="width:100%">
             <thead>
+
             <tr>
-                <th scope="col">#</th>
                 <th scope="col">业务线</th>
                 <th scope="col">系统线</th>
                 <th scope="col">功能模块</th>
@@ -55,14 +56,14 @@
                 <th scope="col">最大时长(s)</th>
             </tr>
             </thead>
-            <tbody>
-            </tbody>
+
         </table>
     </div>
 
 </div>
 
 <script src="/component/js/jquery-3.3.1.min.js"></script>
+<script src="/component/js/jquery.dataTables.min.js"></script>
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
 <script src="/component/js/treeview.min.js"></script>
@@ -71,7 +72,12 @@
 <script>
     var error_alert = $("#error_alert");
     var loader = $("#loader");
-    var table_selector = $("#report_table")
+    var table_selector = $("#report_table");
+    var wageSummaryTable;
+    // var data= [
+    //     ['平台线','销售系统','上架管理','新增前端测试用例', '1', '0', 100, '1.228','1.228'],
+    //     ['回收宝','销售系统1','上架管理1','新增前端', '2', '0', 80, '1.56','3.000']
+    // ];
 
     function show_alert(alert_text) {
         loader.hide();
@@ -89,6 +95,7 @@
         })
     });
     function get_report_info(url='/report/day_report/info', from_time=null, to_time=null) {
+        loader.show();
         $.ajax({
             type: 'post',
             url: url,
@@ -99,7 +106,6 @@
                 from_time: to_time
             }),
             success: function (response) {
-                console.log(response);
                 if (!response.success) {
                     show_alert('获取信息失败：' + response.error)
                 } else {
@@ -108,22 +114,30 @@
                     if (report_list.length <=0) {
                         show_alert('没有日志报表数据')
                     } else {
+                        loader.hide();
                         table_selector.show();
                         error_alert.hide();
+                        var data = [];
                         $.each(report_list, function (i, report_info) {
-                        $("#report_table").find('tbody')
-                            .append('<tr>' +
-                                '<th scope="row">' + (i + 1) + '</th>' +
-                                '<td>' + report_info.business_name + '</td>' +
-                                '<td>' + report_info.system_name + '</td>' +
-                                '<td>' + report_info.function_name + '</td>' +
-                                '<td>' + report_info.use_case_name + '</td>' +
-                                '<td>' + report_info.run_count + '</td>' +
-                                '<td>' + report_info.fail_count + '</td>' +
-                                '<td>' + report_info.pass_rate * 100 + '</td>' +
-                                '<td>' + report_info.average_time.toFixed(3) + '</td>'+
-                                '<td>' + report_info.max_time.toFixed(3) + '</td></tr>')
-                    })
+                            data.push(
+                                [
+                                    report_info.business_name,
+                                    report_info.system_name,
+                                    report_info.function_name,
+                                    report_info.use_case_name,
+                                    report_info.run_count,
+                                    report_info.fail_count,
+                                    report_info.pass_rate * 100,
+                                    report_info.average_time,
+                                    report_info.max_time.toFixed(3)
+                                ]
+                            );
+
+                        });
+                        wageSummaryTable = $('#report_table').dataTable( {
+                            data: data,
+                            language: language_cn
+                        });
                     }
 
                 }
@@ -132,23 +146,32 @@
     }
 
     $(document).ready(function () {
-        loader.hide();
-        get_report_info();
-
+        get_report_info()
     });
 
     $('#day_report').on('click', function () {
-        $("#report_table").find('tbody').empty();
+        console.log(this.value);
+        $("#report_type").text(this.text);
+        wageSummaryTable.fnClearTable();
+        wageSummaryTable.fnDestroy();
         get_report_info('/report/day_report/info')
     });
     $('#week_report').on('click', function () {
-        $("#report_table").find('tbody').empty();
+        console.log(this.text, this);
+        $("#report_type").text(this.text);
+        wageSummaryTable.fnClearTable();
+        wageSummaryTable.fnDestroy();
         get_report_info('/report/week_report/info')
     });
     $('#month_report').on('click', function () {
-        $("#report_table").find('tbody').empty();
+        console.log(this.text, this);
+        $("#report_type").text(this.text);
+        wageSummaryTable.fnClearTable();
+        wageSummaryTable.fnDestroy();
         get_report_info('/report/month_report/info')
     });
+
+
 
 </script>
 
