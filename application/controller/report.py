@@ -345,8 +345,7 @@ def query_month_report_info():
     else:
         to_time = param_kwarg['to_time']
         to_time = datetime.strptime(to_time, '%Y-%m-%d')
-        to_time = to_time + timedelta(days=30)
-        to_time = to_time.strftime(DAY_TIME_FMT)
+        to_time = to_time.strftime(MONTH_TIME_FMT)
         param_kwarg.update({"to_time": to_time})
 
     if not param_kwarg.get('from_time', None):
@@ -354,7 +353,8 @@ def query_month_report_info():
     else:
         from_time = param_kwarg['from_time']
         from_time = datetime.strptime(from_time, '%Y-%m-%d')
-        from_time = from_time.strftime(DAY_TIME_FMT)
+        from_time = from_time - timedelta(days=30)
+        from_time = from_time.strftime(MONTH_TIME_FMT)
         param_kwarg.update({"from_time": from_time})
 
     report_info_list = ReportAPI.get_month_report_info(**param_kwarg)
