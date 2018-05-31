@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from flask import request, jsonify
 from application.api import report as ReportAPI
 from application.api import run_log as RunLogAPI
@@ -285,7 +286,7 @@ def query_week_report_info():
 
 @app.route('/report/month_report/add', methods=['GET'])
 @try_except
-@login_required
+# @login_required
 def add_month_report():
     """
     :return:
@@ -344,7 +345,7 @@ def query_month_report_info():
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     else:
         to_time = param_kwarg['to_time']
-        to_time = datetime.strptime(to_time, '%Y-%m-%d')
+        to_time = datetime.strptime(to_time, '%Y-%m-%d') + relativedelta(months=1)
         to_time = to_time.strftime(MONTH_TIME_FMT)
         param_kwarg.update({"to_time": to_time})
 
@@ -353,9 +354,9 @@ def query_month_report_info():
     else:
         from_time = param_kwarg['from_time']
         from_time = datetime.strptime(from_time, '%Y-%m-%d')
-        from_time = from_time - timedelta(days=30)
         from_time = from_time.strftime(MONTH_TIME_FMT)
         param_kwarg.update({"from_time": from_time})
+    print(param_kwarg['from_time'], param_kwarg['to_time'])
 
     report_info_list = ReportAPI.get_month_report_info(**param_kwarg)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))

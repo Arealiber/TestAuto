@@ -108,6 +108,11 @@
     function get_report_info(url='/report/day_report/info', from_time=null, to_time=null) {
         loader.show();
         datetimepicker.show();
+        if (to_time && !from_time) {
+            from_time = to_time
+        } else if (!to_time && from_time) {
+            to_time = from_time
+        }
         $.ajax({
             type: 'post',
             url: url,
@@ -124,11 +129,7 @@
                     $("#report_table").show();
                     var report_list = response.res;
                     if (report_list.length <=0) {
-                        if (from_time || to_time) {
-                            show_alert(from_time +'~'+ to_time + ' 没有日志报表数据')
-                        } else {
-                            show_alert('没有日志报表数据')
-                        }
+                        show_alert('没有日志报表数据')
                     } else {
                         loader.hide();
                         table_selector.show();
@@ -201,10 +202,10 @@
     $('#month_report').on('click', function () {
         $('#datetimepicker_start').datetimepicker({
             timepicker:false,
-            format:'Y-m',
+            format:'Y-m-d',
         });
         $('#datetimepicker_end').datetimepicker({
-            format:'Y-m',
+            format:'Y-m-d',
             timepicker:false,
         });
         report_type.text(this.text);
