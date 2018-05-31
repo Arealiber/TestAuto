@@ -1,34 +1,12 @@
 # -*- coding:utf-8 -*-
 
 from datetime import datetime
-from enum import Enum
 from sqlalchemy import Column, Integer, String, DateTime, TEXT
 from sqlalchemy.ext.declarative import declarative_base
 
 from application import engine
 
 Base = declarative_base()
-
-
-class InterfaceEntry(Enum):
-    # TODO 填充真实数据
-    h5 = 1
-    toC = 2
-
-    des = {
-        h5: 'HTML5页面',
-        toC: 'To C端'
-    }
-
-
-class InterfaceMethod(Enum):
-    GET = 1
-    POST = 2
-
-    des = {
-        GET: 'GET',
-        POST: 'POST'
-    }
 
 
 class Interface(Base):
