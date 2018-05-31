@@ -31,4 +31,4 @@ DB_MAX_OVERFLOW = 10
 DB_ECHO = False
 
 # 正式环境内部权限系统
-SYSTEM_ID = '106'
+SYSTEM_ID = '42'
