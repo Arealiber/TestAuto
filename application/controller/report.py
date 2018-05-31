@@ -9,7 +9,6 @@ from application import app
 from application.util.exception import try_except
 from application.controller import login_required
 from application.config.default import *
-from application.util import *
 
 
 @app.route('/report/minutes_report/add', methods=['GET'])
@@ -57,7 +56,6 @@ def add_minutes_report():
                 single_report_data['fail_count'] = 1
             single_report_data['sum_time'] = use_case_run_log.get('cost_time')
             single_report_data['max_time'] = use_case_run_log.get('cost_time')
-            # single_report_data['function_id'] = use_case_info_dict[use_case_id].get('function_id')
             all_report_data[use_case_id] = single_report_data
     all_report_list = all_report_data.values()
     for report_data in all_report_list:
@@ -133,7 +131,6 @@ def add_day_report():
             single_report_data['success_count'] = use_case_report['success_count']
             single_report_data['fail_count'] = use_case_report['fail_count']
             single_report_data['max_time'] = use_case_report['max_time']
-            # single_report_data['function_id'] = use_case_report['function_id']
             single_report_data['sum_time'] = use_case_report['sum_time']
             all_report_data[use_case_id] = single_report_data
     all_report_list = all_report_data.values()
@@ -162,7 +159,8 @@ def query_day_report_info():
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     else:
         to_time = param_kwarg['to_time']
-        to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, '%Y-%m-%d %H:%M'))
+        to_time = datetime.strptime(to_time, '%Y-%m-%d')
+        to_time = to_time + timedelta(days=1)
         to_time = to_time.strftime(DAY_TIME_FMT)
         param_kwarg.update({"to_time": to_time})
 
@@ -170,9 +168,11 @@ def query_day_report_info():
         param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
     else:
         from_time = param_kwarg['from_time']
-        from_time = shanghai_to_utc_timezone(datetime.strptime(from_time, '%Y-%m-%d %H:%M'))
+        from_time = datetime.strptime(from_time, '%Y-%m-%d')
         from_time = from_time.strftime(DAY_TIME_FMT)
         param_kwarg.update({"from_time": from_time})
+
+    print(param_kwarg['to_time'], param_kwarg['from_time'])
 
     report_info_list = ReportAPI.get_day_report_info(**param_kwarg)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
@@ -225,7 +225,6 @@ def add_week_report():
             single_report_data['success_count'] = use_case_report['success_count']
             single_report_data['fail_count'] = use_case_report['fail_count']
             single_report_data['max_time'] = use_case_report['max_time']
-            # single_report_data['function_id'] = use_case_report['function_id']
             single_report_data['sum_time'] = use_case_report['sum_time']
             all_report_data[use_case_id] = single_report_data
     all_report_list = list(all_report_data.values())
@@ -253,8 +252,20 @@ def query_week_report_info():
     before_time_point = now_time_point - timedelta(weeks=4)
     if not param_kwarg.get('to_time', None):
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
+    else:
+        to_time = param_kwarg['to_time']
+        to_time = datetime.strptime(to_time, '%Y-%m-%d')
+        to_time = to_time + timedelta(days=7)
+        to_time = to_time.strftime(DAY_TIME_FMT)
+        param_kwarg.update({"to_time": to_time})
+
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
+    else:
+        from_time = param_kwarg['from_time']
+        from_time = datetime.strptime(from_time, '%Y-%m-%d')
+        from_time = from_time.strftime(DAY_TIME_FMT)
+        param_kwarg.update({"from_time": from_time})
     report_info_list = ReportAPI.get_week_report_info(**param_kwarg)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
     use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
@@ -304,7 +315,6 @@ def add_month_report():
             single_report_data['success_count'] = use_case_report['success_count']
             single_report_data['fail_count'] = use_case_report['fail_count']
             single_report_data['max_time'] = use_case_report['max_time']
-            # single_report_data['function_id'] = use_case_report['function_id']
             single_report_data['sum_time'] = use_case_report['sum_time']
             all_report_data[use_case_id] = single_report_data
     all_report_list = list(all_report_data.values())
@@ -332,8 +342,21 @@ def query_month_report_info():
     before_time_point = now_time_point - timedelta(days=30*12)
     if not param_kwarg.get('to_time', None):
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
+    else:
+        to_time = param_kwarg['to_time']
+        to_time = datetime.strptime(to_time, '%Y-%m-%d')
+        to_time = to_time + timedelta(days=30)
+        to_time = to_time.strftime(DAY_TIME_FMT)
+        param_kwarg.update({"to_time": to_time})
+
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
+    else:
+        from_time = param_kwarg['from_time']
+        from_time = datetime.strptime(from_time, '%Y-%m-%d')
+        from_time = from_time.strftime(DAY_TIME_FMT)
+        param_kwarg.update({"from_time": from_time})
+
     report_info_list = ReportAPI.get_month_report_info(**param_kwarg)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
     use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)

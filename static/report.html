@@ -38,7 +38,7 @@
             </div>
 
         </div>
-        <div class="datetimepicker">
+        <div class="datetimepicker7">
             <input id="datetimepicker_start" placeholder="开始" type="text" value="">
             <input id="datetimepicker_end" placeholder="结束" type="text" value=""></label>
             <button id="data-select" class="btn btn-info" style="margin-top: 0;height: 80%;">搜索</button>
@@ -166,6 +166,12 @@
     });
 
     $('#day_report').on('click', function () {
+        $('#datetimepicker_start').datepicker({
+            format:'Y-m-d',
+        });
+        $('#datetimepicker_end').datepicker({
+            format:'Y-m-d',
+        });
         console.log(this.value);
         report_type.text(this.text);
         wageSummaryTable.fnClearTable();
@@ -183,6 +189,12 @@
         clear_datetime()
     });
     $('#month_report').on('click', function () {
+        $('#datetimepicker_start').datetimepicker({
+            format:'Y-m',
+        });
+        $('#datetimepicker_end').datetimepicker({
+            format:'Y-m',
+        });
         report_type.text(this.text);
         wageSummaryTable.fnClearTable();
         wageSummaryTable.fnDestroy();
@@ -200,11 +212,14 @@
     });
 
     $('#datetimepicker_start').datetimepicker({
-        format:'Y-m-d H:i',
+        timepicker:false,
+        format:'Y-m-d',
     });
     $('#datetimepicker_end').datetimepicker({
-        format:'Y-m-d H:i',
+        format:'Y-m-d',
+        timepicker:false,
     });
+
 
 
 
