@@ -7,7 +7,7 @@ from application.api import use_case as Case_API
 from application.util.parameter import *
 from application.util import execute_test as Exec
 from application.util.exception import try_except
-from application.controller import login_required
+from application.controller import login_required, user_real_name
 
 """
 用例
@@ -23,9 +23,8 @@ def add_use_case():
     功能描述: 添加use_case，只包含用例基础信息
     :return:
     """
-    # TODO 接入权限系统后移除写死创建人
     use_case_json = request.get_json()
-    use_case_json['create_by'] = 1
+    use_case_json['create_by'] = user_real_name()
     use_case_id = Case_API.add_use_case(**use_case_json)
     return jsonify({'success': True, 'res': use_case_id})
 

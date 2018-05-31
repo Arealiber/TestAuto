@@ -6,7 +6,7 @@ from application.api import batch as BatchAPI
 from application.api import use_case as UseCaseAPI
 from application.util import execute_test as Exec
 from application.util.exception import try_except
-from application.controller import login_required
+from application.controller import login_required, user_real_name
 
 
 @app.route('/batch/add', methods=['POST'])
@@ -17,10 +17,8 @@ def add_batch():
     create batch for use case
     :return:
     """
-    # TODO 接入权限系统后移除写死创建人
-    # schema.add_batch_schema(request.get_json())
     batch_json = request.get_json()
-    batch_json['create_by'] = 1
+    batch_json['create_by'] = user_real_name()
     batch_id = BatchAPI.add_batch(**batch_json)
     return jsonify({'success': True, 'res': batch_id})
 

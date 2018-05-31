@@ -17,7 +17,7 @@ class Batch(Base):
     id = Column(Integer, primary_key=True)
     batch_name = Column(String(100), nullable=False)
     auto_run = Column(Boolean, nullable=False, default=False)
-    create_by = Column(Integer, nullable=False)
+    create_by = Column(String(50), nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)

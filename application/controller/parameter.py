@@ -4,7 +4,7 @@ from flask import request, jsonify
 from application import app
 from application.api import parameter as ParameterAPI
 from application.util.exception import try_except
-from application.controller import login_required
+from application.controller import login_required, user_real_name
 
 
 @app.route('/parameter/add', methods=['POST'])
@@ -14,9 +14,8 @@ def add_parameter():
     """
     添加parameter
     """
-    # TODO 接入权限系统后移除写死创建人
     parameter_json = request.get_json()
-    parameter_json['create_by'] = 1
+    parameter_json['create_by'] = user_real_name()
     parameter_id = ParameterAPI.add_parameter(**parameter_json)
     return jsonify({'success': True, 'res': parameter_id})
 

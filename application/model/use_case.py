@@ -19,7 +19,7 @@ class UseCase(Base):
     environment_id = Column(Integer, nullable=False)
     use_case_name = Column(String(100), nullable=False)
     desc = Column(String(1000))
-    create_by = Column(Integer, nullable=False)
+    create_by = Column(String(50), nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)

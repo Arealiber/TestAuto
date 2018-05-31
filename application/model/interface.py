@@ -25,7 +25,7 @@ class Interface(Base):
     interface_header = Column(String(255))
     interface_json_payload = Column(TEXT)
     body_type = Column(Integer, nullable=False, default=0)  # 消息体类型， 0为json， 1为form
-    create_by = Column(Integer, nullable=False)
+    create_by = Column(String(50), nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)

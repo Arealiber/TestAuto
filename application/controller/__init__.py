@@ -34,6 +34,10 @@ def cur_user():
     return session['user_id'] if 'user_id' in session else None
 
 
+def user_real_name():
+    return session['real_name']
+
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -63,6 +67,7 @@ def login_required(f):
                     if json_response['body']['ret'] == '0':
                         session['user_id'] = user_id
                         session['timestamp'] = str(int(time.time()))
+                        session['real_name'] = json_response['body']['data']['user_info']['real_name']
                         return f(*args, **kwargs)
                     else:
                         return jsonify({'success': False, 'error': '登陆失败'})

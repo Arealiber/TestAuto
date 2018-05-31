@@ -1,21 +1,10 @@
 # -*- coding:utf-8 -*-
 from datetime import datetime
-from enum import Enum
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from application import engine
 
 Base = declarative_base()
-
-
-class ParameterType(Enum):
-    fixed_value = 1
-    other_interface = 2
-
-    des = {
-        fixed_value: '固定值',
-        other_interface: '其他接口'
-    }
 
 
 class Parameter(Base):
@@ -28,7 +17,7 @@ class Parameter(Base):
     id = Column(Integer, primary_key=True)
     parameter_name = Column(String(20), nullable=False, unique=True)
     value = Column(String(255), nullable=False)
-    create_by = Column(Integer, nullable=False)
+    create_by = Column(String(50), nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

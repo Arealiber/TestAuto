@@ -6,7 +6,7 @@ from application.api import interface as InterfaceAPI
 from application.api import use_case as UseCaseAPI
 from application.util.parameter import search_parameter
 from application.util.exception import try_except
-from application.controller import login_required
+from application.controller import login_required, user_real_name
 
 
 @app.route('/interface/add', methods=['POST'])
@@ -16,9 +16,8 @@ def add_interface():
     """
     添加interface
     """
-    # TODO 接入权限系统后移除写死创建人
     interface_json = request.get_json()
-    interface_json['create_by'] = 1
+    interface_json['create_by'] = user_real_name()
     InterfaceAPI.add_interface(**interface_json)
     return jsonify({'success': True})
 
