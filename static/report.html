@@ -166,11 +166,13 @@
     });
 
     $('#day_report').on('click', function () {
-        $('#datetimepicker_start').datepicker({
+        $('#datetimepicker_start').datetimepicker({
+            timepicker:false,
             format:'Y-m-d',
         });
-        $('#datetimepicker_end').datepicker({
+        $('#datetimepicker_end').datetimepicker({
             format:'Y-m-d',
+            timepicker:false,
         });
         console.log(this.value);
         report_type.text(this.text);
@@ -181,6 +183,14 @@
         clear_datetime()
     });
     $('#week_report').on('click', function () {
+        $('#datetimepicker_start').datetimepicker({
+            timepicker:false,
+            format:'Y-m-d',
+        });
+        $('#datetimepicker_end').datetimepicker({
+            format:'Y-m-d',
+            timepicker:false,
+        });
         report_type.text(this.text);
         wageSummaryTable.fnClearTable();
         wageSummaryTable.fnDestroy();
@@ -190,10 +200,12 @@
     });
     $('#month_report').on('click', function () {
         $('#datetimepicker_start').datetimepicker({
+            timepicker:false,
             format:'Y-m',
         });
         $('#datetimepicker_end').datetimepicker({
             format:'Y-m',
+            timepicker:false,
         });
         report_type.text(this.text);
         wageSummaryTable.fnClearTable();
