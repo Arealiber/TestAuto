@@ -15,6 +15,9 @@ def add_parameter():
     添加parameter
     """
     parameter_json = request.get_json()
+    parameter_name = parameter_json['parameter_name']
+    if len(ParameterAPI.get_parameter(parameter_name=parameter_name)) > 0:
+        return jsonify({'success': False, 'error': '重复的parameter名'})
     parameter_json['create_by'] = user_real_name()
     parameter_id = ParameterAPI.add_parameter(**parameter_json)
     return jsonify({'success': True, 'res': parameter_id})
