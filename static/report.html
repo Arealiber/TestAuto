@@ -74,6 +74,7 @@
 <script src="/component/js/jquery.datetimepicker.full.min.js"></script>
 <script src="/component/js/popper.min.js"></script>
 <script src="/component/js/bootstrap.min.js"></script>
+<script src="/component/js/moment.min.js"></script>
 <script src="/component/js/treeview.min.js"></script>
 <script src="/js/cmm.js"></script>
 
@@ -106,37 +107,29 @@
         })
     });
     function get_report_info(url='/report/day_report/info', from_time=null, to_time=null) {
+        var datatable = [];
+        $("#report_table").show();
         loader.show();
         datetimepicker.show();
-        if (to_time && !from_time) {
-            from_time = to_time
-        } else if (!to_time && from_time) {
-            to_time = from_time
-        }
-        $.ajax({
-            type: 'post',
-            url: url,
-            dataType: 'json',
-            contentType:'application/json; charset:utf-8',
-            data: JSON.stringify({
-                to_time: to_time,
-                from_time: from_time
-            }),
-            success: function (response) {
-                if (!response.success) {
-                    show_alert('获取信息失败：' + response.error)
-                } else {
-                    $("#report_table").show();
+        wageSummaryTable = $('#report_table').dataTable({
+            ajax: {
+                url: url,
+                type: 'post',
+                dataType : "json",
+                contentType: "application/json;charset:utf-8",
+                data: function() {
+                    return JSON.stringify({
+                        to_time: from_time, from_time: to_time
+                    });
+                },
+                dataSrc: function (response) {
                     var report_list = response.res;
+                    console.log(11111111111, report_list);
                     if (report_list.length <=0) {
                         show_alert('没有日志报表数据')
                     } else {
-                        loader.hide();
-                        table_selector.show();
-                        error_alert.hide();
-                        var data = [];
                         $.each(report_list, function (i, report_info) {
-                            data.push(
+                            datatable.push(
                                 [
                                     report_info.business_name,
                                     report_info.system_name,
@@ -144,22 +137,39 @@
                                     report_info.use_case_name,
                                     report_info.run_count,
                                     report_info.fail_count,
-                                    report_info.pass_rate * 100,
-                                    report_info.average_time,
+                                    (report_info.pass_rate * 100).toPrecision(3),
+                                    report_info.average_time.toFixed(3),
                                     report_info.max_time.toFixed(3)
                                 ]
                             );
-
-                        });
-                        wageSummaryTable = $('#report_table').dataTable( {
-                            data: data,
-                            language: language_cn
-                        });
+                        })
                     }
+                    for ( var i=0, ien=report_list.length ; i<ien ; i++ ) {
+                        var from_time = report_list[i].create_time;
+                        from_time = moment(from_time).format('YYYY-MM-DD 00:00');
+                        var to_time = from_time;
+                        from_time = moment(from_time).subtract(1, "days").format('YYYY-MM-DD 00:00');
+                        console.log('from_time:',from_time,'to_time:', to_time);
+                        var href = "/use_case_run_log/1?from_time="+ from_time + '&to_time=' + to_time + '&is_pass=false';
+                        if (report_list[i].fail_count > 0) {
+                            datatable[i][5] = '<a style="color:red;text-decoration:underline" href="'+href +'">'+report_list[i].fail_count+'</a>';
+                        } else {
+                            datatable[i][5] = '<a style="color:black" href="' + href + '">'+report_list[i].fail_count+'</a>';
+                        }
 
+                    }
+                    console.log(datatable);
+                    return datatable
+                },
+                error:function(data){
+                    alert('服务器无响应，请联系管理员!');
                 }
-            }
-        })
+
+            },
+            language: language_cn,
+            data: datatable
+        });
+        loader.hide()
     }
 
     $(document).ready(function () {

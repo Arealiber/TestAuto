@@ -148,6 +148,8 @@ def get_use_case_run_log_count(**kwargs):
     use_case_id = kwargs.get('use_case_id')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
+    is_pass = kwargs.get('is_pass')
+
     count = 0
     for table_name in table_name_fix_lst:
         table = get_use_case_run_log_table(table_name)
@@ -164,6 +166,8 @@ def get_use_case_run_log_count(**kwargs):
             sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
         if use_case_id:
             sql = sql.where(table.c.use_case_id == use_case_id)
+        if is_pass:
+            sql = sql.where(table.c.is_pass == is_pass)
 
         count += exec_query(sql, is_list=True)[0]['count_1']
     return count
@@ -186,6 +190,8 @@ def get_use_case_run_log(**kwargs):
     batch_run_log_id = kwargs.get('batch_run_log_id')
     page_index = kwargs.get('pageIndex')
     page_size = kwargs.get('pageSize')
+    is_pass = kwargs.get('is_pass', None)
+    print(is_pass)
     page_index = int(page_index) if page_index else None
     page_size = int(page_size) if page_size else None
     if page_size:
@@ -222,6 +228,9 @@ def get_use_case_run_log(**kwargs):
         if batch_run_log_id:
             sql = sql.where(table.c.batch_run_log_id == batch_run_log_id)
             count_sql = count_sql.where(table.c.batch_run_log_id == batch_run_log_id)
+        if is_pass:
+            sql = sql.where(table.c.is_pass == is_pass)
+            count_sql = count_sql.where(table.c.is_pass == is_pass)
         if not page_size:
             ret += exec_query(sql, is_list=True)
             continue

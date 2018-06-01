@@ -87,9 +87,9 @@ def query_all_line_relation(**kwargs):
 
 def query_line_relation(**kwargs):
     with session_scope() as session:
-        busines_query = session.query(BusinessLine).filter_by(**kwargs).filter_by(status=1)
-        system_query = session.query(SystemLine).filter_by(**kwargs).filter_by(status=1)
-        function_query = session.query(FunctionLine).filter_by(**kwargs).filter_by(status=1)
+        busines_query = session.query(BusinessLine).filter_by(**kwargs)
+        system_query = session.query(SystemLine).filter_by(**kwargs)
+        function_query = session.query(FunctionLine).filter_by(**kwargs)
         business_line_dict = {}
         for query in busines_query:
             business_line_info = query.to_dict()

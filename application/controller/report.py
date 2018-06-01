@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import copy
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from flask import request, jsonify
@@ -88,11 +89,14 @@ def query_minutes_report_info():
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
     use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
     menu_tree_info = MenuTreeAPI.query_line_relation()
+
     use_case_menu_tree = {}
-    for use_case_info in use_case_info_dict.values():
+    use_case_info_list = list(use_case_info_dict.values())
+    for use_case_info in use_case_info_list:
         function_id = use_case_info.get('function_id')
-        menu_tree_info[function_id]['use_case_name'] = use_case_info['use_case_name']
-        use_case_menu_tree[use_case_info['id']] = menu_tree_info[function_id]
+        use_case_name = use_case_info['use_case_name']
+        use_case_menu_tree[use_case_info['id']] = copy.deepcopy(menu_tree_info[function_id])
+        use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
         report_info.pop('id')
         use_case_id = report_info.pop('use_case_id')
@@ -173,18 +177,18 @@ def query_day_report_info():
         from_time = from_time.strftime(DAY_TIME_FMT)
         param_kwarg.update({"from_time": from_time})
 
-    print(param_kwarg['to_time'], param_kwarg['from_time'])
-
     report_info_list = ReportAPI.get_day_report_info(**param_kwarg)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
     use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
     menu_tree_info = MenuTreeAPI.query_line_relation()
 
     use_case_menu_tree = {}
-    for use_case_info in use_case_info_dict.values():
+    use_case_info_list = list(use_case_info_dict.values())
+    for use_case_info in use_case_info_list:
         function_id = use_case_info.get('function_id')
-        menu_tree_info[function_id]['use_case_name'] = use_case_info['use_case_name']
-        use_case_menu_tree[use_case_info['id']] = menu_tree_info[function_id]
+        use_case_name = use_case_info['use_case_name']
+        use_case_menu_tree[use_case_info['id']] = copy.deepcopy(menu_tree_info[function_id])
+        use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
         report_info.pop('id')
         use_case_id = report_info.pop('use_case_id')
@@ -273,20 +277,22 @@ def query_week_report_info():
     menu_tree_info = MenuTreeAPI.query_line_relation()
 
     use_case_menu_tree = {}
-    for use_case_info in use_case_info_dict.values():
+    use_case_info_list = list(use_case_info_dict.values())
+    for use_case_info in use_case_info_list:
         function_id = use_case_info.get('function_id')
-        menu_tree_info[function_id]['use_case_name'] = use_case_info['use_case_name']
-        use_case_menu_tree[use_case_info['id']] = menu_tree_info[function_id]
+        use_case_name = use_case_info['use_case_name']
+        use_case_menu_tree[use_case_info['id']] = copy.deepcopy(menu_tree_info[function_id])
+        use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
         report_info.pop('id')
-        use_case_id = report_info.get('use_case_id')
+        use_case_id = report_info.pop('use_case_id')
         report_info.update(use_case_menu_tree[use_case_id])
     return jsonify({'success': True, 'res': report_info_list})
 
 
 @app.route('/report/month_report/add', methods=['GET'])
 @try_except
-# @login_required
+@login_required
 def add_month_report():
     """
     :return:
@@ -356,7 +362,6 @@ def query_month_report_info():
         from_time = datetime.strptime(from_time, '%Y-%m-%d')
         from_time = from_time.strftime(MONTH_TIME_FMT)
         param_kwarg.update({"from_time": from_time})
-    print(param_kwarg['from_time'], param_kwarg['to_time'])
 
     report_info_list = ReportAPI.get_month_report_info(**param_kwarg)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
@@ -364,10 +369,12 @@ def query_month_report_info():
     menu_tree_info = MenuTreeAPI.query_line_relation()
 
     use_case_menu_tree = {}
-    for use_case_info in use_case_info_dict.values():
+    use_case_info_list = list(use_case_info_dict.values())
+    for use_case_info in use_case_info_list:
         function_id = use_case_info.get('function_id')
-        menu_tree_info[function_id]['use_case_name'] = use_case_info['use_case_name']
-        use_case_menu_tree[use_case_info['id']] = menu_tree_info[function_id]
+        use_case_name = use_case_info['use_case_name']
+        use_case_menu_tree[use_case_info['id']] = copy.deepcopy(menu_tree_info[function_id])
+        use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
         report_info.pop('id')
         use_case_id = report_info.pop('use_case_id')
