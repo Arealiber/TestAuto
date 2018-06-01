@@ -99,7 +99,7 @@ def query_minutes_report_info():
         use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
         report_info.pop('id')
-        use_case_id = report_info.pop('use_case_id')
+        use_case_id = report_info.get('use_case_id')
         report_info.update(use_case_menu_tree[use_case_id])
     return jsonify({'success': True, 'res': report_info_list})
 
@@ -191,7 +191,7 @@ def query_day_report_info():
         use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
         report_info.pop('id')
-        use_case_id = report_info.pop('use_case_id')
+        use_case_id = report_info.get('use_case_id')
         report_info.update(use_case_menu_tree[use_case_id])
 
     return jsonify({'success': True, 'res': report_info_list})
@@ -285,7 +285,7 @@ def query_week_report_info():
         use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
         report_info.pop('id')
-        use_case_id = report_info.pop('use_case_id')
+        use_case_id = report_info.get('use_case_id')
         report_info.update(use_case_menu_tree[use_case_id])
     return jsonify({'success': True, 'res': report_info_list})
 
@@ -377,7 +377,7 @@ def query_month_report_info():
         use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
         report_info.pop('id')
-        use_case_id = report_info.pop('use_case_id')
+        use_case_id = report_info.get('use_case_id')
         report_info.update(use_case_menu_tree[use_case_id])
     return jsonify({'success': True, 'res': report_info_list})
 
