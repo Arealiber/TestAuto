@@ -95,15 +95,21 @@ def get_use_case_run_log_count():
     """
     :return:
     """
-    from_time = request.get_json().get('from_time', None)
-    to_time = request.get_json().get('to_time', None)
+    param_kwargs = request.get_json()
+    from_time = param_kwargs.get('from_time', None)
+    to_time = param_kwargs.get('to_time', None)
+    function_id = param_kwargs.get('function_id', None)
     if from_time:
         from_time = shanghai_to_utc_timezone(datetime.strptime(from_time, QUERY_TIME_FMT))
-        request.get_json().update({"from_time": from_time.strftime(QUERY_TIME_FMT)})
+        param_kwargs.update({"from_time": from_time.strftime(QUERY_TIME_FMT)})
     if to_time:
         to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, QUERY_TIME_FMT))
-        request.get_json().update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
-    result = RunLogAPI.get_use_case_run_log_count(**request.get_json())
+        param_kwargs.update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
+    if function_id:
+        use_case_id = UseCaseAPI.get_use_case(function_id=function_id)
+        param_kwargs['use_case_id'] = use_case_id
+
+    result = RunLogAPI.get_use_case_run_log_count(**param_kwargs)
     return jsonify({'success': True, 'res': result})
 
 
@@ -116,12 +122,16 @@ def get_use_case_run_log():
     """
     from_time = request.get_json().get('from_time', None)
     to_time = request.get_json().get('to_time', None)
+    function_id = request.get_json().get('function_id', None)
     if from_time:
         from_time = shanghai_to_utc_timezone(datetime.strptime(from_time, QUERY_TIME_FMT))
         request.get_json().update({"from_time": from_time.strftime(QUERY_TIME_FMT)})
     if to_time:
         to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, QUERY_TIME_FMT))
         request.get_json().update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
+    if function_id:
+        use_case_id = UseCaseAPI.get_use_case(function_id=function_id)
+        request.get_json()['use_case_id'] = use_case_id
     '' if 'pageIndex' in request.get_json() else request.get_json().update({'pageIndex': 1})
     '' if 'pageSize' in request.get_json() else request.get_json().update({'pageSize': 10})
     result = RunLogAPI.get_use_case_run_log(**request.get_json())

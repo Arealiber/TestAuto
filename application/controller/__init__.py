@@ -84,3 +84,17 @@ def login_required(f):
                 return redirect('http://api-amc.huishoubao.com.cn/login?system_id={0}&jump_url={1}'.format(app.config['SYSTEM_ID'], request.url))
 
     return decorated_function
+
+
+def localhost_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        local_host_ip = request.remote_addr
+        print(local_host_ip)
+        if not local_host_ip == '127.0.0.1':
+            return jsonify({'success': False, 'error': 'you have to been called by localhost'})
+        return func(*args, **kwargs)
+    return wrapper
+
+
+

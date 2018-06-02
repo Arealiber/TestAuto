@@ -60,7 +60,7 @@ def get_day_report_info(**kwargs):
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
     limit = kwargs.get('limit')
-    print(from_time, to_time)
+    print(kwargs)
     ret = []
     for table_name in table_name_fix_lst:
         table = get_day_report_table(table_name)
@@ -180,6 +180,7 @@ def get_month_report_info(**kwargs):
     else:
         index = -1
     total_count = 0
+    print(kwargs)
     ret = []
     for table_name in table_name_fix_lst:
         table = get_month_report_table(table_name)

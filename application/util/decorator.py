@@ -79,6 +79,8 @@ def get_report_table_decorator(report_func):
         use_case_report_list = report_func(**kwargs)
         all_report_data = {}
         single_report_data = {}
+        from pprint import pprint
+        pprint(use_case_report_list)
         for use_case_report in use_case_report_list:
             function_id = use_case_report.get('function_id')
             if all_report_data.get(function_id, None):

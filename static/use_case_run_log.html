@@ -96,7 +96,7 @@
         var time_string = new URLSearchParams(window.location.search);
         var from_time = time_string.get('from_time');
         var to_time = time_string.get('to_time');
-        var use_case_id = time_string.get('use_case_id');
+        var function_id = time_string.get('function_id');
         var is_pass = time_string.get('is_pass');
         var time_url = '';
         if (from_time){
@@ -110,8 +110,8 @@
         if (is_pass) {
             time_url +="&is_pass=" + is_pass;
         }
-        if (use_case_id) {
-            time_url +="&use_case_id=" + use_case_id;
+        if (function_id) {
+            time_url +="&function_id=" + function_id;
         }
         $.ajax({
             type: 'post',
@@ -120,7 +120,7 @@
                 'from_time': from_time,
                 'to_time': to_time,
                 'is_pass': is_pass,
-                'use_case_id':use_case_id
+                'function_id':function_id
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -203,7 +203,7 @@
                                     'from_time': from_time,
                                     'to_time': to_time,
                                     'is_pass': is_pass,
-                                    'use_case_id':use_case_id
+                                    'function_id':function_id
                                 }),
                                 contentType: "application/json; charset=utf-8",
                                 dataType: "json",

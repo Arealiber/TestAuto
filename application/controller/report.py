@@ -9,13 +9,13 @@ from application.api import use_case as UseCaseAPI
 from application.api import menutree as MenuTreeAPI
 from application import app
 from application.util.exception import try_except
-from application.controller import login_required
+from application.controller import login_required, localhost_required
 from application.config.default import *
 
 
 @app.route('/report/minutes_report/add', methods=['GET'])
 @try_except
-@login_required
+@localhost_required
 def add_minutes_report():
     """
     :return:
@@ -107,7 +107,7 @@ def query_minutes_report_info():
 
 @app.route('/report/day_report/add', methods=['GET'])
 @try_except
-@login_required
+@localhost_required
 def add_day_report():
     """
     :return:
@@ -128,7 +128,7 @@ def add_day_report():
 @login_required
 def query_day_report_info():
     """
-    查询日报表数据，默认查询前4周数据
+    查询日报表数据
     :param: 时间格式：%Y-%m-%d
     :return:
     """
@@ -139,8 +139,7 @@ def query_day_report_info():
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     else:
         to_time = param_kwarg['to_time']
-        to_time = datetime.strptime(to_time, '%Y-%m-%d')
-        to_time = to_time + timedelta(days=1)
+        to_time = datetime.strptime(to_time, '%Y-%m-%d') + timedelta(days=1)
         to_time = to_time.strftime(DAY_TIME_FMT)
         param_kwarg.update({"to_time": to_time})
 
@@ -156,15 +155,13 @@ def query_day_report_info():
     menu_tree_info = MenuTreeAPI.query_line_relation()
     for report_info in report_info_list:
         function_id = report_info.get('function_id')
-        create_time = report_info['create_time']
-        report_info['create_time'] = create_time.strftime('%Y/%m/%d')
         report_info.update(menu_tree_info[function_id])
     return jsonify({'success': True, 'res': report_info_list})
 
 
 @app.route('/report/week_report/add', methods=['GET'])
 @try_except
-@login_required
+@localhost_required
 def add_week_report():
     """
     :return:
@@ -185,7 +182,7 @@ def add_week_report():
 @login_required
 def query_week_report_info():
     """
-    查询周报表数据，默认查询前4周数据
+    查询周报表数据，默认查询前1周数据
     :param: 时间格式：%Y-%m-%d
     :return:
     """
@@ -196,8 +193,7 @@ def query_week_report_info():
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     else:
         to_time = param_kwarg['to_time']
-        to_time = datetime.strptime(to_time, '%Y-%m-%d')
-        to_time = to_time + timedelta(days=7)
+        to_time = datetime.strptime(to_time, '%Y-%m-%d') + timedelta(days=1)
         to_time = to_time.strftime(DAY_TIME_FMT)
         param_kwarg.update({"to_time": to_time})
 
@@ -213,25 +209,19 @@ def query_week_report_info():
 
     for report_info in report_info_list:
         function_id = report_info.get('function_id')
-        create_time = report_info.get('create_time')
-        create_time = datetime.date(create_time).isocalendar()
-        if len(create_time) > 2:
-            report_info['create_time'] = '{0}第{1}周'.format(create_time[0], create_time[1])
-        else:
-            report_info['create_time'] = '未知'
         report_info.update(menu_tree_info[function_id])
     return jsonify({'success': True, 'res': report_info_list})
 
 
 @app.route('/report/month_report/add', methods=['GET'])
 @try_except
-@login_required
+@localhost_required
 def add_month_report():
     """
     :return:
     """
     now_time_point = datetime.utcnow() + timedelta(days=1)
-    before_time_point = now_time_point - timedelta(days=MOUTH_TIME_LENGTH)
+    before_time_point = now_time_point - relativedelta(months=1)
     to_time = now_time_point.strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
     use_case_report_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
@@ -246,18 +236,18 @@ def add_month_report():
 @login_required
 def query_month_report_info():
     """
-    查询月报表数据，默认查询前12月数据
+    查询月报表数据，默认查询前1月数据
     :param: 时间格式：%Y-%m-%d
     :return:
     """
     param_kwarg = request.get_json()
     now_time_point = datetime.utcnow() + timedelta(days=1)
-    before_time_point = now_time_point - timedelta(days=30*12)
+    before_time_point = now_time_point - relativedelta(months=1)
     if not param_kwarg.get('to_time', None):
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     else:
         to_time = param_kwarg['to_time']
-        to_time = datetime.strptime(to_time, '%Y-%m-%d') + relativedelta(months=1)
+        to_time = datetime.strptime(to_time, '%Y-%m-%d') + timedelta(days=1)
         to_time = to_time.strftime(MONTH_TIME_FMT)
         param_kwarg.update({"to_time": to_time})
 
@@ -273,8 +263,6 @@ def query_month_report_info():
     menu_tree_info = MenuTreeAPI.query_line_relation()
     for report_info in report_info_list:
         function_id = report_info.get('function_id')
-        create_time = report_info['create_time']
-        report_info['create_time'] = create_time.strftime('%Y/%m')
         report_info.update(menu_tree_info[function_id])
     return jsonify({'success': True, 'res': report_info_list})
 

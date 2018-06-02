@@ -182,3 +182,6 @@ body {
 .eval_input{
     width: 60%;
 }
+.run_fail{
+    cursor:pointer;
+}
