@@ -28,14 +28,14 @@ def add_minutes_report():
     use_case_run_log_list = RunLogAPI.get_use_case_run_log(from_time=from_time, to_time=to_time)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in use_case_run_log_list]))
     use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
-    print(use_case_info_dict)
 
     all_report_data = {}
     single_report_data = {}
     for use_case_run_log in use_case_run_log_list:
         use_case_id = use_case_run_log.get('use_case_id')
-        if all_report_data.get(use_case_id, None):
-            single_report_data = all_report_data[use_case_id]
+        function_id = use_case_info_dict[use_case_id].get('function_id')
+        if all_report_data.get(function_id, None):
+            single_report_data = all_report_data[function_id]
             single_report_data['run_count'] += 1
             if use_case_run_log.get('is_pass'):
                 single_report_data['success_count'] += 1
@@ -48,7 +48,8 @@ def add_minutes_report():
         else:
             if single_report_data:
                 single_report_data = {}
-            single_report_data['use_case_id'] = use_case_id
+
+            single_report_data['function_id'] = function_id
             single_report_data['run_count'] = 1
             if use_case_run_log.get('is_pass'):
                 single_report_data['success_count'] = 1
@@ -58,7 +59,7 @@ def add_minutes_report():
                 single_report_data['fail_count'] = 1
             single_report_data['sum_time'] = use_case_run_log.get('cost_time')
             single_report_data['max_time'] = use_case_run_log.get('cost_time')
-            all_report_data[use_case_id] = single_report_data
+            all_report_data[function_id] = single_report_data
     all_report_list = all_report_data.values()
     for report_data in all_report_list:
         average_time = report_data['sum_time'] / report_data['run_count']
@@ -113,37 +114,11 @@ def add_day_report():
     """
     now_time_point = datetime.utcnow()
     before_time_point = now_time_point - timedelta(days=DAY_TIME_LENGTH)
-    to_time = now_time_point.strftime(DAY_TIME_FMT)
+    to_time = (now_time_point + timedelta(days=1)).strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
-    use_case_minutes_report_list = ReportAPI.get_minutes_report_info(from_time=from_time, to_time=to_time)
-    all_report_data = {}
-    single_report_data = {}
-    for use_case_report in use_case_minutes_report_list:
-        use_case_id = use_case_report.get('use_case_id')
-        if all_report_data.get(use_case_id, None):
-            single_report_data = all_report_data[use_case_id]
-            single_report_data['run_count'] += use_case_report['run_count']
-            single_report_data['success_count'] += use_case_report['success_count']
-            single_report_data['fail_count'] += use_case_report['fail_count']
-            if single_report_data['max_time'] < use_case_report['max_time']:
-                single_report_data['max_time'] = use_case_report['max_time']
-            single_report_data['sum_time'] += use_case_report.get('sum_time')
-        else:
-            if single_report_data:
-                single_report_data = {}
-            single_report_data['use_case_id'] = use_case_id
-            single_report_data['run_count'] = use_case_report['run_count']
-            single_report_data['success_count'] = use_case_report['success_count']
-            single_report_data['fail_count'] = use_case_report['fail_count']
-            single_report_data['max_time'] = use_case_report['max_time']
-            single_report_data['sum_time'] = use_case_report['sum_time']
-            all_report_data[use_case_id] = single_report_data
-    all_report_list = all_report_data.values()
-    for report_data in all_report_list:
-        average_time = report_data['sum_time'] / report_data['run_count']
-        pass_rate = report_data['success_count'] / report_data['run_count']
-        report_data['average_time'] = average_time
-        report_data['pass_rate'] = pass_rate
+    use_case_report_list = ReportAPI.get_minutes_report_info(from_time=from_time, to_time=to_time)
+
+    for report_data in use_case_report_list:
         ReportAPI.add_day_report(**report_data)
     return jsonify({'success': True})
 
@@ -159,7 +134,7 @@ def query_day_report_info():
     """
     param_kwarg = request.get_json()
     now_time_point = datetime.utcnow() + timedelta(days=1)
-    before_time_point = now_time_point - timedelta(days=4*DEFAULT_TIME_LENGTH)
+    before_time_point = now_time_point - timedelta(days=1)
     if not param_kwarg.get('to_time', None):
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     else:
@@ -178,22 +153,12 @@ def query_day_report_info():
         param_kwarg.update({"from_time": from_time})
 
     report_info_list = ReportAPI.get_day_report_info(**param_kwarg)
-    use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
-    use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
     menu_tree_info = MenuTreeAPI.query_line_relation()
-
-    use_case_menu_tree = {}
-    use_case_info_list = list(use_case_info_dict.values())
-    for use_case_info in use_case_info_list:
-        function_id = use_case_info.get('function_id')
-        use_case_name = use_case_info['use_case_name']
-        use_case_menu_tree[use_case_info['id']] = copy.deepcopy(menu_tree_info[function_id])
-        use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
-        report_info.pop('id')
-        use_case_id = report_info.get('use_case_id')
-        report_info.update(use_case_menu_tree[use_case_id])
-
+        function_id = report_info.get('function_id')
+        create_time = report_info['create_time']
+        report_info['create_time'] = create_time.strftime('%Y/%m/%d')
+        report_info.update(menu_tree_info[function_id])
     return jsonify({'success': True, 'res': report_info_list})
 
 
@@ -204,41 +169,13 @@ def add_week_report():
     """
     :return:
     """
-    print(request.get_json())
+
     now_time_point = datetime.utcnow() + timedelta(days=1)
     before_time_point = now_time_point - timedelta(weeks=WEEK_TIME_LENGTH)
     to_time = now_time_point.strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
-    use_case_day_report_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
-    all_report_data = {}
-    single_report_data = {}
-    for use_case_report in use_case_day_report_list:
-        use_case_id = use_case_report.get('use_case_id')
-        if all_report_data.get(use_case_id, None):
-            single_report_data = all_report_data[use_case_id]
-            single_report_data['run_count'] += use_case_report['run_count']
-            single_report_data['success_count'] += use_case_report['success_count']
-            single_report_data['fail_count'] += use_case_report['fail_count']
-            if single_report_data['max_time'] < use_case_report['max_time']:
-                single_report_data['max_time'] = use_case_report['max_time']
-            single_report_data['sum_time'] += use_case_report.get('sum_time')
-        else:
-            if single_report_data:
-                single_report_data = {}
-            single_report_data['use_case_id'] = use_case_id
-            single_report_data['run_count'] = use_case_report['run_count']
-            single_report_data['success_count'] = use_case_report['success_count']
-            single_report_data['fail_count'] = use_case_report['fail_count']
-            single_report_data['max_time'] = use_case_report['max_time']
-            single_report_data['sum_time'] = use_case_report['sum_time']
-            all_report_data[use_case_id] = single_report_data
-    all_report_list = list(all_report_data.values())
-    for report_data in all_report_list:
-        average_time = report_data['sum_time'] / report_data['run_count']
-        pass_rate = report_data['success_count'] / report_data['run_count']
-        report_data['average_time'] = average_time
-        report_data['pass_rate'] = pass_rate
-        report_data.pop('sum_time')
+    use_case_report_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
+    for report_data in use_case_report_list:
         ReportAPI.add_week_report(**report_data)
     return jsonify({'success': True})
 
@@ -254,7 +191,7 @@ def query_week_report_info():
     """
     param_kwarg = request.get_json()
     now_time_point = datetime.utcnow() + timedelta(days=1)
-    before_time_point = now_time_point - timedelta(weeks=4)
+    before_time_point = now_time_point - timedelta(weeks=1)
     if not param_kwarg.get('to_time', None):
         param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
     else:
@@ -272,21 +209,17 @@ def query_week_report_info():
         from_time = from_time.strftime(DAY_TIME_FMT)
         param_kwarg.update({"from_time": from_time})
     report_info_list = ReportAPI.get_week_report_info(**param_kwarg)
-    use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
-    use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
     menu_tree_info = MenuTreeAPI.query_line_relation()
 
-    use_case_menu_tree = {}
-    use_case_info_list = list(use_case_info_dict.values())
-    for use_case_info in use_case_info_list:
-        function_id = use_case_info.get('function_id')
-        use_case_name = use_case_info['use_case_name']
-        use_case_menu_tree[use_case_info['id']] = copy.deepcopy(menu_tree_info[function_id])
-        use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
-        report_info.pop('id')
-        use_case_id = report_info.get('use_case_id')
-        report_info.update(use_case_menu_tree[use_case_id])
+        function_id = report_info.get('function_id')
+        create_time = report_info.get('create_time')
+        create_time = datetime.date(create_time).isocalendar()
+        if len(create_time) > 2:
+            report_info['create_time'] = '{0}第{1}周'.format(create_time[0], create_time[1])
+        else:
+            report_info['create_time'] = '未知'
+        report_info.update(menu_tree_info[function_id])
     return jsonify({'success': True, 'res': report_info_list})
 
 
@@ -301,36 +234,9 @@ def add_month_report():
     before_time_point = now_time_point - timedelta(days=MOUTH_TIME_LENGTH)
     to_time = now_time_point.strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
-    use_case_day_report_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
-    all_report_data = {}
-    single_report_data = {}
-    for use_case_report in use_case_day_report_list:
-        use_case_id = use_case_report.get('use_case_id')
-        if all_report_data.get(use_case_id, None):
-            single_report_data = all_report_data[use_case_id]
-            single_report_data['run_count'] += use_case_report['run_count']
-            single_report_data['success_count'] += use_case_report['success_count']
-            single_report_data['fail_count'] += use_case_report['fail_count']
-            if single_report_data['max_time'] < use_case_report['max_time']:
-                single_report_data['max_time'] = use_case_report['max_time']
-            single_report_data['sum_time'] += use_case_report.get('sum_time')
-        else:
-            if single_report_data:
-                single_report_data = {}
-            single_report_data['use_case_id'] = use_case_id
-            single_report_data['run_count'] = use_case_report['run_count']
-            single_report_data['success_count'] = use_case_report['success_count']
-            single_report_data['fail_count'] = use_case_report['fail_count']
-            single_report_data['max_time'] = use_case_report['max_time']
-            single_report_data['sum_time'] = use_case_report['sum_time']
-            all_report_data[use_case_id] = single_report_data
-    all_report_list = list(all_report_data.values())
-    for report_data in all_report_list:
-        average_time = report_data['sum_time'] / report_data['run_count']
-        pass_rate = report_data['success_count'] / report_data['run_count']
-        report_data['average_time'] = average_time
-        report_data['pass_rate'] = pass_rate
-        report_data.pop('sum_time')
+    use_case_report_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
+
+    for report_data in list(use_case_report_list):
         ReportAPI.add_month_report(**report_data)
     return jsonify({'success': True})
 
@@ -364,21 +270,12 @@ def query_month_report_info():
         param_kwarg.update({"from_time": from_time})
 
     report_info_list = ReportAPI.get_month_report_info(**param_kwarg)
-    use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
-    use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
     menu_tree_info = MenuTreeAPI.query_line_relation()
-
-    use_case_menu_tree = {}
-    use_case_info_list = list(use_case_info_dict.values())
-    for use_case_info in use_case_info_list:
-        function_id = use_case_info.get('function_id')
-        use_case_name = use_case_info['use_case_name']
-        use_case_menu_tree[use_case_info['id']] = copy.deepcopy(menu_tree_info[function_id])
-        use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
-        report_info.pop('id')
-        use_case_id = report_info.get('use_case_id')
-        report_info.update(use_case_menu_tree[use_case_id])
+        function_id = report_info.get('function_id')
+        create_time = report_info['create_time']
+        report_info['create_time'] = create_time.strftime('%Y/%m')
+        report_info.update(menu_tree_info[function_id])
     return jsonify({'success': True, 'res': report_info_list})
 
 
