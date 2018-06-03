@@ -180,14 +180,25 @@ def add_week_report():
     :return:
     """
 
-    now_time_point = datetime.utcnow() + timedelta(days=0)
-    before_time_point = now_time_point - timedelta(weeks=WEEK_TIME_LENGTH)
-    to_time = now_time_point.strftime(DAY_TIME_FMT)
+    now_time_point = datetime.utcnow()
+    day_of_week_num = (now_time_point.isocalendar())[2]
+    before_time_point = now_time_point - timedelta(days=(day_of_week_num - 1))
+    to_time = (now_time_point + timedelta(days=1)).strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
     use_case_data_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
+    report_info_list = ReportAPI.get_week_report_info(from_time=from_time, to_time=to_time)
+    report_info_dict = {}
+    for report_info in report_info_list:
+        report_info_dict[report_info['function_id']] = report_info
     use_case_report_list = add_report_data_calculate(use_case_data_list)
     for report_data in use_case_report_list:
-        ReportAPI.add_week_report(**report_data)
+        function_id = report_data['function_id']
+        if report_info_dict and report_info_dict.get(function_id, None):
+            id = report_info_dict[function_id].get('id')
+            report_data['id'] = id
+            ReportAPI.modify_week_report(**report_data)
+        else:
+            ReportAPI.add_week_report(**report_data)
     return jsonify({'success': True})
 
 
@@ -202,24 +213,26 @@ def query_week_report_info():
     """
     param_kwarg = request.get_json()
     now_time_point = datetime.utcnow()
-    to_time_point = now_time_point + timedelta(days=0)
+    day_of_week_num = now_time_point.isocalendar()[2]
+    to_time_point = now_time_point + timedelta(days=(7 - (day_of_week_num - 1)))
     from_time_point = now_time_point - timedelta(weeks=4)
     if not param_kwarg.get('to_time', None):
         param_kwarg['to_time'] = to_time_point.strftime(DAY_TIME_FMT)
     else:
-        to_time = param_kwarg['to_time']
-        to_time = datetime.strptime(to_time, '%Y-%m-%d') + timedelta(days=1)
+        to_time = datetime.strptime(param_kwarg['to_time'], '%Y-%m-%d')
+        day_of_week_num = to_time.isocalendar()[2]
+        to_time = to_time + timedelta(days=(7 - (day_of_week_num - 1)))
         to_time = to_time.strftime(DAY_TIME_FMT)
         param_kwarg.update({"to_time": to_time})
 
     if not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = from_time_point.strftime(DAY_TIME_FMT)
     else:
-        from_time = param_kwarg['from_time']
-        from_time = datetime.strptime(from_time, '%Y-%m-%d')
+        from_time = datetime.strptime(param_kwarg['from_time'], '%Y-%m-%d')
+        day_of_week_num = from_time.isocalendar()[2]
+        from_time = from_time - timedelta(days=day_of_week_num-1)
         from_time = from_time.strftime(DAY_TIME_FMT)
         param_kwarg.update({"from_time": from_time})
-    print(param_kwarg)
     report_info_list = ReportAPI.get_week_report_info(**param_kwarg)
     menu_tree_info = MenuTreeAPI.query_line_relation()
 
@@ -236,14 +249,27 @@ def add_month_report():
     """
     :return:
     """
-    now_time_point = datetime.utcnow() + timedelta(days=0)
-    before_time_point = now_time_point - relativedelta(years=1)
-    to_time = now_time_point.strftime(DAY_TIME_FMT)
+
+    now_time_point = datetime.utcnow()
+    day_of_month_num = int(now_time_point.strftime('%m'))
+    before_time_point = now_time_point - timedelta(days=(day_of_month_num - 1))
+    to_time = (now_time_point + timedelta(days=1)).strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
+
     use_case_data_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
+    report_info_list = ReportAPI.get_month_report_info(from_time=from_time, to_time=to_time)
+    report_info_dict = {}
+    for report_info in report_info_list:
+        report_info_dict[report_info['function_id']] = report_info
     use_case_report_list = add_report_data_calculate(use_case_data_list)
-    for report_data in list(use_case_report_list):
-        ReportAPI.add_month_report(**report_data)
+    for report_data in use_case_report_list:
+        function_id = report_data['function_id']
+        if report_info_dict and report_info_dict.get(function_id, None):
+            id = report_info_dict[function_id].get('id')
+            report_data['id'] = id
+            ReportAPI.modify_month_report(**report_data)
+        else:
+            ReportAPI.add_month_report(**report_data)
     return jsonify({'success': True})
 
 

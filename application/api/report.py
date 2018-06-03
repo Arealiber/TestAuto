@@ -26,6 +26,13 @@ def add_week_report(**kwargs):
 
 
 @report_table_decorator
+def add_month_report(**kwargs):
+    table = get_month_report_table(kwargs.pop('table_name')[0])
+    sql = table.insert(kwargs)
+    return exec_change(sql).inserted_primary_key[0]
+
+
+@report_table_decorator
 def modify_day_report(**kwargs):
     table = get_day_report_table(kwargs.pop('table_name')[0])
     id = kwargs.pop('id')
@@ -34,10 +41,19 @@ def modify_day_report(**kwargs):
 
 
 @report_table_decorator
-def add_month_report(**kwargs):
+def modify_week_report(**kwargs):
+    table = get_week_report_table(kwargs.pop('table_name')[0])
+    id = kwargs.pop('id')
+    sql = table.update(table.c.id == id).values(**kwargs)
+    return exec_change(sql)
+
+
+@report_table_decorator
+def modify_month_report(**kwargs):
     table = get_month_report_table(kwargs.pop('table_name')[0])
-    sql = table.insert(kwargs)
-    return exec_change(sql).inserted_primary_key[0]
+    id = kwargs.pop('id')
+    sql = table.update(table.c.id == id).values(**kwargs)
+    return exec_change(sql)
 
 
 @report_table_decorator
