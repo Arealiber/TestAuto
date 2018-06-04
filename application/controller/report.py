@@ -135,10 +135,11 @@ def query_day_report_info():
     :return:
     """
     param_kwarg = request.get_json()
-    now_time_point = datetime.utcnow() + timedelta(days=1)
-    before_time_point = now_time_point - timedelta(days=1)
+    now_time_point = datetime.utcnow()
+    to_time_point = now_time_point + timedelta(days=1)
+    from_time_point = now_time_point - relativedelta(months=1)
     if not param_kwarg.get('to_time', None):
-        param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
+        param_kwarg['to_time'] = to_time_point.strftime(DAY_TIME_FMT)
     else:
         to_time = param_kwarg['to_time']
         to_time = datetime.strptime(to_time, '%Y-%m-%d') + timedelta(days=1)
@@ -146,7 +147,7 @@ def query_day_report_info():
         param_kwarg.update({"to_time": to_time})
 
     if not param_kwarg.get('from_time', None):
-        param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
+        param_kwarg['from_time'] = from_time_point.strftime(DAY_TIME_FMT)
     else:
         from_time = param_kwarg['from_time']
         from_time = datetime.strptime(from_time, '%Y-%m-%d')
@@ -185,15 +186,16 @@ def add_week_report():
 @login_required
 def query_week_report_info():
     """
-    查询周报表数据，默认查询前1周数据
+    查询周报表数据，默认查询前4周数据
     :param: 时间格式：%Y-%m-%d
     :return:
     """
     param_kwarg = request.get_json()
-    now_time_point = datetime.utcnow() + timedelta(days=1)
-    before_time_point = now_time_point - timedelta(weeks=1)
+    now_time_point = datetime.utcnow()
+    to_time_point = now_time_point + timedelta(days=1)
+    from_time_point = now_time_point - timedelta(weeks=4)
     if not param_kwarg.get('to_time', None):
-        param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
+        param_kwarg['to_time'] = to_time_point.strftime(DAY_TIME_FMT)
     else:
         to_time = param_kwarg['to_time']
         to_time = datetime.strptime(to_time, '%Y-%m-%d') + timedelta(days=1)
@@ -201,7 +203,7 @@ def query_week_report_info():
         param_kwarg.update({"to_time": to_time})
 
     if not param_kwarg.get('from_time', None):
-        param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
+        param_kwarg['from_time'] = from_time_point.strftime(DAY_TIME_FMT)
     else:
         from_time = param_kwarg['from_time']
         from_time = datetime.strptime(from_time, '%Y-%m-%d')
@@ -224,7 +226,7 @@ def add_month_report():
     :return:
     """
     now_time_point = datetime.utcnow() + timedelta(days=0)
-    before_time_point = now_time_point - relativedelta(months=1)
+    before_time_point = now_time_point - relativedelta(years=1)
     to_time = now_time_point.strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
     use_case_data_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
@@ -244,10 +246,11 @@ def query_month_report_info():
     :return:
     """
     param_kwarg = request.get_json()
-    now_time_point = datetime.utcnow() + timedelta(days=1)
-    before_time_point = now_time_point - relativedelta(months=1)
+    now_time_point = datetime.utcnow()
+    to_time_point = datetime.utcnow() + timedelta(days=1)
+    from_time_point = now_time_point - relativedelta(months=1)
     if not param_kwarg.get('to_time', None):
-        param_kwarg['to_time'] = now_time_point.strftime(DAY_TIME_FMT)
+        param_kwarg['to_time'] = to_time_point.strftime(DAY_TIME_FMT)
     else:
         to_time = param_kwarg['to_time']
         to_time = datetime.strptime(to_time, '%Y-%m-%d') + timedelta(days=1)
@@ -255,7 +258,7 @@ def query_month_report_info():
         param_kwarg.update({"to_time": to_time})
 
     if not param_kwarg.get('from_time', None):
-        param_kwarg['from_time'] = before_time_point.strftime(DAY_TIME_FMT)
+        param_kwarg['from_time'] = from_time_point.strftime(DAY_TIME_FMT)
     else:
         from_time = param_kwarg['from_time']
         from_time = datetime.strptime(from_time, '%Y-%m-%d')

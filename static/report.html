@@ -111,6 +111,7 @@
         var datatable = [];
         error_alert.hide();
         $("#report_table").show();
+        $("#report_table_wrapper").show();
         loader.show();
         datetimepicker.show();
         wageSummaryTable = $('#report_table').dataTable({
@@ -129,7 +130,8 @@
                 dataSrc: function (response) {
                     var report_list = response.res;
                     if (report_list.length <=0) {
-                        show_alert('没有日志报表数据')
+                        show_alert('没有日志报表数据');
+                        $("#report_table_wrapper").hide();
                     } else {
                         $.each(report_list, function (i, report_info) {
                             datatable.push(
