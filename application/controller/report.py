@@ -192,7 +192,7 @@ def query_week_report_info():
     """
     param_kwarg = request.get_json()
     now_time_point = datetime.utcnow()
-    to_time_point = now_time_point + timedelta(days=1)
+    to_time_point = now_time_point + timedelta(days=0)
     from_time_point = now_time_point - timedelta(weeks=4)
     if not param_kwarg.get('to_time', None):
         param_kwarg['to_time'] = to_time_point.strftime(DAY_TIME_FMT)
@@ -209,6 +209,7 @@ def query_week_report_info():
         from_time = datetime.strptime(from_time, '%Y-%m-%d')
         from_time = from_time.strftime(DAY_TIME_FMT)
         param_kwarg.update({"from_time": from_time})
+    print(param_kwarg)
     report_info_list = ReportAPI.get_week_report_info(**param_kwarg)
     menu_tree_info = MenuTreeAPI.query_line_relation()
 

@@ -137,7 +137,7 @@ def get_week_report_info(**kwargs):
             count_sql = count_sql.where(table.c.create_time.__le__(to_time))
 
         if function_id:
-            sql = sql.where(table.c.use_case_id.in_(function_id)).order_by(desc(table.c.create_time))
+            sql = sql.where(table.c.function_id.in_(function_id)).order_by(desc(table.c.create_time))
             count_sql = count_sql.where(table.c.create_time.__le__(to_time))
         else:
             sql = sql.order_by(desc(table.c.create_time))
