@@ -4,14 +4,35 @@ from application.util.decorator import *
 from application.model.report import *
 
 
-@add_report_table_decorator
+@report_table_decorator
 def add_minutes_report(**kwargs):
     table = get_minutes_report_table(kwargs.pop('table_name')[0])
     sql = table.insert(kwargs)
     return exec_change(sql).inserted_primary_key[0]
 
 
-@get_report_table_decorator
+@report_table_decorator
+def add_day_report(**kwargs):
+    table = get_day_report_table(kwargs.pop('table_name')[0])
+    sql = table.insert(kwargs)
+    return exec_change(sql).inserted_primary_key[0]
+
+
+@report_table_decorator
+def add_week_report(**kwargs):
+    table = get_week_report_table(kwargs.pop('table_name')[0])
+    sql = table.insert(kwargs)
+    return exec_change(sql).inserted_primary_key[0]
+
+
+@report_table_decorator
+def add_month_report(**kwargs):
+    table = get_month_report_table(kwargs.pop('table_name')[0])
+    sql = table.insert(kwargs)
+    return exec_change(sql).inserted_primary_key[0]
+
+
+@report_table_decorator
 def get_minutes_report_info(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name')
     function_id = kwargs.get('function_id')
@@ -46,21 +67,13 @@ def get_minutes_report_info(**kwargs):
     return ret
 
 
-@add_report_table_decorator
-def add_day_report(**kwargs):
-    table = get_day_report_table(kwargs.pop('table_name')[0])
-    sql = table.insert(kwargs)
-    return exec_change(sql).inserted_primary_key[0]
-
-
-@get_report_table_decorator
+@report_table_decorator
 def get_day_report_info(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name')
     function_id = kwargs.get('function_id')
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
     limit = kwargs.get('limit')
-    print(kwargs)
     ret = []
     for table_name in table_name_fix_lst:
         table = get_day_report_table(table_name)
@@ -87,14 +100,7 @@ def get_day_report_info(**kwargs):
     return ret
 
 
-@add_report_table_decorator
-def add_week_report(**kwargs):
-    table = get_week_report_table(kwargs.pop('table_name')[0])
-    sql = table.insert(kwargs)
-    return exec_change(sql).inserted_primary_key[0]
-
-
-@get_report_table_decorator
+@report_table_decorator
 def get_week_report_info(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name')
     function_id = kwargs.get('function_id')
@@ -158,14 +164,7 @@ def get_week_report_info(**kwargs):
     return ret
 
 
-@add_report_table_decorator
-def add_month_report(**kwargs):
-    table = get_month_report_table(kwargs.pop('table_name')[0])
-    sql = table.insert(kwargs)
-    return exec_change(sql).inserted_primary_key[0]
-
-
-@get_report_table_decorator
+@report_table_decorator
 def get_month_report_info(**kwargs):
     table_name_fix_lst = kwargs.pop('table_name')
     function_id = kwargs.get('function_id')
@@ -180,7 +179,6 @@ def get_month_report_info(**kwargs):
     else:
         index = -1
     total_count = 0
-    print(kwargs)
     ret = []
     for table_name in table_name_fix_lst:
         table = get_month_report_table(table_name)

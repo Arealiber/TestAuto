@@ -9,6 +9,7 @@ from application.api import use_case as UseCaseAPI
 from application.api import menutree as MenuTreeAPI
 from application import app
 from application.util.exception import try_except
+from application.util import add_report_data_calculate
 from application.controller import login_required, localhost_required
 from application.config.default import *
 
@@ -114,10 +115,11 @@ def add_day_report():
     """
     now_time_point = datetime.utcnow()
     before_time_point = now_time_point - timedelta(days=DAY_TIME_LENGTH)
-    to_time = (now_time_point + timedelta(days=1)).strftime(DAY_TIME_FMT)
+    to_time = (now_time_point + timedelta(days=0)).strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
-    use_case_report_list = ReportAPI.get_minutes_report_info(from_time=from_time, to_time=to_time)
 
+    use_case_data_list = ReportAPI.get_minutes_report_info(from_time=from_time, to_time=to_time)
+    use_case_report_list = add_report_data_calculate(use_case_data_list)
     for report_data in use_case_report_list:
         ReportAPI.add_day_report(**report_data)
     return jsonify({'success': True})
@@ -167,11 +169,12 @@ def add_week_report():
     :return:
     """
 
-    now_time_point = datetime.utcnow() + timedelta(days=1)
+    now_time_point = datetime.utcnow() + timedelta(days=0)
     before_time_point = now_time_point - timedelta(weeks=WEEK_TIME_LENGTH)
     to_time = now_time_point.strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
-    use_case_report_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
+    use_case_data_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
+    use_case_report_list = add_report_data_calculate(use_case_data_list)
     for report_data in use_case_report_list:
         ReportAPI.add_week_report(**report_data)
     return jsonify({'success': True})
@@ -220,12 +223,12 @@ def add_month_report():
     """
     :return:
     """
-    now_time_point = datetime.utcnow() + timedelta(days=1)
+    now_time_point = datetime.utcnow() + timedelta(days=0)
     before_time_point = now_time_point - relativedelta(months=1)
     to_time = now_time_point.strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
-    use_case_report_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
-
+    use_case_data_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
+    use_case_report_list = add_report_data_calculate(use_case_data_list)
     for report_data in list(use_case_report_list):
         ReportAPI.add_month_report(**report_data)
     return jsonify({'success': True})

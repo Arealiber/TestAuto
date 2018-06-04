@@ -90,7 +90,6 @@ def localhost_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         local_host_ip = request.remote_addr
-        print(local_host_ip)
         if not local_host_ip == '127.0.0.1':
             return jsonify({'success': False, 'error': 'you have to been called by localhost'})
         return func(*args, **kwargs)
