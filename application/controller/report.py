@@ -115,7 +115,7 @@ def add_day_report():
     """
     now_time_point = datetime.utcnow()
     before_time_point = now_time_point - timedelta(days=DAY_TIME_LENGTH)
-    to_time = (now_time_point + timedelta(days=0)).strftime(DAY_TIME_FMT)
+    to_time = (now_time_point + timedelta(days=1)).strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
 
     use_case_data_list = ReportAPI.get_minutes_report_info(from_time=from_time, to_time=to_time)

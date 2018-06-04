@@ -71,46 +71,6 @@ def report_table_decorator(func):
     return wrapper
 
 
-# def add_report_table_decorator(report_func):
-#     @wraps(report_func)
-#     def wrapper(**kwargs):
-#         fmt_str = (datetime.strftime(datetime.utcnow(), TABLE_FMT))
-#         kwargs.update({'table_name': [fmt_str]})   # 按年分表
-#         use_case_report_list = report_func(**kwargs)
-#         all_report_data = {}
-#         single_report_data = {}
-#         for use_case_report in use_case_report_list:
-#             function_id = use_case_report.get('function_id')
-#             if all_report_data.get(function_id, None):
-#                 single_report_data = all_report_data[function_id]
-#                 single_report_data['run_count'] += use_case_report['run_count']
-#                 single_report_data['success_count'] += use_case_report['success_count']
-#                 single_report_data['fail_count'] += use_case_report['fail_count']
-#                 if single_report_data['max_time'] < use_case_report['max_time']:
-#                     single_report_data['max_time'] = use_case_report['max_time']
-#                 single_report_data['sum_time'] += use_case_report.get('sum_time')
-#             else:
-#                 if single_report_data:
-#                     single_report_data = {}
-#                 single_report_data['function_id'] = function_id
-#                 single_report_data['run_count'] = use_case_report['run_count']
-#                 single_report_data['success_count'] = use_case_report['success_count']
-#                 single_report_data['fail_count'] = use_case_report['fail_count']
-#                 single_report_data['max_time'] = use_case_report['max_time']
-#                 single_report_data['sum_time'] = use_case_report['sum_time']
-#                 single_report_data['create_time'] = use_case_report['create_time']
-#                 all_report_data[function_id] = single_report_data
-#         all_report_list = all_report_data.values()
-#         for report_data in all_report_list:
-#             average_time = report_data['sum_time'] / report_data['run_count']
-#             pass_rate = report_data['success_count'] / report_data['run_count']
-#             report_data['average_time'] = average_time
-#             report_data['pass_rate'] = pass_rate
-#         return list(all_report_list)
-#     return wrapper
-#
-
-
 
 
 

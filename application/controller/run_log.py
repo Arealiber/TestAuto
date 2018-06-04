@@ -95,21 +95,22 @@ def get_use_case_run_log_count():
     """
     :return:
     """
-    param_kwargs = request.get_json()
-    from_time = param_kwargs.get('from_time', None)
-    to_time = param_kwargs.get('to_time', None)
-    function_id = param_kwargs.get('function_id', None)
+    param_kwarg = request.get_json()
+    from_time = param_kwarg.get('from_time', None)
+    to_time = param_kwarg.get('to_time', None)
+    function_id = param_kwarg.get('function_id', None)
     if from_time:
         from_time = shanghai_to_utc_timezone(datetime.strptime(from_time, QUERY_TIME_FMT))
-        param_kwargs.update({"from_time": from_time.strftime(QUERY_TIME_FMT)})
+        param_kwarg.update({"from_time": from_time.strftime(QUERY_TIME_FMT)})
     if to_time:
         to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, QUERY_TIME_FMT))
-        param_kwargs.update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
+        param_kwarg.update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
     if function_id:
-        use_case_id = UseCaseAPI.get_use_case(function_id=function_id)
-        param_kwargs['use_case_id'] = use_case_id
+        use_case_info_list = UseCaseAPI.get_use_case(function_id=function_id)
+        use_case_list = [use_case_info.get('id') for use_case_info in use_case_info_list]
+        param_kwarg['use_case_id'] = use_case_list
 
-    result = RunLogAPI.get_use_case_run_log_count(**param_kwargs)
+    result = RunLogAPI.get_use_case_run_log_count(**param_kwarg)
     return jsonify({'success': True, 'res': result})
 
 
@@ -129,13 +130,16 @@ def get_use_case_run_log():
     if to_time:
         to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, QUERY_TIME_FMT))
         request.get_json().update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
+
     if function_id:
-        use_case_id = UseCaseAPI.get_use_case(function_id=function_id)
-        request.get_json()['use_case_id'] = use_case_id
+        use_case_info_list = UseCaseAPI.get_use_case(function_id=function_id)
+        use_case_list = [use_case_info.get('id') for use_case_info in use_case_info_list]
+        request.get_json()['use_case_id'] = use_case_list
+
     '' if 'pageIndex' in request.get_json() else request.get_json().update({'pageIndex': 1})
     '' if 'pageSize' in request.get_json() else request.get_json().update({'pageSize': 10})
+
     result = RunLogAPI.get_use_case_run_log(**request.get_json())
-    result = result
     for use_case_run_log_dict in result:
         use_case_id = use_case_run_log_dict.get('use_case_id')
         use_case_info = UseCaseAPI.get_single_use_case(use_case_id)
