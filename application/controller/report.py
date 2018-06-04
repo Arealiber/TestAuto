@@ -181,8 +181,8 @@ def add_week_report():
     """
 
     now_time_point = datetime.utcnow()
-    day_of_week_num = (now_time_point.isocalendar())[2]
-    before_time_point = now_time_point - timedelta(days=(day_of_week_num - 1))
+    day_of_week_num = int(now_time_point.strftime('%u'))  # 每周的第几天（0~6）
+    before_time_point = now_time_point - timedelta(days=day_of_week_num)
     to_time = (now_time_point + timedelta(days=1)).strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
     use_case_data_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
