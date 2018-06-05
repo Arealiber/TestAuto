@@ -287,12 +287,18 @@
         clear_datetime()
     });
     $('#data-select').on('click', function () {
-        wageSummaryTable.fnClearTable();
-        wageSummaryTable.fnDestroy();
-        var url = $("#report_type").data('url');
+        var url = report_type.data('url');
         var from_time = $("#datetimepicker_start").val();
         var to_time = $("#datetimepicker_end").val();
-        show_report_table_info(url, from_time, to_time)
+        var click_id = $("#show_type").find('.active').find('input').attr('id');
+        if (click_id === 'table') {
+            wageSummaryTable.fnClearTable();
+            wageSummaryTable.fnDestroy();
+            show_report_table_info(url, from_time, to_time)
+        } else {
+            get_report_data(url, from_time, to_time)
+        }
+
     });
 
     $('#datetimepicker_start').datetimepicker({
@@ -321,18 +327,21 @@
     });
 
     $("#show_type").on('click','label', function () {
+        var from_time = $(this).data('from_time');
+        var to_time = $(this).data('to_time');
+        var function_id = $(this).data('function_id');
         var click_id = $(this).find('input').attr('id');
+        var url = report_type.data('url');
         if (click_id === 'table') {
             wageSummaryTable.fnClearTable();
             wageSummaryTable.fnDestroy();
-            show_report_table_info();
+            show_report_table_info(url);
         } else {
-            var url = $("#report_type").data('url');
             if (!url || url === '/report/day_report/info') {
                 url = '/report/day_report/info';
-                get_report_data(url);
+                get_report_data(url, from_time, to_time, function_id);
             } else {
-                get_report_data(url);
+                get_report_data(url,  from_time, to_time, function_id);
             }
 
         }
