@@ -159,13 +159,15 @@
                             from_time = moment(to_time).subtract(0, "days").format('YYYY-MM-DD 00:00');
                             to_time = moment(to_time).add(1, "days").format('YYYY-MM-DD 00:00');
                             datatable[i][8] = moment(datatable[i][8]).format("YYYY-MM-DD");
-                            var href = '/use_case_run_log/1?from_time='+ from_time + '&to_time=' + to_time +'&function_id=' + function_id +'&is_pass=' + 0;
+                            var href = '/use_case_run_log/1?from_time='+ from_time + '&to_time=' + to_time +'&function_id=' + function_id;
                             if (report_list[i].fail_count > 0) {
-                                datatable[i][4] = '<a style="color:red;text-decoration:underline;" href="' + href +'">' +
+                                datatable[i][4] = '<a style="color:red;text-decoration:underline;" href="' + href  +'&is_pass=' + 0 +'">' +
                                     report_list[i].fail_count+'</a>';
                             } else {
                                 datatable[i][4] = '<a class="run_fail" style="color:black;">'+report_list[i].fail_count+'</a>';
                             }
+                            datatable[i][2] = '<a style="color:black;" href="' + href +'">' +
+                                report_list[i].function_name+'</a>';
                         } else {
                             if (url === '/report/week_report/info') {
                                 from_time = moment(to_time).subtract(1, "weeks").format('YYYY-MM-DD 00:00');
