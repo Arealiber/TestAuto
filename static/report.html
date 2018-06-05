@@ -58,7 +58,7 @@
         <div id="loader"></div>
         <div id="error_alert" class="alert alert-danger" role="alert"></div>
 
-        <table class="table" id="report_table" style="width:100%;">
+        <table class="table" id="report_table" style="width:95%;">
             <thead>
             <tr>
                 <th scope="col">业务线</th>
@@ -74,7 +74,7 @@
             </thead>
 
         </table>
-        <div id="report_chart" style="width:75%;">
+        <div id="report_chart" style="width:80%;max-height: 600px">
             <canvas id="canvas"></canvas>
         </div>
 
@@ -233,7 +233,6 @@
         console.log(this.value);
         report_type.text(this.text);
         var click_id = $("#show_type").find('.active').find('input').attr('id');
-        console.log(11111, click_id);
         if (click_id === 'table') {
             wageSummaryTable.fnClearTable();
             wageSummaryTable.fnDestroy();

@@ -108,7 +108,8 @@ def report_data_manager(data_list, time_format='%D'):
             report_time_list.append(create_time)
         if function_name not in report_function_list:
             report_function_list.append(function_name)
-    report_df = pd.DataFrame(columns=report_time_list[::-1], index=report_function_list)
+    report_time_list = report_time_list[::-1]
+    report_df = pd.DataFrame(columns=report_time_list, index=report_function_list)
     for report_info in data_list:
         create_time = report_info.get('create_time').strftime(time_format)
         function_name = report_info.get('function_name')
