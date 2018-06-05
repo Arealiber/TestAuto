@@ -1,10 +1,12 @@
 import requests
 import time
 import socket
-
+from datetime import datetime
+from dateutil.rrule import rrule, DAILY
 from functools import wraps
 from flask import session, request, redirect, jsonify
 from requests.exceptions import ConnectionError, ConnectTimeout
+import pandas as pd
 
 from application import app
 
@@ -95,5 +97,36 @@ def localhost_required(func):
         return func(*args, **kwargs)
     return wrapper
 
+
+def report_data_manager(data_list, time_format='%D'):
+    report_time_list = []
+    report_function_list = []
+    for report_info in data_list:
+        create_time = report_info.get('create_time').strftime(time_format)
+        function_name = report_info.get('function_name')
+        if create_time not in report_time_list:
+            report_time_list.append(create_time)
+        if function_name not in report_function_list:
+            report_function_list.append(function_name)
+    report_df = pd.DataFrame(columns=report_time_list[::-1], index=report_function_list)
+    for report_info in data_list:
+        create_time = report_info.get('create_time').strftime(time_format)
+        function_name = report_info.get('function_name')
+        report_df[create_time][function_name] = report_info.get('pass_rate')*100
+
+    datasets = []
+    for i in range(len(report_df)):
+        datasets.append({
+            'label': report_function_list[i],
+            'data': list(report_df.iloc[i])
+        })
+    chartist_data = {
+        'type': 'line',
+        'data': {
+            'labels': report_time_list,
+            'datasets': datasets
+        }
+    }
+    return chartist_data
 
 

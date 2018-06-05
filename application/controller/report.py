@@ -10,7 +10,7 @@ from application.api import menutree as MenuTreeAPI
 from application import app
 from application.util.exception import try_except
 from application.util import add_report_data_calculate
-from application.controller import login_required, localhost_required
+from application.controller import login_required, localhost_required, report_data_manager
 from application.config.default import *
 
 
@@ -67,7 +67,8 @@ def add_minutes_report():
         pass_rate = report_data['success_count'] / report_data['run_count']
         report_data['average_time'] = average_time
         report_data['pass_rate'] = pass_rate
-        ReportAPI.add_minutes_report(**report_data)
+        if report_data['function_id']:
+            ReportAPI.add_minutes_report(**report_data)
     return jsonify({'success': True})
 
 
@@ -148,7 +149,8 @@ def query_day_report_info():
     now_time_point = datetime.utcnow()
     to_time_point = now_time_point + timedelta(days=1)
     from_time_point = now_time_point - relativedelta(months=1)
-    if not param_kwarg.get('to_time', None):
+    print(111111111, param_kwarg)
+    if 'to_time' not in param_kwarg or not param_kwarg.get('to_time'):
         param_kwarg['to_time'] = to_time_point.strftime(DAY_TIME_FMT)
     else:
         to_time = param_kwarg['to_time']
@@ -156,7 +158,7 @@ def query_day_report_info():
         to_time = to_time.strftime(DAY_TIME_FMT)
         param_kwarg.update({"to_time": to_time})
 
-    if not param_kwarg.get('from_time', None):
+    if 'from_time' not in param_kwarg or not param_kwarg.get('from_time', None):
         param_kwarg['from_time'] = from_time_point.strftime(DAY_TIME_FMT)
     else:
         from_time = param_kwarg['from_time']
@@ -169,6 +171,9 @@ def query_day_report_info():
     for report_info in report_info_list:
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
+    if param_kwarg.get('data_type', None):
+        chartist_data = report_data_manager(report_info_list)
+        return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
 
 
@@ -177,6 +182,7 @@ def query_day_report_info():
 @localhost_required
 def add_week_report():
     """
+    添加周报表数据
     :return:
     """
 
@@ -239,6 +245,9 @@ def query_week_report_info():
     for report_info in report_info_list:
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
+    if param_kwarg.get('data_type', None):
+        chartist_data = report_data_manager(report_info_list)
+        return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
 
 
@@ -307,6 +316,9 @@ def query_month_report_info():
     for report_info in report_info_list:
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
+    if param_kwarg.get('data_type', None):
+        chartist_data = report_data_manager(report_info_list, '%m/%Y')
+        return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
 
 
