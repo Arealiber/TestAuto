@@ -149,7 +149,6 @@ def query_day_report_info():
     now_time_point = datetime.utcnow()
     to_time_point = now_time_point + timedelta(days=1)
     from_time_point = now_time_point - relativedelta(months=1)
-    print(111111111, param_kwarg)
     if 'to_time' not in param_kwarg or not param_kwarg.get('to_time'):
         param_kwarg['to_time'] = to_time_point.strftime(DAY_TIME_FMT)
     else:

@@ -114,6 +114,7 @@ def report_data_manager(data_list, time_format='%D'):
         create_time = report_info.get('create_time').strftime(time_format)
         function_name = report_info.get('function_name')
         report_df[create_time][function_name] = report_info.get('pass_rate')*100
+    report_df = report_df.fillna(0)
 
     datasets = []
     for i in range(len(report_df)):
