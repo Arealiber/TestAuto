@@ -26,6 +26,14 @@ def add_week_report(**kwargs):
 
 
 @report_table_decorator
+def modify_day_report(**kwargs):
+    table = get_day_report_table(kwargs.pop('table_name')[0])
+    id = kwargs.pop('id')
+    sql = table.update(table.c.id == id).values(**kwargs)
+    return exec_change(sql)
+
+
+@report_table_decorator
 def add_month_report(**kwargs):
     table = get_month_report_table(kwargs.pop('table_name')[0])
     sql = table.insert(kwargs)
@@ -48,16 +56,12 @@ def get_minutes_report_info(**kwargs):
             sql = sql.where(table.c.create_time.__le__(to_time))
             if from_time:
                 sql = sql.where(table.c.create_time.__ge__(from_time))
-
         elif table_name == table_name_fix_lst[0] and from_time:
             sql = sql.where(table.c.create_time.__ge__(from_time))
-
         elif table_name == table_name_fix_lst[-1] and to_time:
             sql = sql.where(table.c.create_time.__le__(to_time))
-
         if function_id:
             sql = sql.where(table.c.function_id.in_(function_list)).order_by(desc(table.c.create_time))
-
         else:
             sql = sql.order_by(desc(table.c.create_time))
 

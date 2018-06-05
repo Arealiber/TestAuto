@@ -114,14 +114,24 @@ def add_day_report():
     :return:
     """
     now_time_point = datetime.utcnow()
-    before_time_point = now_time_point - timedelta(days=DAY_TIME_LENGTH)
+    before_time_point = (now_time_point + timedelta(days=1)) - timedelta(days=DAY_TIME_LENGTH)
     to_time = (now_time_point + timedelta(days=1)).strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
 
     use_case_data_list = ReportAPI.get_minutes_report_info(from_time=from_time, to_time=to_time)
+    report_info_list = ReportAPI.get_day_report_info(from_time=from_time, to_time=to_time)
+    report_info_dict = {}
+    for report_info in report_info_list:
+        report_info_dict[report_info['function_id']] = report_info
     use_case_report_list = add_report_data_calculate(use_case_data_list)
     for report_data in use_case_report_list:
-        ReportAPI.add_day_report(**report_data)
+        function_id = report_data['function_id']
+        if report_info_dict and report_info_dict.get(function_id, None):
+            id = report_info_dict[function_id].get('id')
+            report_data['id'] = id
+            ReportAPI.modify_day_report(**report_data)
+        else:
+            ReportAPI.add_day_report(**report_data)
     return jsonify({'success': True})
 
 
