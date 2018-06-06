@@ -85,7 +85,8 @@ def use_case_exception_log_update(use_case_log_id, use_case_start):
     })
 
 
-def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None, async=False, auto_run=False):
+def run_use_case(use_case_id, batch_log_id=None, environment_id=None, interface_id=None,
+                 use_case_count=None, batch_start_timer=None, async=False, auto_run=False):
     global DNS_CACHE
     DNS_CACHE = {}
 
@@ -109,7 +110,10 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
     # 获取用例信息以及用例下接口信息
     try:
         use_case_info = Case_API.get_use_case(id=use_case_id)[0]
-        interface_list = Case_API.get_relation(use_case_id=use_case_id)
+        if interface_id:
+            interface_list = Case_API.get_relation(use_case_id=use_case_id, interface_id=interface_id)
+        else:
+            interface_list = Case_API.get_relation(use_case_id=use_case_id)
     except Exception as e:
         use_case_exception_log_update(use_case_log_id, use_case_start)
         return {'success': False,
@@ -158,7 +162,8 @@ def run_use_case(use_case_id, batch_log_id=None, use_case_count=None, batch_star
 
     with requests.Session() as session:
         if not auto_run:
-            environment_id = use_case_info['environment_id']
+            if not environment_id:
+                environment_id = use_case_info['environment_id']
             environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
             for element in environment_info:
                 url = element['url']
@@ -464,12 +469,12 @@ def run_use_case_callback(obj):
         })
 
 
-def run_use_case_async(use_case_id, batch_log_id=None, use_case_count=None, batch_start_timer=None, auto_run=False):
+def run_use_case_async(use_case_id, batch_log_id=None, environment_id=None, use_case_count=None, batch_start_timer=None, auto_run=False):
     if batch_log_id:
-        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer, True, auto_run).\
+        executor.submit(run_use_case, use_case_id, batch_log_id, environment_id, None, use_case_count, batch_start_timer, True, auto_run).\
             add_done_callback(run_use_case_callback)
     else:
-        executor.submit(run_use_case, use_case_id, batch_log_id, use_case_count, batch_start_timer, True, auto_run)
+        executor.submit(run_use_case, use_case_id, batch_log_id, environment_id, None, use_case_count, batch_start_timer, True, auto_run)
 
 
 def run_batch(batch_id, auto_run=False):
@@ -487,4 +492,6 @@ def run_batch(batch_id, auto_run=False):
     for relation in relation_list:
         counter += 1
         use_case = UseCaseAPI.get_use_case(id=relation['use_case_id'])[0]
-        run_use_case_async(use_case['id'], batch_log_id, use_case_count, start_timer, auto_run)
+        run_use_case_async(use_case['id'], batch_log_id, use_case_count=use_case_count,
+                           batch_start_timer=start_timer, auto_run=auto_run)
+
