@@ -534,6 +534,7 @@
                                 "                        <button type=\"button\" name=\"move_up\" class=\"move_up " + move_up_class + "\">上移</button>\n" +
                                 "                        <button type=\"button\" name=\"move_down\" class=\"move_down " + move_down_class + "\">下移</button>\n" +
                                 "                        <button type=\"button\" name=\"delete_interface\" class=\"btn btn-info delete_interface\" data-toggle=\"modal\" data-target=\"#deleteInterfaceModal\">删除</button>\n" +
+                                "                        <button type=\"button\" name=\"run_interface\" class=\"btn btn-info run_interface\" data-toggle=\"modal\" data-target=\"#execute_result\">运行</button>\n" +
                                 "                    </div>" +
                                 "                </div>\n" +
                                 "                <div id=\"collapse_" + interface.id + "\" class=\"collapse\" aria-labelledby=\"heading_" + interface.id + "\" data-parent=\"#accordion\" + a+\n" +
@@ -881,6 +882,15 @@
         })
     });
 
+    // 运行接口
+    $(document).ready(function () {
+        $("#use_case_interface_list").on('click', '.run_interface', function () {
+            var run_relation_id = $(this).closest('.card-header').data('value');
+            var use_case_id = $(this).closest('.card-header').data('use_case_id');
+            run_use_case(use_case_id, run_relation_id)
+        })
+    });
+
     function show_execute_alert(alert_text, class_name) {
         var execute_alert = $("#execute_alert");
         execute_alert.text(alert_text);
@@ -915,7 +925,7 @@
     });
 
     // 执行
-    function run_use_case(use_case_id){
+    function run_use_case(use_case_id, run_relation_id=null){
         var execute_result_display = $("#execute_result_display");
         var environment_id = $("#input_environment").data('environment_id');
         execute_result_display.empty();
@@ -926,7 +936,8 @@
             url: '/use_case/execute',
             data: JSON.stringify({
                 id: use_case_id,
-                environment_id: environment_id
+                environment_id: environment_id,
+                relation_id:run_relation_id
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",

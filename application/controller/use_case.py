@@ -122,8 +122,8 @@ def execute_use_case():
     """
     use_case_id = request.get_json()['id']
     environment_id = request.get_json().get('environment_id', None)
-    interface_id = request.get_json().get('interface_id', None)
-    result = Exec.run_use_case(use_case_id, environment_id=environment_id, interface_id=interface_id)
+    relation_id = request.get_json().get('relation_id', None)
+    result = Exec.run_use_case(use_case_id, environment_id=environment_id, relation_id=relation_id)
     if 'error' in result:
         return jsonify(result)
     return jsonify({'success': True, 'res': result})
