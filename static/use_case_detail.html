@@ -917,6 +917,7 @@
     // 执行
     function run_use_case(use_case_id){
         var execute_result_display = $("#execute_result_display");
+        var environment_id = $("#input_environment").data('environment_id');
         execute_result_display.empty();
         $("#execute_loader").show();
         $("#execute_alert").hide();
@@ -924,7 +925,8 @@
             type: 'post',
             url: '/use_case/execute',
             data: JSON.stringify({
-                'id': use_case_id
+                id: use_case_id,
+                environment_id: environment_id
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -978,11 +980,13 @@
 
     // 提交异步执行
     function asyc_run_use_case(use_case_id) {
+        var environment_id = $("#input_environment").data('environment_id');
         $.ajax({
             type: 'post',
             url: '/use_case/execute/background',
             data: JSON.stringify({
-                'id': use_case_id
+                id: use_case_id,
+                environment_id:environment_id
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
