@@ -100,28 +100,30 @@ def localhost_required(func):
 
 def report_data_manager(data_list, time_format='%D'):
     report_time_list = []
-    report_function_list = []
+    report_business_list = []
     for report_info in data_list:
         create_time = report_info.get('create_time').strftime(time_format)
-        function_name = report_info.get('function_name')
+        business_name = report_info.get('business_name')
         if create_time not in report_time_list:
             report_time_list.append(create_time)
-        if function_name not in report_function_list:
-            report_function_list.append(function_name)
+        if business_name not in report_business_list:
+            report_business_list.append(business_name)
     report_time_list = report_time_list[::-1]
-    report_df = pd.DataFrame(columns=report_time_list, index=report_function_list)
+    report_df = pd.DataFrame(columns=report_time_list, index=report_business_list)
     for report_info in data_list:
         create_time = report_info.get('create_time').strftime(time_format)
-        function_name = report_info.get('function_name')
-        report_df[create_time][function_name] = report_info.get('pass_rate')*100
+        business_name = report_info.get('business_name')
+        report_df[create_time][business_name] = report_info.get('pass_rate')*100
     report_df = report_df.fillna(False)
 
     datasets = []
     for i in range(len(report_df)):
         datasets.append({
-            'label': report_function_list[i],
+            'label': report_business_list[i],
             'data': list(report_df.iloc[i])
         })
+    if time_format == '%W':
+        report_time_list = ['第{0}周'.format(report_time) for report_time in report_time_list]
     chartist_data = {
         'type': 'line',
         'data': {

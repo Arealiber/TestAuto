@@ -9,7 +9,7 @@ from application.api import use_case as UseCaseAPI
 from application.api import menutree as MenuTreeAPI
 from application import app
 from application.util.exception import try_except
-from application.util import add_report_data_calculate
+from application.util import add_report_data_calculate, get_business_of_data
 from application.controller import login_required, localhost_required, report_data_manager
 from application.config.default import *
 
@@ -171,6 +171,16 @@ def query_day_report_info():
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
+        report_info_list = get_business_of_data(report_info_list)
+        business_info_list = MenuTreeAPI.query_business_line()
+        business_info_dict = {}
+        for business_info in business_info_list:
+            business_info_dict[business_info['id']] = business_info
+
+        for report_info in report_info_list:
+            business_line_id = report_info.get('business_line_id')
+            report_info.update(business_info_dict[business_line_id])
+
         chartist_data = report_data_manager(report_info_list)
         return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
@@ -245,7 +255,17 @@ def query_week_report_info():
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
-        chartist_data = report_data_manager(report_info_list)
+        report_info_list = get_business_of_data(report_info_list)
+        business_info_list = MenuTreeAPI.query_business_line()
+        business_info_dict = {}
+        for business_info in business_info_list:
+            business_info_dict[business_info['id']] = business_info
+
+        for report_info in report_info_list:
+            business_line_id = report_info.get('business_line_id')
+            report_info.update(business_info_dict[business_line_id])
+
+        chartist_data = report_data_manager(report_info_list, '%W')
         return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
 
@@ -316,6 +336,16 @@ def query_month_report_info():
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
+        report_info_list = get_business_of_data(report_info_list)
+        business_info_list = MenuTreeAPI.query_business_line()
+        business_info_dict = {}
+        for business_info in business_info_list:
+            business_info_dict[business_info['id']] = business_info
+
+        for report_info in report_info_list:
+            business_line_id = report_info.get('business_line_id')
+            report_info.update(business_info_dict[business_line_id])
+
         chartist_data = report_data_manager(report_info_list, '%m/%Y')
         return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
