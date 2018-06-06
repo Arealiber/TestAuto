@@ -97,7 +97,7 @@ def update_use_case():
     :return:
     """
     use_case_id = Case_API.modify_use_case(**request.get_json())
-    return jsonify({'success': True, 'res' : use_case_id})
+    return jsonify({'success': True, 'res': use_case_id})
 
 
 @app.route('/use_case/delete', methods=['POST'])
@@ -121,7 +121,9 @@ def execute_use_case():
     :return:
     """
     use_case_id = request.get_json()['id']
-    result = Exec.run_use_case(use_case_id)
+    environment_id = request.get_json().get('environment_id', None)
+    interface_id = request.get_json().get('interface_id', None)
+    result = Exec.run_use_case(use_case_id, environment_id=environment_id, interface_id=interface_id)
     if 'error' in result:
         return jsonify(result)
     return jsonify({'success': True, 'res': result})
@@ -136,7 +138,8 @@ def execute_use_case_background():
     :return:
     """
     use_case_id = request.get_json()['id']
-    Exec.run_use_case_async(use_case_id)
+    environment_id = request.get_json()['environment_id']
+    Exec.run_use_case_async(use_case_id, environment_id=environment_id)
     return jsonify({'success': True})
 
 
@@ -220,3 +223,19 @@ def relation_update_parameter():
     """
     Case_API.modify_case_parameter_relation(**request.get_json())
     return jsonify({'success': True})
+
+
+@app.route('/use_case_interface/execute', methods=['POST'])
+@try_except
+@login_required
+def execute_interface():
+    """
+    功能描述: 用例下的接口单独运行
+    :return:
+    """
+    use_case_id = request.get_json()['id']
+    interface_id = request.get_json()['interface_id']
+    result = Exec.run_use_case(use_case_id, interface_id)
+    if 'error' in result:
+        return jsonify(result)
+    return jsonify({'success': True, 'res': result})
