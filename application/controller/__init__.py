@@ -129,6 +129,11 @@ def report_data_manager(data_list, time_format='%D'):
         'data': {
             'labels': report_time_list,
             'datasets': datasets
+        },
+        'options': {
+            'legend': {
+                'fullWidth': 10
+            }
         }
     }
     return chartist_data
