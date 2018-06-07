@@ -368,10 +368,15 @@
                     var chartist_data = response.res;
                     if (chartist_data.data.datasets.length > 0) {
                         for ( var i=0; i < chartist_data.data.datasets.length; i++) {
-                            var color = getRandomColor()
+                            var color = getRandomColor();
                             chartist_data.data.datasets[i].borderColor= color;
                             chartist_data.data.datasets[i].backgroundColor= color;
                             chartist_data.data.datasets[i].fill= false;
+                            for (var j=0; j < chartist_data.data.datasets[i].data.length; j++) {
+                                if (chartist_data.data.datasets[i].data[j] < 0) {
+                                    chartist_data.data.datasets[i].data[j] = null
+                                }
+                            }
                         }
                     }
                     var ctx = document.getElementById('canvas').getContext('2d');

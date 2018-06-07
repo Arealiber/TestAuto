@@ -73,7 +73,7 @@ function getTree() {
             tags: ['available'],
             color: "#8f9baa",
             backColor: "transparent",
-            href: "/#",
+            href: "/logout",
             levels: 1
         }]
 

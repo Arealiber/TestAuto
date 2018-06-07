@@ -1,6 +1,8 @@
+from flask import session
 from application import app
 from application.controller import login_required
 from application.util.decorator import no_cache
+from application.controller import cur_user
 
 
 @app.route('/')
@@ -113,4 +115,13 @@ def environment_detail():
 @no_cache
 def use_case_report():
     return app.send_static_file('report.html')
+
+
+@app.route('/logout')
+def logout():
+    if cur_user():
+        del session['user_id']
+        del session['real_name']
+        del session['timestamp']
+    return app.send_static_file('logout.html')
 
