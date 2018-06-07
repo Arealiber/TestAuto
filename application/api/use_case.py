@@ -2,6 +2,7 @@
 from sqlalchemy import desc
 from application import session_scope
 from application.model.use_case import UseCase, UseCaseInterfaceRelation, UseCaseParameterRelation
+from application.model.batch import BatchUseCaseRelation
 
 
 def add_use_case(**kwargs):
@@ -61,6 +62,7 @@ def del_use_case(**kwargs):
     with session_scope() as session:
         id = kwargs.pop('id')
         session.query(UseCase).filter_by(id=id).update({'status': 0})
+        session.query(BatchUseCaseRelation).filter_by(use_case_id=id).update({'status': 0})
         session.query(UseCaseInterfaceRelation).filter_by(use_case_id=id).update({'status': 0})
 
 

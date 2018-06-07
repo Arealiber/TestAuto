@@ -42,7 +42,8 @@ def get_use_case_run_log_table(table_name):
                       Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
                       Column('end_time', TIMESTAMP(fsp=3)),
                       Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
-                      Column('cost_time', Float, nullable=False)
+                      Column('cost_time', Float, nullable=False),
+                      Column('auto_run', Boolean, default=False),
                       )
         table.create(checkfirst=True)
         use_case_run_log_table[table_name] = table

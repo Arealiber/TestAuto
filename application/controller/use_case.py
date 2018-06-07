@@ -108,6 +108,7 @@ def del_use_case():
     功能描述: 删除use_case
     :return:
     """
+
     Case_API.del_use_case(**request.get_json())
     return jsonify({'success': True})
 

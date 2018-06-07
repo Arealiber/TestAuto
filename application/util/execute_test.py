@@ -85,7 +85,7 @@ def use_case_exception_log_update(use_case_log_id, use_case_start):
     })
 
 
-def run_use_case(use_case_id, batch_log_id=None, environment_id=None, interface_id=None,
+def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_id=None,
                  use_case_count=None, batch_start_timer=None, async=False, auto_run=False):
     global DNS_CACHE
     DNS_CACHE = {}
@@ -101,7 +101,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, interface_
     run_pass = True
     use_case_log_info = {
         'use_case_id': use_case_id,
-        'start_time': start_time
+        'start_time': start_time,
+        'auto_run': auto_run
     }
     if batch_log_id:
         use_case_log_info['batch_run_log_id'] = batch_log_id
@@ -110,8 +111,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, interface_
     # 获取用例信息以及用例下接口信息
     try:
         use_case_info = Case_API.get_use_case(id=use_case_id)[0]
-        if interface_id:
-            interface_list = Case_API.get_relation(use_case_id=use_case_id, interface_id=interface_id)
+        if relation_id:
+            interface_list = Case_API.get_relation(id=relation_id)
         else:
             interface_list = Case_API.get_relation(use_case_id=use_case_id)
     except Exception as e:

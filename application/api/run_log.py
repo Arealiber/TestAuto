@@ -192,6 +192,7 @@ def get_use_case_run_log(**kwargs):
     page_index = kwargs.get('pageIndex')
     page_size = kwargs.get('pageSize')
     is_pass = kwargs.get('is_pass', None)
+    auto_run = kwargs.get('auto_run', False)
     page_index = int(page_index) if page_index else None
     page_size = int(page_size) if page_size else None
     if page_size:
@@ -231,6 +232,9 @@ def get_use_case_run_log(**kwargs):
         if is_pass in ['0', '1']:
             sql = sql.where(table.c.is_pass == is_pass)
             count_sql = count_sql.where(table.c.is_pass == is_pass)
+        if auto_run:
+            sql = sql.where(table.c.auto_run == auto_run)
+            count_sql = count_sql.where(table.c.auto_run == auto_run)
         if not page_size:
             ret += exec_query(sql, is_list=True)
             continue

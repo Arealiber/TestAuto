@@ -50,6 +50,7 @@ def batch_detail():
     relation_list = BatchAPI.get_batch_use_case_relation(batch_id=batch['id'])
     batch['use_case_list'] = []
     for relation in relation_list:
+        print(relation['use_case_id'])
         use_case = UseCaseAPI.get_use_case(id=relation['use_case_id'])[0]
         batch['use_case_list'].append({
             'id': relation['id'],
