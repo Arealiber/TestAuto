@@ -6,8 +6,7 @@ from application.api import batch as BatchAPI
 from application.api import use_case as UseCaseAPI
 from application.util import execute_test as Exec
 from application.util.exception import try_except
-from application.controller import login_required, user_real_name
-
+from application.controller import login_required, user_real_name,localhost_required
 
 @app.route('/batch/add', methods=['POST'])
 @try_except
@@ -159,6 +158,7 @@ def batch_execute():
 
 @app.route('/batch/auto_run')
 @try_except
+@localhost_required
 def batch_auto_run():
     batch_list = BatchAPI.get_batch(auto_run=True)
     for batch in batch_list:

@@ -277,7 +277,6 @@ def add_month_report():
     """
     :return:
     """
-
     now_time_point = datetime.utcnow()
     day_of_month_num = int(now_time_point.strftime('%m'))
     before_time_point = now_time_point - timedelta(days=(day_of_month_num - 1))
