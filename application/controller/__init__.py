@@ -44,7 +44,7 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user = cur_user()
-        if user:
+        if user or app.config['DEBUG']:
             return f(*args, **kwargs)
         else:
             if 'login_token' in request.args and 'user_id' in request.args:
@@ -99,16 +99,30 @@ def localhost_required(func):
 
 
 def report_data_manager(data_list, time_format='%Y/%m/%d'):
-    report_time_list = []
     report_business_list = []
+    end_time = None
+    start_time = None
     for report_info in data_list:
-        create_time = report_info.get('create_time').strftime(time_format)
         business_name = report_info.get('business_name')
-        if create_time not in report_time_list:
-            report_time_list.append(create_time)
         if business_name not in report_business_list:
             report_business_list.append(business_name)
-    report_time_list = report_time_list[::-1]
+        temp_time = report_info.get('create_time')
+        if end_time is None or end_time < temp_time:
+            end_time = temp_time
+        if not start_time or start_time > temp_time:
+            start_time = temp_time
+    report_time_list = [dt.strftime(time_format) for dt in rrule(DAILY,
+                                                                 dtstart=start_time,
+                                                                 until=end_time)]
+    if report_time_list:
+        report_time_list.append(end_time.strftime(time_format))
+    else:
+        report_time_list=[end_time.strftime(time_format)]
+    temp_time = []
+    for report_time in report_time_list :
+        if report_time not in temp_time:
+            temp_time.append(report_time)
+    report_time_list = temp_time
     report_df = pd.DataFrame(columns=report_time_list, index=report_business_list)
     for report_info in data_list:
         create_time = report_info.get('create_time').strftime(time_format)
