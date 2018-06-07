@@ -131,8 +131,13 @@ def report_data_manager(data_list, time_format='%Y/%m/%d'):
             'datasets': datasets
         },
         'options': {
-            'legend': {
-                'fullWidth': 10
+            'scales': {
+                'yAxes': [{
+                    'ticks': {
+                        'min': 0,
+                        'max': 100
+                    }
+                }]
             }
         }
     }
