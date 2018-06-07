@@ -228,8 +228,8 @@ def query_week_report_info():
     """
     param_kwarg = request.get_json()
     now_time_point = datetime.utcnow()
-    day_of_week_num = now_time_point.isocalendar()[2]
-    to_time_point = now_time_point + timedelta(days=(7 - (day_of_week_num - 1)))
+    day_of_week_num = int(now_time_point.strftime('%w'))
+    to_time_point = now_time_point + timedelta(days=7-day_of_week_num)
     from_time_point = now_time_point - timedelta(weeks=4)
     if not param_kwarg.get('to_time', None):
         param_kwarg['to_time'] = to_time_point.strftime(DAY_TIME_FMT)
@@ -255,7 +255,7 @@ def query_week_report_info():
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
-        report_info_list = get_business_of_data(report_info_list)
+        report_info_list = get_business_of_data(report_info_list, '%W')
         business_info_list = MenuTreeAPI.query_business_line()
         business_info_dict = {}
         for business_info in business_info_list:

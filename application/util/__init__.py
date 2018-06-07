@@ -61,12 +61,12 @@ def add_report_data_calculate(use_case_report_list):
     return list(all_report_list)
 
 
-def get_business_of_data(report_data_list):
+def get_business_of_data(report_data_list, time_format='%Y%m%d'):
     all_report_data = {}
     single_report_data = {}
     for use_case_report in report_data_list:
         business_line_id = use_case_report.get('business_line_id')
-        create_time = use_case_report.get('create_time').strftime('%Y%m%d')
+        create_time = use_case_report.get('create_time').strftime(time_format)
 
         key = str(business_line_id) + create_time
         if all_report_data.get(key, None):
