@@ -346,7 +346,7 @@ def query_month_report_info():
             business_line_id = report_info.get('business_line_id')
             report_info.update(business_info_dict[business_line_id])
 
-        chartist_data = report_data_manager(report_info_list, '%m/%Y')
+        chartist_data = report_data_manager(report_info_list, '%Y/%m')
         return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
 

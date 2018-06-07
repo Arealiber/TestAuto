@@ -98,10 +98,9 @@ def localhost_required(func):
     return wrapper
 
 
-def report_data_manager(data_list, time_format='%D'):
+def report_data_manager(data_list, time_format='%Y/%m/%d'):
     report_time_list = []
     report_business_list = []
-    print(data_list)
     for report_info in data_list:
         create_time = report_info.get('create_time').strftime(time_format)
         business_name = report_info.get('business_name')
@@ -109,7 +108,6 @@ def report_data_manager(data_list, time_format='%D'):
             report_time_list.append(create_time)
         if business_name not in report_business_list:
             report_business_list.append(business_name)
-    print(report_time_list)
     report_time_list = report_time_list[::-1]
     report_df = pd.DataFrame(columns=report_time_list, index=report_business_list)
     for report_info in data_list:
