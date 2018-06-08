@@ -4,6 +4,7 @@ from application.model.menutree import *
 
 
 def add_business_line(**kwargs):
+    print(444444444, kwargs)
     with session_scope() as session:
         business_line = BusinessLine(**kwargs)
         session.add(business_line)

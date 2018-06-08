@@ -198,12 +198,17 @@ def add_use_case_to_menu_tree():
     business_id = param_args.get('business_id')
     system_id = param_args.get('system_id')
     function_id = param_args.get('function_id')
+    if not(param_args.get("business_name") or param_args.get("system_name") or param_args.get("system_name")):
+        return jsonify({'success': False, 'res': '目录不能为空'})
     if not business_id:
         business_name = MenuTreeAPI.query_business_line(**{"business_name": param_args.get("business_name")})
-        if business_name == param_args.get("business_name") or not business_name:
+        if business_name:
             return jsonify({'success': False, 'res': '已存在同名目录'})
         business_id = MenuTreeAPI.add_business_line(**{"business_name": param_args.get("business_name")})
     if not system_id:
+        system_name = MenuTreeAPI.query_system_line(**{"system_name": param_args.get("system_name")})
+        if system_name:
+            return jsonify({'success': False, 'res': '已存在同名目录'})
         system_id = MenuTreeAPI.add_system_line(**{
             "system_name": param_args.get("system_name"),
             "business_line_id": business_id
