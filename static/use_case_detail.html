@@ -144,7 +144,7 @@
                         <ul class="list-group" id="interfaceUL" style="max-height: 300px; overflow-y:scroll;"></ul>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" name="cancel_add_interface" class="btn btn-secondary" data-dismiss="modal">取消</button>
                         <button type="button" name="add_interface" class="btn btn-primary" data-dismiss="modal">添加</button>
                     </div>
                 </div>
@@ -590,6 +590,15 @@
             } else {
                 $(this).removeClass('active');
             }
+        })
+    });
+
+    $(document).ready(function () {
+        $('button[name="cancel_add_interface"]').click(function () {
+            var selected_interface_list = $("#interfaceUL").find('.active');
+            $.each(selected_interface_list, function (i, selected_interface) {
+                $(selected_interface).removeClass("active");
+            })
         })
     });
 
