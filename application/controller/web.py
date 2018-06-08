@@ -3,6 +3,7 @@ from application import app
 from application.controller import login_required
 from application.util.decorator import no_cache
 from application.controller import cur_user
+from application.util.exception import try_except
 
 
 @app.route('/')
@@ -118,6 +119,7 @@ def use_case_report():
 
 
 @app.route('/logout')
+@try_except
 def logout():
     if cur_user():
         del session['user_id']
