@@ -488,6 +488,7 @@
                 } else {
                     error_alert.hide();
                     var use_case_detail = response.res;
+                    select_function_line_append(use_case_detail.function_id);
                     select_environment_line_append(use_case_detail.environment_id);
 
                     $("#use_case_id").attr('placeholder', use_case_detail.id);
