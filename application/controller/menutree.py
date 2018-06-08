@@ -83,7 +83,6 @@ def del_function_line():
     return jsonify({'success': True, 'res': result})
 
 
-
 @app.route('/menu_tree/system_line/info', methods=['POST'])
 @try_except
 @login_required
@@ -200,6 +199,9 @@ def add_use_case_to_menu_tree():
     system_id = param_args.get('system_id')
     function_id = param_args.get('function_id')
     if not business_id:
+        business_name = MenuTreeAPI.query_business_line(**{"business_name": param_args.get("business_name")})
+        if business_name == param_args.get("business_name") or not business_name:
+            return jsonify({'success': False, 'res': '已存在同名目录'})
         business_id = MenuTreeAPI.add_business_line(**{"business_name": param_args.get("business_name")})
     if not system_id:
         system_id = MenuTreeAPI.add_system_line(**{
