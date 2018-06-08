@@ -141,7 +141,17 @@ def get_menu_tree():
     re_system = MenuTreeAPI.query_system_line(**request.get_json())
     re_business = MenuTreeAPI.query_business_line(**request.get_json())
     re_function = MenuTreeAPI.query_function_line(**request.get_json())
-    use_case_list = Case_API.get_use_case(**request.get_json())
+    use_case_info_list = Case_API.get_use_case_with_function_id(re_function)
+    for function_line in re_function:
+        function_id = function_line.get('id')
+        function_line['use_case_list'] = use_case_info_list[function_id]
+    system_line_dict = {}
+    for function_line in re_function:
+        if not system_line_dict.get(function_line['system_line_id'], None):
+            system_line_dict[function_line['system_line_id']] = [function_line]
+        else:
+            system_line_dict[function_line['system_line_id']].append(function_line)
+
     menu_tree = []
     for business_line in re_business:
         business_line_id = business_line.get('id')
@@ -152,23 +162,16 @@ def get_menu_tree():
                 continue
             sys_line.pop('business_line_id')
             system_line_id = sys_line.get('id')
-            sys_line['function_line'] = []
-            for function_line in re_function:
-                if not system_line_id == function_line.get('system_line_id'):
-                    continue
-                function_id = function_line.get('id')
-                function_line.pop('system_line_id')
-                case_menu_tree = []
-                for use_case_info in use_case_list:
-                    function_id_of_use_case = use_case_info.get('function_id')
-                    if function_id != function_id_of_use_case:
-                        continue
-                    case_menu_tree.append({'use_case_name': use_case_info.get('use_case_name'),
-                                           'id': use_case_info.get('id'),
-                                           'create_by': use_case_info.get('create_by'),
-                                           'update_time': use_case_info.get('update_time')})
-                function_line.update({'use_case_list': case_menu_tree})
-                sys_line['function_line'].append(function_line)
+            # sys_line['function_line'] = []
+            # for function_line in re_function:
+            #     if not system_line_id == function_line.get('system_line_id'):
+            #         continue
+            #     function_id = function_line.get('id')
+            #     function_line.pop('system_line_id')
+            #     function_line.update({'use_case_list': use_case_info_list[function_id]})
+            #     sys_line['function_line'].append(function_line)
+            function_line = system_line_dict.get(system_line_id, [])
+            sys_line['function_line'] = function_line
             business_line['system_line'].append(sys_line)
         menu_tree.append({'business_line': business_line})
     return jsonify({'success': True, 'res': menu_tree})

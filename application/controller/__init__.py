@@ -111,15 +111,13 @@ def report_data_manager(data_list, time_format='%Y/%m/%d'):
             end_time = temp_time
         if not start_time or start_time > temp_time:
             start_time = temp_time
-    report_time_list = [dt.strftime(time_format) for dt in rrule(DAILY,
-                                                                 dtstart=start_time,
-                                                                 until=end_time)]
+    report_time_list = [dt.strftime(time_format) for dt in rrule(DAILY, dtstart=start_time, until=end_time)]
     if report_time_list:
         report_time_list.append(end_time.strftime(time_format))
     else:
         report_time_list=[end_time.strftime(time_format)]
     temp_time = []
-    for report_time in report_time_list :
+    for report_time in report_time_list:
         if report_time not in temp_time:
             temp_time.append(report_time)
     report_time_list = temp_time

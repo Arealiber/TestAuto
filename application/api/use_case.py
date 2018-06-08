@@ -32,6 +32,18 @@ def get_multi_use_case(use_case_list):
     return use_case_dict
 
 
+def get_use_case_with_function_id(function_line_list):
+    with session_scope() as session:
+        use_case_with_function_line_dict = {}
+        for function_info in function_line_list:
+            function_id = function_info.get('id')
+            query = session.query(UseCase).filter_by(function_id=function_id).filter_by(status=1).\
+                order_by(UseCase.create_time.desc())
+            use_case_list = [use_case.to_dict() for use_case in query]
+            use_case_with_function_line_dict[function_id] = use_case_list
+    return use_case_with_function_line_dict
+
+
 def get_single_use_case(use_case_id):
     with session_scope() as session:
         query = session.query(UseCase).filter_by(id=use_case_id)
