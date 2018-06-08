@@ -143,36 +143,32 @@ def get_menu_tree():
     re_function = MenuTreeAPI.query_function_line(**request.get_json())
     use_case_info_list = Case_API.get_use_case_with_function_id(re_function)
     for function_line in re_function:
-        function_id = function_line.get('id')
+        function_id = function_line.pop('id')
         function_line['use_case_list'] = use_case_info_list[function_id]
     system_line_dict = {}
     for function_line in re_function:
-        if not system_line_dict.get(function_line['system_line_id'], None):
-            system_line_dict[function_line['system_line_id']] = [function_line]
+        system_line_id = function_line.pop('system_line_id')
+        if not system_line_dict.get(system_line_id, None):
+            system_line_dict[system_line_id] = [function_line]
         else:
-            system_line_dict[function_line['system_line_id']].append(function_line)
+            system_line_dict[system_line_id].append(function_line)
 
+    business_line_info = {}
+    for sys_line in re_system:
+        business_line_id = sys_line.pop('business_line_id')
+        system_line_id = sys_line.pop('id')
+        function_line = system_line_dict.get(system_line_id, [])
+        sys_line['function_line'] = function_line
+        if not business_line_info.get(business_line_id, None):
+            business_line_info[business_line_id] = [sys_line]
+        else:
+            business_line_info[business_line_id].append(sys_line)
     menu_tree = []
     for business_line in re_business:
-        business_line_id = business_line.get('id')
+        business_line_id = business_line.pop('id')
         business_line['business_name'] = business_line.pop('business_name')
-        business_line['system_line'] = []
-        for sys_line in re_system:
-            if not business_line_id == sys_line.get('business_line_id'):
-                continue
-            sys_line.pop('business_line_id')
-            system_line_id = sys_line.get('id')
-            # sys_line['function_line'] = []
-            # for function_line in re_function:
-            #     if not system_line_id == function_line.get('system_line_id'):
-            #         continue
-            #     function_id = function_line.get('id')
-            #     function_line.pop('system_line_id')
-            #     function_line.update({'use_case_list': use_case_info_list[function_id]})
-            #     sys_line['function_line'].append(function_line)
-            function_line = system_line_dict.get(system_line_id, [])
-            sys_line['function_line'] = function_line
-            business_line['system_line'].append(sys_line)
+        system_line = business_line_info.get(business_line_id, [])
+        business_line['system_line'] = system_line
         menu_tree.append({'business_line': business_line})
     return jsonify({'success': True, 'res': menu_tree})
 
