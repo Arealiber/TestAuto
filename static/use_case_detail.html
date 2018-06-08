@@ -1138,6 +1138,8 @@
 
             $("#business_line").show();
             $("#system_line").show();
+            $("#error_alert").hide();
+            error_alert.hide();
         })
     });
 
@@ -1390,10 +1392,10 @@
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (response) {
-                                loader.hide();
                                 if (!response.success) {
                                     show_alert('获取数据失败')
                                 } else {
+                                    loader.hide();
                                     $("#use_case_table").show();
                                     var use_case_list = response.res;
                                     $.each(use_case_list, function (i, use_case) {
