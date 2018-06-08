@@ -44,7 +44,12 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user = cur_user()
-        if user or app.config['DEBUG']:
+        if user:
+            return f(*args, **kwargs)
+        elif app.config['DEBUG']:
+            session['user_id'] = '42'
+            session['timestamp'] = str(int(time.time()))
+            session['real_name'] = '管理员'
             return f(*args, **kwargs)
         else:
             if 'login_token' in request.args and 'user_id' in request.args:
@@ -83,7 +88,8 @@ def login_required(f):
                     # 其他错误
                     pass
             else:
-                return redirect('http://api-amc.huishoubao.com.cn/login?system_id={0}&jump_url={1}'.format(app.config['SYSTEM_ID'], request.url))
+                return redirect('http://api-amc.huishoubao.com.cn/login?system_id={0}&jump_url={1}'
+                                .format(app.config['SYSTEM_ID'], request.url))
 
     return decorated_function
 
