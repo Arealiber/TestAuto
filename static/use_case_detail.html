@@ -402,6 +402,7 @@
                         menu_tree_data = data;
                         filter_use_case_table(data);
                         use_case_table_selector.show();
+                        window.history.pushState(null, null, '/use_case/1');
                         break;
                     case 5:
                         use_case_selected_data = data;
@@ -474,6 +475,7 @@
         $("#business_line").hide();
         $("#system_line").hide();
         $("#error_alert").hide();
+        loader.show();
         $.ajax({
             type: 'post',
             url: '/use_case/detail',
@@ -536,7 +538,7 @@
                                 "                        <button type=\"button\" name=\"move_up\" class=\"move_up " + move_up_class + "\">上移</button>\n" +
                                 "                        <button type=\"button\" name=\"move_down\" class=\"move_down " + move_down_class + "\">下移</button>\n" +
                                 "                        <button type=\"button\" name=\"run_interface\" class=\"btn btn-info run_interface\" data-toggle=\"modal\" data-target=\"#execute_result\">运行</button>\n" +
-                                "                        <button type=\"button\" name=\"edit_interface\" class=\"btn btn-info run_interface\" data-toggle=\"modal\"><a href=\"/interface_detail/"+ interface.interface_id +"\" style=\"background: #17a2b8;border-color:#17a2b8\;color:white\">编辑</a></button>\n" +
+                                "                        <button type=\"button\" name=\"edit_interface\" class=\"btn btn-info edit_interface\" data-toggle=\"modal\"><a href=\"/interface_detail/"+ interface.interface_id+'?relation_id='+interface.id+"\" style=\"background: #17a2b8;border-color:#17a2b8\;color:white\">编辑</a></button>\n" +
                                 "                        <button type=\"button\" name=\"delete_interface\" class=\"btn btn-info delete_interface\" data-toggle=\"modal\" data-target=\"#deleteInterfaceModal\">删除</button>\n" +
 
                                 "                    </div>" +
@@ -577,6 +579,7 @@
                     $("#submit_use_case").show();
                 }
                 loader.hide();
+                window.history.pushState(null, null, '/use_case/1?use_case_detail&use_case_id=' + use_case_id)
             }
         })
 
@@ -917,19 +920,19 @@
     $(document).ready(function () {
         $("#wrapper").on('click', 'button', function () {
             var use_case_id = '';
-            if (this.name == 'table_run_use_case' || this.id == 'run_use_case'){
+            if (this.name === 'table_run_use_case' || this.id === 'run_use_case'){
                 use_case_id = this.value;
-                if (this.id == 'run_use_case') {
+                if (this.id === 'run_use_case') {
                     use_case_id = $('#use_case_id').attr('placeholder');
                 }
                 run_use_case(use_case_id)
-            } else if(this.name == 'table_async_run_use_case' || this.id == 'async_run_use_case') {
+            } else if(this.name === 'table_async_run_use_case' || this.id === 'async_run_use_case') {
                 use_case_id = this.value;
-                if (this.id == 'async_run_use_case') {
+                if (this.id === 'async_run_use_case') {
                     use_case_id = $('#use_case_id').attr('placeholder');
                 }
                 asyc_run_use_case(use_case_id)
-            } else if (this.name == 'table_detail_use_case') {
+            } else if (this.name === 'table_detail_use_case') {
                 get_use_case_detail(this.value)
             }
         })
@@ -1425,6 +1428,21 @@
                 }
             }
         })
+    });
+
+    $(document).ready(function($) {
+        if (window.history && window.history.pushState) {
+            $(window).on('popstate', function() {
+                var time_string = new URLSearchParams(window.location.search);
+                var info = time_string.get('info');
+                if (info !== 'detail') {
+                    var hash = window.location.hash;
+                    if (hash === '') {
+                        window.location.href='/use_case/1';
+                    }
+                }
+            });
+        }
     });
 
 </script>
