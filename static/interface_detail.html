@@ -135,8 +135,7 @@
         error_alert.show();
     }
 
-    // 获取接口数据并展示
-    $(document).ready(function () {
+    function get_interface_detail() {
         $.ajax({
             type: 'get',
             url: '/encryption/list',
@@ -199,12 +198,17 @@
                 }
             }
         });
+    }
 
+    // 获取接口数据并展示
+    $(document).ready(function () {
+        get_interface_detail()
     });
 
     // 提交接口更新
     $(document).ready(function () {
         $("#submit_interface").click(function () {
+            loader.show();
             if ($("#json").hasClass('active')) {
                 var body_type = 0;
             } else {
@@ -239,7 +243,8 @@
                     if (!response.success) {
                         show_alert('更新数据失败');
                     } else {
-                        window.location.href = '/interface/1'
+                        get_interface_detail();
+                        loader.hide();
                     }
                 }
             })
