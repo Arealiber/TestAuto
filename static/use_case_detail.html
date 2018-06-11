@@ -1422,6 +1422,11 @@
                                                 '<td>' + button_col + '</td></tr>')
                                     })
                                 }
+                                var time_string = new URLSearchParams(window.location.search);
+                                var use_case_id = time_string.get('use_case_id');
+                                if (use_case_id) {
+                                    get_use_case_detail(use_case_id)
+                                }
                             }
                         })
                     }
