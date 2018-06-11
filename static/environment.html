@@ -90,6 +90,7 @@
 <script>
     var loader = $("#loader");
     var error_alert = $("#error_alert");
+    var $environment_table = $("#environment_table")
 
     function show_alert(alert_text) {
         $("#head_line").hide();
@@ -231,7 +232,6 @@
 
     function get_environment_lin() {
         $("#add_environment_line").show();
-        $("#environment_table").show();
         $.ajax({
             type: 'post',
             url: '/environment/line/detail',
@@ -241,8 +241,13 @@
             success: function (response) {
                 loader.hide();
                 if (!response.success) {
+                    $environment_table.hide();
                     show_alert('获取数据失败')
-                } else {
+                }  else if (response.res.length <=0) {
+                    $environment_table.hide();
+                    show_alert('没有添加相关的环境信息')
+                }
+                else {
                     $("#environment_table").show();
                     var environment_line_list = response.res;
                     $.each(environment_line_list, function (i, environment_line) {
