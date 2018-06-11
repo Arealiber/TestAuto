@@ -18,7 +18,9 @@ class UseCase(Base):
     id = Column(Integer, primary_key=True)
     environment_id = Column(Integer, nullable=False)
     use_case_name = Column(String(100), nullable=False)
+    pre_condition = Column(String(1000))
     desc = Column(String(1000))
+    post_condition = Column(String(1000))
     create_by = Column(String(50), nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -30,7 +32,9 @@ class UseCase(Base):
             'id': self.id,
             'environment_id': self.environment_id,
             'use_case_name': self.use_case_name,
+            'pre_condition': self.pre_condition,
             'desc': self.desc,
+            'post_condition': self.post_condition,
             'create_by': self.create_by,
             'create_time': self.create_time,
             'update_time': self.update_time,

@@ -73,8 +73,16 @@
                 <input type="text" class="form-control" id="use_case_name" placeholder="用例名称" value="">
             </div>
             <div class="form-group">
+                <label for="use_case_desc">预置条件</label>
+                <textarea type="text" class="form-control" id="pre_condition" rows="2" placeholder="预置条件" value=""></textarea>
+            </div>
+            <div class="form-group">
                 <label for="use_case_desc">用例步骤</label>
-                <textarea type="text" class="form-control" id="use_case_desc" rows="1" placeholder="用例描述" value=""></textarea>
+                <textarea type="text" class="form-control" id="use_case_desc" rows="2" placeholder="用例描述" value=""></textarea>
+            </div>
+            <div class="form-group">
+                <label for="use_case_desc">预期结果</label>
+                <textarea type="text" class="form-control" id="post_condition" rows="2" placeholder="预期结果" value=""></textarea>
             </div>
             <div id="business_line" class="input-select" style="display: none">
                 <label for="business_line">业务线</label>
@@ -496,7 +504,9 @@
                     $("#use_case_id").attr('placeholder', use_case_detail.id);
                     $("#delete_use_case").val(use_case_detail.id);
                     $("#use_case_name").val(use_case_detail.use_case_name);
+                    $("#pre_condition").val(use_case_detail.pre_condition);
                     $("#use_case_desc").val(use_case_detail.desc);
+                    $("#post_condition").val(use_case_detail.post_condition);
                     var num = 0;
                     if (use_case_detail.desc.length > 0) {
                         var line_list = use_case_detail.desc.match(/\n/g || []);
@@ -656,10 +666,13 @@
             var function_id = $("#input_function_name").data('function_id');
             var environment_id = $("#input_environment").data("environment_id");
             var use_case_id = $("#use_case_id").attr('placeholder');
+            var pre_condition = $("#pre_condition").val();
             var url = '/use_case/add';
             var use_case_dict = {
                 'use_case_name': $("#use_case_name").val(),
+                'pre_condition': pre_condition,
                 'desc': $("#use_case_desc").val(),
+                'post_condition': $("#post_condition").val(),
                 'function_id': function_id,
                 'environment_id': environment_id
             };
@@ -1114,6 +1127,8 @@
             $("#input_business_name").data("business_id", null);
             $("#input_system_name").data("system_id", null);
             $("#input_function_name").data("function_id", null);
+            $("#pre_condition").val("");
+            $("#post_condition").val("");
             $("#input_business_name").val("");
             $("#input_system_name").val("");
             $("#input_function_name").val("");
