@@ -36,7 +36,7 @@
         <form id="environment_form" class="detail_form" style="width: 80%; margin-left: 0">
         </form>
 
-        <div id="loader_use"></div>
+        <div id="loader"></div>
         <div id="error_alert" class="alert alert-danger" role="alert"></div>
         <HR>
 
@@ -91,6 +91,7 @@
         $(document).ready(function () {
             $("#save_environment").click(function () {
                 var input_list = $("#environment_form").find('.input-group');
+                loader.show();
                 $.each(input_list, function (i, input_selector) {
                     var args = {
                         id: input_selector.id,
@@ -116,10 +117,10 @@
                         }
                     })
                 });
+                loader.hide();
                 $("#environment_form").empty();
+                sleep(1.5);
                 get_environment_detail();
-
-
             });
 
             //删除host映射
