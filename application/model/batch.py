@@ -17,6 +17,7 @@ class Batch(Base):
     id = Column(Integer, primary_key=True)
     batch_name = Column(String(100), nullable=False)
     auto_run = Column(Boolean, nullable=False, default=False)
+    alarm_monitor = Column(Boolean, nullable=False, default=False)
     create_by = Column(String(50), nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -27,6 +28,7 @@ class Batch(Base):
             'id': self.id,
             'batch_name': self.batch_name,
             'auto_run': self.auto_run,
+            'alarm_monitor': self.alarm_monitor,
             'create_by': self.create_by,
             'create_time': self.create_time,
             'update_time': self.update_time
