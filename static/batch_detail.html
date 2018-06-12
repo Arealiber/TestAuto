@@ -157,6 +157,9 @@
                         if (batch_detail.auto_run) {
                             $("#batch_auto_run").prop('checked', true);
                         }
+                        if (batch_detail.alarm_monitor) {
+                            $("#alarm_monitor").prop('checked', true);
+                        }
 
                         var use_case_list = batch_detail.use_case_list;
                         if (use_case_list.length == 0) {
