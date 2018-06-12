@@ -41,7 +41,7 @@
             </div>
             <div class="input-select">
                 <label for="environment_name">环境路线</label>
-                <select id="environment_name" class="select">
+                <select id="environment_name" class="select" onchange="select_onchange(this)">
                 </select>
             </div>
             <div class="form-row">
@@ -153,6 +153,7 @@
                         var batch_detail = response.res;
                         $("#batch_id").attr('placeholder', batch_detail.id);
                         $("#batch_name").val(batch_detail.batch_name);
+                        select_environment_line_append(batch_detail.environment_id);
                         if (batch_detail.auto_run) {
                             $("#batch_auto_run").prop('checked', true);
                         }
@@ -190,8 +191,10 @@
 
     $(document).ready(function () {
         $("#submit_batch").click(function () {
+            var environment_id = $("#environment_name").data('environment_id');
             var batch_dict = {
                 'batch_name': $("#batch_name").val(),
+                'environment_id': environment_id,
                 'auto_run': $("#batch_auto_run").is(':checked'),
                 'alarm_monitor': $("#alarm_monitor").is(':checked')
             };
@@ -212,7 +215,7 @@
                 dataType: "json",
                 success: function (response) {
                     if (!response.success) {
-                        show_alert('更新数据失败');
+                        show_alert('更新（添加）批次数据失败');
                     } else {
                         window.location.href = '/batch_detail/' + response.res
                     }
@@ -313,6 +316,7 @@
         })
     });
 
+
     // 预删除用例
     $(document).ready(function () {
         $("#batch_use_case_list").on('click', '.delete-use-case', function () {
@@ -344,6 +348,49 @@
             })
         })
     });
+
+    function select_environment_line_append(environment_id) {
+        $("#environment_name").empty();
+        $.ajax({
+            type: 'post',
+            url: '/environment/line/detail',
+            data: JSON.stringify({
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var environment_list = response.res;
+                var append_str = '<option data-environment_id="0"></option>';
+                if (environment_list.length > 0) {
+                    $.each(environment_list, function (i, environment_info) {
+                        if (environment_info.id == environment_id) {
+                            $("#environment_name").data('environment_id', environment_info.id);
+                            $("#environment_name").val(environment_info.environment_name);
+                            append_str += '<option selected="true" data-environment_id="' + environment_info.id + '">' + environment_info.environment_name + '</option>';
+                        } else {
+                            append_str += '<option data-environment_id="' + environment_info.id + '">' + environment_info.environment_name + '</option>';
+                        }
+                    });
+                    $("#environment_name").append(append_str)
+                }
+            }
+        });
+    }
+
+    function select_onchange(selector) {
+        $(selector).val($(selector).val());
+        $(selector).data($(selector).data());
+        var option_length=$("option").length;
+        for(var i=0;i<option_length;i++){
+            var option_id = $("option").eq(i).data();
+            var option_value = $("option").eq(i).val();
+            if($(selector).val()==option_value){
+                $(selector).data(option_id);
+                $("option").eq(i).attr('select', true);
+                break;
+            }
+        }
+    }
 
     $('#menu_tree').treeview({
             data: getTree(),

@@ -16,6 +16,7 @@ class Batch(Base):
 
     id = Column(Integer, primary_key=True)
     batch_name = Column(String(100), nullable=False)
+    environment_id = Column(Integer, nullable=False, default=0)
     auto_run = Column(Boolean, nullable=False, default=False)
     alarm_monitor = Column(Boolean, nullable=False, default=False)
     create_by = Column(String(50), nullable=False)
@@ -27,6 +28,7 @@ class Batch(Base):
         return {
             'id': self.id,
             'batch_name': self.batch_name,
+            'environment_id': self.environment_id,
             'auto_run': self.auto_run,
             'alarm_monitor': self.alarm_monitor,
             'create_by': self.create_by,

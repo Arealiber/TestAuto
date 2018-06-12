@@ -162,13 +162,14 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 }
 
     with requests.Session() as session:
-        if not environment_id:
-            environment_id = use_case_info['environment_id']
-        environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
-        for element in environment_info:
-            url = element['url']
-            ip_address = element['map_ip']
-            DNS_CACHE[url] = ip_address
+        if not alarm_monitor:
+            if not environment_id and not batch_log_id:
+                environment_id = use_case_info['environment_id']
+            environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
+            for element in environment_info:
+                url = element['url']
+                ip_address = element['map_ip']
+                DNS_CACHE[url] = ip_address
 
         for interface in interface_list:
             interface_name = interface.get('interface_name')
@@ -477,7 +478,7 @@ def run_use_case_async(use_case_id, batch_log_id=None, environment_id=None, use_
         executor.submit(run_use_case, use_case_id, batch_log_id, environment_id, None, use_case_count, batch_start_timer, True, auto_run, alarm_monitor)
 
 
-def run_batch(batch_id, auto_run=False, alarm_monitor=False):
+def run_batch(batch_id, environment_id=0, auto_run=False, alarm_monitor=False):
     start_timer = timeit.default_timer()
     relation_list = BatchAPI.get_batch_use_case_relation(batch_id=batch_id)
     use_case_count = len(relation_list)
@@ -492,6 +493,6 @@ def run_batch(batch_id, auto_run=False, alarm_monitor=False):
     for relation in relation_list:
         counter += 1
         use_case = UseCaseAPI.get_use_case(id=relation['use_case_id'])[0]
-        run_use_case_async(use_case['id'], batch_log_id, use_case_count=use_case_count,
+        run_use_case_async(use_case['id'], batch_log_id, environment_id=environment_id, use_case_count=use_case_count,
                            batch_start_timer=start_timer, auto_run=auto_run, alarm_monitor=alarm_monitor)
 

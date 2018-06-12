@@ -45,11 +45,12 @@ def batch_detail():
 
     :return:
     """
+    print(request.get_json())
     batch = BatchAPI.get_batch(**request.get_json())[0]
+    print(batch)
     relation_list = BatchAPI.get_batch_use_case_relation(batch_id=batch['id'])
     batch['use_case_list'] = []
     for relation in relation_list:
-        print(relation['use_case_id'])
         use_case = UseCaseAPI.get_use_case(id=relation['use_case_id'])[0]
         batch['use_case_list'].append({
             'id': relation['id'],
@@ -76,9 +77,10 @@ def query_batch_count():
 @login_required
 def modify_batch():
     """
-    create batch for use case
+    update batch for use case
     :return:
     """
+    print(request.get_json())
     batch_id = BatchAPI.modify_batch(**request.get_json())
     return jsonify({'success': True, 'res': batch_id})
 
@@ -152,7 +154,8 @@ def del_batch_use_case_relation():
 @login_required
 def batch_execute():
     batch_id = request.get_json()['id']
-    Exec.run_batch(batch_id)
+    batch_info = BatchAPI.get_batch(batch_id=batch_id)[0]
+    Exec.run_batch(batch_id, batch_info['environment_id'])
     return jsonify({'success': True})
 
 
@@ -162,5 +165,6 @@ def batch_execute():
 def batch_auto_run():
     batch_list = BatchAPI.get_batch(auto_run=True)
     for batch in batch_list:
-        Exec.run_batch(batch['id'], True, batch['alarm_monitor'])
+        Exec.run_batch(batch['id'], environment_id=batch['environment_id'], auto_run=True,
+                       alarm_monitor=batch['alarm_monitor'])
     return jsonify({'success': True})
