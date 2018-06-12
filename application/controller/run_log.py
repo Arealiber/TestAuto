@@ -99,6 +99,7 @@ def get_use_case_run_log_count():
     from_time = param_kwarg.get('from_time', None)
     to_time = param_kwarg.get('to_time', None)
     function_id = param_kwarg.get('function_id', None)
+    use_case_name = param_kwarg.get('use_case_name', None)
     if from_time:
         from_time = shanghai_to_utc_timezone(datetime.strptime(from_time, QUERY_TIME_FMT))
         param_kwarg.update({"from_time": from_time.strftime(QUERY_TIME_FMT)})
@@ -107,6 +108,10 @@ def get_use_case_run_log_count():
         param_kwarg.update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
     if function_id:
         use_case_info_list = UseCaseAPI.get_use_case(function_id=function_id)
+        use_case_list = [use_case_info.get('id') for use_case_info in use_case_info_list]
+        param_kwarg['use_case_id'] = use_case_list
+    if use_case_name:
+        use_case_info_list = UseCaseAPI.get_use_case_by_name(use_case_name)
         use_case_list = [use_case_info.get('id') for use_case_info in use_case_info_list]
         param_kwarg['use_case_id'] = use_case_list
 
@@ -124,6 +129,7 @@ def get_use_case_run_log():
     from_time = request.get_json().get('from_time', None)
     to_time = request.get_json().get('to_time', None)
     function_id = request.get_json().get('function_id', None)
+    use_case_name = request.get_json().get('use_case_name', None)
     if from_time:
         from_time = shanghai_to_utc_timezone(datetime.strptime(from_time, QUERY_TIME_FMT))
         request.get_json().update({"from_time": from_time.strftime(QUERY_TIME_FMT)})
@@ -133,6 +139,10 @@ def get_use_case_run_log():
 
     if function_id:
         use_case_info_list = UseCaseAPI.get_use_case(function_id=function_id)
+        use_case_list = [use_case_info.get('id') for use_case_info in use_case_info_list]
+        request.get_json()['use_case_id'] = use_case_list
+    if use_case_name:
+        use_case_info_list = UseCaseAPI.get_use_case_by_name(use_case_name)
         use_case_list = [use_case_info.get('id') for use_case_info in use_case_info_list]
         request.get_json()['use_case_id'] = use_case_list
 
