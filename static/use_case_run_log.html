@@ -30,8 +30,9 @@
 
         <div class="datetimepicker">
             <input id="datetimepicker_start" placeholder="开始" type="text" value="">
-            <input id="datetimepicker_end" placeholder="结束" type="text" value=""></label>
-            <button id="data-select" class="btn btn-info" style="margin-top: 0;height: 80%;">搜索</button>
+            <input id="datetimepicker_end" placeholder="结束" type="text" value="">
+            <input id="search_run_log" placeholder="用例名称" type="text" value="">
+            <button id="data-select" class="btn btn-info" style="margin-top: -10px;">搜索</button>
         </div>
 
         <div id="loader"></div>
@@ -89,15 +90,29 @@
 
     $(document).ready(function () {
         $("#data-select").click(function () {
+            use_case_name = $("#search_run_log").val();
             from_time = $("#datetimepicker_start").val();
             to_time = $("#datetimepicker_end").val();
-            window.location.href = "/use_case_run_log/1?from_time="+ from_time + "&to_time=" + to_time
+            console.log(from_time, to_time);
+            if (!from_time && !to_time && use_case_name) {
+                time_string = new URLSearchParams(window.location.search);
+                from_time = time_string.get('from_time');
+                to_time = time_string.get('to_time');
+            }
+            if (!from_time) {
+                from_time = ''
+            }
+            if (!to_time) {
+                to_time = ''
+            }
+            window.location.href = "/use_case_run_log/1?from_time="+ from_time + "&to_time=" + to_time + '&use_case_name=' + use_case_name
         });
         var time_string = new URLSearchParams(window.location.search);
         var from_time = time_string.get('from_time');
         var to_time = time_string.get('to_time');
         var function_id = time_string.get('function_id');
         var is_pass = time_string.get('is_pass');
+        var use_case_name = time_string.get('use_case_name');
         var time_url = '';
         if (from_time){
             time_url = "?from_time="+ from_time;
@@ -113,11 +128,15 @@
         if (function_id) {
             time_url +="&function_id=" + function_id;
         }
+        if (use_case_name) {
+           time_url +="&use_case_name=" + use_case_name;
+           $("#search_run_log").val(use_case_name)
+        }
         var data = {
             from_time: from_time,
             to_time: to_time,
             is_pass: is_pass,
-            function_id:function_id
+            function_id: function_id
         };
         $.ajax({
             type: 'post',
@@ -215,7 +234,12 @@
                                     }else {
                                         $("#run_log_table").show();
                                         var use_case_run_log_list = response.res;
+                                        var use_case_count=0;
                                         $.each(use_case_run_log_list, function (i, use_case_run_log) {
+                                            if (use_case_name && use_case_run_log.use_case_name.indexOf(use_case_name) < 0) {
+                                                use_case_count += 1;
+                                                return true
+                                            }
                                             var start_time = use_case_run_log.start_time.substring(0, 23).replace(' ', '_');
                                             var button_col = '<div class="btn-group btn-group-sm" role="group">'+
                                                 '<a class="btn btn-info" href="/use_case_run_log/detail/'+
@@ -226,16 +250,13 @@
                                             } else{
                                                 is_pass_string = '<td style="color: red; font-weight: bold;">否</td>';
                                             }
-                                            var start_time = "";
-                                            var end_time = "";
                                             if (!use_case_run_log.start_time) {
                                                 start_time = "";
                                             } else{
                                                 start_time = use_case_run_log.start_time.substring(0, 23);
                                             }
-                                            if (!use_case_run_log.end_time) {
-                                                end_time = '';
-                                            } else{
+                                            var end_time = '';
+                                            if (use_case_run_log.end_time) {
                                                 end_time = use_case_run_log.end_time.substring(0, 23);
                                             }
                                             $("#run_log_table").find('tbody').
@@ -248,6 +269,10 @@
                                                 '<td>' + use_case_run_log.cost_time + '</td>' +
                                                 '<td>' + button_col + '</td></tr>')
                                         });
+                                        if (use_case_name && !use_case_count) {
+                                            $("#run_log_table").hide();
+                                            show_alert("无该用例日志")
+                                        }
                                     }
                                 }
                         });
