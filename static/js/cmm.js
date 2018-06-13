@@ -199,7 +199,14 @@ function input_value(selector) {
 function init_input_value(st=selector, id_name=null) {
     var input_val = $(st).val();
     var option_arr=$("option");
-    if ($.inArray(input_val, option_arr) > 0) {
+    var arr_option_val = []
+    $("option").each(function(){  //遍历所有option
+          var channlVal= $(this).val();   //获取option值
+          if(channlVal!=''){
+               arr_option_val.push(channlVal);  //添加到数组中
+          }
+     });
+    if ($.inArray(input_val, arr_option_val) >= 0) {
         for(var i=0;i<option_arr.length;i++){
             var option_id = $("option").eq(i).data();
             var option_value = $("option").eq(i).val();
