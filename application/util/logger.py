@@ -46,3 +46,12 @@ def exception_log(error_str):
     :return:
     """
     LOGGER.log_error(error_str)
+
+
+def info_log(info_str):
+    """
+        记录info log
+        :param info_str:               记录内容
+        :return:
+        """
+    LOGGER.log_info(info_str)
