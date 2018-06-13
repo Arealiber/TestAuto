@@ -169,7 +169,10 @@ body {
     height: 40px;
     top: -40px;
     border: 1px solid #ced4da;
-    border-radius:.25rem
+    border-radius:.25rem;
+    padding:.375rem .75rem;
+    font-size:1rem;
+    color:#495057;
 }
 .select{
     width:100%;
