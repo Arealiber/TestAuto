@@ -348,6 +348,7 @@
 
     function get_report_data(url,from_time=null, to_time=null, function_id=null) {
         $("#report_chart").show();
+        error_alert.hide();
         $.ajax({
             type: 'post',
             url:url,
@@ -365,7 +366,7 @@
                 } else {
                     $("#report_table_wrapper").hide();
                     var chartist_data = response.res;
-                    if (chartist_data.data.datasets.length > 0) {
+                    if (chartist_data.data && chartist_data.data.datasets && chartist_data.data.datasets.length > 0) {
                         for ( var i=0; i < chartist_data.data.datasets.length; i++) {
                             var color = getRandomColor();
                             chartist_data.data.datasets[i].borderColor= color;
@@ -377,6 +378,9 @@
                                 }
                             }
                         }
+
+                    } else {
+                        show_alert("数据为空")
                     }
                     var ctx = document.getElementById('canvas').getContext('2d');
                     new Chart(ctx, chartist_data)

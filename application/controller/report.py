@@ -180,8 +180,10 @@ def query_day_report_info():
         for report_info in report_info_list:
             business_line_id = report_info.get('business_line_id')
             report_info.update(business_info_dict[business_line_id])
-
-        chartist_data = report_data_manager(report_info_list)
+        if report_info_list:
+            chartist_data = report_data_manager(report_info_list)
+        else:
+            chartist_data = {}
         return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
 
@@ -264,8 +266,10 @@ def query_week_report_info():
         for report_info in report_info_list:
             business_line_id = report_info.get('business_line_id')
             report_info.update(business_info_dict[business_line_id])
-
-        chartist_data = report_data_manager(report_info_list, '%W')
+        if report_info_list:
+            chartist_data = report_data_manager(report_info_list, '%W')
+        else:
+            chartist_data = {}
         return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
 
@@ -344,8 +348,10 @@ def query_month_report_info():
         for report_info in report_info_list:
             business_line_id = report_info.get('business_line_id')
             report_info.update(business_info_dict[business_line_id])
-
-        chartist_data = report_data_manager(report_info_list, '%Y/%m')
+        if report_info_list:
+            chartist_data = report_data_manager(report_info_list, '%Y/%m')
+        else:
+            chartist_data = {}
         return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
 
