@@ -154,7 +154,7 @@ def del_batch_use_case_relation():
 @login_required
 def batch_execute():
     batch_id = request.get_json()['id']
-    batch_info = BatchAPI.get_batch(batch_id=batch_id)[0]
+    batch_info = BatchAPI.get_batch(id=batch_id)[0]
     Exec.run_batch(batch_id, batch_info['environment_id'])
     return jsonify({'success': True})
 
