@@ -1276,7 +1276,7 @@
     }
 
     function select_function_line_append(function_line_id=null, system_line_id=null) {
-        $("#function_name").empty();
+
         if (!system_line_id && !function_line_id) {
             return
         }
@@ -1305,9 +1305,10 @@
                         } else {
                             append_str += '<option data-function_id="' + function_info.id + '" value="'+ function_info.function_name +'">' + function_info.function_name + '</option>';
                         }
-                    });
-                    $("#function_name").append(append_str)
+                    })
                 }
+                $("#function_name").empty();
+                $("#function_name").append(append_str)
             }
         });
     }
