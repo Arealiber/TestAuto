@@ -44,6 +44,7 @@ def new_getaddrinfo(*args):
 socket.getaddrinfo = new_getaddrinfo
 
 
+@try_except
 def interface_log_insert(interface_log_dict):
     """
     记录接口请求日志
@@ -68,6 +69,7 @@ def interface_log_insert(interface_log_dict):
     })
 
 
+@try_except
 def use_case_exception_log_update(use_case_log_id, use_case_start):
     """
     用例执行过程中抛出异常时
