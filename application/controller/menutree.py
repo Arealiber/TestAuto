@@ -203,12 +203,12 @@ def add_use_case_to_menu_tree():
     if not business_id:
         business_name = MenuTreeAPI.query_business_line(**{"business_name": param_args.get("business_name")})
         if business_name:
-            return jsonify({'success': False, 'error': '已存在同名目录'})
+            return jsonify({'success': False, 'error': '已存在同名业务线目录'})
         business_id = MenuTreeAPI.add_business_line(**{"business_name": param_args.get("business_name")})
     if not system_id:
         system_name = MenuTreeAPI.query_system_line(**{"system_name": param_args.get("system_name")})
         if system_name:
-            return jsonify({'success': False, 'error': '已存在同名目录'})
+            return jsonify({'success': False, 'error': '已存在同名系统线目录'})
         system_id = MenuTreeAPI.add_system_line(**{
             "system_name": param_args.get("system_name"),
             "business_line_id": business_id
