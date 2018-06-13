@@ -18,8 +18,8 @@ def add_interface():
     """
     interface_json = request.get_json()
     interface_json['create_by'] = user_real_name()
-    InterfaceAPI.add_interface(**interface_json)
-    return jsonify({'success': True})
+    result = InterfaceAPI.add_interface(**interface_json)
+    return jsonify({'success': True, 'res': result})
 
 
 @app.route('/interface/info', methods=['POST'])

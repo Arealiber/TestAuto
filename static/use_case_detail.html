@@ -1147,8 +1147,8 @@
 
             //添加对应菜单下拉框
             select_business_line_append();
-            select_function_line_append();
             select_system_line_append();
+            select_function_line_append();
             select_environment_line_append();
 
             loader.hide();
@@ -1191,6 +1191,7 @@
         if (!business_line_id) {
             return
         }
+
         $.ajax({
             type: 'post',
             url: '/menu_tree/system_line/info',
@@ -1294,7 +1295,7 @@
     }
 
     $(document).ready(function () {
-        $("#system_name").change(function () {
+        $("#system_line").change(function () {
             var input_select=$(this).val();
             var option_length=$("option").length;
             var eq_flag = false;
@@ -1320,7 +1321,7 @@
     });
 
     $(document).ready(function () {
-        $("#business_name").change(function () {
+        $("#business_line").change(function () {
             var business_id = $("#input_business_name").data('business_id');
             $("#input_system_name").val("");
             $("#input_system_name").data("function_id", '0');

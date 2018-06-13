@@ -183,7 +183,6 @@
                                     $("#json").removeClass('active');
                                     $("#form").addClass('active');
                                 }
-
                                 $("#interface_form").show();
                                 $("#submit_interface").html('更新');
                                 $("#submit_interface").show();
@@ -209,10 +208,11 @@
     $(document).ready(function () {
         $("#submit_interface").click(function () {
             loader.show();
+            var body_type = 0;
             if ($("#json").hasClass('active')) {
-                var body_type = 0;
+                body_type = 0;
             } else {
-                var body_type = 1;
+                body_type = 1;
             }
             var interface_dict = {
                 'interface_name': $("#interface_name").val(),
@@ -243,6 +243,9 @@
                     if (!response.success) {
                         show_alert('更新数据失败');
                     } else {
+                        if (url === '/interface/add') {
+                            window.location.href = '/interface_detail/'+ response.res
+                        }
                         get_interface_detail();
                         loader.hide();
                     }

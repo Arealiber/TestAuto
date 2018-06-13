@@ -7,6 +7,8 @@ def add_interface(**kwargs):
     with session_scope() as session:
         interface = Interface(**kwargs)
         session.add(interface)
+        session.flush()
+        return interface.id
 
 
 def get_interface(**kwargs):
