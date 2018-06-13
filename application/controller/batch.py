@@ -8,6 +8,7 @@ from application.util import execute_test as Exec
 from application.util.exception import try_except
 from application.controller import login_required, user_real_name,localhost_required
 
+
 @app.route('/batch/add', methods=['POST'])
 @try_except
 @login_required

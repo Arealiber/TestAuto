@@ -18,6 +18,7 @@ from application.api import batch as BatchAPI
 from application.api import use_case as UseCaseAPI
 from application.api import encryption as EncryptionAPI
 from application.api import environment as EnvironmentAPI
+from application.util.exception import try_except
 from application import engine
 
 if not app.config['DEBUG']:
@@ -442,6 +443,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             'batch_start_timer': batch_start_timer}
 
 
+@try_except
 def run_use_case_callback(obj):
     result = obj.result()
     batch_log_id = result['batch_log_id']
@@ -470,6 +472,7 @@ def run_use_case_callback(obj):
         })
 
 
+@try_except
 def run_use_case_async(use_case_id, batch_log_id=None, environment_id=None, use_case_count=None, batch_start_timer=None, auto_run=False, alarm_monitor=False):
     if batch_log_id:
         executor.submit(run_use_case, use_case_id, batch_log_id, environment_id, None, use_case_count, batch_start_timer, True, auto_run, alarm_monitor).\
@@ -478,6 +481,7 @@ def run_use_case_async(use_case_id, batch_log_id=None, environment_id=None, use_
         executor.submit(run_use_case, use_case_id, batch_log_id, environment_id, None, use_case_count, batch_start_timer, True, auto_run, alarm_monitor)
 
 
+@try_except
 def run_batch(batch_id, environment_id=0, auto_run=False, alarm_monitor=False):
     start_timer = timeit.default_timer()
     relation_list = BatchAPI.get_batch_use_case_relation(batch_id=batch_id)
