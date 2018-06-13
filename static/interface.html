@@ -38,7 +38,6 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">接口名称</th>
-                <th scope="col">接口入口</th>
                 <th scope="col">创建人</th>
                 <th scope="col">创建时间</th>
                 <th scope="col">更新时间</th>
@@ -189,7 +188,6 @@
                                             .append('<tr>' +
                                                 '<th scope="row">' + (page_size * (page_num - 1) + i + 1) + '</th>' +
                                                 '<td>' + interface.interface_name + '</td>' +
-                                                '<td>' + interface.interface_entry + '</td>' +
                                                 '<td>' + interface.create_by + '</td>' +
                                                 '<td>' + moment(interface.create_time).format('YYYY/MM/DD HH:mm') + '</td>' +
                                                 '<td>' + moment(interface.update_time).format('YYYY/MM/DD HH:mm') + '</td>' +
