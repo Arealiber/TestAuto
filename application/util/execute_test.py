@@ -3,7 +3,7 @@ import json
 import timeit
 import re
 import socket
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from datetime import datetime
 from requests.exceptions import ConnectionError, ConnectTimeout
 
@@ -25,7 +25,7 @@ if not app.config['DEBUG']:
     from application.util import logger as LOGGER
 
 # 多进程执行器
-executor = ProcessPoolExecutor()
+executor = ThreadPoolExecutor()
 
 old_getaddrinfo = socket.getaddrinfo
 
