@@ -22,7 +22,7 @@ def get_batch_run_log_table(table_name):
                       Column('pass_rate', Integer, default=-1, nullable=False),  # 百分比，-1表示未执行完成
                       Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
                       Column('end_time', TIMESTAMP(fsp=3)),
-                      Column('cost_time', Float),
+                      Column('cost_time', Float, default=0),
                       Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False)
                       )
         table.create(checkfirst=True)
@@ -42,7 +42,7 @@ def get_use_case_run_log_table(table_name):
                       Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
                       Column('end_time', TIMESTAMP(fsp=3)),
                       Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
-                      Column('cost_time', Float, nullable=False),
+                      Column('cost_time', Float, nullable=False, default=0),
                       Column('auto_run', Boolean, default=False),
                       )
         table.create(checkfirst=True)
@@ -64,7 +64,7 @@ def get_interface_run_log_table(table_name):
                       Column('r_header', TEXT),  # 返回的HTTP header
                       Column('r_payload', TEXT),  # 返回的json
                       Column('is_pass', Boolean, nullable=False),
-                      Column('cost_time', Float, nullable=False),
+                      Column('cost_time', Float, nullable=False, default=0),
                       Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
                       Column('end_time', TIMESTAMP(fsp=3), nullable=False),
                       Column('error_message', String(2000))
