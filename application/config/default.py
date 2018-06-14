@@ -23,7 +23,7 @@ web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardi
 
 DEBUG = False
 HOST = '0.0.0.0'
-PORT = 8000
+PORT = 9091
 
 DB_URI = 'mysql://root:123456@10.251.101.163/auto_test'
 DB_POOL_SIZE = 5
