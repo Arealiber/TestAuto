@@ -1002,8 +1002,8 @@
                         }
                         execute_result_display.append('<h5>' + (i+1) + '.' +  result.interface_name +'</h5>');
                         execute_result_display.append('<p style="color:'+color+ ';font-weight: bolder">运行结果：' + success  + '</p>');
-                        execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
-                        execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
+                        execute_result_display.append('<p><b>返回状态码：</b>' + result.status_code + '</p>');
+                        execute_result_display.append('<p><b>返回包头：</b>' + JSON.stringify(result.header) + '</p>');
                         execute_result_display.append('<p><b>返回json：</b>' + JSON.stringify(result.json_response) + '</p>');
                     })
                 } else {
@@ -1024,8 +1024,8 @@
                         if (success == 'Fail') {
                             execute_result_display.append('<p style="color:'+color+ ';font-weight: bolder">失败原因：接口验证失败</p>');
                         }
-                        execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
-                        execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
+                        execute_result_display.append('<p><b>返回状态码：</b>' + result.status_code + '</p>');
+                        execute_result_display.append('<p><b>返回包头：</b>' + JSON.stringify(result.header) + '</p>');
                         execute_result_display.append('<p><b>返回json：</b>' + JSON.stringify(result.json_response) + '</p>');
                     })
                 }
