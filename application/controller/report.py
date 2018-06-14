@@ -94,7 +94,7 @@ def query_minutes_report_info():
         param_kwarg.update({"to_time": to_time})
 
     if 'from_time' not in param_kwarg or not param_kwarg.get('from_time', None):
-        param_kwarg['from_time'] = from_time_point.strftime(DAY_TIME_FMT)
+        param_kwarg['from_time'] = from_time_point.strftime(MINUTE_TIME_FMT)
     else:
         from_time = param_kwarg['from_time']
         from_time = datetime.strptime(from_time, '%Y-%m-%d')
@@ -116,7 +116,7 @@ def query_minutes_report_info():
             business_line_id = report_info.get('business_line_id')
             report_info.update(business_info_dict[business_line_id])
         if report_info_list:
-            chartist_data = report_data_manager(report_info_list)
+            chartist_data = report_data_manager(report_info_list, '%Y-%m-%d %H:%M')
         else:
             chartist_data = {}
         return jsonify({'success': True, 'res': chartist_data})
