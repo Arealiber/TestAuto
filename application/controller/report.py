@@ -82,12 +82,24 @@ def query_minutes_report_info():
     :return:
     """
     param_kwarg = request.get_json()
-    now_time_point = datetime.utcnow() + timedelta(days=1)
-    before_time_point = now_time_point - timedelta(days=DEFAULT_TIME_LENGTH)
-    if not param_kwarg.get('to_time', None):
-        param_kwarg['to_time'] = now_time_point.strftime(MINUTE_TIME_FMT)
-    if not param_kwarg.get('from_time', None):
-        param_kwarg['from_time'] = before_time_point.strftime(MINUTE_TIME_FMT)
+    now_time_point = datetime.utcnow()
+    to_time_point = now_time_point
+    from_time_point = now_time_point
+    if 'to_time' not in param_kwarg or not param_kwarg.get('to_time'):
+        param_kwarg['to_time'] = to_time_point.strftime(MINUTE_TIME_FMT)
+    else:
+        to_time = param_kwarg['to_time']
+        to_time = datetime.strptime(to_time, '%Y-%m-%d') + timedelta(days=1)
+        to_time = to_time.strftime(MINUTE_TIME_FMT)
+        param_kwarg.update({"to_time": to_time})
+
+    if 'from_time' not in param_kwarg or not param_kwarg.get('from_time', None):
+        param_kwarg['from_time'] = from_time_point.strftime(DAY_TIME_FMT)
+    else:
+        from_time = param_kwarg['from_time']
+        from_time = datetime.strptime(from_time, '%Y-%m-%d')
+        from_time = from_time.strftime(DAY_TIME_FMT)
+        param_kwarg.update({"from_time": from_time})
     report_info_list = ReportAPI.get_minutes_report_info(**param_kwarg)
     use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
     use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
@@ -104,6 +116,21 @@ def query_minutes_report_info():
         report_info.pop('id')
         use_case_id = report_info.get('use_case_id')
         report_info.update(use_case_menu_tree[use_case_id])
+    if param_kwarg.get('data_type', None):
+        report_info_list = get_business_of_data(report_info_list)
+        business_info_list = MenuTreeAPI.query_business_line()
+        business_info_dict = {}
+        for business_info in business_info_list:
+            business_info_dict[business_info['id']] = business_info
+
+        for report_info in report_info_list:
+            business_line_id = report_info.get('business_line_id')
+            report_info.update(business_info_dict[business_line_id])
+        if report_info_list:
+            chartist_data = report_data_manager(report_info_list, '%d:%s')
+        else:
+            chartist_data = {}
+        return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
 
 
