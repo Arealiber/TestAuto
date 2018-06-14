@@ -1004,7 +1004,7 @@
                         execute_result_display.append('<p style="color:'+color+ ';font-weight: bolder">运行结果：' + success  + '</p>');
                         execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
                         execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
-                        execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
+                        execute_result_display.append('<p><b>返回json：</b>' + JSON.stringify(result.json_response) + '</p>');
                     })
                 } else {
                     $("#execute_loader").hide();
@@ -1026,7 +1026,7 @@
                         }
                         execute_result_display.append('<p>返回状态码：' + result.status_code + '</p>');
                         execute_result_display.append('<p>返回包头：' + JSON.stringify(result.header) + '</p>');
-                        execute_result_display.append('<p>返回json：' + JSON.stringify(result.json_response) + '</p>');
+                        execute_result_display.append('<p><b>返回json：</b>' + JSON.stringify(result.json_response) + '</p>');
                     })
                 }
             }
