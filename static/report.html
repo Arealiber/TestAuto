@@ -402,10 +402,6 @@
                     $("#report_table_wrapper").hide();
                     var chartist_data = response.res;
                     if (chartist_data.data && chartist_data.data.datasets && chartist_data.data.datasets.length > 0) {
-                        chartist_data.data.option['onClick'] = function () {
-                            console.log(this)
-                        };
-                        console.log(chartist_data);
                         for ( var i=0; i < chartist_data.data.datasets.length; i++) {
                             var color = getRandomColor();
                             chartist_data.data.datasets[i].borderColor= color;
