@@ -35,6 +35,7 @@
                 日报表
             </button>
             <div class="dropdown-menu">
+                <a id="minutes_report" class="dropdown-item">分报表</a>
                 <a id="day_report" class="dropdown-item">日报表</a>
                 <a id="week_report" class="dropdown-item">周报表</a>
                 <a id="month_report" class="dropdown-item">月报表</a>
@@ -171,12 +172,24 @@
                         var from_time = report_list[i].create_time;
                         from_time = moment(from_time).format('YYYY-MM-DD 00:00');
                         var to_time = from_time;
-
-                        if (url === '/report/day_report/info') {
+                        if (url === '/report/minutes_report/info') {
+                            from_time = moment(to_time).subtract(0, "days").format('DD HH:mm');
+                            to_time = moment(to_time).add(1, "days").format('DD HH:mm');
+                            datatable[i][8] = moment(datatable[i][8]).format("DD HH:mm");
+                            var href = '/use_case_run_log/1?from_time='+ from_time + '&to_time=' + to_time +'&function_id=' + function_id;
+                            if (report_list[i].fail_count > 0) {
+                                datatable[i][4] = '<a style="color:red;text-decoration:underline;" href="' + href  +'&is_pass=' + 0 +'">' +
+                                    report_list[i].fail_count+'</a>';
+                            } else {
+                                datatable[i][4] = '<a class="run_fail" style="color:black;">'+report_list[i].fail_count+'</a>';
+                            }
+                            datatable[i][2] = '<a style="color:black;" href="' + href +'">' +
+                                report_list[i].function_name+'</a>';
+                        }else if (url === '/report/day_report/info') {
                             from_time = moment(to_time).subtract(0, "days").format('YYYY-MM-DD 00:00');
                             to_time = moment(to_time).add(1, "days").format('YYYY-MM-DD 00:00');
                             datatable[i][8] = moment(datatable[i][8]).format("YYYY-MM-DD");
-                            var href = '/use_case_run_log/1?from_time='+ from_time + '&to_time=' + to_time +'&function_id=' + function_id;
+                            href = '/use_case_run_log/1?from_time='+ from_time + '&to_time=' + to_time +'&function_id=' + function_id;
                             if (report_list[i].fail_count > 0) {
                                 datatable[i][4] = '<a style="color:red;text-decoration:underline;" href="' + href  +'&is_pass=' + 0 +'">' +
                                     report_list[i].fail_count+'</a>';
@@ -218,6 +231,28 @@
 
     $(document).ready(function () {
         show_report_table_info();
+    });
+
+    $('#minutes_report').on('click', function () {
+        $('#datetimepicker_start').datetimepicker({
+            timepicker:false,
+            format:'Y-m-d',
+        });
+        $('#datetimepicker_end').datetimepicker({
+            format:'Y-m-d',
+            timepicker:false,
+        });
+        report_type.text(this.text);
+        var click_id = $("#show_type").find('.active').find('input').attr('id');
+        if (click_id === 'table') {
+            wageSummaryTable.fnClearTable();
+            wageSummaryTable.fnDestroy();
+            show_report_table_info('/report/minutes_report/info');
+        } else {
+            get_report_data('/report/minutes_report/info');
+        }
+        report_type.data('url', '/report/minutes_report/info');
+        clear_datetime()
     });
 
     $('#day_report').on('click', function () {
@@ -367,6 +402,10 @@
                     $("#report_table_wrapper").hide();
                     var chartist_data = response.res;
                     if (chartist_data.data && chartist_data.data.datasets && chartist_data.data.datasets.length > 0) {
+                        chartist_data.data.option['onClick'] = function () {
+                            console.log(this)
+                        };
+                        console.log(chartist_data);
                         for ( var i=0; i < chartist_data.data.datasets.length; i++) {
                             var color = getRandomColor();
                             chartist_data.data.datasets[i].borderColor= color;
@@ -387,12 +426,7 @@
                 }
             }
         })
-
     }
-
-
-
-
 
 
 </script>
