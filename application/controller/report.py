@@ -101,21 +101,10 @@ def query_minutes_report_info():
         from_time = from_time.strftime(DAY_TIME_FMT)
         param_kwarg.update({"from_time": from_time})
     report_info_list = ReportAPI.get_minutes_report_info(**param_kwarg)
-    use_case_id_list = list(set([use_case_run_log.get('use_case_id') for use_case_run_log in report_info_list]))
-    use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
     menu_tree_info = MenuTreeAPI.query_line_relation()
-
-    use_case_menu_tree = {}
-    use_case_info_list = list(use_case_info_dict.values())
-    for use_case_info in use_case_info_list:
-        function_id = use_case_info.get('function_id')
-        use_case_name = use_case_info['use_case_name']
-        use_case_menu_tree[use_case_info['id']] = copy.deepcopy(menu_tree_info[function_id])
-        use_case_menu_tree[use_case_info['id']]['use_case_name'] = use_case_name
     for report_info in report_info_list:
-        report_info.pop('id')
-        use_case_id = report_info.get('use_case_id')
-        report_info.update(use_case_menu_tree[use_case_id])
+        function_id = report_info.get('function_id')
+        report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
         report_info_list = get_business_of_data(report_info_list)
         business_info_list = MenuTreeAPI.query_business_line()
@@ -127,7 +116,7 @@ def query_minutes_report_info():
             business_line_id = report_info.get('business_line_id')
             report_info.update(business_info_dict[business_line_id])
         if report_info_list:
-            chartist_data = report_data_manager(report_info_list, '%d:%s')
+            chartist_data = report_data_manager(report_info_list)
         else:
             chartist_data = {}
         return jsonify({'success': True, 'res': chartist_data})
