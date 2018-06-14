@@ -25,7 +25,7 @@ if not app.config['DEBUG']:
     from application.util import logger as LOGGER
 
 # 多进程执行器
-executor = ThreadPoolExecutor()
+executor = ThreadPoolExecutor(max_workers=8)
 
 old_getaddrinfo = socket.getaddrinfo
 
