@@ -2,7 +2,7 @@ import requests
 import time
 import socket
 from datetime import datetime
-from dateutil.rrule import rrule, DAILY
+from dateutil.rrule import rrule, DAILY, MINUTELY
 from functools import wraps
 from flask import session, request, redirect, jsonify
 from requests.exceptions import ConnectionError, ConnectTimeout
@@ -118,10 +118,13 @@ def report_data_manager(data_list, time_format='%Y/%m/%d'):
         if not start_time or start_time > temp_time:
             start_time = temp_time
     report_time_list = [dt.strftime(time_format) for dt in rrule(DAILY, dtstart=start_time, until=end_time)]
+    if time_format == '%Y-%m-%d %H:%M':
+        report_time_list = [dt.strftime(time_format) for dt in rrule(MINUTELY, interval=5,
+                                                                     dtstart=start_time, until=end_time)]
     if report_time_list:
         report_time_list.append(end_time.strftime(time_format))
     else:
-        report_time_list=[end_time.strftime(time_format)]
+        report_time_list = [end_time.strftime(time_format)]
     temp_time = []
     for report_time in report_time_list:
         if report_time not in temp_time:
