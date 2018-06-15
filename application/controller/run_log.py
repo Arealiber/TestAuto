@@ -39,7 +39,7 @@ def get_multi_batch_run_log_info():
         request.get_json().update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
     param_json = request.get_json()
     '' if 'pageIndex' in param_json else param_json.update({'pageIndex': 1})
-    '' if 'pageSize' in param_json else param_json.update({'pageSize': 10})
+    '' if 'pageSize' in param_json else param_json.update({'pageSize': 30})
     result = RunLogAPI.get_multi_batch_run_log_info(**request.get_json())
     result = result
     for batch_run_log_dict in result:
