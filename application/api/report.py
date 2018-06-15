@@ -64,7 +64,7 @@ def get_minutes_report_info(**kwargs):
     to_time = kwargs.get('to_time')
     limit = kwargs.get('limit')
     ret = []
-    for table_name in table_name_fix_lst:
+    for table_name in table_name_fix_lst[::-1]:
         table = get_minutes_report_table(table_name)
         sql = table.select()
         function_list = [function_id] if not isinstance(function_id, list) else function_id
