@@ -140,6 +140,8 @@
     }
 
     function get_interface_detail() {
+        $("#interface_encryption").empty();
+        $("#interface_encryption").append('<option value="0">不加密</option>');
         $.ajax({
             type: 'get',
             url: '/encryption/list',
