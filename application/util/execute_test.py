@@ -94,8 +94,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
     global DNS_CACHE
     DNS_CACHE = {}
 
-    if async:
-        engine.dispose()
+    # if async:
+    #     engine.dispose()
     exec_result_list = []
     interface_count = 1
 
