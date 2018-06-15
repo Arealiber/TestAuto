@@ -201,7 +201,7 @@ def get_use_case_run_log(**kwargs):
         index = -1
     total_count = 0
     ret = []
-    for table_name in table_name_fix_lst:
+    for table_name in table_name_fix_lst[::-1]:
         table = get_use_case_run_log_table(table_name)
         sql = table.select()
         count_sql = select([func.count()]).select_from(table)
