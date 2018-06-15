@@ -53,7 +53,7 @@ def add_report_data_calculate(use_case_report_list):
             single_report_data['fail_count'] = use_case_report['fail_count']
             single_report_data['max_time'] = use_case_report['max_time']
             single_report_data['sum_time'] = use_case_report['sum_time']
-            single_report_data['create_time'] = use_case_report['create_time']
+            single_report_data['create_time'] = tz.localize(use_case_report['create_time'])
             all_report_data[function_id] = single_report_data
     all_report_list = all_report_data.values()
     for report_data in all_report_list:
@@ -89,7 +89,7 @@ def get_business_of_data(report_data_list, time_format='%Y%m%d'):
             single_report_data['fail_count'] = use_case_report['fail_count']
             single_report_data['max_time'] = use_case_report['max_time']
             single_report_data['sum_time'] = use_case_report['sum_time']
-            single_report_data['create_time'] = use_case_report['create_time']
+            single_report_data['create_time'] = tz.localize(use_case_report['create_time'])
             all_report_data[key] = single_report_data
     all_report_list = all_report_data.values()
 

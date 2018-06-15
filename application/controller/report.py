@@ -9,7 +9,7 @@ from application.api import use_case as UseCaseAPI
 from application.api import menutree as MenuTreeAPI
 from application import app
 from application.util.exception import try_except
-from application.util import add_report_data_calculate, get_business_of_data
+from application.util import add_report_data_calculate, get_business_of_data, shanghai_to_utc_timezone
 from application.controller import login_required, localhost_required, report_data_manager
 from application.config.default import *
 
@@ -185,6 +185,7 @@ def query_day_report_info():
     menu_tree_info = MenuTreeAPI.query_line_relation()
     for report_info in report_info_list:
         function_id = report_info.get('function_id')
+        report_info['create_time'] = shanghai_to_utc_timezone(report_info['create_time'])
         report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
         report_info_list = get_business_of_data(report_info_list)
@@ -271,6 +272,7 @@ def query_week_report_info():
 
     for report_info in report_info_list:
         function_id = report_info.get('function_id')
+        report_info['create_time'] = shanghai_to_utc_timezone(report_info['create_time'])
         report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
         report_info_list = get_business_of_data(report_info_list, '%W')
@@ -352,6 +354,7 @@ def query_month_report_info():
     report_info_list = ReportAPI.get_month_report_info(**param_kwarg)
     menu_tree_info = MenuTreeAPI.query_line_relation()
     for report_info in report_info_list:
+        report_info['create_time'] = shanghai_to_utc_timezone(report_info['create_time'])
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
