@@ -290,7 +290,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 }
             }
             try:
-                response = requests.post('http://123.207.51.243:8000/base_server', json=get_server_name_dict)
+                response = requests.post('http://123.207.51.243:8000/base_server', json=get_server_name_dict, timeout=5)
                 server_name = response.json()['_data']['retInfo']['serverName']
             except:
                 server_name = '获取服务名失败'
