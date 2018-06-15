@@ -25,7 +25,7 @@ def get_multi_batch_run_log_info(**kwargs):
     index = (page_index-1)*page_size
     ret = []
     total_count = 0
-    for table_name in table_name_fix_lst:
+    for table_name in table_name_fix_lst[::-1]:
         table = get_batch_run_log_table(table_name)
         batch_list = [batch_id] if not isinstance(batch_id, list) else batch_id
         count_sql = select([func.count()]).select_from(table)
