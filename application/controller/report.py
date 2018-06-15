@@ -21,7 +21,7 @@ def add_minutes_report():
     """
     :return:
     """
-    now_time_point = datetime.utcnow()
+    now_time_point = datetime.utcnow() + timedelta(seconds=59)
     before_time_point = now_time_point - timedelta(minutes=MINUTE_TIME_LENGTH)
     to_time = now_time_point.strftime(MINUTE_TIME_FMT)
     from_time = before_time_point.strftime(MINUTE_TIME_FMT)
@@ -82,7 +82,7 @@ def query_minutes_report_info():
     :return:
     """
     param_kwarg = request.get_json()
-    now_time_point = datetime.utcnow()
+    now_time_point = datetime.now()
     to_time_point = now_time_point
     from_time_point = now_time_point
     if 'to_time' not in param_kwarg or not param_kwarg.get('to_time'):
@@ -130,7 +130,7 @@ def add_day_report():
     """
     :return:
     """
-    now_time_point = datetime.utcnow()
+    now_time_point = datetime.now()
     before_time_point = (now_time_point + timedelta(days=1)) - timedelta(days=DAY_TIME_LENGTH)
     to_time = (now_time_point + timedelta(days=1)).strftime(DAY_TIME_FMT)
     from_time = before_time_point.strftime(DAY_TIME_FMT)
@@ -162,7 +162,7 @@ def query_day_report_info():
     :return:
     """
     param_kwarg = request.get_json()
-    now_time_point = datetime.utcnow()
+    now_time_point = datetime.now()
     to_time_point = now_time_point + timedelta(days=1)
     from_time_point = now_time_point - relativedelta(months=1)
     if 'to_time' not in param_kwarg or not param_kwarg.get('to_time'):
@@ -213,7 +213,7 @@ def add_week_report():
     :return:
     """
 
-    now_time_point = datetime.utcnow()
+    now_time_point = datetime.now()
     day_of_week_num = int(now_time_point.strftime('%u'))  # 每周的第几天（0~6）
     before_time_point = now_time_point - timedelta(days=day_of_week_num)
     to_time = (now_time_point + timedelta(days=1)).strftime(DAY_TIME_FMT)
@@ -245,7 +245,7 @@ def query_week_report_info():
     :return:
     """
     param_kwarg = request.get_json()
-    now_time_point = datetime.utcnow()
+    now_time_point = datetime.now()
     day_of_week_num = int(now_time_point.strftime('%w'))
     to_time_point = now_time_point + timedelta(days=7-day_of_week_num)
     from_time_point = now_time_point - timedelta(weeks=4)
@@ -297,7 +297,7 @@ def add_month_report():
     """
     :return:
     """
-    now_time_point = datetime.utcnow()
+    now_time_point = datetime.now()
     day_of_month_num = int(now_time_point.strftime('%m'))
     before_time_point = now_time_point - timedelta(days=(day_of_month_num - 1))
     to_time = (now_time_point + timedelta(days=1)).strftime(DAY_TIME_FMT)
