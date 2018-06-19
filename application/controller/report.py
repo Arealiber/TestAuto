@@ -21,7 +21,7 @@ def add_minutes_report():
     """
     :return:
     """
-    now_time_point = datetime.utcnow() + timedelta(seconds=59)
+    now_time_point = datetime.utcnow()
     before_time_point = now_time_point - timedelta(minutes=MINUTE_TIME_LENGTH)
     to_time = now_time_point.strftime(MINUTE_TIME_FMT)
     from_time = before_time_point.strftime(MINUTE_TIME_FMT)
@@ -68,10 +68,10 @@ def add_minutes_report():
         report_data['average_time'] = average_time
         report_data['pass_rate'] = pass_rate
         if report_data['function_id']:
-            if not app.config['DEBUG']:
-                from application.util import logger
-                logger.info_log("add minutes data:{0}".format(report_data))
             ReportAPI.add_minutes_report(**report_data)
+    if not app.config['DEBUG']:
+        from application.util import logger
+        logger.info_log("add minutes data:{0}".format(all_report_list))
     return jsonify({'success': True})
 
 
