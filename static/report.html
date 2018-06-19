@@ -384,6 +384,9 @@
     function get_report_data(url,from_time=null, to_time=null, function_id=null) {
         $("#report_chart").show();
         error_alert.hide();
+        if(!($("#canvas"))){
+            $("#canvas").remove();
+        }
         $.ajax({
             type: 'post',
             url:url,
