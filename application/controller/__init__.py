@@ -108,35 +108,39 @@ def report_data_manager(data_list, time_format='%Y/%m/%d'):
     report_business_list = []
     end_time = None
     start_time = None
+    temp_time_report = []
     for report_info in data_list:
         business_name = report_info.get('business_name')
         if business_name not in report_business_list:
             report_business_list.append(business_name)
         temp_time = report_info.get('create_time')
+        if temp_time not in temp_time_report:
+            temp_time_report.append(temp_time)
         if end_time is None or end_time < temp_time:
             end_time = temp_time
         if not start_time or start_time > temp_time:
             start_time = temp_time
-    report_time_list = [dt.strftime(time_format) for dt in rrule(DAILY, dtstart=start_time, until=end_time)]
-    if time_format == '%Y-%m-%d %H:%M':
-        report_time_list = [dt.strftime(time_format) for dt in rrule(MINUTELY, interval=5,
-                                                                     dtstart=start_time, until=end_time)]
-    if report_time_list:
-        report_time_list.append(end_time.strftime(time_format))
-    else:
-        report_time_list = [end_time.strftime(time_format)]
-    temp_time = []
-    for report_time in report_time_list:
-        if report_time not in temp_time:
-            temp_time.append(report_time)
-    report_time_list = temp_time
+    temp_time_report = [temp_time.strftime(time_format) for temp_time in sorted(temp_time_report)]
+    # report_time_list = [dt.strftime(time_format) for dt in rrule(DAILY, dtstart=start_time, until=end_time)]
+    # if time_format == '%Y-%m-%d %H:%M':
+    #     report_time_list = [dt.strftime(time_format) for dt in rrule(MINUTELY, interval=5,
+    #                                                                  dtstart=start_time, until=end_time)]
+    # if report_time_list:
+    #     report_time_list.append(end_time.strftime(time_format))
+    # else:
+    #     report_time_list = [end_time.strftime(time_format)]
+    # temp_time = []
+    # for report_time in report_time_list:
+    #     if report_time not in temp_time:
+    #         temp_time.append(report_time)
+    # report_time_list = temp_time
+    report_time_list = temp_time_report
     report_df = pd.DataFrame(columns=report_time_list, index=report_business_list)
     for report_info in data_list:
         create_time = report_info.get('create_time').strftime(time_format)
         business_name = report_info.get('business_name')
         report_df[create_time][business_name] = report_info.get('pass_rate')*100
     report_df = report_df.fillna(-1)
-
     datasets = []
     for i in range(len(report_df)):
         datasets.append({

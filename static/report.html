@@ -385,7 +385,7 @@
         $("#report_chart").show();
         error_alert.hide();
         if(!($("#canvas"))){
-            $("#canvas").remove();
+            $("#canvas").empty();
         }
         $.ajax({
             type: 'post',
