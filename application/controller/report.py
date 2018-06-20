@@ -107,7 +107,8 @@ def query_minutes_report_info():
     menu_tree_info = MenuTreeAPI.query_line_relation()
     for report_info in report_info_list:
         function_id = report_info.get('function_id')
-        report_info.update(menu_tree_info[function_id])
+        if menu_tree_info.get(function_id, None):
+            report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
         report_info_list = get_business_of_data(report_info_list, '%Y-%m-%d %H:%M')
         business_info_list = MenuTreeAPI.query_business_line()
