@@ -321,10 +321,13 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     r = session.post(url, **request_kwargs)
                 try:
                     json_response = r.json()
+                    json_flag = True
                 except Exception as e:
+                    json_flag = False
                     r_type = r.headers['Content-Type']
-                    if 'application/json' not in r_type:
-                        json_response = '<iframe srcdoc="{}" style="width:100%"></iframe>'.format(html.escape(r.text))
+                    if 'application/json' == r_type:
+                        r.encoding = 'utf-8'
+                        json_response = r.text
                     else:
                         json_response = {}
                 interface_log_dict['interface_stop'] = timeit.default_timer()
@@ -336,7 +339,12 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 }
                 interface_log_dict['r_code'] = r.status_code
                 interface_log_dict['r_header'] = json.dumps(result['header'], ensure_ascii=False)
-                interface_log_dict['r_payload'] = json.dumps(result['json_response'], ensure_ascii=False)
+                if json_flag:
+                    interface_log_dict['r_payload'] = json.dumps(result['json_response'], ensure_ascii=False)
+                else:
+                    r.encoding = 'utf-8'
+                    interface_log_dict['r_payload'] = r.text
+                    result['json_response'] = '<iframe srcdoc="{}" style="width:100%"></iframe>'.format(html.escape(r.text))
             except ConnectTimeout as e:
                 request_exception = True
                 error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
@@ -390,6 +398,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = result['success']
                 interface_log_insert(interface_log_dict)
+
 
                 if alarm_monitor:
                     if not app.config['DEBUG']:
