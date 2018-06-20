@@ -1078,18 +1078,21 @@
             $("#use_case_desc").val(null);
             $("#use_case_id").attr('placeholder', '');
             $("#use_case_table").show();
-            var use_case_list = use_case_info.use_case_list[0];
+
+            var use_case_list = use_case_info.use_case_list;
             var create_by = '';
             var del_flag = false;
             var del_use_case_info = null;
             $.each(use_case_list, function (i, use_case) {
+                use_case = use_case[0];
                 create_by = use_case.create_by;
                 if (create_by == 1) {
                     create_by = "admin"
                 } else {
                     create_by = use_case.create_by;
                 }
-                if (use_case.use_case_id != del_use_case_id) {
+                if (use_case.use_case_id != del_use_case_id || !del_use_case_id) {
+
                     var button_col = '<div class="btn-group btn-group-sm" role="group">' +
                         '<button name="table_detail_use_case" type="button" class="btn btn-info btn-secondary" value="' + use_case.use_case_id + '" data-toggle="modal">详情</button>' +
                         '<button name="table_run_use_case" type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
