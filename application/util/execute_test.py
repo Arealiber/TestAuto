@@ -325,7 +325,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 except Exception as e:
                     json_flag = False
                     r_type = r.headers['Content-Type']
-                    if 'application/json' == r_type:
+                    if 'application/json' != r_type:
                         r.encoding = 'utf-8'
                         json_response = r.text
                     else:
