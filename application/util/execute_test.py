@@ -319,7 +319,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     r = session.get(url, **request_kwargs)
                 elif request_method.upper() == 'POST':
                     r = session.post(url, **request_kwargs)
-                # TODO 添加包头分析格式
                 try:
                     json_response = r.json()
                 except Exception as e:
