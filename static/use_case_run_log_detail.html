@@ -135,6 +135,8 @@
                         }else {
                             is_pass = '<td>是</td>'
                         }
+                        str_res = str_res.replace('iframe', '');
+                        str_res = str_res.replace('style=\\"width:100%\\">', '');
                         var button_col = '<button class="btn btn-sm btn-primary" data-value="open" type="button" data-json="' + escapeHtml(str_res) +'">...</button>';
 
                         $("#interface_run_log_table").find("tbody").

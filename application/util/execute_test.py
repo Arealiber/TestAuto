@@ -3,6 +3,7 @@ import json
 import timeit
 import re
 import socket
+import html
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from datetime import datetime
 from requests.exceptions import ConnectionError, ConnectTimeout
@@ -318,10 +319,15 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     r = session.get(url, **request_kwargs)
                 elif request_method.upper() == 'POST':
                     r = session.post(url, **request_kwargs)
+                # TODO 添加包头分析格式
                 try:
                     json_response = r.json()
                 except Exception as e:
-                    json_response = {}
+                    r_type = r.headers['Content-Type']
+                    if 'application/json' not in r_type:
+                        json_response = '<iframe srcdoc="{}" style="width:100%"></iframe>'.format(html.escape(r.text))
+                    else:
+                        json_response = {}
                 interface_log_dict['interface_stop'] = timeit.default_timer()
                 result = {
                     'status_code': r.status_code,
