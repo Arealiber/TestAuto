@@ -262,6 +262,11 @@
                         if (url === '/interface/add') {
                             window.location.href = '/interface_detail/'+ response.res
                         }
+                        var time_string = new URLSearchParams(window.location.search);
+                        var use_case_id = time_string.get('use_case_id');
+                        if (use_case_id) {
+                            window.location.href = '/use_case/1?use_case_detail&use_case_id='+ use_case_id
+                        }
                         get_interface_detail();
                         loader.hide();
                     }

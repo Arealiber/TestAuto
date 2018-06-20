@@ -484,6 +484,7 @@
         $("#system_line").hide();
         $("#error_alert").hide();
         loader.show();
+        console.log(use_case_id)
         $.ajax({
             type: 'post',
             url: '/use_case/detail',
@@ -565,7 +566,7 @@
                                 "                        <button type=\"button\" name=\"move_up\" class=\"move_up " + move_up_class + "\">上移</button>\n" +
                                 "                        <button type=\"button\" name=\"move_down\" class=\"move_down " + move_down_class + "\">下移</button>\n" +
                                 "                        <button type=\"button\" name=\"run_interface\" class=\"btn btn-info run_interface\" data-toggle=\"modal\" data-target=\"#execute_result\">运行</button>\n" +
-                                "                        <button type=\"button\" name=\"edit_interface\" class=\"btn btn-info edit_interface\" data-toggle=\"modal\"><a href=\"/interface_detail/"+ interface.interface_id+'?relation_id='+interface.id+"\" style=\"background: #17a2b8;border-color:#17a2b8\;color:white\">编辑</a></button>\n" +
+                                "                        <button type=\"button\" name=\"edit_interface\" class=\"btn btn-info edit_interface\" data-toggle=\"modal\"><a href=\"/interface_detail/"+ interface.interface_id+'?relation_id='+interface.id+'&use_case_id='+ use_case_id +"\" style=\"background: #17a2b8;border-color:#17a2b8\;color:white\">编辑</a></button>\n" +
                                 "                        <button type=\"button\" name=\"delete_interface\" class=\"btn btn-info delete_interface\" data-toggle=\"modal\" data-target=\"#deleteInterfaceModal\">删除</button>\n" +
 
                                 "                    </div>" +
