@@ -484,7 +484,6 @@
         $("#system_line").hide();
         $("#error_alert").hide();
         loader.show();
-        console.log(use_case_id)
         $.ajax({
             type: 'post',
             url: '/use_case/detail',
@@ -1085,7 +1084,6 @@
             var del_flag = false;
             var del_use_case_info = null;
             $.each(use_case_list, function (i, use_case) {
-                use_case = use_case[0];
                 create_by = use_case.create_by;
                 if (create_by == 1) {
                     create_by = "admin"
@@ -1093,7 +1091,6 @@
                     create_by = use_case.create_by;
                 }
                 if (use_case.use_case_id != del_use_case_id || !del_use_case_id) {
-
                     var button_col = '<div class="btn-group btn-group-sm" role="group">' +
                         '<button name="table_detail_use_case" type="button" class="btn btn-info btn-secondary" value="' + use_case.use_case_id + '" data-toggle="modal">详情</button>' +
                         '<button name="table_run_use_case" type="button" class="btn btn-info btn-secondary execute-button" value="' + use_case.use_case_id + '" data-toggle="modal" data-target="#execute_result">执行</button>' +
@@ -1131,7 +1128,7 @@
                     if (node.nodes.length > 0) {
                         $.each(node.nodes, function (j, child_node) {
                             if (child_node.nodes.length > 0) {
-                                use_case_list.push(child_node.nodes)
+                                use_case_list = use_case_list.concat(child_node.nodes)
                             }
                         })
                     }
@@ -1140,12 +1137,12 @@
             case 4:
                 $.each(nodes_info, function (i, node) {
                     if (node.nodes.length > 0) {
-                        use_case_list.push(node.nodes)
+                        use_case_list = use_case_list.concat(node.nodes)
                     }
                 });
                 break;
             case 5:
-                use_case_list.push(nodes_info);
+                use_case_list = use_case_list.concat(nodes_info);
                 break
         }
         return {'use_case_list': use_case_list, 'text': data.text}
