@@ -32,7 +32,7 @@
         </nav>
         <div class="btn-group">
             <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="report_type" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-                日报表
+                分报表
             </button>
             <div class="dropdown-menu">
                 <a id="minutes_report" class="dropdown-item">分报表</a>
@@ -124,7 +124,7 @@
             }
         })
     });
-    function show_report_table_info(url='/report/day_report/info', from_time=null, to_time=null, function_id=null) {
+    function show_report_table_info(url='/report/minutes_report/info', from_time=null, to_time=null, function_id=null) {
         var datatable = [];
         error_alert.hide();
         $("#report_table").show();
@@ -183,8 +183,7 @@
                             } else {
                                 datatable[i][4] = '<a class="run_fail" style="color:black;">'+report_list[i].fail_count+'</a>';
                             }
-                            datatable[i][2] = '<a style="color:black;" href="' + href +'">' +
-                                report_list[i].function_name+'</a>';
+                            datatable[i][2] = '<a style="color:black;" href="' + href +'">' + report_list[i].function_name+'</a>';
                         }else if (url === '/report/day_report/info') {
                             from_time = moment(to_time).subtract(0, "days").format('YYYY-MM-DD 00:00');
                             to_time = moment(to_time).add(1, "days").format('YYYY-MM-DD 00:00');
@@ -264,7 +263,6 @@
             format:'Y-m-d',
             timepicker:false,
         });
-        console.log(this.value);
         report_type.text(this.text);
         var click_id = $("#show_type").find('.active').find('input').attr('id');
         if (click_id === 'table') {
@@ -371,8 +369,8 @@
             wageSummaryTable.fnDestroy();
             show_report_table_info(url);
         } else {
-            if (!url || url === '/report/day_report/info') {
-                url = '/report/day_report/info';
+            if (!url || url === '/report/minutes_report/info') {
+                url = '/report/minutes_report/info';
                 get_report_data(url, from_time, to_time, function_id);
             } else {
                 get_report_data(url,  from_time, to_time, function_id);
