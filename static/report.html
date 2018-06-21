@@ -382,9 +382,8 @@
     function get_report_data(url,from_time=null, to_time=null, function_id=null) {
         $("#report_chart").show();
         error_alert.hide();
-        if(!($("#canvas"))){
-            $("#canvas").empty();
-        }
+        $("#report_chart").empty();
+        $("#report_chart").append('<canvas id="canvas"></canvas>');
         $.ajax({
             type: 'post',
             url:url,
@@ -404,7 +403,11 @@
                     var chartist_data = response.res;
                     if (chartist_data.data && chartist_data.data.datasets && chartist_data.data.datasets.length > 0) {
                         for ( var i=0; i < chartist_data.data.datasets.length; i++) {
-                            var color = getRandomColor();
+                            if (ColorData.length > i) {
+                                var color = ColorData[i];
+                            } else {
+                                color = getRandomColor()
+                            }
                             chartist_data.data.datasets[i].borderColor= color;
                             chartist_data.data.datasets[i].backgroundColor= color;
                             chartist_data.data.datasets[i].fill= false;
