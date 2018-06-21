@@ -26,7 +26,8 @@ def get_minutes_report_table(table_name):
                       Column('sum_time', Float),
                       Column('average_time', Float),
                       Column('max_time', Float),
-                      Column('create_time', DateTime, default=datetime.now, nullable=False)
+                      Column('create_time', DateTime, default=datetime.now, nullable=False),
+                      extend_existing=True,
                       )
         table.create(checkfirst=True)
         minutes_report_table[table_name] = table
@@ -47,7 +48,8 @@ def get_day_report_table(table_name):
                       Column('sum_time', Float),
                       Column('average_time', Float),
                       Column('max_time', Float),
-                      Column('create_time', DateTime, default=datetime.now, nullable=False)
+                      Column('create_time', DateTime, default=datetime.now, nullable=False),
+                      extend_existing=True,
                       )
         table.create(checkfirst=True)
         day_report_table[table_name] = table
@@ -68,7 +70,8 @@ def get_week_report_table(table_name):
                       Column('sum_time', Float),
                       Column('average_time', Float),
                       Column('max_time', Float),
-                      Column('create_time', DateTime, default=datetime.now, nullable=False)
+                      Column('create_time', DateTime, default=datetime.now, nullable=False),
+                      extend_existing=True,
                       )
         table.create(checkfirst=True)
         week_report_table[table_name] = table
@@ -89,7 +92,8 @@ def get_month_report_table(table_name):
                       Column('sum_time', Float),
                       Column('average_time', Float),
                       Column('max_time', Float),
-                      Column('create_time', DateTime, default=datetime.now, nullable=False)
+                      Column('create_time', DateTime, default=datetime.now, nullable=False),
+                      extend_existing=True,
                       )
         table.create(checkfirst=True)
         month_report_table[table_name] = table
