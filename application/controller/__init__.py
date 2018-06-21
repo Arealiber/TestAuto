@@ -120,7 +120,8 @@ def report_data_manager(data_list, time_format='%Y/%m/%d'):
             end_time = temp_time
         if not start_time or start_time > temp_time:
             start_time = temp_time
-    temp_time_report = [temp_time.strftime(time_format) for temp_time in sorted(temp_time_report)]
+    temp_time_report = list(set([temp_time.strftime(time_format) for temp_time in sorted(temp_time_report)]))
+    temp_time_report = sorted(temp_time_report)
     # report_time_list = [dt.strftime(time_format) for dt in rrule(DAILY, dtstart=start_time, until=end_time)]
     # if time_format == '%Y-%m-%d %H:%M':
     #     report_time_list = [dt.strftime(time_format) for dt in rrule(MINUTELY, interval=5,
