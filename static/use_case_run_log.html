@@ -112,6 +112,7 @@
         var to_time = time_string.get('to_time');
         var function_id = time_string.get('function_id');
         var is_pass = time_string.get('is_pass');
+        var auto_run = time_string.get('auto_run');
         var use_case_name = time_string.get('use_case_name');
         var time_url = '';
         if (from_time){
@@ -124,6 +125,9 @@
         }
         if (is_pass) {
             time_url +="&is_pass=" + is_pass;
+        }
+        if (auto_run) {
+            time_url +="&auto_run=" + auto_run;
         }
         if (function_id) {
             time_url +="&function_id=" + function_id;
@@ -141,7 +145,8 @@
             to_time: to_time,
             is_pass: is_pass,
             function_id: function_id,
-            use_case_name: use_case_name
+            use_case_name: use_case_name,
+            auto_run:auto_run
         };
         $.ajax({
             type: 'post',
@@ -229,7 +234,8 @@
                                     'to_time': to_time,
                                     'is_pass': is_pass,
                                     'function_id':function_id,
-                                    'use_case_name': use_case_name
+                                    'use_case_name': use_case_name,
+                                    'auto_run':auto_run
                                 }),
                                 contentType: "application/json; charset=utf-8",
                                 dataType: "json",
