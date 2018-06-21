@@ -149,7 +149,7 @@ def get_use_case_run_log_count(**kwargs):
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
     is_pass = kwargs.get('is_pass')
-
+    auto_run = kwargs.get('auto_run', False)
     count = 0
     for table_name in table_name_fix_lst:
         table = get_use_case_run_log_table(table_name)
@@ -169,6 +169,8 @@ def get_use_case_run_log_count(**kwargs):
             sql = sql.where(table.c.use_case_id.in_(use_case_id))
         if is_pass in ['0', '1']:
             sql = sql.where(table.c.is_pass == is_pass)
+        if auto_run:
+            sql = sql.where(table.c.auto_run == auto_run)
 
         count += exec_query(sql, is_list=True)[0]['count_1']
     return count
