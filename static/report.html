@@ -32,7 +32,7 @@
         </nav>
         <div class="btn-group">
             <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="report_type" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-                分报表
+                日报表
             </button>
             <div class="dropdown-menu">
                 <a id="minutes_report" class="dropdown-item">分报表</a>
@@ -124,7 +124,7 @@
             }
         })
     });
-    function show_report_table_info(url='/report/minutes_report/info', from_time=null, to_time=null, function_id=null) {
+    function show_report_table_info(url='/report/day_report/info', from_time=null, to_time=null, function_id=null) {
         var datatable = [];
         error_alert.hide();
         $("#report_table").show();
@@ -369,8 +369,8 @@
             wageSummaryTable.fnDestroy();
             show_report_table_info(url);
         } else {
-            if (!url || url === '/report/minutes_report/info') {
-                url = '/report/minutes_report/info';
+            if (!url || url === '/report/day_report/info') {
+                url = '/report/day_report/info';
                 get_report_data(url, from_time, to_time, function_id);
             } else {
                 get_report_data(url,  from_time, to_time, function_id);

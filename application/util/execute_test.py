@@ -418,10 +418,10 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     run_pass = False
                     break
             except Exception as e:
-                if auto_run:
-                    if not app.config['DEBUG']:
-                        error_str = '参数验证出错，{0}: {1}'.format(str(e.__class__.__name__), str(e))
-                        LOGGER.exception_log(error_str)
+                # if auto_run:
+                #     if not app.config['DEBUG']:
+                #         error_str = '接口名称:{}, 参数验证出错，{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                        # LOGGER.exception_log(error_str)
 
                 result['success'] = False
                 exec_result_list.append(result)
