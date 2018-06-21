@@ -397,7 +397,7 @@
             dataType:'json',
             success: function (response) {
                 if (!response.success) {
-
+                    show_alert("获取数据失败")
                 } else {
                     $("#report_table_wrapper").hide();
                     var chartist_data = response.res;
