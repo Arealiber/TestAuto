@@ -61,6 +61,8 @@ def add_report_data_calculate(use_case_report_list):
         pass_rate = report_data['success_count'] / report_data['run_count']
         report_data['average_time'] = average_time
         report_data['pass_rate'] = pass_rate
+        if report_data.get('create_time', None):
+            report_data.pop('create_time')
     return list(all_report_list)
 
 
