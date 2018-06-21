@@ -139,7 +139,7 @@ def report_data_manager(data_list, time_format='%Y/%m/%d'):
     for report_info in data_list:
         create_time = report_info.get('create_time').strftime(time_format)
         business_name = report_info.get('business_name')
-        report_df[create_time][business_name] = report_info.get('pass_rate')*100
+        report_df.loc[business_name, [create_time]] = report_info.get('pass_rate')*100
     report_df = report_df.fillna(-1)
     datasets = []
     for i in range(len(report_df)):
