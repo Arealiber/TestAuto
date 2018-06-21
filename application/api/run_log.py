@@ -149,7 +149,7 @@ def get_use_case_run_log_count(**kwargs):
     from_time = kwargs.get('from_time')
     to_time = kwargs.get('to_time')
     is_pass = kwargs.get('is_pass')
-    auto_run = kwargs.get('auto_run', False)
+    auto_run = kwargs.get('auto_run', None)
     count = 0
     for table_name in table_name_fix_lst:
         table = get_use_case_run_log_table(table_name)
@@ -170,7 +170,7 @@ def get_use_case_run_log_count(**kwargs):
         if is_pass in ['0', '1']:
             sql = sql.where(table.c.is_pass == is_pass)
         if auto_run:
-            sql = sql.where(table.c.auto_run == auto_run)
+            sql = sql.where(table.c.auto_run == 1)
 
         count += exec_query(sql, is_list=True)[0]['count_1']
     return count
@@ -194,7 +194,7 @@ def get_use_case_run_log(**kwargs):
     page_index = kwargs.get('pageIndex')
     page_size = kwargs.get('pageSize')
     is_pass = kwargs.get('is_pass', None)
-    auto_run = kwargs.get('auto_run', False)
+    auto_run = kwargs.get('auto_run', None)
     page_index = int(page_index) if page_index else None
     page_size = int(page_size) if page_size else None
     if page_size:
@@ -235,8 +235,8 @@ def get_use_case_run_log(**kwargs):
             sql = sql.where(table.c.is_pass == is_pass)
             count_sql = count_sql.where(table.c.is_pass == is_pass)
         if auto_run:
-            sql = sql.where(table.c.auto_run == auto_run)
-            count_sql = count_sql.where(table.c.auto_run == auto_run)
+            sql = sql.where(table.c.auto_run == 1)
+            count_sql = count_sql.where(table.c.auto_run == 1)
         if not page_size:
             ret += exec_query(sql, is_list=True)
             continue
