@@ -1005,7 +1005,7 @@
                         execute_result_display.append('<p><b>返回状态码：</b>' + result.status_code + '</p>');
                         execute_result_display.append('<p><b>返回包头：</b>' + JSON.stringify(result.header) + '</p>');
                         var result_payload = "";
-                        if (result.header['Content-Type'] == "text/html" && JSON.stringify(result.json_response).indexOf("<iframe") >-1) {
+                        if (result.header['Content-Type'].indexOf("text/html") > -1 && JSON.stringify(result.json_response).indexOf("<iframe") >-1) {
                             result_payload = result.json_response
                             execute_result_display.append('<p><b>返回html：</b></p>' + result_payload);
                         } else {
@@ -1035,8 +1035,10 @@
                         execute_result_display.append('<p><b>返回状态码：</b>' + result.status_code + '</p>');
                         execute_result_display.append('<p><b>返回包头：</b>' + JSON.stringify(result.header) + '</p>');
                         var result_payload = "";
-                        if (result.header['Content-Type'] == "text/html" && JSON.stringify(result.json_response).indexOf("<iframe") >-1) {
-                            result_payload = result.json_response
+                        console.log(JSON.stringify(result.json_response).indexOf("iframe"));
+                        if (result.header['Content-Type'].indexOf("text/html") > -1 && JSON.stringify(result.json_response).indexOf("iframe") >-1) {
+                            console.log(result.json_response);
+                            result_payload = result.json_response;
                             execute_result_display.append('<p><b>返回html：</b></p>' + result_payload);
                         } else {
                             result_payload = JSON.stringify(result.json_response);
