@@ -12,7 +12,10 @@ def add_interface(**kwargs):
 
 
 def get_interface(**kwargs):
-    interface_name = kwargs.pop('interface_name')
+    if 'interface_name' not in kwargs:
+        interface_name = ''
+    else:
+        interface_name = kwargs.pop('interface_name')
     with session_scope() as session:
         query = session.query(Interface).filter(Interface.interface_name.like('%{0}%'.format(interface_name))).\
             filter_by(**kwargs).filter_by(status=1).order_by(Interface.update_time.desc())

@@ -102,11 +102,12 @@
     }
 
     $(document).ready(function () {
-        get_interface_info('')
+        get_interface_info()
     });
 
     $(document).ready(function () {
         $("#interface_select").click(function () {
+            window.history.pushState(null, null, '/interface/1');
             var search_key = $('#input_search_name').val();
             var pagination = '<ul class="pagination">\n' +
                 '                <li class="page-item" id="previous_page"><a class="page-link" href="#">上一页</a></li>\n' +

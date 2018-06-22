@@ -30,8 +30,6 @@ def get_interface():
     根据过滤规则获取interface列表, 无规则则返回所有interface
     """
     param_json = request.get_json()
-    if 'interface_name' not in param_json:
-        param_json['interface_name'] = ''
     page_index = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
     page_size = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
     result = InterfaceAPI.get_interface(**param_json)
