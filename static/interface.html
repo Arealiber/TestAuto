@@ -146,6 +146,7 @@
                         show_alert('无此页数据');
                     } else {
                         $(".pagination").show();
+                        error_alert.hide();
                         var previous_page = $('li[id="previous_page"]');
                         var next_page = $('li[id="next_page"]');
                         if (total_page == 1) {
