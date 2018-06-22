@@ -30,6 +30,8 @@ def get_interface():
     根据过滤规则获取interface列表, 无规则则返回所有interface
     """
     param_json = request.get_json()
+    if 'interface_name' not in param_json:
+        param_json['interface_name'] = ''
     page_index = int(param_json.pop('pageIndex')) if 'pageIndex' in param_json else 1
     page_size = int(param_json.pop('pageSize')) if 'pageSize' in param_json else 10
     result = InterfaceAPI.get_interface(**param_json)
@@ -38,14 +40,15 @@ def get_interface():
     return jsonify({'success': True, 'res': result[(page_index - 1) * page_size:page_index * page_size]})
 
 
-@app.route('/interface/count', methods=['GET'])
+@app.route('/interface/count', methods=['POST'])
 @try_except
 @login_required
 def query_interface_count():
     """
     获取数据库中所有interface的总个数
     """
-    result = InterfaceAPI.query_interface_count()
+    result = InterfaceAPI.query_interface_count(**request.get_json())
+    print(2222222, request.get_json(), result)
     return jsonify({'success': True, 'res': result})
 
 

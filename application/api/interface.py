@@ -12,8 +12,10 @@ def add_interface(**kwargs):
 
 
 def get_interface(**kwargs):
+    interface_name = kwargs.pop('interface_name')
     with session_scope() as session:
-        query = session.query(Interface).filter_by(**kwargs).filter_by(status=1).order_by(Interface.update_time.desc())
+        query = session.query(Interface).filter(Interface.interface_name.like('%{0}%'.format(interface_name))).\
+            filter_by(**kwargs).filter_by(status=1).order_by(Interface.update_time.desc())
     interface_list = [interface.to_dict() for interface in query]
     return interface_list
 
@@ -25,9 +27,10 @@ def query_single_interface(interface_id):
     return interface_info
 
 
-def query_interface_count():
+def query_interface_count(interface_name=''):
     with session_scope() as session:
-        interface_count = session.query(Interface).filter_by(status=1).count()
+        interface_count = session.query(Interface).\
+            filter(Interface.interface_name.like('%{0}%'.format(interface_name))).filter_by(status=1).count()
     return interface_count
 
 

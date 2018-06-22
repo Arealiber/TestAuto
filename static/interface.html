@@ -27,9 +27,13 @@
                 <li class="breadcrumb-item active" aria-current="page">接口管理</li>
             </ol>
         </nav>
-
-        <a class="btn btn-primary btn-sm" href="/interface_detail/new" role="button" style="margin-bottom: 20px;">新增</a>
-
+        <div>
+            <a class="btn btn-primary btn-sm" href="/interface_detail/new" role="button" style="margin-bottom: 20px;margin-top: 15px">新增</a>
+            <div style="float:right;width: 30%">
+                <input id="input_search_name" style="width: 70%" placeholder="接口搜索" type="text" value="">
+                <button id="interface_select" class="btn btn-primary btn-sm" style="margin-bottom: 20px;margin-top: 15px">搜索</button>
+            </div>
+        </div>
         <div id="loader"></div>
         <div id="error_alert" class="alert alert-danger" role="alert"></div>
 
@@ -98,9 +102,34 @@
     }
 
     $(document).ready(function () {
+        get_interface_info('')
+    });
+
+    $(document).ready(function () {
+        $("#interface_select").click(function () {
+            var search_key = $('#input_search_name').val();
+            var pagination = '<ul class="pagination">\n' +
+                '                <li class="page-item" id="previous_page"><a class="page-link" href="#">上一页</a></li>\n' +
+                '                <li class="page-item" id="next_page"><a class="page-link" href="#">下一页</a></li>\n' +
+                '                <input id="input_page" value=""/>\n' +
+                '                <button id="jump_page" class="btn btn-primary btn-sm" style="height: 35px" data-page_num="" data-time_url="">跳转</button>\n' +
+                '            </ul>';
+            $("ul.pagination").empty();
+            $("ul.pagination").append(pagination);
+            $("#interface_table").find('tbody').empty();
+            get_interface_info(search_key)
+        })
+    });
+
+    function get_interface_info(interface_name='') {
         $.ajax({
-            type: 'get',
+            type: 'post',
             url: '/interface/count',
+            data: JSON.stringify({
+                interface_name:interface_name
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
             success: function (response) {
                 var page_size = 20;
                 $(".pagination").hide();
@@ -169,7 +198,8 @@
                             url: '/interface/info',
                             data: JSON.stringify({
                                 'pageSize': page_size,
-                                'pageIndex': page_num
+                                'pageIndex': page_num,
+                                'interface_name': interface_name
                             }),
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
@@ -200,7 +230,7 @@
                 }
             }
         })
-    });
+    }
 
     $(document).ready(function () {
         $("#interface_table").on('click', '.delete-button', function () {
