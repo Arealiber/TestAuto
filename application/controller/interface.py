@@ -46,7 +46,6 @@ def query_interface_count():
     获取数据库中所有interface的总个数
     """
     result = InterfaceAPI.query_interface_count(**request.get_json())
-    print(2222222, request.get_json(), result)
     return jsonify({'success': True, 'res': result})
 
 
