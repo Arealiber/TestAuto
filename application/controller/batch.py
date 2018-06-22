@@ -4,6 +4,7 @@ from flask import request, jsonify
 from application import app
 from application.api import batch as BatchAPI
 from application.api import use_case as UseCaseAPI
+from application.api import menutree as MenuTreeAPI
 from application.util import execute_test as Exec
 from application.util.exception import try_except
 from application.controller import login_required, user_real_name,localhost_required
@@ -169,3 +170,19 @@ def batch_auto_run():
         Exec.run_batch(batch['id'], environment_id=batch['environment_id'], auto_run=True,
                        alarm_monitor=batch['alarm_monitor'])
     return jsonify({'success': True})
+
+
+@app.route('/batch/search/use_case/list', methods=['POST'])
+@try_except
+@login_required
+def batch_search_use_case_list():
+    """
+    获取use_case列表，不需要获取与use_case关联的interface
+    :return:
+    """
+    param_json = request.get_json()
+    result = UseCaseAPI.get_use_case(**param_json)
+    function_info_dict = MenuTreeAPI.query_line_relation()
+    for use_case_info in result:
+        use_case_info.update(function_info_dict[use_case_info['function_id']])
+    return jsonify({'success': True, 'res': result})
