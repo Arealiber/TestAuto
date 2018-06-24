@@ -1,5 +1,6 @@
 from datetime import datetime
 import pytz
+import pandas as pd
 
 
 tz = pytz.timezone(pytz.country_timezones('cn')[0])
@@ -31,7 +32,7 @@ def shanghai_to_utc_timezone(time_in):
     return time_in
 
 
-def add_report_data_calculate(use_case_report_list):
+def get_function_of_data(use_case_report_list):
     all_report_data = {}
     single_report_data = {}
     for use_case_report in use_case_report_list:
@@ -66,14 +67,15 @@ def add_report_data_calculate(use_case_report_list):
     return list(all_report_list)
 
 
-def get_business_of_data(report_data_list, time_format='%Y%m%d'):
+def get_business_of_data(report_data_list, time_format='%Y%m%d', filter_line_name='business_line_id'):
     all_report_data = {}
     single_report_data = {}
+    filter_line_str = filter_line_name
     for use_case_report in report_data_list:
-        business_line_id = use_case_report.get('business_line_id')
+        filter_line_name = use_case_report.get(filter_line_str)
         create_time = use_case_report.get('create_time').strftime(time_format)
 
-        key = str(business_line_id) + create_time
+        key = str(filter_line_name) + create_time
         if all_report_data.get(key, None):
             single_report_data = all_report_data[key]
             single_report_data['run_count'] += use_case_report['run_count']
@@ -85,7 +87,7 @@ def get_business_of_data(report_data_list, time_format='%Y%m%d'):
         else:
             if single_report_data:
                 single_report_data = {}
-            single_report_data['business_line_id'] = business_line_id
+            single_report_data['business_line_id'] = filter_line_name
             single_report_data['run_count'] = use_case_report['run_count']
             single_report_data['success_count'] = use_case_report['success_count']
             single_report_data['fail_count'] = use_case_report['fail_count']
@@ -101,6 +103,14 @@ def get_business_of_data(report_data_list, time_format='%Y%m%d'):
         report_data['average_time'] = average_time
         report_data['pass_rate'] = pass_rate
     return list(all_report_list)
+
+
+def several_minutes_report_merge(report_info_list):
+    report_value_list = [list(info.values()) for info in report_info_list]
+    report_key_list = list(report_info_list[0].keys())
+    pd_data = pd.DataFrame(data=report_value_list, columns=report_info_list)
+
+    pass
 
 
 

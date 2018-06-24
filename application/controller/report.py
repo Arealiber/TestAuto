@@ -9,7 +9,7 @@ from application.api import use_case as UseCaseAPI
 from application.api import menutree as MenuTreeAPI
 from application import app
 from application.util.exception import try_except
-from application.util import add_report_data_calculate, get_business_of_data
+from application.util import get_function_of_data, get_business_of_data, several_minutes_report_merge
 from application.controller import login_required, localhost_required, report_data_manager
 from application.config.default import *
 
@@ -144,7 +144,7 @@ def add_day_report():
     report_info_dict = {}
     for report_info in report_info_list:
         report_info_dict[report_info['function_id']] = report_info
-    use_case_report_list = add_report_data_calculate(use_case_data_list)
+    use_case_report_list = get_function_of_data(use_case_data_list)
     for report_data in use_case_report_list:
         function_id = report_data['function_id']
         if report_info_dict and report_info_dict.get(function_id, None):
@@ -227,7 +227,7 @@ def add_week_report():
     report_info_dict = {}
     for report_info in report_info_list:
         report_info_dict[report_info['function_id']] = report_info
-    use_case_report_list = add_report_data_calculate(use_case_data_list)
+    use_case_report_list = get_function_of_data(use_case_data_list)
     for report_data in use_case_report_list:
         function_id = report_data['function_id']
         if report_info_dict and report_info_dict.get(function_id, None):
@@ -312,7 +312,7 @@ def add_month_report():
     report_info_dict = {}
     for report_info in report_info_list:
         report_info_dict[report_info['function_id']] = report_info
-    use_case_report_list = add_report_data_calculate(use_case_data_list)
+    use_case_report_list = get_function_of_data(use_case_data_list)
     for report_data in use_case_report_list:
         function_id = report_data['function_id']
         if report_info_dict and report_info_dict.get(function_id, None):
@@ -376,7 +376,38 @@ def query_month_report_info():
     return jsonify({'success': True, 'res': report_info_list})
 
 
+@app.route('/report/fifteen_minutes/info', methods=['POST'])
+@try_except
+@login_required
+def query_fifteen_minutes_report_info():
+    """
+    查询15分钟报表数据，默认查询1天数据
+    :param:
+    :return:
+    """
+    param_kwarg = request.get_json()
+    now_time_point = datetime.now()
+    to_time_point = now_time_point
+    from_time_point = now_time_point
+    if 'to_time' not in param_kwarg or not param_kwarg.get('to_time'):
+        param_kwarg['to_time'] = to_time_point.strftime(MINUTE_TIME_FMT)
+    else:
+        to_time = param_kwarg['to_time']
+        to_time = datetime.strptime(to_time, '%Y-%m-%d') + timedelta(days=1)
+        to_time = to_time.strftime(MINUTE_TIME_FMT)
+        param_kwarg.update({"to_time": to_time})
 
+    if 'from_time' not in param_kwarg or not param_kwarg.get('from_time', None):
+        param_kwarg['from_time'] = from_time_point.strftime(DAY_TIME_FMT)
+    else:
+        from_time = param_kwarg['from_time']
+        from_time = datetime.strptime(from_time, '%Y-%m-%d')
+        from_time = from_time.strftime(DAY_TIME_FMT)
+        param_kwarg.update({"from_time": from_time})
+    report_info_list = ReportAPI.get_minutes_report_info(**param_kwarg)
+    several_minutes_report_merge(report_info_list)
+
+    return jsonify({'success': True, 'res': ''})
 
 
 

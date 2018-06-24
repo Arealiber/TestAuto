@@ -398,7 +398,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 interface_log_dict['is_pass'] = result['success']
                 interface_log_insert(interface_log_dict)
 
-
                 if alarm_monitor:
                     if not app.config['DEBUG']:
                         cost_time = interface_log_dict['interface_stop'] - interface_log_dict['interface_start']
