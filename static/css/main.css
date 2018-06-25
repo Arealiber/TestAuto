@@ -192,7 +192,7 @@ body {
 .run_fail{
     cursor:pointer;
 }
-tr pre {
+tr pre, div pre {
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
     white-space: -o-pre-wrap;
