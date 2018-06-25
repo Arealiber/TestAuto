@@ -1009,8 +1009,8 @@
                             result_payload = result.json_response
                             execute_result_display.append('<p><b>返回html：</b></p>' + result_payload);
                         } else {
-                            result_payload = JSON.stringify(result.json_response);
-                            execute_result_display.append('<p><b>返回json：</b>' + result_payload + '</p>');
+                            result_payload = syntaxHighlight(result.json_response);
+                            execute_result_display.append('<pre><b>返回json：</b>' + result_payload + '</pre>');
                         }
                     })
                 } else {
@@ -1039,8 +1039,8 @@
                             result_payload = result.json_response;
                             execute_result_display.append('<p><b>返回html：</b></p>' + result_payload);
                         } else {
-                            result_payload = JSON.stringify(result.json_response);
-                            execute_result_display.append('<p><b>返回json：</b>' + result_payload + '</p>');
+                            result_payload = syntaxHighlight(result.json_response);
+                            execute_result_display.append('<pre><b>返回json：</b>' + result_payload + '</pre>');
                         }
                     })
                 }
