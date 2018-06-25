@@ -67,7 +67,7 @@ def get_function_of_data(use_case_report_list):
     return list(all_report_list)
 
 
-def get_business_of_data(report_data_list, time_format='%Y%m%d', filter_line_name='business_line_id'):
+def get_line_of_data(report_data_list, time_format='%Y%m%d', filter_line_name='business_line_id'):
     all_report_data = {}
     single_report_data = {}
     filter_line_str = filter_line_name
@@ -99,18 +99,12 @@ def get_business_of_data(report_data_list, time_format='%Y%m%d', filter_line_nam
 
     for report_data in all_report_list:
         average_time = report_data['sum_time'] / report_data['run_count']
-        pass_rate = report_data['success_count'] / report_data['run_count']
+        pass_rate = round(report_data['success_count'] / report_data['run_count'], 3)
         report_data['average_time'] = average_time
         report_data['pass_rate'] = pass_rate
     return list(all_report_list)
 
 
-def several_minutes_report_merge(report_info_list):
-    report_value_list = [list(info.values()) for info in report_info_list]
-    report_key_list = list(report_info_list[0].keys())
-    pd_data = pd.DataFrame(data=report_value_list, columns=report_info_list)
-
-    pass
 
 
 

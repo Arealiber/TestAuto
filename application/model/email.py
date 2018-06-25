@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 from application import engine
@@ -8,7 +8,7 @@ Base = declarative_base()
 
 
 class Email(Base):
-    __tablename__ = 'batch'
+    __tablename__ = 'email'
     __table_args__ = {
         "mysql_engine": "InnoDB",
         "mysql_charset": "utf8"
