@@ -108,7 +108,8 @@ def query_line_relation(**kwargs):
             system_name = system_line_dict[system_line_id].get('system_name')
             function_name = function_info['function_name']
             function_dict[function_info['id']] = {'business_name': business_name, 'system_name': system_name,
-                                                  'function_name': function_name, 'business_line_id': business_line_id}
+                                                  'function_name': function_name, 'system_line_id': system_line_id,
+                                                  'business_line_id': business_line_id}
         return function_dict
 
 

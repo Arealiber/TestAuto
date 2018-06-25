@@ -9,7 +9,7 @@ from application.api import use_case as UseCaseAPI
 from application.api import menutree as MenuTreeAPI
 from application import app
 from application.util.exception import try_except
-from application.util import get_function_of_data, get_business_of_data, several_minutes_report_merge
+from application.util import get_function_of_data, get_line_of_data
 from application.controller import login_required, localhost_required, report_data_manager
 from application.config.default import *
 
@@ -64,7 +64,7 @@ def add_minutes_report():
     all_report_list = all_report_data.values()
     for report_data in all_report_list:
         average_time = report_data['sum_time'] / report_data['run_count']
-        pass_rate = report_data['success_count'] / report_data['run_count']
+        pass_rate = round(report_data['success_count'] / report_data['run_count'], 3)
         report_data['average_time'] = average_time
         report_data['pass_rate'] = pass_rate
         if report_data['function_id']:
@@ -110,7 +110,7 @@ def query_minutes_report_info():
         if menu_tree_info.get(function_id, None):
             report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
-        report_info_list = get_business_of_data(report_info_list, '%Y-%m-%d %H:%M')
+        report_info_list = get_line_of_data(report_info_list, '%Y-%m-%d %H:%M')
         business_info_list = MenuTreeAPI.query_business_line()
         business_info_dict = {}
         for business_info in business_info_list:
@@ -191,7 +191,7 @@ def query_day_report_info():
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
-        report_info_list = get_business_of_data(report_info_list)
+        report_info_list = get_line_of_data(report_info_list)
         business_info_list = MenuTreeAPI.query_business_line()
         business_info_dict = {}
         for business_info in business_info_list:
@@ -277,7 +277,7 @@ def query_week_report_info():
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
-        report_info_list = get_business_of_data(report_info_list, '%W')
+        report_info_list = get_line_of_data(report_info_list, '%W')
         business_info_list = MenuTreeAPI.query_business_line()
         business_info_dict = {}
         for business_info in business_info_list:
@@ -359,7 +359,7 @@ def query_month_report_info():
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
     if param_kwarg.get('data_type', None):
-        report_info_list = get_business_of_data(report_info_list)
+        report_info_list = get_line_of_data(report_info_list)
         business_info_list = MenuTreeAPI.query_business_line()
         business_info_dict = {}
         for business_info in business_info_list:
