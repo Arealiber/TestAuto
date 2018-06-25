@@ -15,7 +15,7 @@ def add_use_case(**kwargs):
 
 def get_use_case(**kwargs):
     with session_scope() as session:
-        query = session.query(UseCase).filter_by(**kwargs).filter_by(status=1).order_by(UseCase.create_time.desc())
+        query = session.query(UseCase).filter_by(**kwargs).filter_by(status=1).order_by(UseCase.update_time.desc())
     use_case_list = [use_case.to_dict() for use_case in query]
     return use_case_list
 
