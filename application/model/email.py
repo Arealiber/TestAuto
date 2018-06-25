@@ -15,13 +15,13 @@ class Email(Base):
     }
 
     id = Column(Integer, primary_key=True)
-    email_account = Column(String(50), nullable=False)
+    email_address = Column(String(50), nullable=False)
     create_time = Column(DateTime, default=datetime.utcnow)
 
     def to_dict(self):
         return {
             'id': self.id,
-            'email_account': self.email_account,
+            'email_address': self.email_address,
             'create_time': self.create_time
         }
 
