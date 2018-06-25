@@ -121,10 +121,10 @@
                         }
                         var str_res =
                             '<p>请求包头: ' + interface_run_log.s_header + '</p>' +
-                            '<pre>请求消息体: ' + syntaxHighlight(interface_run_log.s_payload) + '</pre>'+
+                            '<p>请求消息体:</p><pre>' + syntaxHighlight(interface_run_log.s_payload) + '</pre>'+
                             '<p>返回状态码: ' + interface_run_log.r_code + '</p>' +
                             '<p>返回包头: ' + interface_run_log.r_header + '</p>' +
-                            '<pre>返回消息体:' + r_json_paload + '</pre>';
+                            '<p style="height: 5px;margin-top: -5px">返回消息体:<pre>' + r_json_paload + '</pre></p>';
 
                         if (interface_run_log.error_message){
                              str_res = '<p style="color: red;">错误信息: "' + interface_run_log.error_message + '</p>' + str_res
