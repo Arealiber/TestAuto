@@ -246,20 +246,20 @@
                                     }else {
                                         $("#run_log_table").show();
                                         var use_case_run_log_list = response.res;
+                                        console.log(use_case_run_log_list[0]);
                                         $.each(use_case_run_log_list, function (i, use_case_run_log) {
-                                            var start_time = use_case_run_log.start_time.substring(0, 23).replace(' ', '_');
+                                            var from_time = use_case_run_log.start_time.substring(0, 16);
                                             var button_col = '<div class="btn-group btn-group-sm" role="group">'+
                                                 '<a class="btn btn-info" href="/use_case_run_log/detail/'+
-                                                use_case_run_log.id + time_url + '" role="button">详情</a></button>';
+                                                use_case_run_log.id + '?from_time='+ from_time + '&to_time=' + use_case_run_log.end_time.substring(0, 16)+ '" role="button">详情</a></button>';
                                             var is_pass_string = '';
                                             if (use_case_run_log.is_pass) {
                                                 is_pass_string = '<td>是</td>';
                                             } else{
                                                 is_pass_string = '<td style="color: red; font-weight: bold;">否</td>';
                                             }
-                                            if (!use_case_run_log.start_time) {
-                                                start_time = "";
-                                            } else{
+                                            var start_time = "";
+                                            if (use_case_run_log.start_time){
                                                 start_time = use_case_run_log.start_time.substring(0, 23);
                                             }
                                             var end_time = '';
