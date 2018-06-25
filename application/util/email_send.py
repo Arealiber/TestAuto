@@ -9,7 +9,6 @@ def email_send(**kwargs):
     :param kwargs:    所需参数，包括收件人/邮件标题/邮件内容
     :return:          成功True， 失败False
     """
-    address_name = kwargs['address'].split('@')[0]
     json_data = {
         'head': {
             'version': '0.01',
@@ -20,7 +19,7 @@ def email_send(**kwargs):
         'params': {
             'system': 'HSB',
             'time': int(time.time()),
-            'address': {address_name: kwargs['address']},
+            'address': kwargs['address'],
             'subject': kwargs['title'],
             'body': kwargs['body']
         }
@@ -48,8 +47,8 @@ def get_html_data():
 
 if __name__ == '__main__':
     kwargs = dict()
-    kwargs['str_url'] = 'http://push.huanjixia.com/email-interface'
-    kwargs['address'] = 'lichengbo@huishoubao.com.cn'
+    kwargs['str_url'] = 'http://push.huishoubao.com/email-interface'
+    kwargs['address'] = {'lichengbo': 'lichengbo@huishoubao.com.cn'}
     kwargs['title'] = '自动化巡检报表'
     with open('D:\\AutoTest\\1.html', encoding="utf-8") as f:
         data = f.read()
