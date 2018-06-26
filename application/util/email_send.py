@@ -1,13 +1,13 @@
 # -*- coding:utf-8 -*-
 import requests
 import time
-import html
-from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
-from application.util import get_line_of_data
-from application.api import report as ReportAPI
-from application.api import menutree as MenuTreeAPI
-from application.config.default import *
+if __name__ != '__main__':
+    from datetime import datetime, timedelta
+    from dateutil.relativedelta import relativedelta
+    from application.util import get_line_of_data
+    from application.api import report as ReportAPI
+    from application.api import menutree as MenuTreeAPI
+    from application.config.default import *
 
 
 def email_send(**kwargs):
@@ -31,10 +31,9 @@ def email_send(**kwargs):
             'body': kwargs['body']
         }
     }
-    print(kwargs.get('str_url'))
     str_url = kwargs.get('str_url')
     res = requests.post(str_url, json=json_data, proxies=kwargs['proxies'])
-    print(res, res.content)
+
     return True
 
 
@@ -54,25 +53,9 @@ def get_send_body():
     return report_info_list
 
 
-def get_html_data():
-    inline_css = {
-        'class1': 'color:#00FF00;',
-        'class2': 'color:#FF0000;',
-        'class3': 'color:#FFFF00;',
-    }
-
-    b = html._html5
-    t = b.table(border='1')
-    r = t.tr()
-    r.td('column 1', style=inline_css['class1'])
-    r.td('column 2', style=inline_css['class2'])
-    r.td('column 3', style=inline_css['class3'])
-    return b
-
-
 if __name__ == '__main__':
     kwargs = dict()
-    kwargs['str_url'] = 'http://push.huishoubao.com/email-interface'
+    kwargs['str_url'] = 'http://push.huanjixia.com/email-interface'
     kwargs['address'] = {'lichengbo': 'lichengbo@huishoubao.com.cn'}
     kwargs['title'] = '自动化巡检报表'
     with open('D:\\AutoTest\\1.html', encoding="utf-8") as f:
