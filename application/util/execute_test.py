@@ -292,9 +292,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             try:
                 response = requests.post('http://123.207.51.243:8000/base_server', json=get_server_name_dict, timeout=5)
                 server_name = response.json()['_data']['retInfo']['serverName']
-            except:
-                server_name = '获取服务名失败'
-            print(111111111111111)
+            except Exception as e:
+                server_name = '获取服务名失败:'.format(str(e))
 
             # 获取方法ID, 接口名
             requested_interface = ''
@@ -312,14 +311,12 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             interface_log_dict['s_header'] = header if header else ''
             interface_log_dict['s_payload'] = json.dumps(json_payload, ensure_ascii=False) if json_payload else ''
             interface_log_dict['interface_start'] = timeit.default_timer()
-            print(DNS_CACHE)
 
             request_exception = False
             try:
                 if request_method.upper() == 'GET':
                     r = session.get(url, **request_kwargs)
                 elif request_method.upper() == 'POST':
-                    print(2222222222222)
                     r = session.post(url, **request_kwargs)
                 try:
                     json_response = r.json()
