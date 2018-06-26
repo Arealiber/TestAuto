@@ -26,7 +26,7 @@ def get_batch_run_log_table(table_name):
                       Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False),
                       extend_existing=True,
                       )
-        table.create(checkfirst=True)
+        table.create(bind=engine, checkfirst=True)
         batch_run_log_table[table_name] = table
     return table
 
@@ -47,7 +47,7 @@ def get_use_case_run_log_table(table_name):
                       Column('auto_run', Boolean, default=False),
                       extend_existing=True,
                       )
-        table.create(checkfirst=True)
+        table.create(bind=engine, checkfirst=True)
         use_case_run_log_table[table_name] = table
     return table
 
@@ -72,7 +72,7 @@ def get_interface_run_log_table(table_name):
                       Column('error_message', String(2000)),
                       extend_existing=True,
                       )
-        table.create(checkfirst=True)
+        table.create(bind=engine, checkfirst=True)
         interface_run_log_table[table_name] = table
     return table
 
