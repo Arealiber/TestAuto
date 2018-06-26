@@ -4,7 +4,7 @@ from application import app
 from application.controller import login_required, localhost_required
 from application.util.exception import try_except
 from application.api import email as EmailAPI
-from application.util.email_send import email_send
+from application.util import email_send as EmailSendAPI
 
 
 @app.route('/email/send', methods=['POST'])
@@ -16,16 +16,22 @@ def email_send():
     :return:
     """
     email_data = dict()
+    email_data['address'] = dict()
     email_data['str_url'] = 'http://push.huishoubao.com/email-interface'
     email_data['title'] = '自动化巡检报表'
     email_data['proxies'] = {
         'http': app.config['DB_URI'].split('@')[1].split('/')[0]  # 取开发机ip作为代理服务器
     }
     result = EmailAPI.query_email_account(**request.get_json())
-
+    if not result:
+        return jsonify({'success': False, 'res': '邮箱不能为空'})
     for emai_account in result:
-        email_data[emai_account.get('email_name')] = emai_account.get('email_address')
+        email_data['address'][emai_account.get('email_name')] = emai_account.get('email_address')
 
+    data_body = EmailSendAPI.get_send_body()
+    print(data_body)
+    email_data['body'] = str(data_body)
+    EmailSendAPI.email_send(**email_data)
     return jsonify({'success': True})
 
 
