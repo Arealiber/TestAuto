@@ -15,8 +15,14 @@ def email_send():
     发送email到指定邮箱
     :return:
     """
+    email_data = dict()
+    email_data['str_url'] = 'http://push.huishoubao.com/email-interface'
+    email_data['title'] = '自动化巡检报表'
+    email_data['proxies'] = {
+        'http': app.config['DB_URI'].split('@')[1].split('/')[0]  # 取开发机ip作为代理服务器
+    }
     result = EmailAPI.query_email_account(**request.get_json())
-    email_data = {}
+
     for emai_account in result:
         email_data[emai_account.get('email_name')] = emai_account.get('email_address')
 

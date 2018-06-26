@@ -167,8 +167,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
 
     with requests.Session() as session:
         if not alarm_monitor:
-            if not environment_id and not batch_log_id:
-                environment_id = use_case_info['environment_id']
+            if not batch_log_id or (batch_log_id and environment_id):
+                environment_id = environment_id or use_case_info['environment_id']
             environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
             for element in environment_info:
                 url = element['url']
@@ -294,6 +294,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 server_name = response.json()['_data']['retInfo']['serverName']
             except:
                 server_name = '获取服务名失败'
+            print(111111111111111)
 
             # 获取方法ID, 接口名
             requested_interface = ''
@@ -311,12 +312,14 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             interface_log_dict['s_header'] = header if header else ''
             interface_log_dict['s_payload'] = json.dumps(json_payload, ensure_ascii=False) if json_payload else ''
             interface_log_dict['interface_start'] = timeit.default_timer()
+            print(DNS_CACHE)
 
             request_exception = False
             try:
                 if request_method.upper() == 'GET':
                     r = session.get(url, **request_kwargs)
                 elif request_method.upper() == 'POST':
+                    print(2222222222222)
                     r = session.post(url, **request_kwargs)
                 try:
                     json_response = r.json()
