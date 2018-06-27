@@ -119,14 +119,13 @@
                         }
                         catch(e) {
                         }
-                        console.log(1111111, r_json_paload);
                         if (r_json_paload.indexOf('<!DOCTYPE html>') > -1) {
                             var str_res =
                             '<p><b>请求包头: </b>' + interface_run_log.s_header + '</p>' +
                             '<p><b>请求消息体:</b></p><pre>' + syntaxHighlight(interface_run_log.s_payload) + '</pre>'+
                             '<p><b>返回状态码: </b>' + interface_run_log.r_code + '</p>' +
                             '<p><b>返回包头: </b>' + interface_run_log.r_header + '</p>' +
-                            '<p style="height: 5px;margin-top: -5px"><b>返回页面:</b><iframe>' + r_json_paload + '</iframe></p>';
+                            '<p style="height: 5px;margin-top: -5px"><b>返回页面:</b>' + escapeHtml(r_json_paload) + '</p>';
                         } else {
                             str_res =
                             '<p><b>请求包头: </b>' + interface_run_log.s_header + '</p>' +
@@ -151,8 +150,8 @@
                         }else {
                             is_pass = '<td>是</td>'
                         }
-                        str_res = str_res.replace('iframe', '');
-                        str_res = str_res.replace('style=\\"width:100%\\">', '');
+                        // str_res = str_res.replace('iframe', '');
+                        // str_res = str_res.replace('style=\\"width:100%\\">', '');
                         var button_col = '<button class="btn btn-sm btn-primary" data-value="open" type="button" data-json="' + escapeHtml(str_res) +'">...</button>';
 
                         $("#interface_run_log_table").find("tbody").
