@@ -39,7 +39,7 @@ def new_getaddrinfo(*args):
     except:
         url = args[0]
         if url in DNS_CACHE:
-            args = ('www.baidu.com', args[1], args[2], args[3])
+            args = ('www.huishoubao.com.cn', args[1], args[2], args[3])
             result = old_getaddrinfo(*args)[0]
             dns_result = result[4]
             dns_result = (DNS_CACHE[url], dns_result[1])
@@ -326,11 +326,10 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             interface_log_dict['interface_start'] = timeit.default_timer()
 
             request_exception = False
+            request_method = request_method.upper()
             try:
-                if request_method.upper() == 'GET':
-                    r = session.get(url, **request_kwargs)
-                elif request_method.upper() == 'POST':
-                    r = session.post(url, **request_kwargs)
+                r = session.request(request_method, url, **request_kwargs)
+                r.encoding = 'utf-8'
                 try:
                     json_response = r.json()
                     json_flag = True
@@ -338,7 +337,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     json_flag = False
                     r_type = r.headers['Content-Type']
                     if 'application/json' != r_type:
-                        r.encoding = 'utf-8'
                         json_response = r.text
                     else:
                         json_response = {}
