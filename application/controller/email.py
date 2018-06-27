@@ -44,8 +44,14 @@ def email_account_add():
     添加要发送的邮箱地址
     :return:
     """
-    EmailAPI.add_email_account(**request.get_json())
-    return jsonify({'success': True})
+    kwarg = request.get_json()
+    if not (kwarg.get('email_name') and kwarg.get('email_address')):
+        return jsonify({'success': False, 'error': '用户名或地址不能为空'})
+    elif '@' not in kwarg.get('email_address'):
+        return jsonify({'success': False, 'error': '邮箱格式错误请正确填写（template@huishoubao.com.cn）'})
+    else:
+        EmailAPI.add_email_account(**request.get_json())
+        return jsonify({'success': True})
 
 
 @app.route('/email/account/delete', methods=['POST'])
