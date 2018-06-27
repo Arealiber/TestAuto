@@ -1,5 +1,4 @@
 # -*- coding:utf-8 -*-
-import os
 from flask import request, jsonify
 from application import app
 from application.controller import login_required, localhost_required
@@ -30,6 +29,8 @@ def email_send():
         email_data['address'][emai_account.get('email_name')] = emai_account.get('email_address')
 
     data_body = EmailSendAPI.get_send_body()
+    if not data_body:
+        data_body = '获取日志报表数据失败'
     email_data['body'] = str(data_body)
     result = EmailSendAPI.email_send(**email_data)
     return jsonify({'success': True, 'res': result})
