@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import os
 from flask import request, jsonify
 from application import app
 from application.controller import login_required, localhost_required
@@ -17,7 +18,7 @@ def email_send():
     """
     email_data = dict()
     email_data['address'] = dict()
-    email_data['str_url'] = 'http://push.huishoubao.com/email-interface'
+    email_data['str_url'] = 'http://push.huanjixia.com/email-interface'
     email_data['title'] = '自动化巡检报表'
     email_data['proxies'] = {
         'http': app.config['DB_URI'].split('@')[1].split('/')[0]  # 取开发机ip作为代理服务器
@@ -30,8 +31,8 @@ def email_send():
 
     data_body = EmailSendAPI.get_send_body()
     email_data['body'] = str(data_body)
-    EmailSendAPI.email_send(**email_data)
-    return jsonify({'success': True})
+    result = EmailSendAPI.email_send(**email_data)
+    return jsonify({'success': True, 'res': result})
 
 
 @app.route('/email/account/add', methods=['POST'])

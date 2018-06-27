@@ -72,10 +72,10 @@ def get_line_of_data(report_data_list, time_format='%Y%m%d', filter_line_name='b
     single_report_data = {}
     filter_line_str = filter_line_name
     for use_case_report in report_data_list:
-        filter_line_name = use_case_report.get(filter_line_str)
+        filter_line_id = use_case_report.get(filter_line_str)
         create_time = use_case_report.get('create_time').strftime(time_format)
 
-        key = str(filter_line_name) + create_time
+        key = str(filter_line_id) + create_time
         if all_report_data.get(key, None):
             single_report_data = all_report_data[key]
             single_report_data['run_count'] += use_case_report['run_count']
@@ -87,13 +87,15 @@ def get_line_of_data(report_data_list, time_format='%Y%m%d', filter_line_name='b
         else:
             if single_report_data:
                 single_report_data = {}
-            single_report_data['business_line_id'] = filter_line_name
+            single_report_data[filter_line_str] = filter_line_id
             single_report_data['run_count'] = use_case_report['run_count']
             single_report_data['success_count'] = use_case_report['success_count']
             single_report_data['fail_count'] = use_case_report['fail_count']
             single_report_data['max_time'] = use_case_report['max_time']
             single_report_data['sum_time'] = use_case_report['sum_time']
             single_report_data['create_time'] = tz.localize(use_case_report['create_time'])
+            single_report_data['business_name'] = use_case_report['business_name']
+            single_report_data['system_name'] = use_case_report['system_name']
             all_report_data[key] = single_report_data
     all_report_list = all_report_data.values()
 
