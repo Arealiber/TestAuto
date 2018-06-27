@@ -334,6 +334,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     json_response = r.json()
                     json_flag = True
                 except Exception as e:
+                    print(str(e))
                     json_flag = False
                     r_type = r.headers['Content-Type']
                     if 'application/json' != r_type:
@@ -354,7 +355,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 else:
                     r.encoding = 'utf-8'
                     interface_log_dict['r_payload'] = r.text
-                    result['json_response'] = '<iframe srcdoc="{}" style="width:100%;height:60vh" frameborder="0"></iframe>'.format(html.escape(r.text))
+                    result['json_response'] = '<iframe srcdoc="{}" style="width:100%;height:60vh" ' \
+                                              'frameborder="0"></iframe>'.format(html.escape(r.text))
             except ConnectTimeout as e:
                 request_exception = True
                 error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
