@@ -118,6 +118,13 @@ def use_case_report():
     return app.send_static_file('report.html')
 
 
+@app.route('/email/manage')
+@login_required
+@no_cache
+def email_manage():
+    return app.send_static_file('email_manage.html')
+
+
 @app.route('/logout')
 @try_except
 def logout():
