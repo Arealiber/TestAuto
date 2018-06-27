@@ -34,7 +34,20 @@ DNS_CACHE = {}
 
 
 def new_getaddrinfo(*args):
-    result = old_getaddrinfo(*args)[0]
+    try:
+        result = old_getaddrinfo(*args)[0]
+    except:
+        url = args[0]
+        if url in DNS_CACHE:
+            args = ('www.baidu.com', args[1], args[2], args[3])
+            result = old_getaddrinfo(*args)[0]
+            dns_result = result[4]
+            dns_result = (DNS_CACHE[url], dns_result[1])
+            modified_result = [(result[0], result[1], result[2], result[3], dns_result)]
+            return modified_result
+        else:
+            result = old_getaddrinfo(*args)[0]
+
     dns_result = result[4]
     if args[0] in DNS_CACHE:
         dns_result = (DNS_CACHE[args[0]], dns_result[1])
