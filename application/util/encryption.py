@@ -1,4 +1,6 @@
 import hashlib
+import time
+import json
 
 
 def key_value_sort_join(**kwargs):
@@ -49,3 +51,23 @@ def huan_ji_xia_encryption(json_payload):
     elif '_param' in json_payload:
         json_payload['_param']['sign'] = sign
     return json_payload
+
+
+def xian_yu_platform_encryption(url, json_payload):
+    """
+    闲鱼平台加密
+    :param url: 请求url
+           json_payload: 请求的json
+    :return:
+    """
+    sec_key = 'fdcd2bdc3846fc6d5bb4967174758c38'
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    json_payload_str = json.dumps(json_payload, ensure_ascii=False)
+    str_data = ''.join([sec_key, 'app_key24633185methodqimen.alibaba.idle.recycle.quote.gettimestamp', timestamp,
+                        json_payload_str, sec_key])
+    data_s = calc_md5(str_data)
+    url += '?timestamp=%s&sign=%s&app_key=24633185&method=qimen.alibaba.idle.recycle.quote.get'.format(timestamp,
+                                                                                                       data_s)
+    return url
+
+
