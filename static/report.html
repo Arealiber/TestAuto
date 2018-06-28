@@ -170,7 +170,8 @@
                     for ( var i=0, ien=report_list.length ; i<ien ; i++ ) {
                         var function_id = report_list[i].function_id;
                         var from_time = report_list[i].create_time;
-                        from_time = moment(from_time).format('YYYY-MM-DD 00:00');
+                        from_time = moment.utc(from_time).format('YYYY-MM-DD 00:00');
+                        console.log(report_list[i].create_time, from_time)
                         var to_time = from_time;
                         if (url === '/report/minutes_report/info') {
                             from_time = moment.utc(datatable[i][8]).subtract(5, 'minute').format("YYYY-MM-DD HH:mm");
@@ -185,8 +186,8 @@
                             }
                             datatable[i][2] = '<a style="color:black;" href="' + href +'">' + report_list[i].function_name+'</a>';
                         }else if (url === '/report/day_report/info') {
-                            from_time = moment(to_time).subtract(0, "days").format('YYYY-MM-DD 08:00');
-                            to_time = moment(to_time).add(1, "days").format('YYYY-MM-DD 08:00');
+                            from_time = moment.utc(to_time).subtract(1, "days").format('YYYY-MM-DD 00:00');
+                            to_time = moment.utc(to_time).add(1, "days").format('YYYY-MM-DD 00:00');
                             datatable[i][8] = moment.utc(datatable[i][8]).format("YYYY-MM-DD");
                             href = '/use_case_run_log/1?from_time='+ from_time + '&to_time=' + to_time +'&function_id=' + function_id + '&auto_run=' + true;
                             if (report_list[i].fail_count > 0) {
@@ -199,10 +200,10 @@
                                 report_list[i].function_name+'</a>';
                         } else {
                             if (url === '/report/week_report/info') {
-                                from_time = moment(to_time).subtract(1, "weeks").format('YYYY-MM-DD 00:00');
+                                from_time = moment.utc(to_time).subtract(1, "weeks").format('YYYY-MM-DD 00:00');
                                 datatable[i][8] = moment.utc(datatable[i][8]).format("YYYY") + '第'+ moment(datatable[i][8]).format("W") + '周';
                             } else {
-                                from_time = moment(to_time).subtract(1, "months").format('YYYY-MM-DD 00:00');
+                                from_time = moment.utc(to_time).subtract(1, "months").format('YYYY-MM-DD 00:00');
                                 datatable[i][8] = moment.utc(datatable[i][8]).format("YYYY-MM");
                             }
                             if (report_list[i].fail_count > 0) {

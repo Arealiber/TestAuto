@@ -55,7 +55,7 @@ def huan_ji_xia_encryption(json_payload):
 
 def xian_yu_platform_encryption(url, json_payload):
     """
-    闲鱼平台加密
+    闲鱼平台加密 图书加密，手机类加密方式不一样
     :param url: 请求url
            json_payload: 请求的json
     :return:
