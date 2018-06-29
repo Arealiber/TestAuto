@@ -1,6 +1,7 @@
 import requests
 import json
 import timeit
+import time
 import re
 import socket
 import html
@@ -151,19 +152,19 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             interface_info['param_define_list'] = []
             param_define_list = Case_API.get_case_parameter_relation(relation_id=interface_relation['id'])
             for param in param_define_list:
-                pattern = re.compile(r'\${param\|[^${}]*}|^random\(.*\)')
+                pattern = re.compile(r'\${param\|[^${}]*}|^random\(.*\)|\${timestamps}')
                 match_result = pattern.findall(param['parameter_value'])
                 if match_result:
                     if 'random'in match_result[0]:
                         param_value = ParameterUtil.random_length_seq(match_result[0])
+                    elif '${timestamps}' in match_result:
+                        param_value = str(int(time.time()))
                     else:
                         param_name = match_result[0].split('|')[1].replace('}', '')
                         param_value = ParameterAPI.get_parameter(parameter_name=param_name)[0]['value']
                     param['parameter_value'] = param_value
                 interface_info['param_define_list'].append(param)
-
             use_case_info['interface_list'].append(interface_info)
-
         interface_list = use_case_info['interface_list']
     except Exception as e:
         # 用例运行日志记录
