@@ -39,7 +39,7 @@ def get_use_case_run_log_table(table_name):
                       Column('id', Integer, primary_key=True),
                       Column('batch_run_log_id', Integer),
                       Column('use_case_id', Integer, nullable=False),
-                      Column('is_pass', Boolean),
+                      Column('is_pass', Boolean, default=False),
                       Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
                       Column('end_time', TIMESTAMP(fsp=3)),
                       Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
