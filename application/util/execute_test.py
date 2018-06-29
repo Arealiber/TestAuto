@@ -139,7 +139,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 'use_case_count': use_case_count,
                 'batch_start_timer': batch_start_timer
                 }
-
     try:
         use_case_info['interface_list'] = []
         # 对用例中使用预定义参数的做参数替换
@@ -149,21 +148,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             interface_info = InterfaceAPI.get_interface(id=interface_id)[0]
             interface_info['eval_string'] = eval_string
 
-            interface_info['param_define_list'] = []
-            param_define_list = Case_API.get_case_parameter_relation(relation_id=interface_relation['id'])
-            for param in param_define_list:
-                pattern = re.compile(r'\${param\|[^${}]*}|^random\(.*\)|\${timestamps}')
-                match_result = pattern.findall(param['parameter_value'])
-                if match_result:
-                    if 'random'in match_result[0]:
-                        param_value = ParameterUtil.random_length_seq(match_result[0])
-                    elif '${timestamps}' in match_result:
-                        param_value = str(int(time.time()))
-                    else:
-                        param_name = match_result[0].split('|')[1].replace('}', '')
-                        param_value = ParameterAPI.get_parameter(parameter_name=param_name)[0]['value']
-                    param['parameter_value'] = param_value
-                interface_info['param_define_list'].append(param)
+            interface_info['param_define_list'] = get_param_define_list(interface_relation['id'])
             use_case_info['interface_list'].append(interface_info)
         interface_list = use_case_info['interface_list']
     except Exception as e:
@@ -207,7 +192,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     param_list = ParameterUtil.search_parameter(item_to_rephrase)
                     if param_list:
                         for item in param_list:
-                            param_value = next((param for param in param_define_list if param["parameter_name"] == item))['parameter_value']
+                            param_value = next((param for param in param_define_list
+                                                if param["parameter_name"] == item))['parameter_value']
                             value_to_rephrase = ParameterUtil.search_parameter(param_value)
                             if value_to_rephrase:
                                 for value_info in value_to_rephrase:
@@ -227,9 +213,11 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                                 item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), new_param_value)
                             else:
                                 if item_to_rephrase == interface['interface_url']:
-                                    item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '{0}'.format(param_value))
+                                    item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '{0}'.
+                                                                                format(param_value))
                                 else:
-                                    item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '"{0}"'.format(param_value))
+                                    item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '"{0}"'.
+                                                                                format(param_value))
                     result_list.append(item_to_rephrase)
                 url = result_list[0]
                 header = result_list[1]
@@ -527,4 +515,23 @@ def run_batch(batch_id, environment_id=0, auto_run=False, alarm_monitor=False):
         use_case = UseCaseAPI.get_use_case(id=relation['use_case_id'])[0]
         run_use_case_async(use_case['id'], batch_log_id, environment_id=environment_id, use_case_count=use_case_count,
                            batch_start_timer=start_timer, auto_run=auto_run, alarm_monitor=alarm_monitor)
+
+
+def get_param_define_list(relation_id=None):
+    param_define_list = Case_API.get_case_parameter_relation(relation_id=relation_id)
+    param_list = []
+    for param in param_define_list:
+        pattern = re.compile(r'\${param\|[^${}]*}|^random\(.*\)|\${timestamps}')
+        match_result = pattern.findall(param['parameter_value'])
+        if match_result:
+            if 'random' in match_result[0]:
+                param_value = ParameterUtil.random_length_seq(match_result[0])
+            elif '${timestamps}' in match_result:
+                param_value = str(int(time.time()))
+            else:
+                param_name = match_result[0].split('|')[1].replace('}', '')
+                param_value = ParameterAPI.get_parameter(parameter_name=param_name)[0]['value']
+            param['parameter_value'] = param_value
+        param_list.append(param)
+    return param_list
 
