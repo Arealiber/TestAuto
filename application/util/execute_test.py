@@ -151,11 +151,14 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             interface_info['param_define_list'] = []
             param_define_list = Case_API.get_case_parameter_relation(relation_id=interface_relation['id'])
             for param in param_define_list:
-                pattern = re.compile(r'\${param\|[^${}]*}')
+                pattern = re.compile(r'\${param\|[^${}]*}|^random\(.*\)')
                 match_result = pattern.findall(param['parameter_value'])
                 if match_result:
-                    param_name = match_result[0].split('|')[1].replace('}', '')
-                    param_value = ParameterAPI.get_parameter(parameter_name=param_name)[0]['value']
+                    if 'random'in match_result[0]:
+                        param_value = ParameterUtil.random_length_seq(match_result[0])
+                    else:
+                        param_name = match_result[0].split('|')[1].replace('}', '')
+                        param_value = ParameterAPI.get_parameter(parameter_name=param_name)[0]['value']
                     param['parameter_value'] = param_value
                 interface_info['param_define_list'].append(param)
 
