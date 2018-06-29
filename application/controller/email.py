@@ -19,9 +19,9 @@ def email_send():
     email_data['address'] = dict()
     email_data['str_url'] = 'http://push.huanjixia.com/email-interface'
     email_data['title'] = '自动化巡检报表'
-    email_data['proxies'] = {
-        'http': app.config['DB_URI'].split('@')[1].split('/')[0]  # 取开发机ip作为代理服务器
-    }
+    if app.config['PROXIES']:
+        email_data['proxies'] = {'http': app.config['DB_URI'].split('@')[1].split('/')[0]}  # 取开发机ip作为代理服务器
+
     result = EmailAPI.query_email_account(**request.get_json())
     if not result:
         return jsonify({'success': False, 'res': '邮箱不能为空'})

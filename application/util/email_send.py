@@ -33,7 +33,7 @@ def email_send(**kwargs):
         }
     }
     str_url = kwargs.get('str_url')
-    res = requests.post(str_url, json=json_data, proxies=kwargs['proxies'])
+    res = requests.post(str_url, json=json_data, proxies=kwargs.get('proxies', None))
     if res.status_code == 200:
         return '成功'
     else:
