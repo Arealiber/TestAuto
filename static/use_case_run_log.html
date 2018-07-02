@@ -324,9 +324,7 @@
         $('#menu_tree').treeview({
             data: tree_data,
             onNodeSelected: function (event, data) {
-                if (data.text != '运行日志') {
-                    getMapfromUrl(data);
-                }
+                getMapfromUrl(data);
             },
         });
     })
