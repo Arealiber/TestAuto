@@ -24,12 +24,24 @@ def random_length_seq(input_string):
     """
     digits = '0123456789'
     str_letters = 'abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    pattern = re.compile(r'\d+')
-    match_result = pattern.findall(input_string)
-    if 'str' in input_string and match_result:
-        return ''.join([random.choice(digits + str_letters) for _ in range(int(match_result[0]))])
-    elif match_result:
-        return ''.join([random.choice(digits) for _ in range(int(match_result[0]))])
+    param_pattern = re.compile(r'\((.*)\)')
+    param = param_pattern.findall(input_string)[0].split(',')
+    start_str = ''
+    if 'str' in input_string and param[1]:
+        param_length = param[1]
+        random_str = digits + str_letters
+        if len(param) == 3:
+            start_str = param[-1].strip().strip("'").strip("\"")
     else:
-        return None
+        if 'int' != param[0]:
+            param_length = param[0]
+        else:
+            param_length = param[1]
+        random_str = digits
+        if len(param) == 2:
+            start_str = param[-1].strip().strip("'").strip("\"")
+    if len(start_str) > int(param_length):
+        return start_str
+    return ''.join([start_str] + [random.choice(random_str) for _ in range(int(param_length)-len(start_str))])
+
 
