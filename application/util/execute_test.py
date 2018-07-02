@@ -14,7 +14,6 @@ from application.util import encryption as Encryption
 from application.util import parameter as ParameterUtil
 from application.api import run_log as RunLogAPI
 from application.api import interface as InterfaceAPI
-from application.api import use_case as Case_API
 from application.api import parameter as ParameterAPI
 from application.api import batch as BatchAPI
 from application.api import use_case as UseCaseAPI
@@ -124,11 +123,11 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
 
     # 获取用例信息以及用例下接口信息
     try:
-        use_case_info = Case_API.get_use_case(id=use_case_id)[0]
+        use_case_info = UseCaseAPI.get_use_case(id=use_case_id)[0]
         if relation_id:
-            interface_list = Case_API.get_relation(id=relation_id)
+            interface_list = UseCaseAPI.get_relation(id=relation_id)
         else:
-            interface_list = Case_API.get_relation(use_case_id=use_case_id)
+            interface_list = UseCaseAPI.get_relation(use_case_id=use_case_id)
     except Exception as e:
         use_case_exception_log_update(use_case_log_id, use_case_start)
         return {'success': False,
@@ -315,6 +314,10 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             interface_log_dict['interface_start'] = timeit.default_timer()
 
             request_exception = False
+            log_report_code = 0
+            error_string = ''
+            json_response = dict()
+            result = dict()
             request_method = request_method.upper()
             try:
                 r = session.request(request_method, url, **request_kwargs)
@@ -519,7 +522,7 @@ def run_batch(batch_id, environment_id=0, auto_run=False, alarm_monitor=False):
 
 
 def get_param_define_list(relation_id=None):
-    param_define_list = Case_API.get_case_parameter_relation(relation_id=relation_id)
+    param_define_list = UseCaseAPI.get_case_parameter_relation(relation_id=relation_id)
     param_list = []
     for param in param_define_list:
         pattern = re.compile(r'\${param\|[^${}]*}|^random\(.*\)|\${timestamps}')
