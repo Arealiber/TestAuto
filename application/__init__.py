@@ -28,16 +28,17 @@ if len(sys.argv) > 1:
 # for session
 app.secret_key = 'RFmoIw6P6B9LE5otg9ba7iyoXm5PkUM0s8KnV3cr'
 
-# SQLAlchemy engine
-engine = create_engine(app.config['DB_URI'] + '?charset=utf8',
-                       encoding='utf-8',
-                       convert_unicode=True,
-                       poolclass=NullPool,
-                       # pool_recycle=app.config['DB_POOL_RECYCLE'],
-                       # pool_size=app.config['DB_POOL_SIZE'],
-                       # max_overflow=app.config['DB_MAX_OVERFLOW'],
-                       echo=app.config['DB_ECHO'],
-                       pool_pre_ping=True)
+with app.app_context():
+    # SQLAlchemy engine
+    engine = create_engine(app.config['DB_URI'] + '?charset=utf8',
+                           encoding='utf-8',
+                           convert_unicode=True,
+                           poolclass=NullPool,
+                           # pool_recycle=app.config['DB_POOL_RECYCLE'],
+                           # pool_size=app.config['DB_POOL_SIZE'],
+                           # max_overflow=app.config['DB_MAX_OVERFLOW'],
+                           echo=app.config['DB_ECHO'],
+                           pool_pre_ping=True)
 
 # SQLAlchemy session
 session_factory = sessionmaker(bind=engine)
