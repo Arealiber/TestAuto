@@ -171,7 +171,6 @@
                         var function_id = report_list[i].function_id;
                         var from_time = report_list[i].create_time;
                         from_time = moment.utc(from_time).format('YYYY-MM-DD 00:00');
-                        console.log(report_list[i].create_time, from_time)
                         var to_time = from_time;
                         if (url === '/report/minutes_report/info') {
                             from_time = moment.utc(datatable[i][8]).subtract(5, 'minute').format("YYYY-MM-DD HH:mm");
