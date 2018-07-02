@@ -165,7 +165,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
 
     with requests.Session() as session:
         if not alarm_monitor:
-            environment_id = environment_id or use_case_info['environment_id']
+            if not batch_log_id:
+                environment_id = environment_id or use_case_info['environment_id']
             environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
             for element in environment_info:
                 url = element['url']
