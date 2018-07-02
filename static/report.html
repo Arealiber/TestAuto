@@ -415,6 +415,8 @@
                             for (var j=0; j < chartist_data.data.datasets[i].data.length; j++) {
                                 if (chartist_data.data.datasets[i].data[j] < 0) {
                                     chartist_data.data.datasets[i].data[j] = null
+                                } else {
+                                    chartist_data.data.datasets[i].data[j] = chartist_data.data.datasets[i].data[j].toFixed(3)
                                 }
                             }
                         }
