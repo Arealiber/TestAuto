@@ -164,14 +164,15 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 }
 
     with requests.Session() as session:
-        if not alarm_monitor:
-            if not batch_log_id:
-                environment_id = environment_id or use_case_info['environment_id']
-            environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
-            for element in environment_info:
-                url = element['url']
-                ip_address = element['map_ip']
-                DNS_CACHE[url] = ip_address
+        # 由于线上环境配置有host，所以监控模式下，也要配置环境信息
+        # if not alarm_monitor:
+        if not batch_log_id:
+            environment_id = environment_id or use_case_info['environment_id']
+        environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
+        for element in environment_info:
+            url = element['url']
+            ip_address = element['map_ip']
+            DNS_CACHE[url] = ip_address
 
         for interface in interface_list:
             interface_name = interface.get('interface_name')
