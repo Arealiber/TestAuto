@@ -226,7 +226,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = False
                 interface_log_dict['error_message'] = '参数替换: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-                LOGGER.info_log(interface_log_dict)
                 interface_log_insert(interface_log_dict)
                 # 用例运行日志记录
                 use_case_exception_log_update(use_case_log_id, use_case_start)
@@ -251,7 +250,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = False
                 interface_log_dict['error_message'] = 'json处理或加密: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-                LOGGER.info_log(interface_log_dict)
                 interface_log_insert(interface_log_dict)
                 # 用例运行日志记录
                 use_case_exception_log_update(use_case_log_id, use_case_start)
@@ -373,7 +371,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     # 数据处理以及日志记录
                     interface_log_dict['is_pass'] = False
                     interface_log_dict['error_message'] = '请求: {0}'.format(error_string)
-                    LOGGER.info_log(interface_log_dict)
                     interface_log_insert(interface_log_dict)
                     # 用例运行日志记录
                     use_case_exception_log_update(use_case_log_id, use_case_start)
@@ -435,7 +432,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = result['success']
                 interface_log_dict['error_message'] = '验证: {0}: {1}'.format(str(e.__class__.__name__), str(e))
-                LOGGER.info_log(interface_log_dict)
                 interface_log_insert(interface_log_dict)
                 # 用例运行日志记录
                 use_case_exception_log_update(use_case_log_id, use_case_start)
