@@ -46,7 +46,7 @@
             </div>
             <div class="form-row">
                 <div class="form-group form-check mb-2 mr-sm-2">
-                    <input type="checkbox" class="form-check-input" id="batch_auto_run">
+                    <input type="checkbox" class="form-check-input" id="batch_auto_run"  data-toggle="modal"  data-target="#batch_auto_run-info">
                     <label class="form-check-label" for="batch_auto_run">自动运行</label>
                 </div>
                 <div class="form-group form-check mb-2 mr-sm-2">
@@ -127,11 +127,32 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>请确认是否是线上环境，如果运行的不是线上环境请取消监控选项，您还选择继续吗？</p>
+                        <p>请确认是否是线上环境，如果运行的不是线上环境请取消监控选项，是否继续？</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" name="alarm_monitor-cancel">取消</button>
                         <button type="button" class="btn btn-danger" name="alarm_monitor-confirm">继续</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--勾选自动运行选项提示-->
+        <div class="modal fade" id="batch_auto_run-info" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="color: red">提示</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>选择自动运行后，该批次用例会每5分钟自动触发一次，是否继续？</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" name="batch_auto_run-cancel">取消</button>
+                        <button type="button" class="btn btn-danger" name="batch_auto_run-confirm">继续</button>
                     </div>
                 </div>
             </div>
@@ -327,6 +348,22 @@
             $.each(selected_use_case_list, function (i, selected_use_case) {
                 $(selected_use_case).removeClass("active");
             });
+        })
+    });
+
+    // 自动运行选项取消
+    $(document).ready(function () {
+        $('button[name="batch_auto_run-cancel"]').click(function () {
+            $("#batch_auto_run").prop("checked",false);
+            $("#batch_auto_run-info").modal('hide');
+        })
+    });
+
+    // 自动运行选项确认
+    $(document).ready(function () {
+        $('button[name="batch_auto_run-confirm"]').click(function () {
+            $("#batch_auto_run").prop("checked",true);
+            $("#batch_auto_run-info").modal('hide');
         })
     });
 
