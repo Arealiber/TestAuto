@@ -94,6 +94,7 @@ def exec_query(sql, is_list=False):
 
 def exec_change(*args):
     retry = 3
+    conn = trans = None
     while retry > 0:
         retry -= 1
         try:
