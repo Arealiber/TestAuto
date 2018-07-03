@@ -47,9 +47,7 @@ def batch_detail():
 
     :return:
     """
-    print(request.get_json())
     batch = BatchAPI.get_batch(**request.get_json())[0]
-    print(batch)
     relation_list = BatchAPI.get_batch_use_case_relation(batch_id=batch['id'])
     batch['use_case_list'] = []
     for relation in relation_list:
@@ -82,7 +80,6 @@ def modify_batch():
     update batch for use case
     :return:
     """
-    print(request.get_json())
     batch_id = BatchAPI.modify_batch(**request.get_json())
     return jsonify({'success': True, 'res': batch_id})
 
