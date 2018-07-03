@@ -93,8 +93,17 @@ def exec_query(sql, is_list=False):
 
 
 def exec_change(*args):
-    conn = engine.connect()
-    trans = conn.begin()
+    retry = 3
+    while retry > 0:
+        retry -= 1
+        try:
+            conn = engine.connect()
+            trans = conn.begin()
+            break
+        except Exception as e:
+            raise e
+    if retry < 0:
+        return
     try:
         ret = []
         for sql in args:
