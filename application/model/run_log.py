@@ -6,15 +6,10 @@ from sqlalchemy.dialects.mysql import TIMESTAMP
 
 
 meta = MetaData(bind=engine)
-batch_run_log_table = {}
-use_case_run_log_table = {}
-interface_run_log_table = {}
 
 
 # 用例脚本的运行日记表
 def get_batch_run_log_table(table_name):
-    # table = batch_run_log_table.get(table_name)
-    # if table is None:
     table = Table('batch_run_log_{0}'.format(table_name), meta,
                   Column('id', Integer, primary_key=True),
                   Column('batch_id', Integer, nullable=False),
@@ -27,14 +22,11 @@ def get_batch_run_log_table(table_name):
                   extend_existing=True,
                   )
     table.create(bind=engine, checkfirst=True)
-        # batch_run_log_table[table_name] = table
     return table
 
 
 # 用例脚本的运行日记表
 def get_use_case_run_log_table(table_name):
-    # table = use_case_run_log_table.get(table_name)
-    # if table is None:
     table = Table('use_case_run_log_{0}'.format(table_name), meta,
                   Column('id', Integer, primary_key=True),
                   Column('batch_run_log_id', Integer),
@@ -48,14 +40,11 @@ def get_use_case_run_log_table(table_name):
                   extend_existing=True,
                   )
     table.create(bind=engine, checkfirst=True)
-        # use_case_run_log_table[table_name] = table
     return table
 
 
 # 接口的运行日记表
 def get_interface_run_log_table(table_name):
-    # table = interface_run_log_table.get(table_name)
-    # if table is None:
     table = Table('interface_run_log_{0}'.format(table_name), meta,
                   Column('id', Integer, primary_key=True),
                   Column('use_case_run_log_id', Integer, nullable=False),
@@ -73,7 +62,6 @@ def get_interface_run_log_table(table_name):
                   extend_existing=True,
                   )
     table.create(bind=engine, checkfirst=True)
-        # interface_run_log_table[table_name] = table
     return table
 
 
