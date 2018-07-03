@@ -50,7 +50,7 @@
                     <label class="form-check-label" for="batch_auto_run">自动运行</label>
                 </div>
                 <div class="form-group form-check mb-2 mr-sm-2">
-                    <input type="checkbox" class="form-check-input" id="alarm_monitor">
+                    <input type="checkbox" class="form-check-input" id="alarm_monitor" data-toggle="modal"  data-target="#alarm_monitor_info">
                     <label class="form-check-label" for="alarm_monitor">告警监控</label>
                 </div>
             </div>
@@ -111,6 +111,27 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" name="delete-cancel-btn" data-dismiss="modal">取消</button>
                         <button type="button" class="btn btn-danger" name="delete-confirm-btn" value="">确认删除</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--勾选监控选项提示-->
+        <div class="modal fade" id="alarm_monitor_info" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="color: red">提示</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>请确认是否是线上环境，如果运行的不是线上环境请取消监控选项，您还选择继续吗？</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" name="alarm_monitor-cancel">取消</button>
+                        <button type="button" class="btn btn-danger" name="alarm_monitor-confirm">继续</button>
                     </div>
                 </div>
             </div>
@@ -282,6 +303,23 @@
             }
         })
     });
+
+    // 监控告警取消
+    $(document).ready(function () {
+        $('button[name="alarm_monitor-cancel"]').click(function () {
+            $("#alarm_monitor").prop("checked",false);
+            $("#alarm_monitor_info").modal('hide');
+        })
+    });
+
+    // 监控告警确认
+    $(document).ready(function () {
+        $('button[name="alarm_monitor-confirm"]').click(function () {
+            $("#alarm_monitor").prop("checked",true);
+            $("#alarm_monitor_info").modal('hide');
+        })
+    });
+
 
     $(document).ready(function () {
         $('button[name="cancel_add_use_case"]').click(function () {
