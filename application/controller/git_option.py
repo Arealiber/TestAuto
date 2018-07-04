@@ -14,9 +14,8 @@ def create_tag():
     功能描述: 创建一个tag
     :return:
     """
-    project_path = request.get_json()['project_path']
     tag = request.get_json()['tag']
-    result = gitAPI.create_tag(project_path, tag)
+    result = gitAPI.create_tag(tag)
     return jsonify({'success': True, 'res': result})
 
 
