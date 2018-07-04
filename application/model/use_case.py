@@ -79,7 +79,7 @@ class UseCaseParameterRelation(Base):
 
     id = Column(Integer, primary_key=True)
     relation_id = Column(Integer, nullable=False)
-    parameter_name = Column(String(20), nullable=False)
+    parameter_name = Column(String(128), nullable=False)
     parameter_value = Column(String(200))
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
