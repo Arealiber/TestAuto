@@ -84,14 +84,14 @@ def exec_change(*args):
     retry = 3
     conn = trans = None
     while retry > 0:
-        retry -= 1
         try:
             conn = engine.connect()
             trans = conn.begin()
             break
         except Exception as e:
-            raise e
-    if retry < 0:
+            print(str(e))
+            retry -= 1
+    if not retry:
         return
     try:
         ret = []
