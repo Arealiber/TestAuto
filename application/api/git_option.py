@@ -5,9 +5,10 @@ import os
 def create_tag(project_path, tag):
     print(os.popen('pwd').readlines())
     os.system('cd %s' % project_path)
+    print(os.popen('pwd').readlines())
     cmd_str = 'git tag %s' % tag
-    res = os.system(cmd_str)
-    os.system('git push --tag')
+    res = os.popen(cmd_str).readlines()
+    os.popen('git push --tags').readline()
     # os.system('git tag -d %s' % tag)
     print(res)
     return res
