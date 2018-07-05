@@ -5,6 +5,7 @@ from git import Repo, GitCmdObjectDB
 
 
 def create_tag(soft_name, work_path):
+    os.chdir(work_path)
     repo = Repo(work_path, odbt=GitCmdObjectDB)
     assert repo.bare == False
     git = repo.git
