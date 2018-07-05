@@ -53,11 +53,11 @@ def login_required(f):
             return f(*args, **kwargs)
         else:
             if ('login_token' in request.args and 'user_id' in request.args) or \
-                    ('login_token' in kwargs and 'user_id' in kwargs):
+                    ('login_token' in request.get_json() and 'user_id' in request.get_json()):
 
-                login_token = request.args.get('login_token') or kwargs.get('login_token', None)
-                user_id = request.args.get('user_id') or kwargs.get('user_id', None)
-                if check_login(user_id, login_token):
+                login_token = request.args.get('login_token', None) or request.get_json().get('login_token', None)
+                user_id = request.args.get('user_id', None) or request.get_json().get('user_id', None)
+                if login_token and user_id is not None and check_login(user_id, login_token):
                     return f(*args, **kwargs)
                 else:
                     return jsonify({'success': False, 'res': '登陆失败'})
