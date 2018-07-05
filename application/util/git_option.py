@@ -40,11 +40,11 @@ def get_new_tag(soft_name, work_path):
     max_phase_num = max([phase_pattern.findall(name)[0] for name in soft_tags_list])
     print(max_major_ver_num, max_child_ver_num, max_phase_num)
     if int(max_phase_num) < 9:
-        new_tag_name = '{0}-test-v{1}.{2}.{3}'.format(soft_name, max_major_ver_num, max_child_ver_num, max_phase_num+1)
+        new_tag_name = '{0}-test-v%d.%d.%d'.format(soft_name, max_major_ver_num, max_child_ver_num, max_phase_num+1)
     elif max_child_ver_num < 9:
-        new_tag_name = '{0}-test-v{1}.{2}.0'.format(soft_name, max_major_ver_num, max_child_ver_num+1)
+        new_tag_name = '{0}-test-v%d.%d.0'.format(soft_name, max_major_ver_num, max_child_ver_num+1)
     else:
-        new_tag_name = '{0}-test-v{1}.0.0'.format(soft_name, max_major_ver_num+1)
+        new_tag_name = '{0}-test-v%d.0.0'.format(soft_name, max_major_ver_num+1)
     return new_tag_name
 
 
