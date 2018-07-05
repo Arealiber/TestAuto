@@ -2,13 +2,13 @@
 from flask import request, jsonify
 from application import app
 from application.util.exception import try_except
-from application.controller import login_required
+from application.controller import localhost_required
 from application.util import git_option as gitAPI
 
 
 @app.route('/git/create_tag', methods=['POST'])
 @try_except
-@login_required
+@localhost_required
 def create_tag():
     """
     功能描述: 创建一个tag
