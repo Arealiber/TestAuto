@@ -11,8 +11,9 @@ def create_tag(soft_name, work_path):
     git_pull_cmd = ';'.join([work_path_cmd, 'git pull'])
     push_tag_cmd = ';'.join([work_path_cmd, 'git push origin %s' % tag_name])
 
-    os.popen(git_pull_cmd)
-    os.popen(git_tag_cmd)
+    res1 = os.system(git_pull_cmd)
+    res2 = os.system(git_tag_cmd)
+    print(res1, res2)
     res = os.popen(push_tag_cmd).readline()
     if res == 0:
         return tag_name
