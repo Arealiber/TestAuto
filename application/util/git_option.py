@@ -39,10 +39,10 @@ def get_new_tag(soft_name, work_path):
     if int(max_phase_num) < 9:
         new_tag_name = '{0}-test-v{1}.{2}.{3}'.format(soft_name, str(max_major_ver_num), str(max_child_ver_num),
                                                       str(int(max_phase_num)+1))
-    elif max_child_ver_num < 9:
-        new_tag_name = '{0}-test-v{1}.{2}.0'.format(soft_name, str(max_major_ver_num), str(max_child_ver_num+1))
+    elif int(max_child_ver_num) < 9:
+        new_tag_name = '{0}-test-v{1}.{2}.0'.format(soft_name, str(max_major_ver_num), str(int(max_child_ver_num)+1))
     else:
-        new_tag_name = '{0}-test-v{1}.0.0'.format(soft_name, str(max_major_ver_num+1))
+        new_tag_name = '{0}-test-v{1}.0.0'.format(soft_name, str(int(max_major_ver_num)+1))
     return new_tag_name
 
 
