@@ -14,7 +14,7 @@ def create_tag(soft_name, work_path):
     tag_name = get_new_tag(soft_name, work_path)
     print('commit tag ', tag_name)
     new_tag = repo.create_tag(tag_name)
-    git.push('master ' + tag_name)
+    git.push('tag %s' % tag_name)
 
     option_cmd = ';'.join([work_path_cmd, 'git pull', 'git tag %s' % tag_name, 'git push origin %s' % tag_name])
 
