@@ -8,7 +8,7 @@ from application.util import git_option as gitAPI
 
 @app.route('/git/create_tag', methods=['POST'])
 @try_except
-@login_required
+@localhost_required
 def create_tag():
     """
     功能描述: 创建一个tag
