@@ -7,7 +7,6 @@ from git import Repo
 def create_tag(soft_name, work_path):
     repo = Repo(work_path)
     git = repo.git
-    remote = repo.remote('master')
     work_path_cmd = 'cd %s' % work_path
     tag_name = get_new_tag(soft_name, work_path)
     print('commit tag ', tag_name)
