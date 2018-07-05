@@ -9,7 +9,7 @@ def create_tag(soft_name, work_path):
     repo = Repo(work_path, odbt=GitCmdObjectDB)
     assert repo.bare == False
     git = repo.git
-    git.pull('git@git.huishoubao.com.cn:liuyuan/AutoTest.git')
+    git.pull('origin master')
     work_path_cmd = 'cd %s' % work_path
     tag_name = get_new_tag(soft_name, work_path)
     option_cmd = ';'.join([work_path_cmd, 'git pull', 'git tag %s -m "创建版本发布测试tag"' % tag_name,
