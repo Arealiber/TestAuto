@@ -28,12 +28,12 @@ def get_all_tags(work_path):
 def get_new_tag(soft_name, work_path):
     tag_list = get_all_tags(work_path)
     print(tag_list)
-    soft_tags_list = [tag.splitlines() for tag in tag_list if soft_name in tag]
+    soft_tags_list = [tag.splitlines() for tag in tag_list if '{0}-test'.format(soft_name) in tag]
     if not soft_tags_list:
         return '{0}-test-v0.0.1'.format(soft_name)
-    major_pattern = re.compile(r'(\d).\d.\d')
-    child_pattern = re.compile(r'\d.(\d).\d')
-    phase_pattern = re.compile(r'\d.\d.(\d)')
+    major_pattern = re.compile(r'-test-v(\d).\d.\d')
+    child_pattern = re.compile(r'-test-v\d.(\d).\d')
+    phase_pattern = re.compile(r'-test-v\d.\d.(\d)')
     max_major_ver_num = [major_pattern.findall(name)[0] for name in soft_tags_list]
     max_child_ver_num = [child_pattern.findall(name)[0] for name in soft_tags_list]
     max_phase_num = [phase_pattern.findall(name)[0] for name in soft_tags_list]
