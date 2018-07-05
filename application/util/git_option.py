@@ -33,6 +33,7 @@ def get_new_tag(soft_name, work_path):
     soft_tags_list = [tag.splitlines()[0] for tag in tag_list if '{0}-test-v'.format(soft_name) in tag]
     if not soft_tags_list:
         return '{0}-test-v0.0.1'.format(soft_name)
+    print(soft_tags_list)
     major_pattern = re.compile(r'-test-v(\d).\d.\d')
     max_major_ver_num = max([major_pattern.findall(name)[0] for name in soft_tags_list])
     child_pattern = re.compile(r'-test-v%s.(\d).\d' % max_major_ver_num)
