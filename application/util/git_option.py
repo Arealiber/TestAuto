@@ -34,12 +34,11 @@ def get_new_tag(soft_name, work_path):
     if not soft_tags_list:
         return '{0}-test-v0.0.1'.format(soft_name)
     major_pattern = re.compile(r'-test-v(\d).\d.\d')
-    child_pattern = re.compile(r'-test-v\d.(\d).\d')
-    phase_pattern = re.compile(r'-test-v\d.\d.(\d)')
     max_major_ver_num = max([major_pattern.findall(name)[0] for name in soft_tags_list])
+    child_pattern = re.compile(r'-test-v%d.(\d).\d' % max_major_ver_num)
     max_child_ver_num = max([child_pattern.findall(name)[0] for name in soft_tags_list])
+    phase_pattern = re.compile(r'-test-v%d.%d.(\d)' % (max_major_ver_num, max_child_ver_num))
     max_phase_num = max([phase_pattern.findall(name)[0] for name in soft_tags_list])
-    print(1111111111, max_phase_num)
     if int(max_phase_num) < 9:
         new_tag_name = '{0}-test-v{1}.{2}.{3}'.format(soft_name, str(max_major_ver_num), str(max_child_ver_num),
                                                       str(int(max_phase_num)+1))
