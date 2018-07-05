@@ -84,6 +84,7 @@ def check_login(user_id, login_token):
     }
     try:
         r = requests.post(USER_INFO_URL, json=params, timeout=5)
+        print(r.json())
         json_response = r.json()
         if json_response['body']['ret'] == '0':
             session['user_id'] = user_id
