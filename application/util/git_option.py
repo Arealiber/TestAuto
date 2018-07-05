@@ -1,16 +1,21 @@
 # -*- coding:utf-8 -*-
 import os
 import re
+from git import Repo
 
 
 def create_tag(soft_name, work_path):
+    repo = Repo(work_path)
+    git = repo.git
+    remote = repo.remote('master')
     work_path_cmd = 'cd %s' % work_path
     tag_name = get_new_tag(soft_name, work_path)
-    os.chdir(work_path)
-    print(11111111, tag_name, os.getcwd())
-    os.system('git pull')
+    print('commit tag ', tag_name)
+    git.execute('git pull')
+    git.execute('git tag %s' % tag_name)
+    git.execute('git push origin %s' % tag_name)
 
-    option_cmd = ';'.join([work_path_cmd, 'sudo git pull', 'git tag %s' % tag_name, 'sudo git push origin %s' % tag_name])
+    option_cmd = ';'.join([work_path_cmd, 'git pull', 'git tag %s' % tag_name, 'git push origin %s' % tag_name])
 
     res = os.system(option_cmd)
     if res == 0:
