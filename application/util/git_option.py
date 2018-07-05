@@ -8,8 +8,9 @@ def create_tag(soft_name, work_path):
     repo = Repo(work_path, odbt=GitCmdObjectDB)
     assert repo.bare == False
     git = repo.git
+    remote = repo.remote()
+    remote.pull()
     work_path_cmd = 'cd %s' % work_path
-    git.pull()
     tag_name = get_new_tag(soft_name, work_path)
     print('commit tag ', tag_name)
     new_tag = repo.create_tag(tag_name)
