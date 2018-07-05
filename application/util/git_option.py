@@ -10,7 +10,7 @@ def create_tag(soft_name, work_path):
     print(11111111, tag_name, os.getcwd())
     os.system('git pull')
 
-    option_cmd = ';'.join([work_path_cmd, 'git pull', 'git tag %s' % tag_name, 'git push origin %s' % tag_name])
+    option_cmd = ';'.join([work_path_cmd, 'sudo git pull', 'git tag %s' % tag_name, 'sudo git push origin %s' % tag_name])
 
     res = os.system(option_cmd)
     if res == 0:
