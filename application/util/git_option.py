@@ -35,13 +35,13 @@ def get_new_tag(soft_name, work_path):
         return '{0}-test-v0.0.1'.format(soft_name)
     print(soft_tags_list)
     major_pattern = re.compile(r'-test-v(\d).\d.\d')
-    max_major_ver_num = max([major_pattern.findall(name)[0] for name in soft_tags_list])
+    max_major_ver_num = max([major_pattern.findall(name)[0] for name in soft_tags_list if major_pattern.findall(name)])
     child_pattern = re.compile(r'-test-v%d.(\d).\d' % int(max_major_ver_num))
     print(child_pattern)
-    max_child_ver_num = max([child_pattern.findall(name)[0] for name in soft_tags_list])
+    max_child_ver_num = max([child_pattern.findall(name)[0] for name in soft_tags_list if child_pattern.findall(name)])
     phase_pattern = re.compile(r'-test-v%d.%d.(\d)' % (int(max_major_ver_num), int(max_child_ver_num)))
     print(phase_pattern)
-    max_phase_num = max([phase_pattern.findall(name)[0] for name in soft_tags_list])
+    max_phase_num = max([phase_pattern.findall(name)[0] for name in soft_tags_list if phase_pattern.findall(name)])
     if int(max_phase_num) < 9:
         new_tag_name = '{0}-test-v{1}.{2}.{3}'.format(soft_name, str(max_major_ver_num), str(max_child_ver_num),
                                                       str(int(max_phase_num)+1))
