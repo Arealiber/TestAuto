@@ -7,10 +7,13 @@ from git import Repo, GitCmdObjectDB
 def create_tag(soft_name, work_path):
     repo = Repo(work_path, odbt=GitCmdObjectDB)
     assert repo.bare == False
+    git = repo.git
     work_path_cmd = 'cd %s' % work_path
+    git.pull()
     tag_name = get_new_tag(soft_name, work_path)
     print('commit tag ', tag_name)
     new_tag = repo.create_tag(tag_name)
+    git.push('origin ' + tag_name)
 
     option_cmd = ';'.join([work_path_cmd, 'git pull', 'git tag %s' % tag_name, 'git push origin %s' % tag_name])
 
