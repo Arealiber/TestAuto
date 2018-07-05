@@ -30,9 +30,12 @@ def get_new_tag(soft_name, work_path):
     soft_tags_list = [tag.splitlines() for tag in tag_list if soft_name in tag]
     if not soft_tags_list:
         return '{0}-test-v0.0.1'.format(soft_name)
-    max_major_ver_num = int(max([re.match(r'v(\d).\d.\d', name)[0] for name in soft_tags_list]))
-    max_child_ver_num = int(max([re.match(r'v\d.(\d).\d', name)[0] for name in soft_tags_list]))
-    max_phase_num = int(max([re.match(r'v\d.\d.(\d)', name)[0] for name in soft_tags_list]))
+    major_pattern = re.compile(r'(\d).\d.\d')
+    child_pattern = re.compile(r'\d.(\d).\d')
+    phase_pattern = re.compile(r'\d.\d.(\d)')
+    max_major_ver_num = int(max([major_pattern.findall(name)[0] for name in soft_tags_list]))
+    max_child_ver_num = int(max([child_pattern.findall(name)[0] for name in soft_tags_list]))
+    max_phase_num = int(max([phase_pattern.findall(name)[0] for name in soft_tags_list]))
     if int(max_phase_num) < 9:
         new_tag_name = '{0}-test-v{1}.{2}.{3}'.format(soft_name, max_major_ver_num, max_child_ver_num, max_phase_num+1)
     elif max_child_ver_num < 9:
@@ -40,7 +43,6 @@ def get_new_tag(soft_name, work_path):
     else:
         new_tag_name = '{0}-test-v{1}.0.0'.format(soft_name, max_major_ver_num+1)
     return new_tag_name
-
 
 
 
