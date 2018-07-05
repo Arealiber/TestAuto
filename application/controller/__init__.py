@@ -52,9 +52,11 @@ def login_required(f):
             session['real_name'] = '管理员'
             return f(*args, **kwargs)
         else:
-            if 'login_token' in request.args and 'user_id' in request.args:
-                login_token = request.args.get('login_token')
-                user_id = request.args.get('user_id')
+            if ('login_token' in request.args and 'user_id' in request.args) or \
+                    ('login_token' in kwargs and 'user_id' in kwargs):
+
+                login_token = request.args.get('login_token') or kwargs.get('login_token', None)
+                user_id = request.args.get('user_id') or kwargs.get('user_id', None)
                 if check_login(user_id, login_token):
                     return f(*args, **kwargs)
                 else:
