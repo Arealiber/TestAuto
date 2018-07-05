@@ -47,7 +47,7 @@ def login_required(f):
         if user:
             return f(*args, **kwargs)
         elif app.config['DEBUG']:
-            session['user_id'] = '42'
+            session['user_id'] = app.config['SYSTEM_ID']
             session['timestamp'] = str(int(time.time()))
             session['real_name'] = '管理员'
             return f(*args, **kwargs)
@@ -55,43 +55,50 @@ def login_required(f):
             if 'login_token' in request.args and 'user_id' in request.args:
                 login_token = request.args.get('login_token')
                 user_id = request.args.get('user_id')
-                params = {
-                    "head": {
-                        "interface": "loginuserinfo",
-                        "msgtype": "request",
-                        "remark": "",
-                        "version": "0.01"
-                    },
-                    "params": {
-                        "login_token": login_token,
-                        "login_user_id": user_id,
-                        "login_system_id": app.config['SYSTEM_ID']
-                    }
-                }
-                try:
-                    r = requests.post(USER_INFO_URL, json=params, timeout=5)
-                    json_response = r.json()
-                    if json_response['body']['ret'] == '0':
-                        session['user_id'] = user_id
-                        session['timestamp'] = str(int(time.time()))
-                        session['real_name'] = json_response['body']['data']['user_info']['real_name']
-                        return f(*args, **kwargs)
-                    else:
-                        return jsonify({'success': False, 'error': '登陆失败'})
-                except ConnectTimeout:
-                    # 链接超时
-                    pass
-                except ConnectionError:
-                    # 链接错误
-                    pass
-                except:
-                    # 其他错误
-                    pass
+                if check_login(user_id, login_token):
+                    return f(*args, **kwargs)
+                else:
+                    return jsonify({'success': False, 'res': '登陆失败'})
             else:
                 return redirect('http://api-amc.huishoubao.com.cn/login?system_id={0}&jump_url={1}'
                                 .format(app.config['SYSTEM_ID'], request.url))
 
     return decorated_function
+
+
+def check_login(user_id, login_token):
+    params = {
+        "head": {
+            "interface": "loginuserinfo",
+            "msgtype": "request",
+            "remark": "",
+            "version": "0.01"
+        },
+        "params": {
+            "login_token": login_token,
+            "login_user_id": user_id,
+            "login_system_id": app.config['SYSTEM_ID']
+        }
+    }
+    try:
+        r = requests.post(USER_INFO_URL, json=params, timeout=5)
+        json_response = r.json()
+        if json_response['body']['ret'] == '0':
+            session['user_id'] = user_id
+            session['timestamp'] = str(int(time.time()))
+            session['real_name'] = json_response['body']['data']['user_info']['real_name']
+            return True
+        else:
+            return False
+    except ConnectTimeout:
+        # 链接超时
+        pass
+    except ConnectionError:
+        # 链接错误
+        pass
+    except:
+        # 其他错误
+        pass
 
 
 def localhost_required(func):
