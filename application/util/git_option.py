@@ -6,6 +6,7 @@ import re
 def create_tag(soft_name, work_path):
     work_path_cmd = 'cd %s' % work_path
     tag_name = get_new_tag(soft_name, work_path)
+    print(11111111, tag_name)
     git_tag_cmd = ';'.join([work_path_cmd, 'git tag %s' % tag_name])
     git_pull_cmd = ';'.join([work_path_cmd, 'git pull'])
     push_tag_cmd = ';'.join([work_path_cmd, 'git push origin %s' % tag_name])
