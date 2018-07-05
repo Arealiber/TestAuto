@@ -5,10 +5,10 @@ from git import Repo, GitCmdObjectDB
 
 
 def create_tag(soft_name, work_path):
-    os.chdir(work_path)
     repo = Repo(work_path, odbt=GitCmdObjectDB)
     assert repo.bare == False
     git = repo.git
+    os.chdir(work_path)
     git.pull('origin master')
     work_path_cmd = 'cd %s' % work_path
     tag_name = get_new_tag(soft_name, work_path)
