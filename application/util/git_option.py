@@ -12,9 +12,6 @@ def create_tag(soft_name, work_path):
     git.pull()
     work_path_cmd = 'cd %s' % work_path
     tag_name = get_new_tag(soft_name, work_path)
-    print('commit tag ', tag_name)
-    # new_tag = repo.create_tag(tag_name)
-    # git.push('tag %s' % tag_name)
 
     option_cmd = ';'.join([work_path_cmd, 'git pull', 'git tag %s' % tag_name, 'git push origin %s' % tag_name])
 
@@ -42,6 +39,7 @@ def get_new_tag(soft_name, work_path):
     max_major_ver_num = max([major_pattern.findall(name)[0] for name in soft_tags_list])
     max_child_ver_num = max([child_pattern.findall(name)[0] for name in soft_tags_list])
     max_phase_num = max([phase_pattern.findall(name)[0] for name in soft_tags_list])
+    print(1111111111, max_phase_num)
     if int(max_phase_num) < 9:
         new_tag_name = '{0}-test-v{1}.{2}.{3}'.format(soft_name, str(max_major_ver_num), str(max_child_ver_num),
                                                       str(int(max_phase_num)+1))
