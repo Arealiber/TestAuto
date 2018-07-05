@@ -1,18 +1,17 @@
 # -*- coding:utf-8 -*-
 import os
 import re
-from git import Repo
+from git import Repo, GitCmdObjectDB
 
 
 def create_tag(soft_name, work_path):
-    repo = Repo(work_path)
-    git = repo.git
+    repo = Repo(work_path, odbt=GitCmdObjectDB)
+    assert repo.bare == False
     work_path_cmd = 'cd %s' % work_path
     tag_name = get_new_tag(soft_name, work_path)
     print('commit tag ', tag_name)
-    git.execute('git pull')
-    git.execute('git tag %s' % tag_name)
-    git.execute('git push origin %s' % tag_name)
+    new_tag = repo.create_tag(tag_name)
+    new_tag.commit()
 
     option_cmd = ';'.join([work_path_cmd, 'git pull', 'git tag %s' % tag_name, 'git push origin %s' % tag_name])
 
