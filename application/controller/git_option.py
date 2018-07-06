@@ -2,7 +2,7 @@
 from flask import request, jsonify
 from application import app
 from application.util.exception import try_except
-from application.controller import _build_params, login_required
+from application.controller import login_required
 from application.util import git_option as gitAPI
 
 
@@ -21,15 +21,7 @@ def create_tag():
     tag = gitAPI.create_tag(soft_name, work_path)
     if not tag:
         return jsonify({'success': False, 'res': '创建tag失败'})
-    kwargs = {
-        'data': {
-            "_errCode": 0,
-            'ret': 0,
-            'tag_name': tag
-        }
-    }
-    params = _build_params('/git/create_tag', **kwargs)
-    return jsonify(params)
+    return jsonify({'success': True, 'res': tag})
 
 
 @app.route('/git/delete_tag', methods=['POST'])
