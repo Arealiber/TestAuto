@@ -46,14 +46,14 @@ def login_required(f):
         user = cur_user()
         if user:
             return f(*args, **kwargs)
-        elif app.config['DEBUG']:
+        elif not app.config['DEBUG']:
             session['user_id'] = app.config['SYSTEM_ID']
             session['timestamp'] = str(int(time.time()))
             session['real_name'] = '管理员'
             return f(*args, **kwargs)
         else:
             if ('login_token' in request.args and 'user_id' in request.args) or \
-                    ('login_token' in request.get_json() and 'user_id' in request.get_json()):
+                    (request.get_json() and 'login_token' in request.get_json() and 'user_id' in request.get_json()):
 
                 login_token = request.args.get('login_token', None) or request.get_json().get('login_token', None)
                 user_id = request.args.get('user_id', None) or request.get_json().get('user_id', None)
