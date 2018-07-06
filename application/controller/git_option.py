@@ -24,5 +24,23 @@ def create_tag():
     return jsonify({'success': True, 'res': tag})
 
 
+@app.route('/git/delete_tag', methods=['POST'])
+@try_except
+@login_required
+def delete_tag():
+    """
+    功能描述: 删除一个tag
+    :return:
+    """
+    tag_name = request.get_json()['tag_name']
+    work_path = request.get_json()['work_path']
+    if not (tag_name or work_path):
+        return jsonify({'success': False, 'res': '参数错误'})
+    tag = gitAPI.delete_tag(work_path, tag_name)
+    if not tag:
+        return jsonify({'success': False, 'res': '删除tag失败'})
+    return jsonify({'success': True, 'res': '删除成功'})
+
+
 
 

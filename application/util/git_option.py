@@ -15,6 +15,16 @@ def create_tag(soft_name, work_path):
     return False
 
 
+def delete_tag(work_path, tag_name):
+    os.chdir(work_path)
+    work_path_cmd = 'cd %s' % work_path
+    option_cmd = ';'.join([work_path_cmd, 'git push origin –delete %s' % tag_name])
+    res = os.system(option_cmd)
+    if res == 0:
+        return True
+    return False
+
+
 def get_all_tags(work_path):
     work_path_cmd = 'cd %s' % work_path
     show_tags_cmd = ';'.join([work_path_cmd, 'git tag'])
