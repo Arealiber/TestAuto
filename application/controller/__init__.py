@@ -46,7 +46,7 @@ def login_required(f):
         user = cur_user()
         if user:
             return f(*args, **kwargs)
-        elif not app.config['DEBUG']:
+        elif app.config['DEBUG']:
             session['user_id'] = app.config['SYSTEM_ID']
             session['timestamp'] = str(int(time.time()))
             session['real_name'] = '管理员'
