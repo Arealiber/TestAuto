@@ -17,7 +17,7 @@ def create_tag(soft_name, work_path):
 
 def delete_tag(work_path, tag_name):
     work_path_cmd = 'cd %s' % work_path
-    option_cmd = ';'.join([work_path_cmd, 'git push origin –-delete %s' % tag_name])
+    option_cmd = ';'.join([work_path_cmd, 'git push origin --delete %s' % tag_name])
     res = os.system(option_cmd)
     if res == 0:
         return True
