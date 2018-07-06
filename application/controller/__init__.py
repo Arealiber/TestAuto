@@ -12,6 +12,19 @@ from application import app
 
 USER_INFO_URL = 'http://api-amc.huishoubao.com.cn/loginuserinfo'
 
+
+def _build_params(interface, **kwargs):
+    return {
+        'head': {
+            'interface': interface,
+            'msgtype': 'request',
+            'remark': '',
+            'version': '2.0.0'
+        },
+        'params': kwargs
+    }
+
+
 if not app.config['DEBUG']:
     DNS = {'api-amc.huishoubao.com.cn': '139.199.164.232'}
 else:
