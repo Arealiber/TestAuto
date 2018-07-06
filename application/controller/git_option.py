@@ -39,7 +39,7 @@ def delete_tag():
     tag = gitAPI.delete_tag(work_path, tag_name)
     if not tag:
         return jsonify({'success': False, 'res': '删除tag失败'})
-    return jsonify({'success': True, 'res': '删除成功'})
+    return jsonify({'success': True, 'res': '删除tag[%s]成功' % tag_name})
 
 
 
