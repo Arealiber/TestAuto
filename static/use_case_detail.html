@@ -568,13 +568,22 @@
                                 "                            " + (i+1) + ". " + interface.interface_name + "\n" +
                                 "                        </button>\n" +
                                 "                    </h5>\n" +
+                                "                    <div>" +
+
+                                "                    </div>"+
                                 "                    <div class=\"btn-group btn-group-sm float-right\" data-order=\"" + interface.order + "\" role=\"group\" aria-label=\"Basic example\">\n" +
+
                                 "                        <button type=\"button\" name=\"move_up\" class=\"move_up " + move_up_class + "\">上移</button>\n" +
                                 "                        <button type=\"button\" name=\"move_down\" class=\"move_down " + move_down_class + "\">下移</button>\n" +
                                 "                        <button type=\"button\" name=\"run_interface\" class=\"btn btn-info run_interface\" data-toggle=\"modal\" data-target=\"#execute_result\">运行</button>\n" +
                                 "                        <button type=\"button\" name=\"edit_interface\" class=\"btn btn-info edit_interface\" data-toggle=\"modal\"><a href=\"/interface_detail/"+ interface.interface_id+'?relation_id='+interface.id+'&use_case_id='+ use_case_id +"\" style=\"background: #17a2b8;border-color:#17a2b8\;color:white\">编辑</a></button>\n" +
                                 "                        <button type=\"button\" name=\"delete_interface\" class=\"btn btn-info delete_interface\" data-toggle=\"modal\" data-target=\"#deleteInterfaceModal\">删除</button>\n" +
-
+                                "                        <select id=\"interface_delay\">\n" +
+                                "                                <option value=\"0\">正常模式</option>\n" +
+                                "                                <option value=\"10\">延时10秒</option>\n" +
+                                "                                <option value=\"30\">延时30秒</option>\n" +
+                                "                                <option value=\"60\">延时1分钟</option>\n" +
+                                "                        </select>\n" +
                                 "                    </div>" +
                                 "                </div>\n" +
                                 "                <div id=\"collapse_" + interface.id + "\" class=\"collapse\" aria-labelledby=\"heading_" + interface.id + "\" data-parent=\"#accordion\" + a+\n" +
@@ -586,7 +595,7 @@
                             $("#use_case_interface_list").append(interface_card);
                             var param_list = interface.param_list;
                             $.each(param_list, function (i, param) {
-                                if (param_list.length != 0) {
+                                if (param_list.length != 0 && param.parameter_name != 'interface_delay') {
                                     var param_string = "<div class=\"form-group row\">\n" +
                                         "                                <label for=\"param_" + param.id + "\" class=\"col-sm-2 col-form-label\">" + escapeHtml(param.parameter_name) + "</label>\n" +
                                         "                                <div class=\"col-sm-10\">\n" +
@@ -754,7 +763,7 @@
                 if (!response.success) {
                     show_alert('更新数据失败:' + response.error);
                 } else {
-                    if (url == '/use_case/add') {
+                    if (url==='/use_case/add') {
                         var use_case_id = response.res;
                         get_use_case_detail(use_case_id)
                     } else {
