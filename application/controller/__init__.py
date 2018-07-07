@@ -133,19 +133,6 @@ def report_data_manager(data_list, time_format='%Y/%m/%d'):
             start_time = temp_time
     temp_time_report = list(set([temp_time.strftime(time_format) for temp_time in sorted(temp_time_report)]))
     temp_time_report = sorted(temp_time_report)
-    # report_time_list = [dt.strftime(time_format) for dt in rrule(DAILY, dtstart=start_time, until=end_time)]
-    # if time_format == '%Y-%m-%d %H:%M':
-    #     report_time_list = [dt.strftime(time_format) for dt in rrule(MINUTELY, interval=5,
-    #                                                                  dtstart=start_time, until=end_time)]
-    # if report_time_list:
-    #     report_time_list.append(end_time.strftime(time_format))
-    # else:
-    #     report_time_list = [end_time.strftime(time_format)]
-    # temp_time = []
-    # for report_time in report_time_list:
-    #     if report_time not in temp_time:
-    #         temp_time.append(report_time)
-    # report_time_list = temp_time
     report_time_list = temp_time_report
     report_df = pd.DataFrame(columns=report_time_list, index=report_business_list)
     for report_info in data_list:
