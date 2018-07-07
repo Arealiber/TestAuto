@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import time
 from datetime import datetime
 from application import engine
 from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TEXT
@@ -93,6 +94,7 @@ def exec_change(*args):
             retry -= 1
             if not retry:
                 raise e
+        time.sleep(1)
     try:
         ret = []
         for sql in args:
