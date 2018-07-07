@@ -91,8 +91,8 @@ def exec_change(*args):
         except Exception as e:
             print(str(e))
             retry -= 1
-    if not retry:
-        return
+            if not retry:
+                raise e
     try:
         ret = []
         for sql in args:
