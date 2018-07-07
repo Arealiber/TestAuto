@@ -54,6 +54,7 @@ class UseCaseInterfaceRelation(Base):
     interface_id = Column(Integer, nullable=False)
     order = Column(Integer, nullable=False)
     eval_string = Column(String(1000), nullable=False, default='')
+    interface_delay = Column(Integer, nullable=False, default=0)
     create_time = Column(DateTime, default=datetime.utcnow)
     update_time = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(Integer, default=1, nullable=False)
@@ -65,6 +66,7 @@ class UseCaseInterfaceRelation(Base):
             'interface_id': self.interface_id,
             'order': self.order,
             'eval_string': self.eval_string,
+            'interface_delay': self.interface_delay,
             'create_time': self.create_time,
             'update_time': self.update_time
         }
