@@ -595,7 +595,7 @@
                             $("#use_case_interface_list").append(interface_card);
                             var param_list = interface.param_list;
                             $.each(param_list, function (i, param) {
-                                if (param_list.length != 0 && param.parameter_name != 'interface_delay') {
+                                if (param_list.length != 0) {
                                     var param_string = "<div class=\"form-group row\">\n" +
                                         "                                <label for=\"param_" + param.id + "\" class=\"col-sm-2 col-form-label\">" + escapeHtml(param.parameter_name) + "</label>\n" +
                                         "                                <div class=\"col-sm-10\">\n" +
