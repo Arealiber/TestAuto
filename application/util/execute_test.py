@@ -145,6 +145,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             eval_string = interface_relation['eval_string']
             interface_id = interface_relation['interface_id']
             interface_info = InterfaceAPI.get_interface(id=interface_id)[0]
+            interface_info['interface_delay'] = interface_relation['interface_delay']
             interface_info['eval_string'] = eval_string
 
             interface_info['param_define_list'] = get_param_define_list(interface_relation['id'])
