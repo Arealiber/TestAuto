@@ -70,8 +70,8 @@ def update_repo_file(soft_name, repo_path, file_path, src=None, dst=None):
         return False
     if not dst:
         dst = get_new_tag(repo_path, soft_name)
-    with open(file_path, 'rb') as fp:
-        fdata = fp.read()
+    with open(file_path, 'r') as fp:
+        fdata = str(fp.read())
         if src:
             new_fdata = fdata.replace(src, dst)
         else:
@@ -79,7 +79,7 @@ def update_repo_file(soft_name, repo_path, file_path, src=None, dst=None):
             for src in src_list:
                 fdata = fdata.replace(src, dst)
             new_fdata = fdata
-    with open(file_path, 'wb') as fp:
+    with open(file_path, 'w') as fp:
         fp.write(new_fdata)
 
     ret = git_push_remote(repo_path, file_path)
@@ -89,7 +89,7 @@ def update_repo_file(soft_name, repo_path, file_path, src=None, dst=None):
 
 
 def git_push_remote(repo_path, file_path, msg='AutoTest Commit to Remote'):
-    commit_cmd = 'cd %s;git commit -m %s %s' % (repo_path, file_path, msg)
+    commit_cmd = 'cd %s;git commit -m "%s" %s' % (repo_path, msg, file_path)
     if not os.system(commit_cmd):
         return False
     push_cmd = 'cd %s;git push' % repo_path
