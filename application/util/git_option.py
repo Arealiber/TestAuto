@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
 import re
+from datetime import datetime
 from application.util.parameter import search_parameter
 
 
@@ -55,7 +56,7 @@ def get_new_tag(work_path, soft_name='AutoTest'):
     return new_tag_name
 
 
-def update_repo_file(soft_name, repo_path, file_path, src=None, dst=None):
+def update_repo_file(repo_path, file_path, src=None, dst=None):
     """
     原字符串为空时，替换文件中${}包裹的字符串
     :param repo_path
@@ -69,7 +70,7 @@ def update_repo_file(soft_name, repo_path, file_path, src=None, dst=None):
     if ret != 0:
         return False
     if not dst:
-        dst = get_new_tag(repo_path, soft_name)
+        dst = datetime.now().strftime('%Y-%m-%d H%:%M:%s')
     with open(file_path, 'r') as fp:
         fdata = str(fp.read())
         if src:

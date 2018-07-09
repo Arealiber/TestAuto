@@ -58,10 +58,9 @@ def update_file():
     dst = request.get_json().get('dst', None)
     file_path = request.get_json().get('file_path', None)
     repo_path = request.get_json().get('repo_path', None)
-    soft_name = request.get_json().get('soft_name', None)
     if not (file_path and repo_path):
         return jsonify({'success': False, 'res': '参数错误'})
-    ret = gitAPI.update_repo_file(soft_name, repo_path, file_path, src, dst)
+    ret = gitAPI.update_repo_file(repo_path, file_path, src, dst)
     if not ret:
         return jsonify({'success': False, 'res': '更新文件失败'})
     return jsonify({'success': True, 'res': ret})
