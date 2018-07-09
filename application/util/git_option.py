@@ -90,10 +90,10 @@ def update_repo_file(soft_name, repo_path, file_path, src=None, dst=None):
 
 def git_push_remote(repo_path, file_path, msg='AutoTest Commit to Remote'):
     commit_cmd = 'cd %s;git commit -m "%s" %s' % (repo_path, msg, file_path)
-    if not os.system(commit_cmd):
+    if os.system(commit_cmd):
         return False
     push_cmd = 'cd %s;git push' % repo_path
-    if not os.system(push_cmd):
+    if os.system(push_cmd):
         return False
     return True
 
