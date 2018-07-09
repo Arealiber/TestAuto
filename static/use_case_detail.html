@@ -554,6 +554,13 @@
                         loader.show();
                         $.each(interface_list, function (i, interface_info) {
                             var interface_delay = interface_info.interface_delay;
+                            var select_status = {
+                                0: '0',
+                                10: '10',
+                                30: '30',
+                                60: '60'
+                            };
+                            select_status[interface_delay] = ' selected=\"true\"';
                             var move_up_class = 'btn btn-info';
                             var move_down_class = 'btn btn-info';
                             if (interface_info.order == 1) {
@@ -579,11 +586,11 @@
                                 "                        <button type=\"button\" name=\"run_interface\" class=\"btn btn-info run_interface\" data-toggle=\"modal\" data-target=\"#execute_result\">运行</button>\n" +
                                 "                        <button type=\"button\" name=\"edit_interface\" class=\"btn btn-info edit_interface\" data-toggle=\"modal\"><a href=\"/interface_detail/"+ interface_info.interface_id+'?relation_id='+interface_info.id+'&use_case_id='+ use_case_id +"\" style=\"background: #17a2b8;border-color:#17a2b8\;color:white\">编辑</a></button>\n" +
                                 "                        <button type=\"button\" name=\"delete_interface\" class=\"btn btn-info delete_interface\" data-toggle=\"modal\" data-target=\"#deleteInterfaceModal\">删除</button>\n" +
-                                "                        <select name=\"interface_delay\">\n" +
-                                "                                <option value=\"0\">正常模式</option>\n" +
-                                "                                <option value=\"10\">延时10秒</option>\n" +
-                                "                                <option value=\"30\">延时30秒</option>\n" +
-                                "                                <option value=\"60\">延时1分钟</option>\n" +
+                                "                        <select name=\"interface_delay\" class=\"interface_delay\">\n" +
+                                "                                <option value=\"0\""+ select_status[0]+">正常模式</option>\n" +
+                                "                                <option value=\"10\""+ select_status[10]+">延时10秒</option>\n" +
+                                "                                <option value=\"30\""+ select_status[30]+">延时30秒</option>\n" +
+                                "                                <option value=\"60\""+ select_status[60]+">延时1分钟</option>\n" +
                                 "                        </select>\n" +
                                 "                    </div>" +
                                 "                </div>\n" +
@@ -982,6 +989,27 @@
             } else if (this.name === 'table_detail_use_case') {
                 get_use_case_detail(this.value)
             }
+        });
+
+        $("#use_case_interface_list").on('change', '.interface_delay', function () {
+            var interface_delay = this.value;
+            var relation_id = $(this).closest('.card-header').data('value');
+            $.ajax({
+                type: 'post',
+                url: '/use_case/relation/update/interface_delay',
+                data: JSON.stringify({
+                    id: relation_id,
+                    interface_delay: interface_delay
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (!response.success) {
+                        error_alert("更新失败，请重试")
+                    }
+
+                }
+            })
         })
     });
 

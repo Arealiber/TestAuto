@@ -214,6 +214,20 @@ def reorder_relation():
     return jsonify({'success': True})
 
 
+@app.route('/use_case/relation/update/interface_delay', methods=['POST'])
+@try_except
+@login_required
+def modify_interface_delay_relation():
+    """
+    功能描述: 更新interface和use_case关系表中的interface_delay
+    :return:
+    """
+    relation_id = request.get_json()['id']
+    interface_delay = request.get_json()['interface_delay']
+    Case_API.modify_interface_delay_relation(relation_id, interface_delay)
+    return jsonify({'success': True})
+
+
 @app.route('/use_case/relation/parameter/modify', methods=['POST'])
 @try_except
 @login_required

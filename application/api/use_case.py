@@ -176,6 +176,17 @@ def del_relation(relation_id):
             .update({'order': UseCaseInterfaceRelation.order - 1})
 
 
+def modify_interface_delay_relation(relation_id, interface_delay):
+    """
+    更新关系表中的interface_delay
+    :param relation_id:
+    :param interface_delay:
+    :return:
+    """
+    with session_scope() as session:
+        session.query(UseCaseInterfaceRelation).filter_by(id=relation_id).update({'interface_delay': interface_delay})
+
+
 def reorder_relation(relation_id, new_order):
     """
     调整某个已有interface的order
