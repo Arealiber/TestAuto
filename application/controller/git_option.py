@@ -63,7 +63,7 @@ def update_file():
     ret = gitAPI.update_repo_file(repo_path, file_path, src, dst)
     if not ret:
         return jsonify({'success': False, 'res': '更新文件失败'})
-    return jsonify({'success': True, 'res': ret})
+    return jsonify({'success': True, 'res': '更新成功'})
 
 
 
