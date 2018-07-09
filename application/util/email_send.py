@@ -14,6 +14,7 @@ if __name__ != '__main__':
 def email_send(**kwargs):
     """
     发送邮件
+    发件人：attc@huishoubao.com.cn 密码：Att123456
     :param kwargs:    所需参数，包括收件人/邮件标题/邮件内容
     :return:          成功True， 失败False
     """
