@@ -53,7 +53,7 @@ def get_send_body():
         function_id = report_info.get('function_id')
         report_info.update(menu_tree_info[function_id])
     report_info_list = get_line_of_data(report_info_list, filter_line_name='system_line_id')
-    cur_wk_path = os.path.join(os.getcwd(), 'static', 'email_template.html')
+    cur_wk_path = os.path.join(web_root, 'static', 'email_template.html')
 
     with open(cur_wk_path, 'r+', encoding="utf-8") as fp:
         fp_data = fp.read()

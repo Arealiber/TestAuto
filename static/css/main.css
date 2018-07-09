@@ -206,6 +206,6 @@ tr pre, div pre {
     background-color: #fff;
     font-family:"Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontAwesome, sans-serif;
 }
-[name="interface_delay"] {
+select[name="interface_delay"] {
     background: #17a2b8;border-color:#17a2b8;color:white
 }
