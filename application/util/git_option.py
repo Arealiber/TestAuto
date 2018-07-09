@@ -8,7 +8,7 @@ def create_tag(soft_name, work_path):
     cur_wk_path = os.getcwd()
     os.chdir(work_path)
     work_path_cmd = 'cd %s' % work_path
-    tag_name = get_new_tag(soft_name, work_path)
+    tag_name = get_new_tag(work_path, soft_name)
     option_cmd = ';'.join([work_path_cmd, 'git pull origin master', 'git tag %s' % tag_name,
                            'git push origin %s' % tag_name])
     res = os.system(option_cmd)
@@ -33,7 +33,7 @@ def get_all_tags(work_path):
     return tags_list
 
 
-def get_new_tag(soft_name, work_path):
+def get_new_tag(work_path, soft_name='AutoTest'):
     tag_list = get_all_tags(work_path)
     soft_tags_list = [tag.splitlines()[0] for tag in tag_list if '{0}-test-v'.format(soft_name) in tag]
     if not soft_tags_list:
@@ -55,7 +55,7 @@ def get_new_tag(soft_name, work_path):
     return new_tag_name
 
 
-def update_repo_file(repo_path, file_path, src=None, dst='AutoTest Replace string'):
+def update_repo_file(soft_name, repo_path, file_path, src=None, dst=None):
     """
     原字符串为空时，替换文件中${}包裹的字符串
     :param repo_path
@@ -68,6 +68,8 @@ def update_repo_file(repo_path, file_path, src=None, dst='AutoTest Replace strin
     ret = os.system(push_cmd)
     if ret != 0:
         return False
+    if not dst:
+        dst = get_new_tag(repo_path, soft_name)
     with open(file_path, 'rw') as fp:
         fdata = fp.read()
         if src:
