@@ -54,8 +54,8 @@ def update_file():
     file_path 文件的绝对路劲
     :return:
     """
-    src = request.get_json()['src']
-    dst = request.get_json()['dst']
+    src = request.get_json().get('src', None)
+    dst = request.get_json().get('dst', None)
     file_path = request.get_json()['file_path']
     repo_path = request.get_json()['repo_path']
     ret = gitAPI.update_repo_file(repo_path, file_path, src, dst)
