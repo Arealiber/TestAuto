@@ -70,7 +70,7 @@ def update_repo_file(soft_name, repo_path, file_path, src=None, dst=None):
         return False
     if not dst:
         dst = get_new_tag(repo_path, soft_name)
-    with open(file_path, 'r+') as fp:
+    with open(file_path, 'rb') as fp:
         fdata = fp.read()
         if src:
             new_fdata = fdata.replace(src, dst)
@@ -79,6 +79,7 @@ def update_repo_file(soft_name, repo_path, file_path, src=None, dst=None):
             for src in src_list:
                 fdata = fdata.replace(src, dst)
             new_fdata = fdata
+    with open(file_path, 'wb') as fp:
         fp.write(new_fdata)
 
     ret = git_push_remote(repo_path, file_path)
