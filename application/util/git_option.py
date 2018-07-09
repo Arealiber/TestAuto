@@ -4,10 +4,8 @@ import re
 
 
 def create_tag(soft_name, work_path):
-    os.chdir(work_path)
     work_path_cmd = 'cd %s' % work_path
     tag_name = get_new_tag(soft_name, work_path)
-    os.chdir(work_path)
     option_cmd = ';'.join([work_path_cmd, 'git pull origin master', 'git tag %s' % tag_name,
                            'git push origin %s' % tag_name])
     res = os.system(option_cmd)
@@ -17,8 +15,7 @@ def create_tag(soft_name, work_path):
 
 
 def delete_tag(work_path, tag_name):
-    os.chdir(work_path)
-    option_cmd = ';'.join(['git tag -d %s' % tag_name, 'git push origin --delete %s' % tag_name])
+    option_cmd = ';'.join(['cd %s' % work_path, 'git tag -d %s' % tag_name, 'git push origin --delete %s' % tag_name])
     res = os.system(option_cmd)
     if res == 0:
         return True
