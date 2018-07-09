@@ -70,7 +70,7 @@ def update_repo_file(soft_name, repo_path, file_path, src=None, dst=None):
         return False
     if not dst:
         dst = get_new_tag(repo_path, soft_name)
-    with open(file_path, 'rw') as fp:
+    with open(file_path, 'r+') as fp:
         fdata = fp.read()
         if src:
             new_fdata = fdata.replace(src, dst)
