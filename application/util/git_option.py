@@ -4,11 +4,14 @@ import re
 
 
 def create_tag(soft_name, work_path):
+    cur_wk_path = os.getcwd()
+    os.chdir(work_path)
     work_path_cmd = 'cd %s' % work_path
     tag_name = get_new_tag(soft_name, work_path)
     option_cmd = ';'.join([work_path_cmd, 'git pull origin master', 'git tag %s' % tag_name,
                            'git push origin %s' % tag_name])
     res = os.system(option_cmd)
+    os.chdir(cur_wk_path)
     if res == 0:
         return tag_name
     return False
