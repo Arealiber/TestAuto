@@ -14,6 +14,7 @@ def email_send():
     """
     发送email到指定邮箱
     :return:
+    #TODO: 发送邮件时发件人设置，等邮件系统改好后添加
     """
     email_data = dict()
     email_data['address'] = dict()

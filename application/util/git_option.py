@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
 import re
+from application.util.parameter import search_parameter
 
 
 def create_tag(soft_name, work_path):
@@ -54,7 +55,43 @@ def get_new_tag(soft_name, work_path):
     return new_tag_name
 
 
+def update_repo_file(repo_path, file_path, src=None, dst='AutoTest Replace string'):
+    """
+    原字符串为空时，替换文件中${}包裹的字符串
+    :param repo_path
+    :param file_path:
+    :param src:
+    :param dst:
+    :return:
+    """
+    push_cmd = 'cd %s; git pull' % repo_path
+    ret = os.system(push_cmd)
+    if ret != 0:
+        return False
+    with open(file_path, 'rw') as fp:
+        fdata = fp.read()
+        if src:
+            new_fdata = fdata.replace(src, dst)
+        else:
+            src_list = search_parameter(fdata)
+            for src in src_list:
+                fdata = fdata.replace(src, dst)
+            new_fdata = fdata
+        fp.write(new_fdata)
+
+    ret = git_push_remote(repo_path, file_path)
+    if not ret:
+        return False
+    return True
 
 
+def git_push_remote(repo_path, file_path, msg='AutoTest Commit to Remote'):
+    commit_cmd = 'cd %s;git commit -m %s %s' % (repo_path, file_path, msg)
+    if not os.system(commit_cmd):
+        return False
+    push_cmd = 'cd %s;git push' % repo_path
+    if not os.system(push_cmd):
+        return False
+    return True
 
 

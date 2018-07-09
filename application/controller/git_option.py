@@ -30,6 +30,7 @@ def create_tag():
 def delete_tag():
     """
     功能描述: 删除一个tag
+    :param: work_path Repo的绝对路径
     :return:
     """
     tag_name = request.get_json()['tag_name']
@@ -40,6 +41,28 @@ def delete_tag():
     if not tag:
         return jsonify({'success': False, 'res': '删除tag失败'})
     return jsonify({'success': True, 'res': '删除tag[%s]成功' % tag_name})
+
+
+@app.route('/git/update', methods=['POST'])
+@try_except
+@login_required
+def update_file():
+    """
+    功能描述: 更新文件内容并提交
+    src 替换的原字符串
+    dst 目的字符串
+    file_path 文件的绝对路劲
+    :return:
+    """
+    src = request.get_json()['src']
+    dst = request.get_json()['dst']
+    file_path = request.get_json()['file_path']
+    repo_path = request.get_json()['repo_path']
+    ret = gitAPI.update_repo_file(repo_path, file_path, src, dst)
+    if not ret:
+        return jsonify({'success': False, 'res': '更新文件失败'})
+    return jsonify({'success': True, 'res': ret})
+
 
 
 
