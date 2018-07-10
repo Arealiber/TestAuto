@@ -1023,6 +1023,7 @@
         $.ajax({
             type: 'post',
             url: '/use_case/execute',
+            timeout:300,
             data: JSON.stringify({
                 id: use_case_id,
                 environment_id: environment_id,
