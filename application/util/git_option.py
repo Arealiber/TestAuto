@@ -70,7 +70,7 @@ def update_repo_file(repo_path, file_path, src=None, dst=None):
     if ret != 0:
         return False
     if not dst:
-        dst = datetime.now().strftime('%c')
+        dst = datetime.now().strftime('%Y-%m-%D %H:%M:%S')
     with open(file_path, 'r') as fp:
         fdata = str(fp.read())
         if src:
