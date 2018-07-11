@@ -74,15 +74,15 @@
             </div>
             <div class="form-group">
                 <label for="use_case_desc">预置条件</label>
-                <textarea type="text" class="form-control" id="pre_condition" rows="2" value=""></textarea>
+                <textarea type="text" class="form-control" id="pre_condition" rows="1" value=""></textarea>
             </div>
             <div class="form-group">
                 <label for="use_case_desc">用例步骤</label>
-                <textarea type="text" class="form-control" id="use_case_desc" rows="2" placeholder="用例步骤描述" value=""></textarea>
+                <textarea type="text" class="form-control" id="use_case_desc" rows="1" placeholder="用例步骤描述" value=""></textarea>
             </div>
             <div class="form-group">
                 <label for="use_case_desc">预期结果</label>
-                <textarea type="text" class="form-control" id="post_condition" rows="2" value=""></textarea>
+                <textarea type="text" class="form-control" id="post_condition" rows="1" value=""></textarea>
             </div>
             <div id="business_line" class="input-select" style="display: none">
                 <label for="business_line">业务线</label>
@@ -516,6 +516,8 @@
                     $("#use_case_desc").val(use_case_detail.desc);
                     $("#post_condition").val(use_case_detail.post_condition);
                     var row = 0;
+                    var row2 = 0;
+                    var row3 = 0;
                     if (use_case_detail.desc && use_case_detail.desc.length > 0) {
                         var line_list = use_case_detail.desc.match(/\n/g || []);
                         if (!line_list || use_case_detail.desc.length<5) {
@@ -528,7 +530,7 @@
                     if (use_case_detail.pre_condition && use_case_detail.pre_condition.length > 0) {
                         line_list = use_case_detail.pre_condition.match(/\n/g || []);
                         if (!line_list || use_case_detail.pre_condition.length<5) {
-                            var row2 = 0;
+                            row2 = 0;
                         } else {
                             row2 = line_list.length;
                         }
@@ -537,7 +539,7 @@
                     if (use_case_detail.post_condition && use_case_detail.post_condition.length > 0) {
                         line_list = use_case_detail.post_condition.match(/\n/g || []);
                         if (!line_list || use_case_detail.post_condition.length<5) {
-                            var row3 = 0;
+                            row3 = 0;
                         } else {
                             row3 = line_list.length;
                         }
