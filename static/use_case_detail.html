@@ -1093,6 +1093,7 @@
                 }
             },
             error: function () {
+                $("#execute_loader").hide();
                 show_execute_alert("请求超时或异常，请到日志中查看用例运行结果！");
             },
         })
