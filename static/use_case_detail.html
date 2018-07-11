@@ -363,15 +363,16 @@
         if (data.levels && data.levels > 3 && !data.state.expanded || data.levels >4) {
             sidebar_selector.attr('style',"width: 28%; max-width: 400px");
             selector_list.find('ol').attr('style', 'margin-left:20%');
-            $('#use_case-wrapper').attr('style', 'margin-left:20%');
+            $('#use_case-wrapper').removeAttr('style', 'margin-left:20%');
+            $('#use_case-wrapper').attr('style', 'margin-left:15%');
         } else if (!parentNode.state.expanded) {
             sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
             selector_list.find('ol').removeAttr('style', 'margin-left:20%');
-            $('#use_case-wrapper').removeAttr('style', 'margin-left:20%');
+            $('#use_case-wrapper').removeAttr('style', 'margin-left:15%');
         } else if (data.levels == 4 && data.state.expanded) {
             sidebar_selector.removeAttr('style',"width: 28%; max-width: 400px");
             selector_list.find('ol').removeAttr('style', 'margin-left:20%');
-            $('#use_case-wrapper').removeAttr('style', 'margin-left:20%');
+            $('#use_case-wrapper').removeAttr('style', 'margin-left:15%');
         }
     }
 
