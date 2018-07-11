@@ -519,7 +519,7 @@
                     var row2 = 0;
                     var row3 = 0;
                     if (use_case_detail.desc && use_case_detail.desc.length > 0) {
-                        var line_list = use_case_detail.desc.match(/\n/g || []);
+                        var line_list = use_case_detail.desc.match(/\r\n/g || []);
                         if (!line_list || use_case_detail.desc.length<5) {
                             row = 0;
                         } else {
@@ -528,7 +528,7 @@
                     }
                     $("#use_case_desc").attr('rows', row+1);
                     if (use_case_detail.pre_condition && use_case_detail.pre_condition.length > 0) {
-                        line_list = use_case_detail.pre_condition.match(/\n/g || []);
+                        line_list = use_case_detail.pre_condition.match(/\r\n/g || []);
                         if (!line_list || use_case_detail.pre_condition.length<5) {
                             row2 = 0;
                         } else {
@@ -537,7 +537,7 @@
                     }
                     $("#pre_condition").attr('rows', row2+1);
                     if (use_case_detail.post_condition && use_case_detail.post_condition.length > 0) {
-                        line_list = use_case_detail.post_condition.match(/\n/g || []);
+                        line_list = use_case_detail.post_condition.match(/\r\n/g || []);
                         if (!line_list || use_case_detail.post_condition.length<5) {
                             row3 = 0;
                         } else {
