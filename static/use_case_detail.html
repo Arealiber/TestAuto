@@ -1093,12 +1093,9 @@
                 }
             },
             error: function (event, errtext) {
+                console.log(errtext);
                 $("#execute_loader").hide();
-                if (errtext.indexOf('timeout') >= 0) {
-                    show_execute_alert("请求超时，请到日志中查看用例运行结果！",'alert-danger');
-                } else {
-                    show_execute_alert(errtext,'alert-danger');
-                }
+                show_execute_alert("请求超时，请到日志中查看用例运行结果！",'alert-danger');
 
             },
         })
