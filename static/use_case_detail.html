@@ -518,31 +518,31 @@
                     var row = 0;
                     if (use_case_detail.desc && use_case_detail.desc.length > 0) {
                         var line_list = use_case_detail.desc.match(/\n/g || []);
-                        if (!line_list) {
+                        if (!line_list || use_case_detail.desc.length<5) {
                             row = 0;
                         } else {
                             row = line_list.length;
                         }
                     }
-                    $("#use_case_desc").attr('rows', 1 + row);
+                    $("#use_case_desc").attr('rows', row+1);
                     if (use_case_detail.pre_condition && use_case_detail.pre_condition.length > 0) {
                         line_list = use_case_detail.pre_condition.match(/\n/g || []);
-                        if (!line_list) {
-                            row = 0;
+                        if (!line_list || use_case_detail.pre_condition.length<5) {
+                            var row2 = 0;
                         } else {
-                            row = line_list.length;
+                            row2 = line_list.length;
                         }
                     }
-                    $("#pre_condition").attr('rows', 1 + row);
+                    $("#pre_condition").attr('rows', row2+1);
                     if (use_case_detail.post_condition && use_case_detail.post_condition.length > 0) {
                         line_list = use_case_detail.post_condition.match(/\n/g || []);
-                        if (!line_list) {
-                            row = 0;
+                        if (!line_list || use_case_detail.post_condition.length<5) {
+                            var row3 = 0;
                         } else {
-                            row = line_list.length;
+                            row3 = line_list.length;
                         }
                     }
-                    $("#post_condition").attr('rows', 1 + row);
+                    $("#post_condition").attr('rows', row3+1);
 
                     var interface_list = use_case_detail.interface_list;
                     if (interface_list.length == 0) {
