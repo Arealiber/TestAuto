@@ -665,6 +665,7 @@
         $('button[name="add_interface"]').click(function () {
             var selected_interface_list = $("#interfaceUL").find('.active');
             var use_case_id = $('#use_case_id').attr('placeholder');
+            loader.show();
             if (selected_interface_list.length < 1) {
                 get_use_case_detail(use_case_id);
             } else {
@@ -690,7 +691,6 @@
                         if (!response.success) {
                             show_alert('更新数据失败')
                         } else {
-                            loader.show();
                             get_use_case_detail(use_case_id);
                         }
                     }
