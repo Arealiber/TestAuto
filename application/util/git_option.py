@@ -9,7 +9,7 @@ def create_tag(soft_name, work_path):
     cur_wk_path = os.getcwd()
     os.chdir(work_path)
     work_path_cmd = 'cd %s' % work_path
-    os.system('%s;git checkout master' % work_path_cmd)
+    os.system('%s;git checkout master; git pull origin master' % work_path_cmd)
     tag_name = get_new_tag(work_path, soft_name)
     option_cmd = ';'.join([work_path_cmd, 'git pull origin master', 'git tag %s' % tag_name,
                            'git push origin %s' % tag_name])
