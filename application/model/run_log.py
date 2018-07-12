@@ -2,6 +2,7 @@
 import time
 from datetime import datetime
 from application import engine
+from application.util.redis_lock import deco, RedisLock
 from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TEXT
 from sqlalchemy.dialects.mysql import TIMESTAMP
 
@@ -22,7 +23,7 @@ def get_batch_run_log_table(table_name):
                   Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False),
                   extend_existing=True,
                   )
-    table.create(bind=engine, checkfirst=True)
+    create_table(table, engine, 'batch_run_log_{0}'.format(table_name))
     return table
 
 
@@ -40,7 +41,7 @@ def get_use_case_run_log_table(table_name):
                   Column('auto_run', Boolean, default=False),
                   extend_existing=True,
                   )
-    table.create(bind=engine, checkfirst=True)
+    create_table(table, engine, 'use_case_run_log_{0}'.format(table_name))
     return table
 
 
@@ -62,8 +63,20 @@ def get_interface_run_log_table(table_name):
                   Column('error_message', String(2000)),
                   extend_existing=True,
                   )
-    table.create(bind=engine, checkfirst=True)
+    create_table(table, engine, 'interface_run_log_{0}'.format(table_name))
     return table
+
+
+def create_table(table, bind, table_name):
+    if table_name not in meta.tables:
+        lock_create_table(table, bind, check_first=True)
+    else:
+        table.create(bind=engine, checkfirst=True)
+
+
+@deco(RedisLock('table_lock'))
+def lock_create_table(table, bind):
+    table.create(bind=bind, checkfirst=True)
 
 
 def exec_query(sql, is_list=False):
