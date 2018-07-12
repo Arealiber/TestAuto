@@ -93,7 +93,7 @@ def create_table(table, bind, table_name):
         table.create(bind=engine, checkfirst=True)
 
 
-@deco(RedisLock('table_lock'))
+@deco(RedisLock('report_lock'))
 def lock_create_table(table, bind):
     table.create(bind=bind, checkfirst=True)
 
