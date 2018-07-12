@@ -2,6 +2,7 @@
 import time
 from datetime import datetime
 from application import engine
+from application.util.redis_lock import deco, RedisLock
 from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TEXT, DateTime
 from sqlalchemy.dialects.mysql import TIMESTAMP
 
@@ -24,7 +25,7 @@ def get_minutes_report_table(table_name):
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
                   extend_existing=True,
                   )
-    table.create(bind=engine, checkfirst=True)
+    create_table(table, engine, 'report_minute_{0}'.format(table_name))
     return table
 
 
@@ -43,7 +44,7 @@ def get_day_report_table(table_name):
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
                   extend_existing=True,
                   )
-    table.create(bind=engine, checkfirst=True)
+    create_table(table, engine, 'report_day_{0}'.format(table_name))
     return table
 
 
@@ -62,7 +63,7 @@ def get_week_report_table(table_name):
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
                   extend_existing=True,
                   )
-    table.create(bind=engine, checkfirst=True)
+    create_table(table, engine, 'report_week_{0}'.format(table_name))
     return table
 
 
@@ -81,8 +82,20 @@ def get_month_report_table(table_name):
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
                   extend_existing=True,
                   )
-    table.create(bind=engine, checkfirst=True)
+    create_table(table, engine, 'report_month_{0}'.format(table_name))
     return table
+
+
+def create_table(table, bind, table_name):
+    if table_name not in meta.tables:
+        lock_create_table(table, bind, check_first=True)
+    else:
+        table.create(bind=engine, checkfirst=True)
+
+
+@deco(RedisLock('table_lock'))
+def lock_create_table(table, bind):
+    table.create(bind=bind, checkfirst=True)
 
 
 def exec_query(sql, is_list=False):
