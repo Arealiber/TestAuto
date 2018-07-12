@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
 from application.config import default
+from redis import StrictRedis
 
 web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir))
 
@@ -56,3 +57,8 @@ def session_scope():
     finally:
         session.close()
         # gc.collect()
+
+
+redis_link = StrictRedis(host=app.config['REDIS_HOST'], port=app.config['REDIS_PORT'],
+                         password=app.config['REDIS_AUTH'])
+

@@ -33,3 +33,8 @@ DB_ECHO = False
 
 # 正式环境内部权限系统
 SYSTEM_ID = '42'
+
+# redis配置
+REDIS_HOST = '10.66.230.61'
+REDIS_PORT = '6379'
+REDIS_AUTH = 'crs-g0dg7okv:vZ3RScfBUI'
