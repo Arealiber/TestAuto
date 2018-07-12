@@ -273,7 +273,7 @@
                                             $("#run_log_table").find('tbody').
                                             append('<tr>'+
                                                 '<th scope="row">' + (pageSize * (page_num - 1 ) + i + 1) + '</th>' +
-                                                '<td>' + use_case_run_log.use_case_name + '</td>' +
+                                                '<td><a href="/use_case/1?use_case_detail&use_case_id='+ use_case_run_log.use_case_id +'" class="run_log_use_case_name">' + use_case_run_log.use_case_name + '</a></td>' +
                                                 is_pass_string +
                                                 '<td>' + start_time + '</td>' +
                                                 '<td>' + end_time + '</td>' +

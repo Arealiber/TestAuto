@@ -209,3 +209,10 @@ tr pre, div pre {
 select[name="interface_delay"] {
     background: #17a2b8;border-color:#17a2b8;color:white
 }
+.run_log_use_case_name {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: left;
+}
