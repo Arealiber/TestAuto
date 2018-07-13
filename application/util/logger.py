@@ -54,4 +54,4 @@ def info_log(info_str):
         :param info_str:               记录内容
         :return:
         """
-    LOGGER.log_info(info_str)
+    LOGGER.log_info(str(info_str))
