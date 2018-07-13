@@ -3,7 +3,6 @@ import socket
 from datetime import datetime
 
 from application.util import hsbpythonlog as LOGGER
-from application.util.redis_lock import RedisLock, deco
 
 
 # log内容
@@ -15,7 +14,6 @@ HOSTNAME = socket.gethostname()
 LOGGER.log_initialize("InspectSys", False)
 
 
-@deco(RedisLock('request_log'))
 def request_log(target_name, target_id, interface, code, cost_time):
     """
     常规上报（调用成功或错误或超时均上报，内部错误不上报）
