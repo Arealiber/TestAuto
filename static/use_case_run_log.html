@@ -113,9 +113,9 @@
         var is_pass = time_string.get('is_pass');
         var auto_run = time_string.get('auto_run');
         var use_case_name = time_string.get('use_case_name');
-        var time_url = '';
+        var time_url = '?';
         if (from_time){
-            time_url = "?from_time="+ from_time;
+            time_url += "&from_time="+ from_time;
             from_time += ':00.000'
         }
         if (to_time){
