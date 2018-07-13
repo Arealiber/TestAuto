@@ -4,7 +4,6 @@ import time
 import requests
 if __name__ != '__main__':
     from datetime import datetime, timedelta
-    from dateutil.relativedelta import relativedelta
     from application.util import get_line_of_data
     from application.api import report as ReportAPI
     from application.api import menutree as MenuTreeAPI
@@ -22,7 +21,7 @@ def email_send(**kwargs):
         'head': {
             'version': '0.01',
             'msgtype': 'request',
-            'interface': 'account1',
+            'interface': 'account5',
             'remark': ''
         },
         'params': {
@@ -34,11 +33,11 @@ def email_send(**kwargs):
         }
     }
     str_url = kwargs.get('str_url')
-    res = requests.post(str_url, json=json_data, proxies=kwargs.get('proxies', None))
-    if res.status_code == 200:
-        return '成功'
+    r = requests.post(str_url, json=json_data, proxies=kwargs.get('proxies', None))
+    if r.status_code == 200:
+        return 0
     else:
-        return res.content
+        return 1
 
 
 def get_send_body():

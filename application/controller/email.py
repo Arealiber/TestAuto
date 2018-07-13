@@ -33,8 +33,11 @@ def email_send():
     if not data_body:
         data_body = '获取日志报表数据失败'
     email_data['body'] = str(data_body)
-    result = EmailSendAPI.email_send(**email_data)
-    return jsonify({'success': True, 'res': result})
+    ret = EmailSendAPI.email_send(**email_data)
+    if ret == 0:
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'res': '发送失败'})
 
 
 @app.route('/email/account/add', methods=['POST'])
