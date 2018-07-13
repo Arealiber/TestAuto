@@ -2,6 +2,7 @@
 from sqlalchemy import func, select, desc
 from application.util.decorator import *
 from application.model.run_log import *
+from application.util import logger
 
 
 @run_log_table_decorator
@@ -137,8 +138,12 @@ def modify_batch_run_log(**kwargs):
 @run_log_table_decorator
 def add_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
+    logger.info_log(kwargs)
     sql = table.insert(kwargs)
-    return exec_change(sql).inserted_primary_key[0]
+    primary_key = exec_change(sql).inserted_primary_key[0]
+    if not primary_key:
+        logger.exception_log('返回主键异常，为空：' + primary_key)
+    return primary_key
 
 
 @run_log_table_decorator
