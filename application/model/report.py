@@ -88,7 +88,7 @@ def get_month_report_table(table_name):
 
 def create_table(table, bind, table_name):
     if table_name not in meta.tables:
-        lock_create_table(table, bind, check_first=True)
+        lock_create_table(table, bind)
     else:
         table.create(bind=engine, checkfirst=True)
 
