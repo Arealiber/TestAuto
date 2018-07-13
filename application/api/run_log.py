@@ -142,12 +142,12 @@ def modify_batch_run_log(**kwargs):
 def add_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     if not app.config['DEBUG']:
-        logger.info_log(kwargs)
+        logger.info_log(str(kwargs))
     sql = table.insert(kwargs)
     primary_key = exec_change(sql).inserted_primary_key[0]
     if not primary_key:
         if not app.config['DEBUG']:
-            logger.exception_log('返回主键异常，为空：' + primary_key)
+            logger.exception_log('返回主键异常，为空：' + str(primary_key))
         else:
             print('返回主键异常，为空：' + primary_key)
     return primary_key
