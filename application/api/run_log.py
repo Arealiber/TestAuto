@@ -148,7 +148,7 @@ def add_use_case_run_log(**kwargs):
     primary_key = ret.inserted_primary_key[0]
     if not primary_key:
         if not app.config['DEBUG']:
-            logger.exception_log('返回主键异常，为空, 返回结果：'+ret)
+            logger.exception_log('返回主键异常，为空, 返回结果：'+str(ret))
             logger.exception_log('返回主键异常，为空：' + str(primary_key))
         else:
             print('返回主键异常，为空：' + primary_key)
