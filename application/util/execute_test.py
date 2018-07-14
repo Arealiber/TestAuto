@@ -1,10 +1,12 @@
-import requests
 import json
 import timeit
 import time
+import sys
+import traceback
 import re
 import socket
 import html
+import requests
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from datetime import datetime
 from requests.exceptions import ConnectionError, ConnectTimeout
@@ -436,7 +438,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 exec_result_list.append(result)
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = result['success']
-                interface_log_dict['error_message'] = '验证: {0}: {1}'.format(str(e.__class__.__name__), str(e))
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                interface_log_dict['error_message'] = '验证: {0}: {1},异常信息：{2}'.format(str(e.__class__.__name__), str(e), str(traceback.extract_tb(exc_tb)))
                 interface_log_insert(interface_log_dict)
                 # 用例运行日志记录
                 use_case_exception_log_update(use_case_log_id, use_case_start)
