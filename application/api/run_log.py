@@ -2,6 +2,7 @@
 from sqlalchemy import func, select, desc
 from application.util.decorator import *
 from application.model.run_log import *
+from application.util import LocalLog
 
 from application import app
 if not app.config['DEBUG']:
@@ -150,7 +151,7 @@ def add_use_case_run_log(**kwargs):
         if not app.config['DEBUG']:
             logger.exception_log('返回主键异常，为空, 返回结果：'+str(primary_key))
         else:
-            print('返回主键异常，为空：' + primary_key)
+            LocalLog.info('返回主键异常，为空：' + str(primary_key))
     return primary_key
 
 
