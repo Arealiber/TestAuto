@@ -145,14 +145,13 @@ def add_use_case_run_log(**kwargs):
         logger.info_log(str(kwargs))
     sql = table.insert(kwargs)
     ret = exec_change(sql)
-    primary_key = ret.inserted_primary_key[0]
-    last_rowid = ret.lastrowid
+    primary_key = ret.inserted_primary_key[0] or ret.lastrowid
     if not primary_key:
         if not app.config['DEBUG']:
-            logger.exception_log('返回主键异常，为空, 返回结果：'+str(last_rowid))
+            logger.exception_log('返回主键异常，为空, 返回结果：'+str(primary_key))
         else:
             print('返回主键异常，为空：' + primary_key)
-    return primary_key or last_rowid
+    return primary_key
 
 
 @run_log_table_decorator
