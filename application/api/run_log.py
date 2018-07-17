@@ -149,9 +149,11 @@ def add_use_case_run_log(**kwargs):
     primary_key = ret.inserted_primary_key[0] or ret.lastrowid
     if not primary_key:
         if not app.config['DEBUG']:
-            logger.exception_log('返回主键异常，为空, 返回结果：'+str(primary_key))
+            logger.exception_log('返回主键异常，为空, 返回结果：%s' % str(primary_key))
         else:
-            LocalLog.info('返回主键异常，为空：' + str(primary_key))
+            LocalLog.error('返回主键异常，为空：%s' % str(kwargs))
+    else:
+        LocalLog.info('插入数据成功：%s' % primary_key)
     return primary_key
 
 
