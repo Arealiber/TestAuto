@@ -150,8 +150,7 @@ def add_use_case_run_log(**kwargs):
     if not primary_key:
         if not app.config['DEBUG']:
             logger.exception_log('返回主键异常，为空, 返回结果：%s' % str(primary_key))
-        else:
-            LocalLog.error(u'返回主键异常，为空：%s' % str(kwargs))
+        LocalLog.error(u'返回主键异常，为空：%s' % str(kwargs))
     return primary_key
 
 
