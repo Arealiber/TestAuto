@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+from datetime import datetime
 from application.config.default import QUERY_TIME_FMT
 from flask import request, jsonify
 from application.api import run_log as RunLogAPI
