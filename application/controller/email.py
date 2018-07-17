@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from flask import request, jsonify
+from flask import request, jsonify, session
 from application import app
 from application.controller import login_required, localhost_required
 from application.util.exception import try_except
@@ -78,5 +78,8 @@ def email_account_info():
     查询邮箱地址
     :return:
     """
+    real_name = session['real_name']
+    if real_name not in ['李成波', '汪林云', '赵军', '刘渊']:
+        return jsonify({'success': False, 'error': '无该功能权限，请找相关开发人员给配置权限'})
     result = EmailAPI.query_email_account(**request.get_json())
     return jsonify({'success': True, 'res': result})
