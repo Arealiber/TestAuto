@@ -71,7 +71,7 @@ def create_table(table, bind, table_name):
     if table_name not in meta.tables:
         lock_create_table(table, bind)
     else:
-        table.create(bind=engine, checkfirst=True)
+        return meta.tables.get(table_name)
 
 
 @deco(RedisLock('run_log_lock'))
