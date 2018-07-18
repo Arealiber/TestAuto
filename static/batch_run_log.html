@@ -208,7 +208,7 @@
                                         var start_time = batch_run_log.start_time;
                                         var end_time = batch_run_log.end_time;
                                         var button_col = '<div class="btn-group btn-group-sm" role="group">' +
-                                            '<a class="btn btn-info" href="/batch_run_log/detail/' + batch_run_log.id +'/1'+ time_url +'" role="button">详情</a></button>';
+                                            '<a class="btn btn-info" href="/batch_run_log/detail/' + batch_run_log.id +'/1?from_time='+ start_time.substring(0, 16) +'" role="button">详情</a></button>';
                                         if (!start_time) {
                                             start_time = "";
                                         } else {
