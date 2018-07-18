@@ -12,17 +12,17 @@ class RedisLock(object):
     @staticmethod
     def get_lock(cls, timeout=10):
         while cls._lock != 1:
-            timestamp = time.time() + timeout + 1
+            timestamp = int(time.time()) + timeout + 1
             cls._lock = cls.redis.setnx(cls.lock_key, timestamp)
-            if cls._lock == 1 or (time.time() > cls.redis.get(cls.lock_key) and
-                                  time.time() > cls.redis.getset(cls.lock_key, timestamp)):
+            if cls._lock == 1 or (time.time() > float(cls.redis.get(cls.lock_key)) and
+                                  time.time() > float(cls.redis.getset(cls.lock_key, timestamp))):
                 break
             else:
                 time.sleep(0.3)
 
     @staticmethod
     def release(cls):
-        if time.time() < cls.redis.get(cls.lock_key):
+        if cls.redis.get(cls.lock_key) and time.time() < float(cls.redis.get(cls.lock_key)):
             cls.redis.delete(cls.lock_key)
 
 

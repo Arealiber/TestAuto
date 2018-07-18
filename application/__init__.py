@@ -44,6 +44,9 @@ with app.app_context():
 # SQLAlchemy session
 session_factory = sessionmaker(bind=engine)
 
+redis_link = StrictRedis(host=app.config['REDIS_HOST'], port=app.config['REDIS_PORT'],
+                         password=app.config['REDIS_AUTH'])
+
 
 @contextmanager
 def session_scope():
@@ -59,6 +62,5 @@ def session_scope():
         # gc.collect()
 
 
-redis_link = StrictRedis(host=app.config['REDIS_HOST'], port=app.config['REDIS_PORT'],
-                         password=app.config['REDIS_AUTH'])
+
 

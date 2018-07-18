@@ -10,3 +10,8 @@ PORT = 9091
 
 # 是否需要代理
 PROXIES = True
+
+# redis配置
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = '6379'
+REDIS_AUTH = '123456'
