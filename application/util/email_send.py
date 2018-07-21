@@ -37,7 +37,7 @@ def email_send(**kwargs):
     if r.status_code == 200:
         return 0
     else:
-        return 1
+        return r.text
 
 
 def get_send_body():

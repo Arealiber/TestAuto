@@ -23,7 +23,7 @@ def email_send():
     if app.config['PROXIES']:
         email_data['proxies'] = {'http': app.config['DB_URI'].split('@')[1].split('/')[0]}  # 取开发机ip作为代理服务器
 
-    result = EmailAPI.query_email_account(**{})
+    result = EmailAPI.query_email_account()
     if not result:
         return jsonify({'success': False, 'res': '邮箱不能为空'})
     for emai_account in result:
@@ -37,7 +37,7 @@ def email_send():
     if ret == 0:
         return jsonify({'success': True})
     else:
-        return jsonify({'success': False, 'res': '发送失败'})
+        return jsonify({'success': False, 'res': '发送失败:{}'.format(ret)})
 
 
 @app.route('/email/account/add', methods=['POST'])
