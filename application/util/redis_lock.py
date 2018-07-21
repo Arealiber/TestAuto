@@ -14,7 +14,8 @@ class RedisLock(object):
         while cls._lock != 1:
             timestamp = int(time.time()) + timeout + 1
             cls._lock = cls.redis.setnx(cls.lock_key, timestamp)
-            if cls._lock == 1 or (time.time() > float(cls.redis.get(cls.lock_key)) and
+            if cls._lock == 1 or (cls.redis.get(cls.lock_key) and
+                                  time.time() > float(cls.redis.get(cls.lock_key)) and
                                   time.time() > float(cls.redis.getset(cls.lock_key, timestamp))):
                 break
             else:
