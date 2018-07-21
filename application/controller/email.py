@@ -81,5 +81,5 @@ def email_account_info():
     real_name = session['real_name']
     if real_name not in ['李成波', '汪林云', '赵军', '刘渊', '管理员']:
         return jsonify({'success': False, 'error': '无该功能权限，请找相关开发人员给配置权限'})
-    result = EmailAPI.query_email_account(**request.get_json())
+    result = EmailAPI.query_email_account()
     return jsonify({'success': True, 'res': result})
