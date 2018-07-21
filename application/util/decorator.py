@@ -4,9 +4,11 @@ from application.config.default import *
 from dateutil.rrule import rrule, DAILY
 from functools import wraps
 from flask import make_response
+from application import app
 
 
 # 处理日志模块对于分表和按时间查询参数的装饰器
+@app.context_processor
 def run_log_table_decorator(func):
     def wrapper(**kwargs):
         """
