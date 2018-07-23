@@ -178,7 +178,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
 
         for interface in interface_list:
             # 添加延时运行接口
-            interface_delay = int(interface.get('interface_delay', 0))
+            interface_delay = int(interface.get('interface_delay'))
             if interface_delay > 0:
                 time.sleep(interface_delay)
             interface_name = interface.get('interface_name')
