@@ -23,6 +23,7 @@ def get_minutes_report_table(table_name):
                   Column('average_time', Float),
                   Column('max_time', Float),
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
+                  autoload=True,
                   extend_existing=True,
                   )
     create_table(table, engine, 'report_minute_{0}'.format(table_name))
@@ -42,6 +43,7 @@ def get_day_report_table(table_name):
                   Column('average_time', Float),
                   Column('max_time', Float),
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
+                  autoload=True,
                   extend_existing=True,
                   )
     create_table(table, engine, 'report_day_{0}'.format(table_name))
@@ -61,6 +63,7 @@ def get_week_report_table(table_name):
                   Column('average_time', Float),
                   Column('max_time', Float),
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
+                  autoload=True,
                   extend_existing=True,
                   )
     create_table(table, engine, 'report_week_{0}'.format(table_name))
@@ -80,6 +83,7 @@ def get_month_report_table(table_name):
                   Column('average_time', Float),
                   Column('max_time', Float),
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
+                  autoload=True,
                   extend_existing=True,
                   )
     create_table(table, engine, 'report_month_{0}'.format(table_name))
