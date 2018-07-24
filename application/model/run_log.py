@@ -26,7 +26,6 @@ def get_batch_run_log_table(table_name):
                       Column('end_time', TIMESTAMP(fsp=3)),
                       Column('cost_time', Float, default=0),
                       Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False),
-                      autoload=True,
                       extend_existing=True,
                       )
         create_table(table, engine)
@@ -48,7 +47,6 @@ def get_use_case_run_log_table(table_name):
                       Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
                       Column('cost_time', Float, nullable=False, default=0),
                       Column('auto_run', Boolean, default=False),
-                      autoload=True,
                       extend_existing=True,
                       )
         create_table(table, engine)
@@ -74,7 +72,6 @@ def get_interface_run_log_table(table_name):
                       Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
                       Column('end_time', TIMESTAMP(fsp=3), nullable=False),
                       Column('error_message', String(2000)),
-                      autoload=True,
                       extend_existing=True,
                       )
         create_table(table, engine)

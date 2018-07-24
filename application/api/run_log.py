@@ -140,7 +140,6 @@ def modify_batch_run_log(**kwargs):
 
 
 @run_log_table_decorator
-@deco(RedisLock('add_use_case_run_log'))
 def add_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     if not app.config['DEBUG']:
@@ -275,7 +274,6 @@ def get_use_case_run_log(**kwargs):
 
 
 @run_log_table_decorator
-@deco(RedisLock('add_interface_run_log'))
 def add_interface_run_log(**kwargs):
     table = get_interface_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     sql = table.insert(kwargs)
