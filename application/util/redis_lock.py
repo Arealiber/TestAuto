@@ -28,7 +28,7 @@ class RedisLock(object):
             if cls.redis.exists(cls.lock_key) and time.time() < float(cls.redis.get(cls.lock_key)):
                 cls.redis.delete(cls.lock_key)
         except:
-            LOGGER.exception_log('异常键{}：{}'.format(cls.lock_key, str(cls.redis.get(cls.lock_key))))
+            LOGGER.exception_log('异常键{0}：{1}'.format(cls.lock_key, str(cls.redis.get(cls.lock_key))))
 
 
 def deco(cls):
