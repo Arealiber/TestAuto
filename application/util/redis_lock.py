@@ -31,8 +31,11 @@ class RedisLock(object):
                 cls.redis.delete(cls.lock_key)
         except:
             if not app.config['DEBUG']:
-                LOGGER.exception_log('是否存在：{0}'.format(cls.redis.exists(cls.lock_key)))
-                LOGGER.exception_log('异常键{0}：{1}'.format(cls.lock_key, str(cls.redis.get(cls.lock_key))))
+                LOGGER.exception_log('异常键{0}|{1}|是否存在：{2}'.
+                                     format(cls.lock_key, str(cls.redis.get(cls.lock_key)),
+                                            cls.redis.exists(cls.lock_key)
+                                            )
+                                     )
             else:
                 print('异常键{0}：{1}'.format(cls.lock_key, str(cls.redis.get(cls.lock_key))))
 
