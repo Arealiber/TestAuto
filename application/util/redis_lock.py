@@ -27,7 +27,8 @@ class RedisLock(object):
     @staticmethod
     def release(cls):
         try:
-            if cls.redis.exists(cls.lock_key) and time.time() < float(cls.redis.get(cls.lock_key)):
+            if cls.redis.exists(cls.lock_key) and not cls.redis.get(cls.lock_key) \
+                    and time.time() < float(cls.redis.get(cls.lock_key)):
                 cls.redis.delete(cls.lock_key)
         except:
             if not app.config['DEBUG']:
