@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import time
 from application import redis_link as redis
+from application.util import logger as LOGGER
 
 
 class RedisLock(object):
@@ -23,8 +24,11 @@ class RedisLock(object):
 
     @staticmethod
     def release(cls):
-        if cls.redis.exists(cls.lock_key) and time.time() < float(cls.redis.get(cls.lock_key)):
-            cls.redis.delete(cls.lock_key)
+        try:
+            if cls.redis.exists(cls.lock_key) and time.time() < float(cls.redis.get(cls.lock_key)):
+                cls.redis.delete(cls.lock_key)
+        except:
+            LOGGER.exception_log('异常键{}：{}'.format(cls.lock_key, str(cls.redis.get(cls.lock_key))))
 
 
 def deco(cls):
