@@ -17,19 +17,7 @@ interface_run_log_table = {}
 def get_batch_run_log_table(table_name):
     table = batch_run_log_table.get('batch_run_log_{0}'.format(table_name), None)
     if table is None:
-        table = Table('batch_run_log_{0}'.format(table_name), meta,
-                      Column('id', Integer, primary_key=True),
-                      Column('batch_id', Integer, nullable=False),
-                      Column('use_case_count', Integer, nullable=False),
-                      Column('pass_rate', Integer, default=-1, nullable=False),  # 百分比，-1表示未执行完成
-                      Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
-                      Column('end_time', TIMESTAMP(fsp=3)),
-                      Column('cost_time', Float, default=0),
-                      Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False),
-                      extend_existing=True,
-                      )
-        create_table(table, engine)
-        batch_run_log_table['batch_run_log_{0}'.format(table_name)] = table
+        return create_batch_run_log_table(table_name)
     return table
 
 
@@ -37,20 +25,7 @@ def get_batch_run_log_table(table_name):
 def get_use_case_run_log_table(table_name):
     table = use_case_run_log_table.get('use_case_run_log_{0}'.format(table_name), None)
     if table is None:
-        table = Table('use_case_run_log_{0}'.format(table_name), meta,
-                      Column('id', Integer, primary_key=True),
-                      Column('batch_run_log_id', Integer),
-                      Column('use_case_id', Integer, nullable=False),
-                      Column('is_pass', Boolean, default=False),
-                      Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
-                      Column('end_time', TIMESTAMP(fsp=3)),
-                      Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
-                      Column('cost_time', Float, nullable=False, default=0),
-                      Column('auto_run', Boolean, default=False),
-                      extend_existing=True,
-                      )
-        create_table(table, engine)
-        use_case_run_log_table['use_case_run_log_{0}'.format(table_name)] = table
+        return create_use_case_run_log_table(table_name)
     return table
 
 
@@ -58,30 +33,68 @@ def get_use_case_run_log_table(table_name):
 def get_interface_run_log_table(table_name):
     table = interface_run_log_table.get('interface_run_log_{0}'.format(table_name), None)
     if table is None:
-        table = Table('interface_run_log_{0}'.format(table_name), meta,
-                      Column('id', Integer, primary_key=True),
-                      Column('use_case_run_log_id', Integer, nullable=False),
-                      Column('interface_id', Integer, nullable=False),
-                      Column('s_header', TEXT),  # 发送的header
-                      Column('s_payload', TEXT),  # 发送的payload
-                      Column('r_code', String(10)),  # 返回的HTTP code
-                      Column('r_header', TEXT),  # 返回的HTTP header
-                      Column('r_payload', TEXT),  # 返回的json
-                      Column('is_pass', Boolean, nullable=False),
-                      Column('cost_time', Float, nullable=False, default=0),
-                      Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
-                      Column('end_time', TIMESTAMP(fsp=3), nullable=False),
-                      Column('error_message', String(2000)),
-                      extend_existing=True,
-                      )
-        create_table(table, engine)
-        interface_run_log_table['interface_run_log_{0}'.format(table_name)] = table
+        return create_interface_run_log_table(table_name)
     return table
 
 
-@deco(RedisLock('run_log_lock'))
-def create_table(table, bind):
+@deco(RedisLock('batch_run_log_lock'))
+def create_batch_run_log_table(table_name, bind=engine):
+    table = Table('batch_run_log_{0}'.format(table_name), meta,
+                  Column('id', Integer, primary_key=True),
+                  Column('batch_id', Integer, nullable=False),
+                  Column('use_case_count', Integer, nullable=False),
+                  Column('pass_rate', Integer, default=-1, nullable=False),  # 百分比，-1表示未执行完成
+                  Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
+                  Column('end_time', TIMESTAMP(fsp=3)),
+                  Column('cost_time', Float, default=0),
+                  Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False),
+                  extend_existing=True,
+                  )
     table.create(bind=bind, checkfirst=True)
+    interface_run_log_table['batch_run_log_{0}'.format(table_name)] = table
+    return table
+
+
+@deco(RedisLock('use_case_run_log_lock'))
+def create_use_case_run_log_table(table_name, bind=engine):
+    table = Table('use_case_run_log_{0}'.format(table_name), meta,
+                  Column('id', Integer, primary_key=True),
+                  Column('batch_run_log_id', Integer),
+                  Column('use_case_id', Integer, nullable=False),
+                  Column('is_pass', Boolean, default=False),
+                  Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
+                  Column('end_time', TIMESTAMP(fsp=3)),
+                  Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
+                  Column('cost_time', Float, nullable=False, default=0),
+                  Column('auto_run', Boolean, default=False),
+                  extend_existing=True,
+                  )
+    table.create(bind=bind, checkfirst=True)
+    interface_run_log_table['use_case_run_log_{0}'.format(table_name)] = table
+    return table
+
+
+@deco(RedisLock('interface_run_log_lock'))
+def create_interface_run_log_table(table_name, bind=engine):
+    table = Table('interface_run_log_{0}'.format(table_name), meta,
+                  Column('id', Integer, primary_key=True),
+                  Column('use_case_run_log_id', Integer, nullable=False),
+                  Column('interface_id', Integer, nullable=False),
+                  Column('s_header', TEXT),  # 发送的header
+                  Column('s_payload', TEXT),  # 发送的payload
+                  Column('r_code', String(10)),  # 返回的HTTP code
+                  Column('r_header', TEXT),  # 返回的HTTP header
+                  Column('r_payload', TEXT),  # 返回的json
+                  Column('is_pass', Boolean, nullable=False),
+                  Column('cost_time', Float, nullable=False, default=0),
+                  Column('start_time', TIMESTAMP(fsp=3), default=datetime.utcnow),
+                  Column('end_time', TIMESTAMP(fsp=3), nullable=False),
+                  Column('error_message', String(2000)),
+                  extend_existing=True,
+                  )
+    table.create(bind=bind, checkfirst=True)
+    interface_run_log_table['interface_run_log_{0}'.format(table_name)] = table
+    return table
 
 
 def exec_query(sql, is_list=False):
