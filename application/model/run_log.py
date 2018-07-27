@@ -50,7 +50,7 @@ def get_use_case_run_log_table(table_name):
                       extend_existing=True,
                       )
         create_table(table, engine)
-        use_case_run_log_table['batch_run_log_{0}'.format(table_name)] = table
+        use_case_run_log_table['use_case_run_log_{0}'.format(table_name)] = table
     return table
 
 
@@ -75,7 +75,7 @@ def get_interface_run_log_table(table_name):
                       extend_existing=True,
                       )
         create_table(table, engine)
-        interface_run_log_table['batch_run_log_{0}'.format(table_name)] = table
+        interface_run_log_table['interface_run_log_{0}'.format(table_name)] = table
     return table
 
 
