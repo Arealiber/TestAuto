@@ -5,6 +5,9 @@ from application import engine
 from application.util.redis_lock import deco, RedisLock
 from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TEXT
 from sqlalchemy.dialects.mysql import TIMESTAMP
+from application import app
+if not app.config['DEBUG']:
+    from application.util import logger
 
 
 meta = MetaData(bind=engine)
@@ -112,7 +115,7 @@ def exec_query(sql, is_list=False):
         conn.close()
 
 
-def exec_change(*args):
+def exec_change(sql):
     retry = 3
     conn = trans = None
     while retry > 0:
@@ -127,13 +130,15 @@ def exec_change(*args):
                 raise e
         time.sleep(1)
     try:
-        ret = []
-        for sql in args:
-            ret.append(conn.execute(sql))
+        ret = conn.execute(sql)
         trans.commit()
-        return ret if len(ret) != 1 else ret[0]
+        return ret
     except Exception as e:
         trans.rollback()
+        if not app.config['DEBUG']:
+            logger.exception_log(str(sql))
+        else:
+            print(sql)
         raise e
     finally:
         conn.close()

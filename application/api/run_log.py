@@ -4,9 +4,7 @@ from application.util.decorator import *
 from application.model.run_log import *
 from application.util import LocalLog
 
-from application import app
-if not app.config['DEBUG']:
-    from application.util import logger
+
 
 
 @run_log_table_decorator
