@@ -23,7 +23,7 @@ class RedisLock(object):
 
     @staticmethod
     def release(cls):
-        if cls.redis.get(cls.lock_key) and time.time() < float(cls.redis.get(cls.lock_key)):
+        if cls.redis.get(cls.lock_key) is not None and time.time() < float(cls.redis.get(cls.lock_key)):
             cls.redis.delete(cls.lock_key)
 
 
