@@ -1,6 +1,5 @@
-from datetime import datetime
 import pytz
-import pandas as pd
+import logging
 
 
 tz = pytz.timezone(pytz.country_timezones('cn')[0])
@@ -107,6 +106,19 @@ def get_line_of_data(report_data_list, time_format='%Y%m%d', filter_line_name='b
     return list(all_report_list)
 
 
+def get_logger():
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    handler = logging.FileHandler('AutoTest.log')
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('[%(asctime)s %(name)s line:%(lineno)d %(levelname)s] %(message)s',
+                                  datefmt='%Y-%d-%m %H:%M:%S')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    return logger
+
+
+LocalLog = get_logger()
 
 
 

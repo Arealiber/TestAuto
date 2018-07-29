@@ -1,6 +1,9 @@
 # -*- coding:utf-8 -*-
 import time
 from application import redis_link as redis
+from application import app
+if not app.config['DEBUG']:
+    from application.util import logger as LOGGER
 
 
 class RedisLock(object):
@@ -12,18 +15,28 @@ class RedisLock(object):
     @staticmethod
     def get_lock(cls, timeout=10):
         while cls._lock != 1:
-            timestamp = time.time() + timeout + 1
+            timestamp = int(time.time()) + timeout + 1
             cls._lock = cls.redis.setnx(cls.lock_key, timestamp)
-            if cls._lock == 1 or (time.time() > cls.redis.get(cls.lock_key) and
-                                  time.time() > cls.redis.getset(cls.lock_key, timestamp)):
+            if cls._lock == 1 or (cls.redis.get(cls.lock_key) and
+                                  time.time() > float(cls.redis.get(cls.lock_key)) and
+                                  time.time() > float(cls.redis.getset(cls.lock_key, timestamp))):
                 break
             else:
                 time.sleep(0.3)
 
     @staticmethod
     def release(cls):
-        if time.time() < cls.redis.get(cls.lock_key):
-            cls.redis.delete(cls.lock_key)
+        try:
+            if cls.redis.exists(cls.lock_key) and not cls.redis.get(cls.lock_key) \
+                    and time.time() < float(cls.redis.get(cls.lock_key)):
+                cls.redis.delete(cls.lock_key)
+        except:
+            if not app.config['DEBUG']:
+                LOGGER.exception_log('异常键{0}|{1}|是否存在：{2}'.format(cls.lock_key, str(cls.redis.get(cls.lock_key)),
+                                                                  cls.redis.exists(cls.lock_key)
+                                                                  ))
+            else:
+                print('异常键{0}：{1}'.format(cls.lock_key, str(cls.redis.get(cls.lock_key))))
 
 
 def deco(cls):

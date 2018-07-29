@@ -10,9 +10,9 @@ def add_email_account(**kwargs):
         return email.id
 
 
-def query_email_account(**kwargs):
+def query_email_account():
     with session_scope() as session:
-        query = session.query(Email).filter_by(**kwargs)
+        query = session.query(Email)
         email_list = [email.to_dict() for email in query]
         return email_list
 

@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from flask import request, jsonify
+from flask import request, jsonify, session
 from application import app
 from application.controller import login_required, localhost_required
 from application.util.exception import try_except
@@ -7,7 +7,7 @@ from application.api import email as EmailAPI
 from application.util import email_send as EmailSendAPI
 
 
-@app.route('/email/send', methods=['POST'])
+@app.route('/email/send', methods=['GET'])
 @try_except
 @localhost_required
 def email_send():
@@ -23,7 +23,7 @@ def email_send():
     if app.config['PROXIES']:
         email_data['proxies'] = {'http': app.config['DB_URI'].split('@')[1].split('/')[0]}  # 取开发机ip作为代理服务器
 
-    result = EmailAPI.query_email_account(**request.get_json())
+    result = EmailAPI.query_email_account()
     if not result:
         return jsonify({'success': False, 'res': '邮箱不能为空'})
     for emai_account in result:
@@ -37,7 +37,7 @@ def email_send():
     if ret == 0:
         return jsonify({'success': True})
     else:
-        return jsonify({'success': False, 'res': '发送失败'})
+        return jsonify({'success': False, 'res': '发送失败:{}'.format(ret)})
 
 
 @app.route('/email/account/add', methods=['POST'])
@@ -78,5 +78,8 @@ def email_account_info():
     查询邮箱地址
     :return:
     """
-    result = EmailAPI.query_email_account(**request.get_json())
+    real_name = session['real_name']
+    if real_name not in ['李成波', '汪林云', '赵军', '刘渊', '管理员']:
+        return jsonify({'success': False, 'error': '无该功能权限，请找相关开发人员给配置权限'})
+    result = EmailAPI.query_email_account()
     return jsonify({'success': True, 'res': result})

@@ -5,13 +5,43 @@ from application import engine
 from application.util.redis_lock import deco, RedisLock
 from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TEXT
 from sqlalchemy.dialects.mysql import TIMESTAMP
+from application import app
+if not app.config['DEBUG']:
+    from application.util import logger
 
 
 meta = MetaData(bind=engine)
+batch_run_log_table = {}
+use_case_run_log_table = {}
+interface_run_log_table = {}
 
 
 # 用例脚本的运行日记表
 def get_batch_run_log_table(table_name):
+    table = batch_run_log_table.get('batch_run_log_{0}'.format(table_name), None)
+    if table is None:
+        return create_batch_run_log_table(table_name)
+    return table
+
+
+# 用例脚本的运行日记表
+def get_use_case_run_log_table(table_name):
+    table = use_case_run_log_table.get('use_case_run_log_{0}'.format(table_name), None)
+    if table is None:
+        return create_use_case_run_log_table(table_name)
+    return table
+
+
+# 接口的运行日记表
+def get_interface_run_log_table(table_name):
+    table = interface_run_log_table.get('interface_run_log_{0}'.format(table_name), None)
+    if table is None:
+        return create_interface_run_log_table(table_name)
+    return table
+
+
+@deco(RedisLock('batch_run_log_lock'))
+def create_batch_run_log_table(table_name, bind=engine):
     table = Table('batch_run_log_{0}'.format(table_name), meta,
                   Column('id', Integer, primary_key=True),
                   Column('batch_id', Integer, nullable=False),
@@ -23,12 +53,13 @@ def get_batch_run_log_table(table_name):
                   Column('create_time', TIMESTAMP(fsp=3), default=datetime.utcnow, nullable=False),
                   extend_existing=True,
                   )
-    create_table(table, engine, 'batch_run_log_{0}'.format(table_name))
+    table.create(bind=bind, checkfirst=True)
+    interface_run_log_table['batch_run_log_{0}'.format(table_name)] = table
     return table
 
 
-# 用例脚本的运行日记表
-def get_use_case_run_log_table(table_name):
+@deco(RedisLock('use_case_run_log_lock'))
+def create_use_case_run_log_table(table_name, bind=engine):
     table = Table('use_case_run_log_{0}'.format(table_name), meta,
                   Column('id', Integer, primary_key=True),
                   Column('batch_run_log_id', Integer),
@@ -41,12 +72,13 @@ def get_use_case_run_log_table(table_name):
                   Column('auto_run', Boolean, default=False),
                   extend_existing=True,
                   )
-    create_table(table, engine, 'use_case_run_log_{0}'.format(table_name))
+    table.create(bind=bind, checkfirst=True)
+    interface_run_log_table['use_case_run_log_{0}'.format(table_name)] = table
     return table
 
 
-# 接口的运行日记表
-def get_interface_run_log_table(table_name):
+@deco(RedisLock('interface_run_log_lock'))
+def create_interface_run_log_table(table_name, bind=engine):
     table = Table('interface_run_log_{0}'.format(table_name), meta,
                   Column('id', Integer, primary_key=True),
                   Column('use_case_run_log_id', Integer, nullable=False),
@@ -63,20 +95,9 @@ def get_interface_run_log_table(table_name):
                   Column('error_message', String(2000)),
                   extend_existing=True,
                   )
-    create_table(table, engine, 'interface_run_log_{0}'.format(table_name))
-    return table
-
-
-def create_table(table, bind, table_name):
-    if table_name not in meta.tables:
-        lock_create_table(table, bind)
-    else:
-        table.create(bind=engine, checkfirst=True)
-
-
-@deco(RedisLock('run_log_lock'))
-def lock_create_table(table, bind):
     table.create(bind=bind, checkfirst=True)
+    interface_run_log_table['interface_run_log_{0}'.format(table_name)] = table
+    return table
 
 
 def exec_query(sql, is_list=False):
@@ -94,7 +115,7 @@ def exec_query(sql, is_list=False):
         conn.close()
 
 
-def exec_change(*args):
+def exec_change(sql):
     retry = 3
     conn = trans = None
     while retry > 0:
@@ -109,13 +130,15 @@ def exec_change(*args):
                 raise e
         time.sleep(1)
     try:
-        ret = []
-        for sql in args:
-            ret.append(conn.execute(sql))
+        ret = conn.execute(sql)
         trans.commit()
-        return ret if len(ret) != 1 else ret[0]
+        return ret
     except Exception as e:
         trans.rollback()
+        if not app.config['DEBUG']:
+            logger.exception_log(str(sql))
+        else:
+            print(sql)
         raise e
     finally:
         conn.close()

@@ -178,7 +178,7 @@
                 loader.hide();
                 $("#email_table").hide();
                 if (!response.success) {
-                    show_alert('获取数据失败')
+                    show_alert('获取数据失败:' + response.error)
                 }  else if (response.res.length <=0) {
                     show_alert('没有添加相关的email信息')
                 } else {
