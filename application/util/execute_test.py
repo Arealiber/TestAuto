@@ -22,7 +22,7 @@ from application.api import use_case as UseCaseAPI
 from application.api import encryption as EncryptionAPI
 from application.api import environment as EnvironmentAPI
 from application.util.exception import try_except
-from application import engine
+
 
 if not app.config['DEBUG']:
     from application.util import logger as LOGGER
@@ -476,8 +476,10 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
 def run_use_case_callback(obj):
     result = obj.result()
     batch_log_id = result['batch_log_id']
-    batch_log = RunLogAPI.get_batch_run_log_info(id=batch_log_id)[0]
-    if batch_log['pass_rate'] != -1:
+    batch_log = RunLogAPI.get_batch_run_log_info(id=batch_log_id)
+    if not batch_log:
+        return
+    if batch_log[0]['pass_rate'] != -1:
         return
     use_case_count = result['use_case_count']
     use_case_run_logs = RunLogAPI.get_use_case_run_log(batch_run_log_id=batch_log_id)
