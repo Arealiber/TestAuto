@@ -40,7 +40,7 @@ def get_interface_run_log_table(table_name):
     return table
 
 
-@deco(RedisLock('batch_run_log_lock'))
+# @deco(RedisLock('batch_run_log_lock'))
 def create_batch_run_log_table(table_name, bind=engine):
     table = Table('batch_run_log_{0}'.format(table_name), meta,
                   Column('id', Integer, primary_key=True),
@@ -58,7 +58,7 @@ def create_batch_run_log_table(table_name, bind=engine):
     return table
 
 
-@deco(RedisLock('use_case_run_log_lock'))
+# @deco(RedisLock('use_case_run_log_lock'))
 def create_use_case_run_log_table(table_name, bind=engine):
     table = Table('use_case_run_log_{0}'.format(table_name), meta,
                   Column('id', Integer, primary_key=True),
