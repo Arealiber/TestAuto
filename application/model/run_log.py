@@ -7,7 +7,9 @@ from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean,
 from sqlalchemy.dialects.mysql import TIMESTAMP
 from application import app
 if not app.config['DEBUG']:
-    from application.util import logger
+    from application.util import logger as LOGGER
+else:
+    from application.util import LocalLogger as LOGGER
 
 
 meta = MetaData(bind=engine)
@@ -43,7 +45,7 @@ def get_interface_run_log_table(table_name):
 # @deco(RedisLock('batch_run_log_lock'))
 def create_batch_run_log_table(table_name, bind=engine):
     table = Table('batch_run_log_{0}'.format(table_name), meta,
-                  Column('id', Integer, primary_key=True),
+                  Column('id', Integer, primary_key=True, autoincrement=True),
                   Column('batch_id', Integer, nullable=False),
                   Column('use_case_count', Integer, nullable=False),
                   Column('pass_rate', Integer, default=-1, nullable=False),  # 百分比，-1表示未执行完成
@@ -61,7 +63,7 @@ def create_batch_run_log_table(table_name, bind=engine):
 # @deco(RedisLock('use_case_run_log_lock'))
 def create_use_case_run_log_table(table_name, bind=engine):
     table = Table('use_case_run_log_{0}'.format(table_name), meta,
-                  Column('id', Integer, primary_key=True),
+                  Column('id', Integer, primary_key=True, autoincrement=True),
                   Column('batch_run_log_id', Integer),
                   Column('use_case_id', Integer, nullable=False),
                   Column('is_pass', Boolean, default=False),
@@ -80,7 +82,7 @@ def create_use_case_run_log_table(table_name, bind=engine):
 @deco(RedisLock('interface_run_log_lock'))
 def create_interface_run_log_table(table_name, bind=engine):
     table = Table('interface_run_log_{0}'.format(table_name), meta,
-                  Column('id', Integer, primary_key=True),
+                  Column('id', Integer, primary_key=True, autoincrement=True),
                   Column('use_case_run_log_id', Integer, nullable=False),
                   Column('interface_id', Integer, nullable=False),
                   Column('s_header', TEXT),  # 发送的header
@@ -135,10 +137,7 @@ def exec_change(sql):
         return ret
     except Exception as e:
         trans.rollback()
-        if not app.config['DEBUG']:
-            logger.exception_log(str(sql))
-        else:
-            print(sql)
+        LOGGER.exception_log(str(sql))
         raise e
     finally:
         conn.close()

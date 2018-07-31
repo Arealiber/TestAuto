@@ -26,6 +26,9 @@ from application.util.exception import try_except
 
 if not app.config['DEBUG']:
     from application.util import logger as LOGGER
+else:
+    from application.util import LocalLogger as LOGGER
+
 
 # 多进程执行器
 executor = ThreadPoolExecutor(max_workers=8)

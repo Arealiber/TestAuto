@@ -2,9 +2,6 @@
 from sqlalchemy import func, select, desc
 from application.util.decorator import *
 from application.model.run_log import *
-from application.util import LocalLog
-
-
 
 
 @run_log_table_decorator
@@ -140,15 +137,11 @@ def modify_batch_run_log(**kwargs):
 @run_log_table_decorator
 def add_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
-    if not app.config['DEBUG']:
-        logger.info_log(str(kwargs))
     sql = table.insert(kwargs)
     ret = exec_change(sql)
     primary_key = ret.inserted_primary_key[0] or ret.lastrowid
     if not primary_key:
-        if not app.config['DEBUG']:
-            logger.exception_log('返回主键异常，为空, 返回结果：%s' % str(primary_key))
-        LocalLog.error(u'返回主键异常，为空：%s' % str(kwargs))
+        LOGGER.exception_log('返回主键异常，为空, 返回结果：%s' % str(primary_key))
     return primary_key
 
 

@@ -1,5 +1,4 @@
 import sys
-import os
 import traceback
 
 from flask import jsonify
@@ -8,6 +7,8 @@ from application import app
 
 if not app.config['DEBUG']:
     from application.util import logger as LOGGER
+else:
+    from application.util import LocalLogger as LOGGER
 
 
 def try_except(fn):

@@ -1,5 +1,4 @@
 # -*- coding:utf-8 -*-
-import copy
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from flask import request, jsonify
@@ -69,9 +68,6 @@ def add_minutes_report():
         report_data['pass_rate'] = pass_rate
         if report_data['function_id']:
             ReportAPI.add_minutes_report(**report_data)
-    if not app.config['DEBUG']:
-        from application.util import logger
-        logger.info_log("add minutes data:{0}".format(all_report_list))
     return jsonify({'success': True})
 
 
