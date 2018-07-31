@@ -642,7 +642,8 @@
                     $("#submit_use_case").show();
                 }
                 loader.hide();
-                window.history.pushState(null, null, '/use_case/1?use_case_detail&use_case_id=' + use_case_id)
+                var page_num = window.location.pathname.split('/').pop();
+                window.history.pushState(null, null, '/use_case/'+ page_num +'?use_case_detail&use_case_id=' + use_case_id)
             }
         })
 
@@ -1553,12 +1554,13 @@
     $(document).ready(function($) {
         if (window.history && window.history.pushState) {
             $(window).on('popstate', function() {
+                var page_num = window.location.pathname.split('/').pop();
                 var time_string = new URLSearchParams(window.location.search);
                 var info = time_string.get('info');
                 if (info !== 'detail') {
                     var hash = window.location.hash;
                     if (hash === '') {
-                        window.location.href='/use_case/1';
+                        window.location.href='/use_case/'+ page_num;
                     }
                 }
             });
