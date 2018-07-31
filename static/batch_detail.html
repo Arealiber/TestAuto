@@ -263,6 +263,24 @@
         })
     });
 
+    function update_batch_check_status(kwarg) {
+        kwarg["id"] = $("#batch_id").attr('placeholder');
+        $.ajax({
+            type: 'post',
+            url: '/batch/update',
+            data: JSON.stringify(kwarg),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (!response.success) {
+                    show_alert('更新（添加）批次数据失败');
+                } else {
+
+                }
+            }
+        })
+    }
+
     // 获取所有用例列表并放入接口添加列表
     $(document).ready(function () {
         $.ajax({
@@ -322,7 +340,11 @@
     // 监控告警取消
     $(document).ready(function () {
         $('button[name="alarm_monitor-cancel"]').click(function () {
-            $("#alarm_monitor").prop("checked",false);
+            if ($("#alarm_monitor").prop("checked")) {
+                $("#alarm_monitor").prop("checked",false)
+            } else {
+                $("#alarm_monitor").prop("checked",true);
+            }
             $("#alarm_monitor_info").modal('hide');
         })
     });
@@ -330,7 +352,9 @@
     // 监控告警确认
     $(document).ready(function () {
         $('button[name="alarm_monitor-confirm"]').click(function () {
-            $("#alarm_monitor").prop("checked",true);
+            update_batch_check_status({
+                'alarm_monitor': $("#alarm_monitor").prop("checked")
+            });
             $("#alarm_monitor_info").modal('hide');
         })
     });
@@ -348,7 +372,11 @@
     // 自动运行选项取消
     $(document).ready(function () {
         $('button[name="batch_auto_run-cancel"]').click(function () {
-            $("#batch_auto_run").prop("checked",false);
+            if ($("#batch_auto_run").prop("checked")) {
+                $("#batch_auto_run").prop("checked",false);
+            } else {
+                $("#batch_auto_run").prop("checked",true);
+            }
             $("#batch_auto_run-info").modal('hide');
         })
     });
@@ -356,7 +384,9 @@
     // 自动运行选项确认
     $(document).ready(function () {
         $('button[name="batch_auto_run-confirm"]').click(function () {
-            $("#batch_auto_run").prop("checked",true);
+            update_batch_check_status({
+                'auto_run': $("#batch_auto_run").prop("checked")
+            });
             $("#batch_auto_run-info").modal('hide');
         })
     });
