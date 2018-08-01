@@ -70,7 +70,7 @@ def get_week_report_table(table_name):
 # 用例脚本的月报表
 def get_month_report_table(table_name):
     table = Table('report_month_{0}'.format(table_name), meta,
-                  Column('id', Integer, primary_key=True),
+                  Column('id', Integer, primary_key=True, autoincrement=True),
                   Column('function_id', Integer, nullable=False),
                   Column('run_count', Integer, nullable=False),
                   Column('success_count', Integer, nullable=False),
