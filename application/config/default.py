@@ -20,7 +20,7 @@ MONTH_TIME_FMT = '%Y-%m-00 00:00:00.000'
 
 web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 
-PROXIES = False
+PROXIES = True
 DEBUG = False
 HOST = '0.0.0.0'
 PORT = 9091
