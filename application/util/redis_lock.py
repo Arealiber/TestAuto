@@ -15,7 +15,7 @@ class RedisLock(object):
         self.lock_key = "auto_test:server:server_{0}_deploy_lock".format(key)
 
     @staticmethod
-    def get_lock(cls, timeout=10):
+    def get_lock(cls, timeout=3):
         while cls._lock != 1:
             timestamp = int(time.time()) + timeout + 1
             cls._lock = cls.redis.setnx(cls.lock_key, timestamp)
