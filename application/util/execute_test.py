@@ -317,8 +317,11 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 elif '_head' in json_payload:
                     if '_interface' in json_payload['_head']:
                         requested_interface = json_payload['_head']['_interface']
-            if not requested_interface and interface['interface_url']:
-                requested_interface = interface['interface_url'].split('//')[1].split('/')[0]
+            if not requested_interface:
+                try:
+                    requested_interface = url.split('//')[1].split('/')[0]
+                except:
+                    requested_interface = interface['interface_url'].split('//')[1].split('/')[0]
 
             # 日志内容
             interface_log_dict['s_header'] = header if header else ''
