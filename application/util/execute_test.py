@@ -174,6 +174,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
         # if not alarm_monitor:
         if not batch_log_id:
             environment_id = environment_id or use_case_info['environment_id']
+        print(environment_id)
         environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
         for element in environment_info:
             url = element['url']
@@ -316,7 +317,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 elif '_head' in json_payload:
                     if '_interface' in json_payload['_head']:
                         requested_interface = json_payload['_head']['_interface']
-            if not requested_interface:
+            if not requested_interface and interface['interface_url']:
                 requested_interface = interface['interface_url'].split('//')[1].split('/')[0]
 
             # 日志内容
