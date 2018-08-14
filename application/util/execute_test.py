@@ -41,7 +41,7 @@ DNS_CACHE = {}
 def new_getaddrinfo(*args):
     global DNS_CACHE
     url = args[0]
-    if url in DNS_CACHE:
+    if url in DNS_CACHE.keys():
         local_args = ('www.huishoubao.com.cn', args[1], args[2], args[3])
         try:
             result = old_getaddrinfo(*args)[0]
