@@ -52,6 +52,7 @@ def new_getaddrinfo(*args):
             dns_result = (DNS_CACHE[url], dns_result[1])
         except KeyError as e:
             LOGGER.info_log('键值{0}不存在，DNS_CACHE:{1}'.format(str(e), DNS_CACHE))
+            raise
 
         modified_result = [(result[0], result[1], result[2], result[3], dns_result)]
         return modified_result
