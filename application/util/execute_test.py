@@ -45,7 +45,7 @@ def new_getaddrinfo(*args):
         try:
             result = old_getaddrinfo(*args)[0]
         except Exception as e:
-            print(str(e))
+            print(sys._getframe().f_lineno, str(e))
             result = old_getaddrinfo(*local_args)[0]
         dns_result = result[4]
         dns_result = (DNS_CACHE[url], dns_result[1])
