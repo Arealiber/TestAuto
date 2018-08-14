@@ -31,7 +31,7 @@ else:
 
 
 # 多进程执行器
-executor = ThreadPoolExecutor(max_workers=8)
+executor = ProcessPoolExecutor(max_workers=4)
 
 old_getaddrinfo = socket.getaddrinfo
 
@@ -517,12 +517,15 @@ def run_use_case_callback(obj):
 
 
 @try_except
-def run_use_case_async(use_case_id, batch_log_id=None, environment_id=None, use_case_count=None, batch_start_timer=None, auto_run=False, alarm_monitor=False):
+def run_use_case_async(use_case_id, batch_log_id=None, environment_id=None, use_case_count=None,
+                       batch_start_timer=None, auto_run=False, alarm_monitor=False):
     if batch_log_id:
-        executor.submit(run_use_case, use_case_id, batch_log_id, environment_id, None, use_case_count, batch_start_timer, True, auto_run, alarm_monitor).\
+        executor.submit(run_use_case, use_case_id, batch_log_id, environment_id, None, use_case_count,
+                        batch_start_timer, True, auto_run, alarm_monitor).\
             add_done_callback(run_use_case_callback)
     else:
-        executor.submit(run_use_case, use_case_id, batch_log_id, environment_id, None, use_case_count, batch_start_timer, True, auto_run, alarm_monitor)
+        executor.submit(run_use_case, use_case_id, batch_log_id, environment_id, None, use_case_count,
+                        batch_start_timer, True, auto_run, alarm_monitor)
 
 
 @try_except
