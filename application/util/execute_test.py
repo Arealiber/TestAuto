@@ -31,7 +31,7 @@ else:
 
 
 # 多进程执行器
-executor = ThreadPoolExecutor(max_workers=8)
+executor = ProcessPoolExecutor()
 
 old_getaddrinfo = socket.getaddrinfo
 
