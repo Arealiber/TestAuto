@@ -395,7 +395,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
 
                     # 数据处理以及日志记录
                     interface_log_dict['is_pass'] = False
-                    interface_log_dict['error_message'] = '请求: {0}'.format(error_string)
+                    interface_log_dict['error_message'] = '{0}'.format(error_string)
                     interface_log_insert(interface_log_dict)
                     # 用例运行日志记录
                     use_case_exception_log_update(use_case_log_id, use_case_start)
