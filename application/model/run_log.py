@@ -128,6 +128,7 @@ def exec_change(sql):
         except Exception as e:
             print(str(e))
             retry -= 1
+            conn.close()
             if not retry:
                 raise e
         time.sleep(1)
