@@ -102,8 +102,8 @@
             to_time += ':00.000'
         }
         if (!from_time && !to_time) {
-            from_time = moment().subtract(5, 'minute').format('YYYY-MM-DD 00:00:00.000');
-            to_time = moment().format('YYYY-MM-DD HH:mm:00.000');
+            from_time = moment().format('YYYY-MM-DD 00:00:00.000');
+            to_time = moment().add(5, "minute").format('YYYY-MM-DD HH:mm:00.000');
         }
         $.ajax({
             type: 'post',
