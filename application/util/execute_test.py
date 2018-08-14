@@ -366,15 +366,19 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                                               'frameborder="0"></iframe>'.format(html.escape(r.text))
             except ConnectTimeout as e:
                 request_exception = True
-                error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                error_string = '{0}: {1} ，{2}'.format(sys._getframe().f_lineno, str(e.__class__.__name__), str(e))
                 log_report_code = '9991'
             except ConnectionError as e:
                 request_exception = True
-                error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                error_string = '{0}: {1}: {2}'.format(sys._getframe().f_lineno, str(e.__class__.__name__), str(e))
                 log_report_code = '9992'
+            except KeyError as e:
+                request_exception = True
+                error_string = '错误代码行{0}: {1}'.format(sys._getframe().f_lineno, str(e))
+                log_report_code = '99924'
             except Exception as e:
                 request_exception = True
-                error_string = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                error_string = '{0}: {1}，{2}'.format(sys._getframe().f_lineno, str(e.__class__.__name__), str(e))
                 log_report_code = '9993'
             finally:
                 if request_exception:
