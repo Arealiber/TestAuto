@@ -43,11 +43,7 @@ def new_getaddrinfo(*args):
     url = args[0]
     if url in DNS_CACHE.keys():
         local_args = ('www.huishoubao.com.cn', args[1], args[2], args[3])
-        try:
-            result = old_getaddrinfo(*args)[0]
-        except Exception as e:
-            print(sys._getframe().f_lineno, str(e))
-            result = old_getaddrinfo(*local_args)[0]
+        result = old_getaddrinfo(*local_args)[0]
         dns_result = result[4]
         try:
             dns_result = (DNS_CACHE[url], dns_result[1])
