@@ -53,7 +53,6 @@ def new_getaddrinfo(*args):
             raise
 
         modified_result = [(result[0], result[1], result[2], result[3], dns_result)]
-        new_dns.pop(key)
         return modified_result
     else:
         result = old_getaddrinfo(*args)
