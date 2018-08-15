@@ -9,6 +9,7 @@ import pandas as pd
 
 from application import app
 from application.util import g_DNS
+from application.util import logger as Logger
 
 USER_INFO_URL = 'http://api-amc.huishoubao.com.cn/loginuserinfo'
 
@@ -121,8 +122,9 @@ def del_g_dns(func):
         ret = func(*args, **kwargs)
         cur_pid = os.getpid()
         g_dns_dict = g_DNS.get_dns()
+        Logger.info_log(g_dns_dict)
         del g_dns_dict[cur_pid] if cur_pid in g_dns_dict else ''
-        return ret
+        Logger.info_log(g_dns_dict)
     return wrapper
 
 
