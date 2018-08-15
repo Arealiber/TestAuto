@@ -55,6 +55,7 @@ def new_getaddrinfo(*args):
             raise
 
         modified_result = [(result[0], result[1], result[2], result[3], dns_result)]
+        LOGGER.info_log('dns解析信息：{}'.format(modified_result))
         return modified_result
     else:
         result = old_getaddrinfo(*args)
