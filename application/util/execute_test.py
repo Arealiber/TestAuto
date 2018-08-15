@@ -7,6 +7,7 @@ import re
 import socket
 import html
 import requests
+import os
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from datetime import datetime
 from requests.exceptions import ConnectionError, ConnectTimeout
@@ -40,17 +41,19 @@ old_getaddrinfo = socket.getaddrinfo
 def new_getaddrinfo(*args):
     new_dns = g_DNS.get_dns()
     url = args[0]
+    key = '-'.join([url, os.getpid()])
     if url in new_dns.keys():
         local_args = ('www.huishoubao.com.cn', args[1], args[2], args[3])
         result = old_getaddrinfo(*local_args)[0]
         dns_result = result[4]
         try:
-            dns_result = (new_dns[url], dns_result[1])
+            dns_result = (new_dns[key], dns_result[1])
         except KeyError as e:
             LOGGER.info_log('键值{0}不存在，DNS_CACHE:{1}'.format(str(e), new_dns))
             raise
 
         modified_result = [(result[0], result[1], result[2], result[3], dns_result)]
+        new_dns.pop(key)
         return modified_result
     else:
         result = old_getaddrinfo(*args)
@@ -178,7 +181,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
         for element in environment_info:
             url = element['url']
             ip_address = element['map_ip']
-            g_DNS.add_new_dns(url, ip_address)
+            key = '-'.join([url, os.getpid()])
+            g_DNS.add_new_dns(key, ip_address)
 
         for interface in interface_list:
             # 添加延时运行接口
