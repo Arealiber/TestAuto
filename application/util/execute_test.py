@@ -45,7 +45,7 @@ def new_getaddrinfo(*args):
         result = old_getaddrinfo(*local_args)[0]
         dns_result = result[4]
         try:
-            dns_result = (new_dns.pop(url), dns_result[1])
+            dns_result = (new_dns[url], dns_result[1])
         except KeyError as e:
             LOGGER.info_log('键值{0}不存在，DNS_CACHE:{1}'.format(str(e), new_dns))
             raise
