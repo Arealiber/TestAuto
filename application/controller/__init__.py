@@ -121,7 +121,7 @@ def del_g_dns(func):
         ret = func(*args, **kwargs)
         cur_pid = os.getpid()
         g_dns_dict = g_DNS.get_dns()
-        g_dns_dict.pop(cur_pid)if cur_pid in g_dns_dict else ''
+        del g_dns_dict[cur_pid] if cur_pid in g_dns_dict else ''
         return ret
     return wrapper
 
