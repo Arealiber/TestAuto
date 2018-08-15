@@ -42,8 +42,8 @@ def new_getaddrinfo(*args):
     cur_pid = os.getpid()
     g_dns_dict = g_DNS.get_dns()
     LOGGER.info_log('dns内容：{0},url:{1}'.format(g_dns_dict, url))
-    if cur_pid in g_DNS.get_dns() and url in g_dns_dict[cur_pid].keys():
-        new_dns = g_DNS.get_dns()[cur_pid]
+    if cur_pid in g_dns_dict and url in g_dns_dict[cur_pid].keys():
+        new_dns = g_dns_dict[cur_pid]
 
         local_args = ('www.huishoubao.com.cn', args[1], args[2], args[3])
         result = old_getaddrinfo(*local_args)[0]
