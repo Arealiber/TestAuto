@@ -372,6 +372,9 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 error_string = '{0}: {1} ，{2}'.format('请求服务连接超时', str(e.__class__.__name__), str(e))
                 log_report_code = '9991'
             except ConnectionError as e:
+                if os.getpid() in g_DNS.get_dns() and url in g_DNS.get_dns()[os.getpid()]:
+                    dns_info = g_DNS.get_dns()[os.getpid()]
+                    LOGGER.info_log('连接失败，环境映射信息：{}'.format(dns_info))
                 request_exception = True
                 error_string = '{0}，{1}: {2}'.format('请求服务连接失败', str(e.__class__.__name__), str(e))
                 log_report_code = '9992'
