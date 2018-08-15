@@ -123,8 +123,10 @@ def del_g_dns(func):
         cur_pid = os.getpid()
         g_dns_dict = g_DNS.get_dns()
         Logger.info_log(g_dns_dict)
-        del g_dns_dict[cur_pid] if cur_pid in g_dns_dict else ''
+        if cur_pid in g_dns_dict:
+            del g_dns_dict[cur_pid]
         Logger.info_log(g_dns_dict)
+        return ret
     return wrapper
 
 
