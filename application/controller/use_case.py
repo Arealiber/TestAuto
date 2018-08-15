@@ -116,7 +116,6 @@ def del_use_case():
 @app.route('/use_case/execute', methods=['POST'])
 @login_required
 @try_except
-@del_g_dns
 def execute_use_case():
     """
     手动执行某个use_case, 前端等待执行完成返回
@@ -134,7 +133,6 @@ def execute_use_case():
 @app.route('/use_case/execute/background', methods=['POST'])
 @login_required
 @try_except
-@del_g_dns
 def execute_use_case_background():
     """
     手动后台运行某个use_case, 不等待直接返回, 需要查看日志确认运行结果

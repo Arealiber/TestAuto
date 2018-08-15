@@ -152,7 +152,6 @@ def del_batch_use_case_relation():
 @app.route('/batch/execute', methods=['POST'])
 @login_required
 @try_except
-@del_g_dns
 def batch_execute():
     batch_id = request.get_json()['id']
     batch_info = BatchAPI.get_batch(id=batch_id)[0]
@@ -163,7 +162,6 @@ def batch_execute():
 @app.route('/batch/auto_run')
 @localhost_required
 @try_except
-@del_g_dns
 def batch_auto_run():
     batch_list = BatchAPI.get_batch(auto_run=True)
     for batch in batch_list:
