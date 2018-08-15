@@ -7,7 +7,7 @@ from application.api import use_case as Case_API
 from application.util.parameter import *
 from application.util import execute_test as Exec
 from application.util.exception import try_except
-from application.controller import login_required, user_real_name
+from application.controller import login_required, user_real_name, del_g_dns
 
 """
 用例
@@ -16,8 +16,8 @@ from application.controller import login_required, user_real_name
 
 
 @app.route('/use_case/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_use_case():
     """
     功能描述: 添加use_case，只包含用例基础信息
@@ -30,8 +30,8 @@ def add_use_case():
 
 
 @app.route('/use_case/list', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def use_case_list():
     """
     获取use_case列表，不需要获取与use_case关联的interface
@@ -49,8 +49,8 @@ def use_case_list():
 
 
 @app.route('/use_case/count', methods=['GET'])
-@try_except
 @login_required
+@try_except
 def use_case_count():
     """
     获取use_case的总个数
@@ -61,8 +61,8 @@ def use_case_count():
 
 
 @app.route('/use_case/detail', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def use_case_detail():
     """
     功能描述: 获取某个use_case的详细信息，包括其包含的interface列表
@@ -89,8 +89,8 @@ def use_case_detail():
 
 
 @app.route('/use_case/update', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def update_use_case():
     """
     功能描述: 更新use_case内容，不更新与interface的关联
@@ -101,8 +101,8 @@ def update_use_case():
 
 
 @app.route('/use_case/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def del_use_case():
     """
     功能描述: 删除use_case
@@ -114,8 +114,9 @@ def del_use_case():
 
 
 @app.route('/use_case/execute', methods=['POST'])
-@try_except
 @login_required
+@try_except
+@del_g_dns
 def execute_use_case():
     """
     手动执行某个use_case, 前端等待执行完成返回
@@ -131,8 +132,9 @@ def execute_use_case():
 
 
 @app.route('/use_case/execute/background', methods=['POST'])
-@try_except
 @login_required
+@try_except
+@del_g_dns
 def execute_use_case_background():
     """
     手动后台运行某个use_case, 不等待直接返回, 需要查看日志确认运行结果
@@ -145,8 +147,8 @@ def execute_use_case_background():
 
 
 @app.route('/use_case/relation/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_relation():
     """
     功能描述: 将某个interface与某个use_case关联
@@ -176,8 +178,8 @@ def add_relation():
 
 
 @app.route('/use_case/relation/update_eval', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def update_eval():
     """
     更新eval_string的值
@@ -188,8 +190,8 @@ def update_eval():
 
 
 @app.route('/use_case/relation/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def del_relation():
     """
     功能描述: 解除某个interface与use_case的关联
@@ -201,8 +203,8 @@ def del_relation():
 
 
 @app.route('/use_case/relation/reorder', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def reorder_relation():
     """
     功能描述: 重新排序某个interface在use_case中的顺序
@@ -215,8 +217,8 @@ def reorder_relation():
 
 
 @app.route('/use_case/relation/update/interface_delay', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def modify_interface_delay_relation():
     """
     功能描述: 更新interface和use_case关系表中的interface_delay
@@ -229,8 +231,8 @@ def modify_interface_delay_relation():
 
 
 @app.route('/use_case/relation/parameter/modify', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def relation_update_parameter():
     """
     功能描述: 更新某个use_case传给interface的参数的信息

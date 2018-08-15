@@ -10,8 +10,8 @@ from application.controller import login_required, user_real_name
 
 
 @app.route('/interface/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_interface():
     """
     添加interface
@@ -23,8 +23,8 @@ def add_interface():
 
 
 @app.route('/interface/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_interface():
     """
     根据过滤规则获取interface列表, 无规则则返回所有interface
@@ -39,8 +39,8 @@ def get_interface():
 
 
 @app.route('/interface/count', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def query_interface_count():
     """
     获取数据库中所有interface的总个数
@@ -50,8 +50,8 @@ def query_interface_count():
 
 
 @app.route('/interface/update', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def modify_interface():
     """
     更新interface信息
@@ -91,8 +91,8 @@ def modify_interface():
 
 
 @app.route('/interface/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def delete_interface():
     """
     删除某个interface

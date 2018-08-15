@@ -41,8 +41,8 @@ def email_send():
 
 
 @app.route('/email/account/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def email_account_add():
     """
     添加要发送的邮箱地址
@@ -59,8 +59,8 @@ def email_account_add():
 
 
 @app.route('/email/account/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def email_account_delete():
     """
     删除指定的邮箱地址
@@ -71,8 +71,8 @@ def email_account_delete():
 
 
 @app.route('/email/account/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def email_account_info():
     """
     查询邮箱地址
