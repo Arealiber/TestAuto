@@ -25,11 +25,10 @@ from application.api import environment as EnvironmentAPI
 from application.util.exception import try_except
 from application.util import g_DNS
 
-from application.util import logger as LOGGER
-# if not app.config['DEBUG']:
-#     from application.util import logger as LOGGER
-# else:
-#     from application.util import LocalLogger as LOGGER
+if not app.config['DEBUG']:
+    from application.util import logger as LOGGER
+else:
+    from application.util import LocalLogger as LOGGER
 
 
 # 多进程执行器
