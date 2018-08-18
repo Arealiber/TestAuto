@@ -137,6 +137,8 @@ def modify_batch_run_log(**kwargs):
 @run_log_table_decorator
 def add_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
+    if not table:
+        LOGGER.exception_log('获取table失败:{0}, 请求信息{1}'.format(table, kwargs))
     sql = table.insert(kwargs)
     ret = exec_change(sql)
     primary_key = ret.inserted_primary_key[0] or ret.lastrowid
