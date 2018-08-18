@@ -38,6 +38,7 @@ def get_use_case_run_log_table(table_name):
 def get_interface_run_log_table(table_name):
     table = interface_run_log_table.get('interface_run_log_{0}'.format(table_name), None)
     if table is None:
+        LOGGER.info_log('create table:{}'.format(table_name))
         return create_interface_run_log_table(table_name)
     return table
 
@@ -75,6 +76,8 @@ def create_use_case_run_log_table(table_name, bind=engine):
                   extend_existing=True,
                   )
     table.create(bind=bind, checkfirst=True)
+    if not table:
+        LOGGER.exception_log('创建table失败')
     interface_run_log_table['use_case_run_log_{0}'.format(table_name)] = table
     return table
 
