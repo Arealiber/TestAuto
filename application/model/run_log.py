@@ -76,8 +76,7 @@ def create_use_case_run_log_table(table_name, bind=engine):
                   extend_existing=True,
                   )
     table.create(bind=bind, checkfirst=True)
-    if not table:
-        LOGGER.exception_log('创建table失败')
+
     interface_run_log_table['use_case_run_log_{0}'.format(table_name)] = table
     return table
 

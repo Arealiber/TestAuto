@@ -9,7 +9,8 @@ import pandas as pd
 
 from application import app
 from application.util import g_DNS
-from application.util import logger as Logger
+if not app.config['DEBUG']:
+    from application.util import logger as Logger
 
 USER_INFO_URL = 'http://api-amc.huishoubao.com.cn/loginuserinfo'
 
