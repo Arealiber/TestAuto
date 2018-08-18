@@ -138,7 +138,7 @@ def exec_change(sql):
         return ret
     except Exception as e:
         trans.rollback()
-        LOGGER.exception_log(str(e))
+        LOGGER.exception_log('数据写入数据库失败：{}'.format(str(e)))
         raise e
     finally:
         conn.close()
