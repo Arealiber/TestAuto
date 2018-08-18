@@ -8,8 +8,8 @@ from application.controller import login_required, user_real_name
 
 
 @app.route('/parameter/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_parameter():
     """
     添加parameter
@@ -24,8 +24,8 @@ def add_parameter():
 
 
 @app.route('/parameter/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def parameter_info():
     """
     获取parameter列表
@@ -42,8 +42,8 @@ def parameter_info():
 
 
 @app.route('/parameter/count', methods=['GET'])
-@try_except
 @login_required
+@try_except
 def parameter_count():
     """
     获取parameter总个数
@@ -53,8 +53,8 @@ def parameter_count():
 
 
 @app.route('/parameter/update', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def update_parameter():
     """
     修改parameter
@@ -64,8 +64,8 @@ def update_parameter():
 
 
 @app.route('/parameter/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def delete_parameter():
     """
     删除parameter

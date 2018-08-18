@@ -9,8 +9,8 @@ from application.controller import login_required
 
 
 @app.route('/environment/line/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_environment_line():
     """
     添加environment_line
@@ -20,8 +20,8 @@ def add_environment_line():
 
 
 @app.route('/environment/line_info/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_environment_line_info():
     """
     添加environment_line_info
@@ -31,8 +31,8 @@ def add_environment_line_info():
 
 
 @app.route('/environment/line/modify', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def update_environment_line():
     """
     更新environment_line
@@ -42,8 +42,8 @@ def update_environment_line():
 
 
 @app.route('/environment/line_info/modify', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def update_environment_line_info():
     """
     更新environment_line_info
@@ -53,8 +53,8 @@ def update_environment_line_info():
 
 
 @app.route('/environment/line/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def del_environment_line():
     """
     删除environment_line
@@ -67,8 +67,8 @@ def del_environment_line():
 
 
 @app.route('/environment/line_info/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def del_environment_line_info():
     """
     删除environment_line_info
@@ -78,8 +78,8 @@ def del_environment_line_info():
 
 
 @app.route('/environment/line/detail', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_environment_line():
     """
     查询environment_line
@@ -90,8 +90,8 @@ def get_environment_line():
 
 
 @app.route('/environment/line_info/detail', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_environment_line_info():
     """
     查询environment_line_info
