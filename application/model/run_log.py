@@ -130,7 +130,7 @@ def exec_change(sql):
             retry -= 1
             conn.close()
             if not retry:
-                raise e
+                LOGGER.exception_log('数据库连接失败：{}'.format(str(e)))
         time.sleep(1)
     try:
         ret = conn.execute(sql)
