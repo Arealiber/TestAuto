@@ -138,7 +138,7 @@ def exec_change(sql):
         return ret
     except Exception as e:
         trans.rollback()
-        LOGGER.exception_log(str(sql))
+        LOGGER.exception_log(str(e))
         raise e
     finally:
         conn.close()
