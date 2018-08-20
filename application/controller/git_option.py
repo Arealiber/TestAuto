@@ -7,8 +7,8 @@ from application.util import git_option as gitAPI
 
 
 @app.route('/git/create_tag', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def create_tag():
     """
     功能描述: 创建一个tag
@@ -25,8 +25,8 @@ def create_tag():
 
 
 @app.route('/git/delete_tag', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def delete_tag():
     """
     功能描述: 删除一个tag
@@ -44,8 +44,8 @@ def delete_tag():
 
 
 @app.route('/git/update', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def update_file():
     """
     功能描述: 更新文件内容并提交

@@ -13,8 +13,8 @@ from application.controller import login_required
 
 
 @app.route('/run_log/batch/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_batch_run_log():
     """
     :return:
@@ -24,8 +24,8 @@ def add_batch_run_log():
 
 
 @app.route('/run_log/batch/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_multi_batch_run_log_info():
     """
     :return:
@@ -60,8 +60,8 @@ def get_multi_batch_run_log_info():
 
 
 @app.route('/run_log/batch/count', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_batch_run_log_count():
     """
     :return:
@@ -79,8 +79,8 @@ def get_batch_run_log_count():
 
 
 @app.route('/run_log/use_case/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_use_case_run_log():
     """
     :return:
@@ -90,8 +90,8 @@ def add_use_case_run_log():
 
 
 @app.route('/run_log/use_case/count', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_use_case_run_log_count():
     """
     :return:
@@ -121,8 +121,8 @@ def get_use_case_run_log_count():
 
 
 @app.route('/run_log/use_case/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_use_case_run_log():
     """
     :return:
@@ -165,8 +165,8 @@ def get_use_case_run_log():
 
 
 @app.route('/run_log/use_case/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_interface_run_log():
     """
     :return:
@@ -176,8 +176,8 @@ def add_interface_run_log():
 
 
 @app.route('/run_log/interface/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_interface_run_log():
     """
     :param: 必须需要传入use_case_run_log_id

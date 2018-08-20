@@ -14,8 +14,8 @@ from application.config.default import *
 
 
 @app.route('/report/minutes_report/add', methods=['GET'])
-@try_except
 @localhost_required
+@try_except
 def add_minutes_report():
     """
     :return:
@@ -72,8 +72,8 @@ def add_minutes_report():
 
 
 @app.route('/report/minutes_report/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def query_minutes_report_info():
     """
     查询分钟报表数据
@@ -153,8 +153,8 @@ def add_day_report():
 
 
 @app.route('/report/day_report/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def query_day_report_info():
     """
     查询日报表数据
@@ -205,8 +205,8 @@ def query_day_report_info():
 
 
 @app.route('/report/week_report/add', methods=['GET'])
-@try_except
 @localhost_required
+@try_except
 def add_week_report():
     """
     添加周报表数据
@@ -236,8 +236,8 @@ def add_week_report():
 
 
 @app.route('/report/week_report/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def query_week_report_info():
     """
     查询周报表数据，默认查询前4周数据
@@ -291,8 +291,8 @@ def query_week_report_info():
 
 
 @app.route('/report/month_report/add', methods=['GET'])
-@try_except
 @localhost_required
+@try_except
 def add_month_report():
     """
     :return:
@@ -321,8 +321,8 @@ def add_month_report():
 
 
 @app.route('/report/month_report/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def query_month_report_info():
     """
     查询月报表数据，默认查询前1月数据
@@ -370,40 +370,6 @@ def query_month_report_info():
             chartist_data = {}
         return jsonify({'success': True, 'res': chartist_data})
     return jsonify({'success': True, 'res': report_info_list})
-
-
-@app.route('/report/fifteen_minutes/info', methods=['POST'])
-@try_except
-@login_required
-def query_fifteen_minutes_report_info():
-    """
-    查询15分钟报表数据，默认查询1天数据
-    :param:
-    :return:
-    """
-    param_kwarg = request.get_json()
-    now_time_point = datetime.now()
-    to_time_point = now_time_point
-    from_time_point = now_time_point
-    if 'to_time' not in param_kwarg or not param_kwarg.get('to_time'):
-        param_kwarg['to_time'] = to_time_point.strftime(MINUTE_TIME_FMT)
-    else:
-        to_time = param_kwarg['to_time']
-        to_time = datetime.strptime(to_time, '%Y-%m-%d') + timedelta(days=1)
-        to_time = to_time.strftime(MINUTE_TIME_FMT)
-        param_kwarg.update({"to_time": to_time})
-
-    if 'from_time' not in param_kwarg or not param_kwarg.get('from_time', None):
-        param_kwarg['from_time'] = from_time_point.strftime(DAY_TIME_FMT)
-    else:
-        from_time = param_kwarg['from_time']
-        from_time = datetime.strptime(from_time, '%Y-%m-%d')
-        from_time = from_time.strftime(DAY_TIME_FMT)
-        param_kwarg.update({"from_time": from_time})
-    report_info_list = ReportAPI.get_minutes_report_info(**param_kwarg)
-    several_minutes_report_merge(report_info_list)
-
-    return jsonify({'success': True, 'res': ''})
 
 
 

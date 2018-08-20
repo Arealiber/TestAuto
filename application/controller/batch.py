@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import os
 from flask import request, jsonify
 
 from application import app
@@ -7,12 +8,12 @@ from application.api import use_case as UseCaseAPI
 from application.api import menutree as MenuTreeAPI
 from application.util import execute_test as Exec
 from application.util.exception import try_except
-from application.controller import login_required, user_real_name, localhost_required
+from application.controller import login_required, user_real_name, localhost_required, del_g_dns
 
 
 @app.route('/batch/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_batch():
     """
     create batch for use case
@@ -25,8 +26,8 @@ def add_batch():
 
 
 @app.route('/batch/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_batch():
     """
     query batch of use case
@@ -40,8 +41,8 @@ def get_batch():
 
 
 @app.route('/batch/detail', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def batch_detail():
     """
 
@@ -61,8 +62,8 @@ def batch_detail():
 
 
 @app.route('/batch/count', methods=['GET'])
-@try_except
 @login_required
+@try_except
 def query_batch_count():
     """
     query batch count of use case
@@ -73,8 +74,8 @@ def query_batch_count():
 
 
 @app.route('/batch/update', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def modify_batch():
     """
     update batch for use case
@@ -85,8 +86,8 @@ def modify_batch():
 
 
 @app.route('/batch/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def delete_batch():
     """
     删除用例批次，并解除批次关联的用例
@@ -97,8 +98,8 @@ def delete_batch():
 
 
 @app.route('/batch/relation/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_batch_use_case_relation():
     """
     往某一个批次添加用例
@@ -115,8 +116,8 @@ def add_batch_use_case_relation():
 
 
 @app.route('/batch/relation/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_batch_use_case_relation():
     """
     查询某一个批次已添加的用例列表
@@ -136,8 +137,8 @@ def get_batch_use_case_relation():
 
 
 @app.route('/batch/relation/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def del_batch_use_case_relation():
     """
     删除某一个批次已添加的用例列表
@@ -149,8 +150,8 @@ def del_batch_use_case_relation():
 
 
 @app.route('/batch/execute', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def batch_execute():
     batch_id = request.get_json()['id']
     batch_info = BatchAPI.get_batch(id=batch_id)[0]
@@ -159,8 +160,8 @@ def batch_execute():
 
 
 @app.route('/batch/auto_run')
-@try_except
 @localhost_required
+@try_except
 def batch_auto_run():
     batch_list = BatchAPI.get_batch(auto_run=True)
     for batch in batch_list:
@@ -170,8 +171,8 @@ def batch_auto_run():
 
 
 @app.route('/batch/search/use_case/list', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def batch_search_use_case_list():
     """
     获取use_case列表，不需要获取与use_case关联的interface

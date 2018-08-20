@@ -7,6 +7,7 @@ import re
 import socket
 import html
 import requests
+import os
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from datetime import datetime
 from requests.exceptions import ConnectionError, ConnectTimeout
@@ -22,7 +23,7 @@ from application.api import use_case as UseCaseAPI
 from application.api import encryption as EncryptionAPI
 from application.api import environment as EnvironmentAPI
 from application.util.exception import try_except
-
+from application.util import g_DNS
 
 if not app.config['DEBUG']:
     from application.util import logger as LOGGER
@@ -35,27 +36,29 @@ executor = ThreadPoolExecutor(max_workers=8)
 
 old_getaddrinfo = socket.getaddrinfo
 
-DNS_CACHE = {}
-
 
 def new_getaddrinfo(*args):
-    global DNS_CACHE
     url = args[0]
-    if url in DNS_CACHE.keys():
+    cur_pid = os.getpid()
+    g_dns_dict = g_DNS.get_dns()
+    LOGGER.info_log('dns内容：{0},url:{1}'.format(g_dns_dict, url))
+    if cur_pid in g_dns_dict and url in g_dns_dict[cur_pid].keys():
+        new_dns = g_dns_dict[cur_pid]
+
         local_args = ('www.huishoubao.com.cn', args[1], args[2], args[3])
         result = old_getaddrinfo(*local_args)[0]
         dns_result = result[4]
         try:
-            dns_result = (DNS_CACHE[url], dns_result[1])
+            dns_result = (new_dns[url], dns_result[1])
         except KeyError as e:
-            LOGGER.info_log('键值{0}不存在，DNS_CACHE:{1}'.format(str(e), DNS_CACHE))
+            LOGGER.info_log('键值{0}不存在，DNS_CACHE:{1}'.format(str(e), new_dns))
             raise
 
         modified_result = [(result[0], result[1], result[2], result[3], dns_result)]
-        return modified_result
     else:
-        result = old_getaddrinfo(*args)
-        return result
+        modified_result = old_getaddrinfo(*args)
+    LOGGER.info_log('url:{0}, dns解析信息：{1}'.format(url, modified_result))
+    return modified_result
 
 
 socket.getaddrinfo = new_getaddrinfo
@@ -108,8 +111,6 @@ def use_case_exception_log_update(use_case_log_id, use_case_start):
 @app.context_processor
 def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_id=None,
                  use_case_count=None, batch_start_timer=None, async=False, auto_run=False, alarm_monitor=False):
-    global DNS_CACHE
-    DNS_CACHE = {}
 
     # if async:
     #     engine.dispose()
@@ -181,7 +182,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
         for element in environment_info:
             url = element['url']
             ip_address = element['map_ip']
-            DNS_CACHE[url] = ip_address
+            g_DNS.add_new_dns(os.getpid(), {url: ip_address})
 
         for interface in interface_list:
             # 添加延时运行接口
@@ -371,6 +372,9 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 error_string = '{0}: {1} ，{2}'.format('请求服务连接超时', str(e.__class__.__name__), str(e))
                 log_report_code = '9991'
             except ConnectionError as e:
+                if os.getpid() in g_DNS.get_dns():
+                    dns_info = g_DNS.get_dns()[os.getpid()]
+                    LOGGER.info_log('连接失败，环境映射信息：{}'.format(dns_info))
                 request_exception = True
                 error_string = '{0}，{1}: {2}'.format('请求服务连接失败', str(e.__class__.__name__), str(e))
                 log_report_code = '9992'

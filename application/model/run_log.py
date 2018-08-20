@@ -38,6 +38,7 @@ def get_use_case_run_log_table(table_name):
 def get_interface_run_log_table(table_name):
     table = interface_run_log_table.get('interface_run_log_{0}'.format(table_name), None)
     if table is None:
+        LOGGER.info_log('create table:{}'.format(table_name))
         return create_interface_run_log_table(table_name)
     return table
 
@@ -75,6 +76,7 @@ def create_use_case_run_log_table(table_name, bind=engine):
                   extend_existing=True,
                   )
     table.create(bind=bind, checkfirst=True)
+
     interface_run_log_table['use_case_run_log_{0}'.format(table_name)] = table
     return table
 
@@ -130,7 +132,7 @@ def exec_change(sql):
             retry -= 1
             conn.close()
             if not retry:
-                raise e
+                LOGGER.exception_log('数据库连接失败：{}'.format(str(e)))
         time.sleep(1)
     try:
         ret = conn.execute(sql)
@@ -138,7 +140,7 @@ def exec_change(sql):
         return ret
     except Exception as e:
         trans.rollback()
-        LOGGER.exception_log(str(sql))
+        LOGGER.exception_log('数据写入数据库失败：{}'.format(str(e)))
         raise e
     finally:
         conn.close()

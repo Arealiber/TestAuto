@@ -132,7 +132,21 @@ class LoggerClass(object):
         return logger
 
 
+class DNSManager(object):
+    dns = {}
+
+    def get_dns(self):
+        return self.dns
+
+    def add_new_dns(self, new_url, new_dns):
+        self.dns.update({new_url: new_dns})
+
+
+g_DNS = DNSManager()
+
+
 LocalLogger = LoggerClass()
+
 
 
 

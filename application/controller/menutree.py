@@ -9,8 +9,8 @@ from application.controller import login_required
 
 
 @app.route('/menu_tree/business_line/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def create_business_line():
     """
     查询所有系统菜单
@@ -21,8 +21,8 @@ def create_business_line():
 
 
 @app.route('/menu_tree/business_line/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def del_business_line():
     """
     删除指定系统菜单
@@ -34,8 +34,8 @@ def del_business_line():
 
 
 @app.route('/menu_tree/system_line/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def create_system_line():
     """
     查询所有系统菜单
@@ -46,8 +46,8 @@ def create_system_line():
 
 
 @app.route('/menu_tree/system_line/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def del_system_line():
     """
     查询所有系统菜单
@@ -59,8 +59,8 @@ def del_system_line():
 
 
 @app.route('/menu_tree/function_line/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def create_function_line():
     """
     查询所有系统菜单
@@ -72,8 +72,8 @@ def create_function_line():
 
 
 @app.route('/menu_tree/function_line/delete', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def del_function_line():
     """
     查询所有系统菜单
@@ -84,8 +84,8 @@ def del_function_line():
 
 
 @app.route('/menu_tree/system_line/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_system_line():
     """
     查询所有系统菜单
@@ -101,8 +101,8 @@ def get_system_line():
 
 
 @app.route('/menu_tree/business_line/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_business_line():
     """
     查询所有业务菜单
@@ -113,8 +113,8 @@ def get_business_line():
 
 
 @app.route('/menu_tree/function_line/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_function_line():
     """
     查询所有功能模块菜单
@@ -130,8 +130,8 @@ def get_function_line():
 
 
 @app.route('/menu_tree/info', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_menu_tree():
     """
     查询所有菜单
@@ -173,8 +173,8 @@ def get_menu_tree():
 
 
 @app.route('/menu_tree/use_case/count', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def get_use_case_count_from_function_id():
     """
     查询功能模块用例个数
@@ -186,8 +186,8 @@ def get_use_case_count_from_function_id():
 
 
 @app.route('/menu_tree/use_case/add', methods=['POST'])
-@try_except
 @login_required
+@try_except
 def add_use_case_to_menu_tree():
     """
     创建用例的菜单

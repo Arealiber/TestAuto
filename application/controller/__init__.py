@@ -1,14 +1,16 @@
 import requests
 import time
 import socket
-from datetime import datetime
-from dateutil.rrule import rrule, DAILY, MINUTELY
+import os
 from functools import wraps
 from flask import session, request, redirect, jsonify
 from requests.exceptions import ConnectionError, ConnectTimeout
 import pandas as pd
 
 from application import app
+from application.util import g_DNS
+if not app.config['DEBUG']:
+    from application.util import logger as Logger
 
 USER_INFO_URL = 'http://api-amc.huishoubao.com.cn/loginuserinfo'
 
@@ -112,6 +114,20 @@ def localhost_required(func):
         if not local_host_ip == '127.0.0.1':
             return jsonify({'success': False, 'error': 'you have to been called by localhost'})
         return func(*args, **kwargs)
+    return wrapper
+
+
+def del_g_dns(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        ret = func(*args, **kwargs)
+        cur_pid = os.getpid()
+        g_dns_dict = g_DNS.get_dns()
+        Logger.info_log(g_dns_dict)
+        if cur_pid in g_dns_dict:
+            del g_dns_dict[cur_pid]
+        Logger.info_log(g_dns_dict)
+        return ret
     return wrapper
 
 
