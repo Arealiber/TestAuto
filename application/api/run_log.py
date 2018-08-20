@@ -137,6 +137,8 @@ def modify_batch_run_log(**kwargs):
 @run_log_table_decorator
 def add_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
+    if table is None:
+        LOGGER.exception_log('add_use_case_run_log获取usecase表对象失败')
     sql = table.insert(kwargs)
     ret = exec_change(sql)
     primary_key = ret.inserted_primary_key[0] or ret.lastrowid
@@ -157,6 +159,8 @@ def get_use_case_run_log_count(**kwargs):
     count = 0
     for table_name in table_name_fix_lst:
         table = get_use_case_run_log_table(table_name)
+        if table is None:
+            LOGGER.exception_log('get_use_case_run_log_count获取usecase表对象失败')
         sql = select([func.count()]).select_from(table)
         if len(table_name_fix_lst) == 1 and to_time:
             sql = sql.where(table.c.start_time.__le__(to_time))
@@ -183,6 +187,8 @@ def get_use_case_run_log_count(**kwargs):
 @run_log_table_decorator
 def modify_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
+    if table is None:
+        LOGGER.exception_log('modify_use_case_run_log获取usecase表对象失败')
     id = kwargs.pop('id')
     sql = table.update(table.c.id == id).values(**kwargs)
     return exec_change(sql)
@@ -209,6 +215,8 @@ def get_use_case_run_log(**kwargs):
     ret = []
     for table_name in table_name_fix_lst[::-1]:
         table = get_use_case_run_log_table(table_name)
+        if table is None:
+            LOGGER.exception_log('get_use_case_run_log获取usecase表对象失败')
         sql = table.select()
         count_sql = select([func.count()]).select_from(table)
         use_case_list = [use_case_id] if not isinstance(use_case_id, list) else use_case_id
