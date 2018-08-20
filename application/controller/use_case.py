@@ -7,7 +7,7 @@ from application.api import use_case as Case_API
 from application.util.parameter import *
 from application.util import execute_test as Exec
 from application.util.exception import try_except
-from application.controller import login_required, user_real_name, del_g_dns
+from application.controller import login_required, user_real_name
 
 """
 用例
