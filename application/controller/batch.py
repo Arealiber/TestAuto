@@ -8,7 +8,7 @@ from application.api import use_case as UseCaseAPI
 from application.api import menutree as MenuTreeAPI
 from application.util import execute_test as Exec
 from application.util.exception import try_except
-from application.controller import login_required, user_real_name, localhost_required, del_g_dns
+from application.controller import login_required, user_real_name, localhost_required
 
 
 @app.route('/batch/add', methods=['POST'])
