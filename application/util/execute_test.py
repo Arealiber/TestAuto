@@ -128,7 +128,17 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
     }
     if batch_log_id:
         use_case_log_info['batch_run_log_id'] = batch_log_id
-    use_case_log_id = RunLogAPI.add_use_case_run_log(**use_case_log_info)
+    try:
+        use_case_log_id = RunLogAPI.add_use_case_run_log(**use_case_log_info)
+    except Exception as e:
+        return {'success': False,
+                'error_str': '接口{0}数据库'.format(interface_count),
+                'res': exec_result_list,
+                'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
+                'batch_log_id': batch_log_id,
+                'use_case_count': use_case_count,
+                'batch_start_timer': batch_start_timer
+                }
 
     # 获取用例信息以及用例下接口信息
     try:

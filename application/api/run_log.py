@@ -8,7 +8,7 @@ from application.model.run_log import *
 def add_batch_run_log(**kwargs):
     table = get_batch_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     sql = table.insert(kwargs)
-    return exec_change(sql).inserted_primary_key[0]
+    return exec_change(sql, **kwargs).inserted_primary_key[0]
 
 
 @run_log_table_decorator
@@ -140,10 +140,15 @@ def add_use_case_run_log(**kwargs):
     if table is None:
         LOGGER.exception_log('add_use_case_run_log获取usecase表对象失败')
     sql = table.insert(kwargs)
-    ret = exec_change(sql)
-    primary_key = ret.inserted_primary_key[0] or ret.lastrowid
-    if not primary_key:
-        LOGGER.exception_log('返回主键异常，为空, 返回结果：%s' % str(primary_key))
+    LOGGER.info_log('插入日志内容：{}'.format(str(kwargs)))
+    ret = exec_change(sql, **kwargs)
+    try:
+        primary_key = ret.inserted_primary_key[0] or ret.lastrowid
+        if not primary_key:
+            LOGGER.exception_log('返回主键异常，为空, 返回结果：%s' % str(primary_key))
+    except Exception as e:
+        LOGGER.exception_log('返回值：{}, 异常信息{}'.format(str(ret), str(e)))
+        raise
     return primary_key
 
 
@@ -276,7 +281,7 @@ def get_use_case_run_log(**kwargs):
 def add_interface_run_log(**kwargs):
     table = get_interface_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     sql = table.insert(kwargs)
-    return exec_change(sql).inserted_primary_key[0]
+    return exec_change(sql, **kwargs).inserted_primary_key[0]
 
 
 @run_log_table_decorator
@@ -321,7 +326,7 @@ def modify_interface_run_log(**kwargs):
     table = get_interface_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     id = kwargs.pop('id')
     sql = table.update(table.c.id == id).values(**kwargs)
-    return exec_change(sql).inserted_primary_key[0]
+    return exec_change(sql, **kwargs).inserted_primary_key[0]
 
 
 

@@ -119,7 +119,7 @@ def exec_query(sql, is_list=False):
         conn.close()
 
 
-def exec_change(sql):
+def exec_change(sql, **params):
     retry = 3
     conn = trans = None
     while retry > 0:
@@ -140,8 +140,8 @@ def exec_change(sql):
         return ret
     except Exception as e:
         trans.rollback()
-        LOGGER.exception_log('数据写入数据库失败：{}'.format(str(e)))
-        raise e
+        LOGGER.exception_log('数据写入数据库失败：{}, sql语句：{}'.format(str(e), params))
+        raise
     finally:
         conn.close()
 
