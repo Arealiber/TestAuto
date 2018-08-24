@@ -171,7 +171,14 @@ def add_relation():
                                 the_interface.get('interface_url')])
         param_list = search_parameter(analysis_str)
         for para in param_list:
-            Case_API.add_case_parameter_relation(relation_id=relation_id, parameter_name=para, parameter_value='')
+            if '==' in para:
+                parameter_value = para.split('==')[1]
+                parameter_name = para.split('==')[0]
+            else:
+                parameter_value = ''
+                parameter_name = para
+            Case_API.add_case_parameter_relation(relation_id=relation_id, parameter_name=parameter_name,
+                                                 parameter_value=parameter_value)
     return jsonify({'success': True})
 
 

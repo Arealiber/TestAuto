@@ -78,14 +78,20 @@ def modify_interface():
         return jsonify({'success': True})
     else:
         for param in update_param_list:
+            if '==' in param:
+                parameter_value = param.split('==')[1]
+                parameter_name = param.split('==')[0]
+            else:
+                parameter_value = ''
+                parameter_name = param
             if param in old_param_list:
                 for p_relation in relation_list:
-                    UseCaseAPI.del_case_parameter_relation(parameter_name=param, relation_id=p_relation['id'])
+                    UseCaseAPI.del_case_parameter_relation(parameter_name=parameter_name, relation_id=p_relation['id'])
             else:  # 新增参数添加到各个用例中去
                 for relation in relation_list:
                     kwargs = {'relation_id': relation['id'],
-                              'parameter_name': param,
-                              'parameter_value': ''}
+                              'parameter_name': parameter_name,
+                              'parameter_value': parameter_value}
                     UseCaseAPI.add_case_parameter_relation(**kwargs)
     return jsonify({'success': True})
 
