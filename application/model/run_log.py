@@ -2,6 +2,7 @@
 import time
 from datetime import datetime
 from application import engine
+from application import redis_link as redis
 from application.util.redis_lock import deco, RedisLock
 from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TEXT
 from sqlalchemy.dialects.mysql import TIMESTAMP
@@ -13,30 +14,29 @@ else:
 
 
 meta = MetaData(bind=engine)
-batch_run_log_table = {}
-use_case_run_log_table = {}
-interface_run_log_table = {}
 
 
 # 用例脚本的运行日记表
 def get_batch_run_log_table(table_name):
-    table = batch_run_log_table.get('batch_run_log_{0}'.format(table_name), None)
+    table = redis.get('auto_test:batch_run_log_{0}'.format(table_name))
     if table is None:
+        LOGGER.info_log('create table:{}'.format(table_name))
         return create_batch_run_log_table(table_name)
     return table
 
 
 # 用例脚本的运行日记表
 def get_use_case_run_log_table(table_name):
-    table = use_case_run_log_table.get('use_case_run_log_{0}'.format(table_name), None)
+    table = redis.get('auto_test:use_case_run_log_{0}'.format(table_name))
     if table is None:
+        LOGGER.info_log('create table:{}'.format(table_name))
         return create_use_case_run_log_table(table_name)
     return table
 
 
 # 接口的运行日记表
 def get_interface_run_log_table(table_name):
-    table = interface_run_log_table.get('interface_run_log_{0}'.format(table_name), None)
+    table = redis.get('auto_test:interface_run_log_{0}'.format(table_name))
     if table is None:
         LOGGER.info_log('create table:{}'.format(table_name))
         return create_interface_run_log_table(table_name)
@@ -57,7 +57,8 @@ def create_batch_run_log_table(table_name, bind=engine):
                   extend_existing=True,
                   )
     table.create(bind=bind, checkfirst=True)
-    interface_run_log_table['batch_run_log_{0}'.format(table_name)] = table
+
+    redis.setex('auto_test:batch_run_log_{0}', 3600 * 24, table)
     return table
 
 
@@ -77,7 +78,7 @@ def create_use_case_run_log_table(table_name, bind=engine):
                   )
     table.create(bind=bind, checkfirst=True)
 
-    interface_run_log_table['use_case_run_log_{0}'.format(table_name)] = table
+    redis.setex('auto_test:use_case_run_log_{0}', 3600 * 24, table)
     return table
 
 
@@ -100,7 +101,8 @@ def create_interface_run_log_table(table_name, bind=engine):
                   extend_existing=True,
                   )
     table.create(bind=bind, checkfirst=True)
-    interface_run_log_table['interface_run_log_{0}'.format(table_name)] = table
+
+    redis.setex('auto_test:interface_run_log_{0}', 3600 * 24, table)
     return table
 
 

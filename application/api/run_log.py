@@ -139,6 +139,8 @@ def add_use_case_run_log(**kwargs):
     table = get_use_case_run_log_table(kwargs.pop('table_name_fix_lst')[0])
     if table is None:
         LOGGER.exception_log('add_use_case_run_log获取usecase表对象失败')
+    else:
+        LOGGER.info_log('add_use_case_run_log插入日志类型{}，日志对象：{}'.format(type(table), dir(table)))
     sql = table.insert(kwargs)
     LOGGER.info_log('插入日志内容：{}'.format(str(kwargs)))
     ret = exec_change(sql, **kwargs)
