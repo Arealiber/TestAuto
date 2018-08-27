@@ -58,7 +58,7 @@ def create_batch_run_log_table(table_name, bind=engine):
                   )
     table.create(bind=bind, checkfirst=True)
 
-    redis.setex('auto_test:batch_run_log_{0}', 3600 * 24, table)
+    redis.setex('auto_test:batch_run_log_{0}'.format(table_name), 3600 * 24, table)
     return table
 
 
@@ -78,7 +78,7 @@ def create_use_case_run_log_table(table_name, bind=engine):
                   )
     table.create(bind=bind, checkfirst=True)
 
-    redis.setex('auto_test:use_case_run_log_{0}', 3600 * 24, table)
+    redis.setex('auto_test:use_case_run_log_{0}'.format(table_name), 3600 * 24, table)
     return table
 
 
@@ -102,7 +102,7 @@ def create_interface_run_log_table(table_name, bind=engine):
                   )
     table.create(bind=bind, checkfirst=True)
 
-    redis.setex('auto_test:interface_run_log_{0}', 3600 * 24, table)
+    redis.setex('auto_test:interface_run_log_{0}'.format(table_name), 3600 * 24, table)
     return table
 
 
