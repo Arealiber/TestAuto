@@ -25,7 +25,7 @@ DEBUG = False
 HOST = '0.0.0.0'
 PORT = 9091
 
-DB_URI = 'mysql://root:123456@127.0.0.1/auto_test'
+DB_URI = 'mysql://root:123456@47.107.74.172/auto_test'
 DB_POOL_SIZE = 5
 DB_POOL_RECYCLE = 5
 DB_MAX_OVERFLOW = 10
