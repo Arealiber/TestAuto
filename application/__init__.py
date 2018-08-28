@@ -1,6 +1,5 @@
 import os
 import sys
-import gc
 from contextlib import contextmanager
 from importlib import import_module
 from flask import Flask
