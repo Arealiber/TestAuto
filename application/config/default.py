@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
 
+web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 TIME_FMT = '%Y-%m-%d %H:%M:%S.%f GMT'
 QUERY_TIME_FMT = '%Y-%m-%d %H:%M:%S.%f'
 TABLE_TIME_FMT = '%Y-%m-%d'
@@ -17,8 +18,6 @@ DEFAULT_TIME_LENGTH = 7  # 默认7 个单位（日、周、月）长度
 DAY_TIME_FMT = '%Y-%m-%d 00:00:00'
 MINUTE_TIME_FMT = '%Y-%m-%d %H:%M:00.000'
 MONTH_TIME_FMT = '%Y-%m-00 00:00:00.000'
-
-web_root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 
 PROXIES = False
 DEBUG = False
