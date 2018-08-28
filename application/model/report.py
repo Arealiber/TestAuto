@@ -25,7 +25,7 @@ def get_minutes_report_table(table_name):
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
                   extend_existing=True,
                   )
-    create_table(table, engine, 'report_minute_{0}'.format(table_name))
+    table.create(bind=engine, checkfirst=True)
     return table
 
 
@@ -44,7 +44,7 @@ def get_day_report_table(table_name):
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
                   extend_existing=True,
                   )
-    create_table(table, engine, 'report_day_{0}'.format(table_name))
+    table.create(bind=engine, checkfirst=True)
     return table
 
 
@@ -63,7 +63,7 @@ def get_week_report_table(table_name):
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
                   extend_existing=True,
                   )
-    create_table(table, engine, 'report_week_{0}'.format(table_name))
+    table.create(bind=engine, checkfirst=True)
     return table
 
 
@@ -82,20 +82,8 @@ def get_month_report_table(table_name):
                   Column('create_time', DateTime, default=datetime.now, nullable=False),
                   extend_existing=True,
                   )
-    create_table(table, engine, 'report_month_{0}'.format(table_name))
+    table.create(bind=engine, checkfirst=True)
     return table
-
-
-def create_table(table, bind, table_name):
-    if table_name not in meta.tables:
-        lock_create_table(table, bind)
-    else:
-        return meta.tables.get(table_name)
-
-
-@deco(RedisLock('report_lock'))
-def lock_create_table(table, bind):
-    table.create(bind=bind, checkfirst=True)
 
 
 def exec_query(sql, is_list=False):
