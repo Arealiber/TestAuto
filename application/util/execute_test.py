@@ -187,7 +187,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
         # if not alarm_monitor:
         if not batch_log_id:
             environment_id = environment_id or use_case_info['environment_id']
-        print(environment_id)
         environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
         for element in environment_info:
             url = element['url']
@@ -263,7 +262,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                         'use_case_count': use_case_count,
                         'batch_start_timer': batch_start_timer
                         }
-            print('参数处理时间：', timeit.default_timer() - interface_start_time)
 
             try:
                 # 加密
@@ -419,7 +417,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                             'use_case_count': use_case_count,
                             'batch_start_timer': batch_start_timer
                             }
-            print('请求处理时间：', timeit.default_timer() - interface_start_time)
             ecx_start_time = timeit.default_timer()
             try:
                 # 验证接口返回
@@ -439,11 +436,9 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 exec_result_list.append(result)
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = result['success']
-                print('exc处理时间：', timeit.default_timer() - ecx_start_time)
                 executor.submit(interface_log_insert, interface_log_dict)
 
                 # interface_log_insert(interface_log_dict)
-                print('insert请求处理时间：', timeit.default_timer() - ecx_start_time)
 
                 if alarm_monitor:
                     if not app.config['DEBUG']:
@@ -488,8 +483,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                         }
 
             interface_count += 1
-            print('验证处理时间：', timeit.default_timer() - ecx_start_time)
-            print('接口总时长：', timeit.default_timer() - interface_start_time)
 
     # 用例运行日志记录
     use_case_stop = timeit.default_timer()
