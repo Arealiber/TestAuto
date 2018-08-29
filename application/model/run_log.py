@@ -122,31 +122,42 @@ def exec_query(sql, is_list=False):
         conn.close()
 
 
+# def exec_change(sql, **params):
+#     retry = 3
+#     # conn = trans = None
+#     while True:
+#         try:
+#             conn = engine.connect()
+#             trans = conn.begin()
+#             break
+#         except Exception as e:
+#             print(str(e))
+#             retry -= 1
+#             if not retry:
+#                 LOGGER.exception_log('数据库连接失败：{}'.format(str(e)))
+#                 raise
+#             time.sleep(0.5)
+#     try:
+#         ret = conn.execute(sql)
+#         trans.commit()
+#         return ret
+#     except Exception as e:
+#         trans.rollback()
+#         LOGGER.exception_log('数据写入数据库失败：{}, sql语句：{}'.format(str(e), params))
+#         raise
+#     finally:
+#         conn.close()
+
+
 def exec_change(sql, **params):
-    retry = 3
-    # conn = trans = None
-    while True:
-        try:
-            conn = engine.connect()
-            trans = conn.begin()
-            break
-        except Exception as e:
-            print(str(e))
-            retry -= 1
-            if not retry:
-                LOGGER.exception_log('数据库连接失败：{}'.format(str(e)))
-                raise
-            time.sleep(0.5)
     try:
-        ret = conn.execute(sql)
-        trans.commit()
-        return ret
+        with engine.connect() as conn:
+            trans = conn.begin()
+            ret = conn.execute(sql)
+            trans.commit()
+            return ret
     except Exception as e:
-        trans.rollback()
         LOGGER.exception_log('数据写入数据库失败：{}, sql语句：{}'.format(str(e), params))
-        raise
-    finally:
-        conn.close()
 
 
 def drop_all():

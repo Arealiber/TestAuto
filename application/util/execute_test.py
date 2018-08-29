@@ -349,7 +349,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             json_response = dict()
             result = dict()
             request_method = request_method.upper()
-            print(url)
             try:
                 r = session.request(request_method, url, **request_kwargs)
                 r.encoding = 'utf-8'
@@ -441,7 +440,9 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = result['success']
                 print('exc处理时间：', timeit.default_timer() - ecx_start_time)
-                interface_log_insert(interface_log_dict)
+                executor.submit(interface_log_insert, interface_log_dict)
+
+                # interface_log_insert(interface_log_dict)
                 print('insert请求处理时间：', timeit.default_timer() - ecx_start_time)
 
                 if alarm_monitor:
