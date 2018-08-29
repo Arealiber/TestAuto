@@ -20,9 +20,9 @@ class Interface(Base):
     interface_name = Column(String(100), nullable=False)
     interface_entry = Column(Integer, nullable=False)  # 入口
     interface_encryption = Column(Integer, nullable=False, default=0)
-    interface_url = Column(String(255), nullable=False)
+    interface_url = Column(String(1000), nullable=False)
     interface_method = Column(String(20), nullable=False)
-    interface_header = Column(String(255))
+    interface_header = Column(String(1000))
     interface_json_payload = Column(TEXT)
     body_type = Column(Integer, nullable=False, default=0)  # 消息体类型， 0为json， 1为form
     create_by = Column(String(50), nullable=False)
