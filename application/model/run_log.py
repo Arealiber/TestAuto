@@ -158,6 +158,7 @@ def exec_change(sql, **params):
             return ret
     except Exception as e:
         LOGGER.exception_log('数据写入数据库失败：{}, sql语句：{}'.format(str(e), params))
+        raise
 
 
 def drop_all():
