@@ -196,6 +196,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
 
         for interface in interface_list:
             # 添加延时运行接口
+            interface_start_time = timeit.default_timer()
             interface_delay = int(interface.get('interface_delay'))
             if interface_delay > 0:
                 time.sleep(interface_delay)
@@ -237,7 +238,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                                 new_param_value = '"{0}"'.format(a[0])
                                 item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), new_param_value)
                             else:
-                                if item_to_rephrase == interface['interface_url']:
+                                if item_to_rephrase.split('?')[0] == interface['interface_url'].split('?')[0]:
                                     item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '{0}'.
                                                                                 format(param_value))
                                 else:
@@ -262,6 +263,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                         'use_case_count': use_case_count,
                         'batch_start_timer': batch_start_timer
                         }
+            print('参数处理时间：', timeit.default_timer() - interface_start_time)
 
             try:
                 # 加密
@@ -347,6 +349,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             json_response = dict()
             result = dict()
             request_method = request_method.upper()
+            print(url)
             try:
                 r = session.request(request_method, url, **request_kwargs)
                 r.encoding = 'utf-8'
@@ -417,7 +420,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                             'use_case_count': use_case_count,
                             'batch_start_timer': batch_start_timer
                             }
-
+            print('请求处理时间：', timeit.default_timer() - interface_start_time)
+            ecx_start_time = timeit.default_timer()
             try:
                 # 验证接口返回
                 eval_string = interface['eval_string']
@@ -436,7 +440,9 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 exec_result_list.append(result)
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = result['success']
+                print('exc处理时间：', timeit.default_timer() - ecx_start_time)
                 interface_log_insert(interface_log_dict)
+                print('insert请求处理时间：', timeit.default_timer() - ecx_start_time)
 
                 if alarm_monitor:
                     if not app.config['DEBUG']:
@@ -481,6 +487,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                         }
 
             interface_count += 1
+            print('验证处理时间：', timeit.default_timer() - ecx_start_time)
+            print('接口总时长：', timeit.default_timer() - interface_start_time)
 
     # 用例运行日志记录
     use_case_stop = timeit.default_timer()
