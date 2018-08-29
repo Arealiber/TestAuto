@@ -38,6 +38,7 @@ def get_use_case_run_log_table(table_name):
 def get_interface_run_log_table(table_name):
     table = interface_run_log_table.get('interface_run_log_{0}'.format(table_name), None)
     if table is None:
+        print('create table:{}'.format(table_name))
         LOGGER.info_log('create table:{}'.format(table_name))
         return create_interface_run_log_table(table_name)
     return table
@@ -123,8 +124,8 @@ def exec_query(sql, is_list=False):
 
 def exec_change(sql, **params):
     retry = 3
-    conn = trans = None
-    while retry > 0:
+    # conn = trans = None
+    while True:
         try:
             conn = engine.connect()
             trans = conn.begin()
@@ -132,10 +133,10 @@ def exec_change(sql, **params):
         except Exception as e:
             print(str(e))
             retry -= 1
-            conn.close()
             if not retry:
                 LOGGER.exception_log('数据库连接失败：{}'.format(str(e)))
-        time.sleep(1)
+                raise
+            time.sleep(0.5)
     try:
         ret = conn.execute(sql)
         trans.commit()
