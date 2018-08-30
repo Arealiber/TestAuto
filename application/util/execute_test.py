@@ -404,18 +404,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             ecx_start_time = timeit.default_timer()
             try:
                 # 验证接口返回
-                eval_string = interface['eval_string']
-                # if eval_string:
-                #     eval_string = eval_string.replace('${status_code}', 'result["status_code"]') \
-                #         .replace('${header}', 'result["header"]') \
-                #         .replace('${json_payload}', 'result["json_response"]')
-                #     a = []
-                #     exec_string = 'a.append({0})'.format(eval_string)
-                #     exec(exec_string)
-                #     eval_success = a[0]
-                # else:
-                #     eval_success = True
-                eval_success = eval_interface_result(result, eval_string)
+                eval_success = eval_interface_result(result, interface['eval_string'])
 
                 result['success'] = eval_success
                 run_pass = run_pass and eval_success
@@ -423,8 +412,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = result['success']
                 executor.submit(interface_log_insert, interface_log_dict)
-
-                # interface_log_insert(interface_log_dict)
 
                 if alarm_monitor:
                     if not app.config['DEBUG']:
