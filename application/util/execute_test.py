@@ -303,26 +303,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     request_kwargs['data'] = json_payload
 
             # 获取域名对应的服务名
-            get_server_name_dict = {
-                "_head": {
-                    "_version": "0.01",
-                    "_msgType": "request",
-                    "_timestamps": "",
-                    "_invokeId": "",
-                    "_callerServiceId": "",
-                    "_groupNo": "",
-                    "_interface": "get_server_name",
-                    "_remark": ""
-                },
-                "_params": {
-                    "strUrl": url
-                }
-            }
-            try:
-                response = requests.post('http://123.207.51.243:8000/base_server', json=get_server_name_dict, timeout=5)
-                server_name = response.json()['_data']['retInfo']['serverName']
-            except Exception as e:
-                server_name = '获取服务名失败:'.format(str(e))
+            server_name = get_server_name(url)
 
             # 获取方法ID, 接口名
             requested_interface = ''
@@ -606,4 +587,33 @@ def eval_interface_result(result, eval_string):
         return a[0]
     else:
         return True
+
+
+def get_server_name(url):
+    """
+     获取域名对应的服务名
+    :param url:
+    :return:
+    """
+    get_server_name_dict = {
+        "_head": {
+            "_version": "0.01",
+            "_msgType": "request",
+            "_timestamps": "",
+            "_invokeId": "",
+            "_callerServiceId": "",
+            "_groupNo": "",
+            "_interface": "get_server_name",
+            "_remark": ""
+        },
+        "_params": {
+            "strUrl": url
+        }
+    }
+    try:
+        response = requests.post('http://123.207.51.243:8000/base_server', json=get_server_name_dict, timeout=5)
+        server_name = response.json()['_data']['retInfo']['serverName']
+    except Exception as e:
+        server_name = '获取服务名失败:'.format(str(e))
+    return server_name
 
