@@ -151,9 +151,11 @@ def get_use_case_run_log():
     '' if 'pageSize' in request.get_json() else request.get_json().update({'pageSize': 10})
 
     result = RunLogAPI.get_use_case_run_log(**request.get_json())
+    use_case_id_list = [info['use_case_id'] for info in result]
+    use_case_info_dict = UseCaseAPI.get_multi_use_case(use_case_id_list)
     for use_case_run_log_dict in result:
         use_case_id = use_case_run_log_dict.get('use_case_id')
-        use_case_info = UseCaseAPI.get_single_use_case(use_case_id)
+        use_case_info = use_case_info_dict[use_case_id]
         use_case_name = use_case_info.get('use_case_name')
         use_case_run_log_dict.update({'use_case_name': use_case_name})
         start_time = utc_to_shanghai_timezone(use_case_run_log_dict.get('start_time'))
@@ -192,9 +194,11 @@ def get_interface_run_log():
         to_time = shanghai_to_utc_timezone(datetime.strptime(to_time, QUERY_TIME_FMT))
         request.get_json().update({"to_time": to_time.strftime(QUERY_TIME_FMT)})
     result = RunLogAPI.get_interface_run_log(**request.get_json())
+    interface_id_list = [info['interface_id'] for info in result]
+    interface_dict = InterfaceAPI.query_multi_interface(interface_id_list)
     for interface_run_log_dict in result:
         interface_id = interface_run_log_dict.get('interface_id')
-        interface_info = InterfaceAPI.query_single_interface(interface_id)
+        interface_info = interface_dict[interface_id]
         interface_name = interface_info.get('interface_name')
         interface_run_log_dict.update({'interface_name': interface_name})
         start_time = utc_to_shanghai_timezone(interface_run_log_dict.get('start_time'))

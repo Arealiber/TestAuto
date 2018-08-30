@@ -30,6 +30,17 @@ def query_single_interface(interface_id):
     return interface_info
 
 
+def query_multi_interface(interface_list):
+    with session_scope() as session:
+        query = session.query(Interface).filter(Interface.id.in_(interface_list))
+    interface_dict = {}
+    for use_case in query:
+        interface_info = use_case.to_dict()
+        interface_id = interface_info['id']
+        interface_dict[interface_id] = interface_info
+    return interface_dict
+
+
 def query_interface_count(interface_name=''):
     with session_scope() as session:
         interface_count = session.query(Interface).\
