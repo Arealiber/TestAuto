@@ -79,7 +79,7 @@ def create_use_case_run_log_table(table_name, bind=engine):
                   )
     table.create(bind=bind, checkfirst=True)
 
-    interface_run_log_table['use_case_run_log_{0}'.format(table_name)] = table
+    use_case_run_log_table['use_case_run_log_{0}'.format(table_name)] = table
     return table
 
 
@@ -103,7 +103,8 @@ def create_interface_run_log_table(table_name, bind=engine):
                   )
     table.create(bind=bind, checkfirst=True)
 
-    use_case_run_log_table['interface_run_log_{0}'.format(table_name)] = table
+    interface_run_log_table['interface_run_log_{0}'.format(table_name)] = table
+
     return table
 
 
