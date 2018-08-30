@@ -359,10 +359,10 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 log_report_code = '9993'
             finally:
                 if request_exception:
-                    if alarm_monitor:
-                        if not app.config['DEBUG']:
+                    if alarm_monitor and not app.config['DEBUG']:
                             cost_time = timeit.default_timer() - interface_log_dict['interface_start']
-                            LOGGER.request_log(server_name, server_name, requested_interface, log_report_code, str(cost_time))
+                            LOGGER.request_log(server_name, server_name, requested_interface, log_report_code,
+                                               str(cost_time))
 
                     # 数据处理以及日志记录
                     interface_log_dict['is_pass'] = False
@@ -392,10 +392,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     run_pass = False
                     break
             except Exception as e:
-                # if auto_run:
-                #     if not app.config['DEBUG']:
-                #         error_str = '接口名称:{}, 参数验证出错，{0}: {1}'.format(str(e.__class__.__name__), str(e))
-                        # LOGGER.exception_log(error_str)
 
                 result['success'] = False
                 exec_result_list.append(result)
