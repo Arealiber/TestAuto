@@ -424,16 +424,18 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             try:
                 # 验证接口返回
                 eval_string = interface['eval_string']
-                if eval_string:
-                    eval_string = eval_string.replace('${status_code}', 'result["status_code"]') \
-                        .replace('${header}', 'result["header"]') \
-                        .replace('${json_payload}', 'result["json_response"]')
-                    a = []
-                    exec_string = 'a.append({0})'.format(eval_string)
-                    exec(exec_string)
-                    eval_success = a[0]
-                else:
-                    eval_success = True
+                # if eval_string:
+                #     eval_string = eval_string.replace('${status_code}', 'result["status_code"]') \
+                #         .replace('${header}', 'result["header"]') \
+                #         .replace('${json_payload}', 'result["json_response"]')
+                #     a = []
+                #     exec_string = 'a.append({0})'.format(eval_string)
+                #     exec(exec_string)
+                #     eval_success = a[0]
+                # else:
+                #     eval_success = True
+                eval_success = eval_interface_result(result, eval_string)
+
                 result['success'] = eval_success
                 run_pass = run_pass and eval_success
                 exec_result_list.append(result)
@@ -584,4 +586,24 @@ def get_param_define_list(relation_id=None):
             param['parameter_value'] = param_value
         param_list.append(param)
     return param_list
+
+
+def eval_interface_result(result, eval_string):
+    """
+    验证接口返回
+    :param result:
+    :param eval_string:
+    :return:
+    """
+    LOGGER.info_log(result)
+    if eval_string:
+        eval_string = eval_string.replace('${status_code}', 'result["status_code"]') \
+            .replace('${header}', 'result["header"]') \
+            .replace('${json_payload}', 'result["json_response"]')
+        a = []
+        exec_string = 'a.append({0})'.format(eval_string)
+        exec(exec_string)
+        return a[0]
+    else:
+        return True
 
