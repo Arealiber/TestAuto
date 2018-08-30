@@ -372,11 +372,9 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     use_case_exception_log_update(use_case_log_id, use_case_start)
                     return except_result(interface_count, exec_result_list, error_string, batch_log_id, use_case_count,
                                          batch_start_timer)
-            ecx_start_time = timeit.default_timer()
             try:
                 # 验证接口返回
                 eval_success = eval_interface_result(result, interface['eval_string'])
-
                 result['success'] = eval_success
                 run_pass = run_pass and eval_success
                 exec_result_list.append(result)
@@ -389,10 +387,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                                     eval_success, server_name, requested_interface)
 
                 if not result['success']:
-                    run_pass = False
                     break
             except Exception as e:
-
                 result['success'] = False
                 exec_result_list.append(result)
                 # 数据处理以及日志记录
