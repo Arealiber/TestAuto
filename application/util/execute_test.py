@@ -146,6 +146,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
         use_case_exception_log_update(use_case_log_id, use_case_start)
         error = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
         return except_result(interface_count, exec_result_list, error, batch_log_id, use_case_count, batch_start_timer)
+
     try:
         use_case_info['interface_list'] = []
         # 对用例中使用预定义参数的做参数替换
@@ -292,7 +293,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             if not requested_interface:
                 try:
                     requested_interface = url.split('//')[1].split('/')[0]
-                except:
+                except Exception as e:
+                    LOGGER.info_log('接口名称获取异常：{}'.format(str(e)))
                     requested_interface = interface['interface_url'].split('//')[1].split('/')[0]
 
             # 日志内容
