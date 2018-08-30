@@ -213,7 +213,10 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                                     interface['interface_json_payload']]
                 result_list = []
                 param_define_list = interface['param_define_list']
+                # url参数替换不带双引号
+                i_url = 0
                 for item_to_rephrase in to_rephrase_list:
+                    i_url += 1
                     param_list = ParameterUtil.search_parameter(item_to_rephrase)
                     if param_list:
                         for item in param_list:
@@ -237,7 +240,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                                 new_param_value = '"{0}"'.format(a[0])
                                 item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), new_param_value)
                             else:
-                                if item_to_rephrase.split('?')[0] == interface['interface_url'].split('?')[0]:
+                                if i_url <= 1:
                                     item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '{0}'.
                                                                                 format(param_value))
                                 else:
