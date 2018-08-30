@@ -384,20 +384,9 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 interface_log_dict['is_pass'] = result['success']
                 executor.submit(interface_log_insert, interface_log_dict)
 
-                if alarm_monitor:
-                    if not app.config['DEBUG']:
-                        cost_time = interface_log_dict['interface_stop'] - interface_log_dict['interface_start']
-                        ret_code = '' if eval_success else '1'
-                        if not ret_code:
-                            if 'body' in json_response:
-                                if 'ret' in json_response['body']:
-                                    ret_code = json_response['body']['ret']
-                            elif '_data' in json_response:
-                                if '_ret' in json_response['_data']:
-                                    ret_code = json_response['_data']['_ret']
-                            else:
-                                ret_code = '0'
-                        LOGGER.request_log(server_name, server_name, requested_interface, ret_code, str(cost_time))
+                if alarm_monitor and not app.config['DEBUG']:
+                    executor.submit(monitor_request, interface_log_dict, json_response,
+                                    eval_success, server_name, requested_interface)
 
                 if not result['success']:
                     run_pass = False
@@ -413,6 +402,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = result['success']
                 exc_type, exc_obj, exc_tb = sys.exc_info()
+                error = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
                 interface_log_dict['error_message'] = '验证: {0}: {1},异常信息：{2}'.\
                     format(str(e.__class__.__name__), str(e), str(traceback.extract_tb(exc_tb)))
 
@@ -420,7 +410,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 # 用例运行日志记录
                 use_case_exception_log_update(use_case_log_id, use_case_start)
 
-                error = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
                 return except_result(interface_count, exec_result_list, error,
                                      batch_log_id, use_case_count, batch_start_timer)
 
@@ -583,3 +572,18 @@ def except_result(interface_count, exec_result_list, error, batch_log_id, use_ca
             'use_case_count': use_case_count,
             'batch_start_timer': batch_start_timer
             }
+
+
+def monitor_request(interface_log_dict, json_response, eval_success, server_name, requested_interface):
+    cost_time = interface_log_dict['interface_stop'] - interface_log_dict['interface_start']
+    ret_code = '' if eval_success else '1'
+    if not ret_code:
+        if 'body' in json_response:
+            if 'ret' in json_response['body']:
+                ret_code = json_response['body']['ret']
+        elif '_data' in json_response:
+            if '_ret' in json_response['_data']:
+                ret_code = json_response['_data']['_ret']
+        else:
+            ret_code = '0'
+    LOGGER.request_log(server_name, server_name, requested_interface, ret_code, str(cost_time))
