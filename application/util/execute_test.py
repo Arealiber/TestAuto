@@ -221,7 +221,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     if param_list:
                         for item in param_list:
                             param_value = next((param for param in param_define_list
-                                                if param["parameter_name"] == item))['parameter_value']
+                                                if param["parameter_name"] == item.split('==')[0]))['parameter_value']
                             value_to_rephrase = ParameterUtil.search_parameter(param_value)
                             if value_to_rephrase:
                                 for value_info in value_to_rephrase:
