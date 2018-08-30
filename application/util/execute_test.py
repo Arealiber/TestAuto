@@ -130,15 +130,10 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
         use_case_log_info['batch_run_log_id'] = batch_log_id
     try:
         use_case_log_id = RunLogAPI.add_use_case_run_log(**use_case_log_info)
+
     except Exception as e:
-        return {'success': False,
-                'error_str': '接口{0}数据库'.format(interface_count),
-                'res': exec_result_list,
-                'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
-                'batch_log_id': batch_log_id,
-                'use_case_count': use_case_count,
-                'batch_start_timer': batch_start_timer
-                }
+        error = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+        return except_result(interface_count, exec_result_list, error, batch_log_id, use_case_count, batch_start_timer)
 
     # 获取用例信息以及用例下接口信息
     try:
@@ -149,14 +144,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             interface_list = UseCaseAPI.get_relation(use_case_id=use_case_id)
     except Exception as e:
         use_case_exception_log_update(use_case_log_id, use_case_start)
-        return {'success': False,
-                'error_str': '接口{0}数据库'.format(interface_count),
-                'res': exec_result_list,
-                'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
-                'batch_log_id': batch_log_id,
-                'use_case_count': use_case_count,
-                'batch_start_timer': batch_start_timer
-                }
+        error = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+        return except_result(interface_count, exec_result_list, error, batch_log_id, use_case_count, batch_start_timer)
     try:
         use_case_info['interface_list'] = []
         # 对用例中使用预定义参数的做参数替换
@@ -173,14 +162,9 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
     except Exception as e:
         # 用例运行日志记录
         use_case_exception_log_update(use_case_log_id, use_case_start)
-        return {'success': False,
-                'error_str': '接口{0}参数替换'.format(interface_count),
-                'res': exec_result_list,
-                'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
-                'batch_log_id': batch_log_id,
-                'use_case_count': use_case_count,
-                'batch_start_timer': batch_start_timer
-                }
+
+        error = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+        return except_result(interface_count, exec_result_list, error, batch_log_id, use_case_count, batch_start_timer)
 
     with requests.Session() as session:
         # 由于线上环境配置有host，所以监控模式下，也要配置环境信息
@@ -257,14 +241,9 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 interface_log_insert(interface_log_dict)
                 # 用例运行日志记录
                 use_case_exception_log_update(use_case_log_id, use_case_start)
-                return {'success': False,
-                        'error_str': '接口{0}参数替换'.format(interface_count),
-                        'res': exec_result_list,
-                        'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
-                        'batch_log_id': batch_log_id,
-                        'use_case_count': use_case_count,
-                        'batch_start_timer': batch_start_timer
-                        }
+                error = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                return except_result(interface_count, exec_result_list, error, batch_log_id, use_case_count,
+                                     batch_start_timer)
 
             try:
                 # 加密
@@ -281,14 +260,10 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 interface_log_insert(interface_log_dict)
                 # 用例运行日志记录
                 use_case_exception_log_update(use_case_log_id, use_case_start)
-                return {'success': False,
-                        'error_str': '接口{0} json处理或加密'.format(interface_count),
-                        'res': exec_result_list,
-                        'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
-                        'batch_log_id': batch_log_id,
-                        'use_case_count': use_case_count,
-                        'batch_start_timer': batch_start_timer
-                        }
+
+                error = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                return except_result(interface_count, exec_result_list, error, batch_log_id, use_case_count,
+                                     batch_start_timer)
 
             # 请求接口参数准备
             request_kwargs = {
@@ -393,14 +368,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                     interface_log_insert(interface_log_dict)
                     # 用例运行日志记录
                     use_case_exception_log_update(use_case_log_id, use_case_start)
-                    return {'success': False,
-                            'error_str': '接口{0}请求'.format(interface_count),
-                            'res': exec_result_list,
-                            'error': error_string,
-                            'batch_log_id': batch_log_id,
-                            'use_case_count': use_case_count,
-                            'batch_start_timer': batch_start_timer
-                            }
+                    return except_result(interface_count, exec_result_list, error_string, batch_log_id, use_case_count,
+                                         batch_start_timer)
             ecx_start_time = timeit.default_timer()
             try:
                 # 验证接口返回
@@ -442,18 +411,16 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = result['success']
                 exc_type, exc_obj, exc_tb = sys.exc_info()
-                interface_log_dict['error_message'] = '验证: {0}: {1},异常信息：{2}'.format(str(e.__class__.__name__), str(e), str(traceback.extract_tb(exc_tb)))
+                interface_log_dict['error_message'] = '验证: {0}: {1},异常信息：{2}'.\
+                    format(str(e.__class__.__name__), str(e), str(traceback.extract_tb(exc_tb)))
+
                 interface_log_insert(interface_log_dict)
                 # 用例运行日志记录
                 use_case_exception_log_update(use_case_log_id, use_case_start)
-                return {'success': False,
-                        'error_str': '接口{0}验证'.format(interface_count),
-                        'res': exec_result_list,
-                        'error': '{0}: {1}'.format(str(e.__class__.__name__), str(e)),
-                        'batch_log_id': batch_log_id,
-                        'use_case_count': use_case_count,
-                        'batch_start_timer': batch_start_timer
-                        }
+
+                error = '{0}: {1}'.format(str(e.__class__.__name__), str(e))
+                return except_result(interface_count, exec_result_list, error,
+                                     batch_log_id, use_case_count, batch_start_timer)
 
             interface_count += 1
 
@@ -604,3 +571,13 @@ def get_server_name(url):
         server_name = '获取服务名失败:'.format(str(e))
     return server_name
 
+
+def except_result(interface_count, exec_result_list, error, batch_log_id, use_case_count, batch_start_timer):
+    return {'success': False,
+            'error_str': '接口{0} json处理或加密'.format(interface_count),
+            'res': exec_result_list,
+            'error': error,
+            'batch_log_id': batch_log_id,
+            'use_case_count': use_case_count,
+            'batch_start_timer': batch_start_timer
+            }
