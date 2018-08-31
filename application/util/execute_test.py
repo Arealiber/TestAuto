@@ -648,5 +648,4 @@ def get_item_to_rephrase(interface, exec_result_list):
                     item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '"{0}"'.
                                                                 format(param_value))
         result_list.append(item_to_rephrase)
-
     return result_list
