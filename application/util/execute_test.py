@@ -222,7 +222,10 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                                 a = []
                                 exec_string = 'a.append({0})'.format(param_value)
                                 exec(exec_string, locals(), locals())
-                                new_param_value = '"{0}"'.format(a[0])
+                                if i_url <= 1:
+                                    new_param_value = '{0}'.format(a[0])
+                                else:
+                                    new_param_value = '"{0}"'.format(a[0])
                                 item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), new_param_value)
                             else:
                                 if i_url <= 1:
@@ -308,6 +311,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             json_response = dict()
             result = dict()
             request_method = request_method.upper()
+            print(url)
             try:
                 r = session.request(request_method, url, **request_kwargs)
                 r.encoding = 'utf-8'
