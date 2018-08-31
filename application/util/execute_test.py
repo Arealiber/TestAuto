@@ -174,10 +174,12 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
         if not batch_log_id:
             environment_id = environment_id or use_case_info['environment_id']
         environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
+        url_map_ip = dict()
         for element in environment_info:
             url = element['url'].strip()
             ip_address = element['map_ip'].strip()
-            g_DNS.add_new_dns(os.getpid(), {url: ip_address})
+            url_map_ip[url] = ip_address
+        g_DNS.add_new_dns(os.getpid(), url_map_ip)
 
         for interface in interface_list:
             # 添加延时运行接口
