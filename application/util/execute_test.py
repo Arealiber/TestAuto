@@ -71,13 +71,15 @@ def interface_log_insert(interface_log_dict):
     :param interface_log_dict:      接口请求信息
     """
     interface_end_time = datetime.utcnow()
-    interface_stop = interface_log_dict['interface_stop'] if 'interface_stop' in interface_log_dict else timeit.default_timer()
+    interface_stop = interface_log_dict['interface_stop'] if 'interface_stop' in interface_log_dict \
+        else timeit.default_timer()
 
     RunLogAPI.add_interface_run_log(**{
         'use_case_run_log_id': interface_log_dict['use_case_run_log_id'],
         'interface_id': interface_log_dict['interface_id'],
         'is_pass': interface_log_dict['is_pass'],
-        'cost_time': interface_stop - interface_log_dict['interface_start'] if 'interface_start' in interface_log_dict else 0,
+        'cost_time':
+            interface_stop - interface_log_dict['interface_start'] if 'interface_start' in interface_log_dict else 0,
         'start_time': interface_log_dict['interface_start_time'],
         'end_time': interface_end_time,
         'error_message': interface_log_dict['error_message'] if 'error_message' in interface_log_dict else '',
