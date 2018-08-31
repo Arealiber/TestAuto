@@ -175,8 +175,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             environment_id = environment_id or use_case_info['environment_id']
         environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
         for element in environment_info:
-            url = element['url']
-            ip_address = element['map_ip']
+            url = element['url'].strip()
+            ip_address = element['map_ip'].strip()
             g_DNS.add_new_dns(os.getpid(), {url: ip_address})
 
         for interface in interface_list:
