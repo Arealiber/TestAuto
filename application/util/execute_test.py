@@ -110,7 +110,7 @@ def use_case_exception_log_update(use_case_log_id, use_case_start):
 
 @app.context_processor
 def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_id=None,
-                 use_case_count=None, batch_start_timer=None, async=False, auto_run=False, alarm_monitor=False):
+                 use_case_count=None, batch_start_timer=None, auto_run=False, alarm_monitor=False):
 
     # if async:
     #     engine.dispose()
@@ -169,7 +169,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
 
     with requests.Session() as session:
         # 由于线上环境配置有host，所以监控模式下，也要配置环境信息
-        # if not alarm_monitor:
         if not batch_log_id:
             environment_id = environment_id or use_case_info['environment_id']
         environment_info = EnvironmentAPI.get_environment_line_info(environment_id=environment_id)
@@ -180,7 +179,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
 
         for interface in interface_list:
             # 添加延时运行接口
-            interface_start_time = timeit.default_timer()
             interface_delay = int(interface.get('interface_delay'))
             if interface_delay > 0:
                 time.sleep(interface_delay)
@@ -389,6 +387,11 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
 
 @try_except
 def run_use_case_callback(obj):
+    """
+    用例异步运行的回调函数
+    :param obj:
+    :return:
+    """
     result = obj.result()
     batch_log_id = result['batch_log_id']
     batch_log = RunLogAPI.get_batch_run_log_info(id=batch_log_id)
@@ -421,17 +424,36 @@ def run_use_case_callback(obj):
 @try_except
 def run_use_case_async(use_case_id, batch_log_id=None, environment_id=None, use_case_count=None,
                        batch_start_timer=None, auto_run=False, alarm_monitor=False):
+    """
+    用例异步运行接口
+    :param use_case_id:
+    :param batch_log_id:
+    :param environment_id:
+    :param use_case_count:
+    :param batch_start_timer:
+    :param auto_run:
+    :param alarm_monitor:
+    :return:
+    """
     if batch_log_id:
         executor.submit(run_use_case, use_case_id, batch_log_id, environment_id, None, use_case_count,
-                        batch_start_timer, True, auto_run, alarm_monitor).\
+                        batch_start_timer, auto_run, alarm_monitor).\
             add_done_callback(run_use_case_callback)
     else:
         executor.submit(run_use_case, use_case_id, batch_log_id, environment_id, None, use_case_count,
-                        batch_start_timer, True, auto_run, alarm_monitor)
+                        batch_start_timer, auto_run, alarm_monitor)
 
 
 @try_except
 def run_batch(batch_id, environment_id=0, auto_run=False, alarm_monitor=False):
+    """
+    批次运行接口
+    :param batch_id:
+    :param environment_id:
+    :param auto_run:
+    :param alarm_monitor:
+    :return:
+    """
     start_timer = timeit.default_timer()
     relation_list = BatchAPI.get_batch_use_case_relation(batch_id=batch_id)
     use_case_count = len(relation_list)
@@ -451,6 +473,11 @@ def run_batch(batch_id, environment_id=0, auto_run=False, alarm_monitor=False):
 
 
 def get_param_define_list(relation_id=None):
+    """
+    正则解析用例全局参数的实际值返回相关值列表
+    :param relation_id:
+    :return:
+    """
     param_define_list = UseCaseAPI.get_case_parameter_relation(relation_id=relation_id)
     param_list = []
     for param in param_define_list:
@@ -519,6 +546,16 @@ def get_server_name(url):
 
 
 def except_result(interface_count, exec_result_list, error, batch_log_id, use_case_count, batch_start_timer):
+    """
+    用例运行异常返回结果
+    :param interface_count:
+    :param exec_result_list:
+    :param error:
+    :param batch_log_id:
+    :param use_case_count:
+    :param batch_start_timer:
+    :return:
+    """
     return {'success': False,
             'error_str': '接口{0} json处理或加密'.format(interface_count),
             'res': exec_result_list,
@@ -530,6 +567,15 @@ def except_result(interface_count, exec_result_list, error, batch_log_id, use_ca
 
 
 def monitor_request(interface_log_dict, json_response, eval_success, server_name, requested_interface):
+    """
+    监控用例运行结果函数，把用例运行结果记录到日志中
+    :param interface_log_dict:
+    :param json_response:
+    :param eval_success:
+    :param server_name:
+    :param requested_interface:
+    :return:
+    """
     cost_time = interface_log_dict['interface_stop'] - interface_log_dict['interface_start']
     ret_code = '' if eval_success else '1'
     if not ret_code:
