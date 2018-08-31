@@ -581,6 +581,7 @@ def get_item_to_rephrase(interface, exec_result_list):
                     exec(exec_string, locals(), locals())
                     param_value = a[0]
                 if i_url <= 1:
+                    # url参数替换不用双引号包裹
                     item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '{0}'.
                                                                 format(param_value))
                 else:
