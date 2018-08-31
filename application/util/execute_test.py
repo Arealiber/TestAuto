@@ -245,20 +245,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             server_name = get_server_name(url)
 
             # 获取方法ID, 接口名
-            requested_interface = ''
-            if json_payload:
-                if 'head' in json_payload:
-                    if 'interface' in json_payload['head']:
-                        requested_interface = json_payload['head']['interface']
-                elif '_head' in json_payload:
-                    if '_interface' in json_payload['_head']:
-                        requested_interface = json_payload['_head']['_interface']
-            if not requested_interface:
-                try:
-                    requested_interface = url.split('//')[1].split('/')[0]
-                except Exception as e:
-                    LOGGER.info_log('接口名称获取异常：{}'.format(str(e)))
-                    requested_interface = interface['interface_url'].split('//')[1].split('/')[0]
+            requested_interface = get_remote_interface_name(json_payload, interface, url)
 
             # 日志内容
             interface_log_dict['s_header'] = header if header else ''
@@ -545,6 +532,31 @@ def get_server_name(url):
     except Exception as e:
         server_name = '获取服务名失败:'.format(str(e))
     return server_name
+
+
+def get_remote_interface_name(json_payload, interface, url):
+    """
+    获取方法ID, 接口名
+    :param json_payload:
+    :param interface:
+    :param url:
+    :return:
+    """
+    requested_interface = ''
+    if json_payload:
+        if 'head' in json_payload:
+            if 'interface' in json_payload['head']:
+                requested_interface = json_payload['head']['interface']
+        elif '_head' in json_payload:
+            if '_interface' in json_payload['_head']:
+                requested_interface = json_payload['_head']['_interface']
+    if not requested_interface:
+        try:
+            requested_interface = url.split('//')[1].split('/')[0]
+        except Exception as e:
+            LOGGER.info_log('接口名称获取异常：{}'.format(str(e)))
+            requested_interface = interface['interface_url'].split('//')[1].split('/')[0]
+    return requested_interface
 
 
 def except_result(interface_count, exec_result_list, error, batch_log_id, use_case_count, batch_start_timer):
