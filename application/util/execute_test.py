@@ -222,18 +222,13 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                                 a = []
                                 exec_string = 'a.append({0})'.format(param_value)
                                 exec(exec_string, locals(), locals())
-                                if i_url <= 1:
-                                    new_param_value = '{0}'.format(a[0])
-                                else:
-                                    new_param_value = '"{0}"'.format(a[0])
-                                item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), new_param_value)
+                                param_value = a[0]
+                            if i_url <= 1:
+                                item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '{0}'.
+                                                                            format(param_value))
                             else:
-                                if i_url <= 1:
-                                    item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '{0}'.
-                                                                                format(param_value))
-                                else:
-                                    item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '"{0}"'.
-                                                                                format(param_value))
+                                item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '"{0}"'.
+                                                                            format(param_value))
                     result_list.append(item_to_rephrase)
                 url = result_list[0]
                 header = result_list[1]
