@@ -193,43 +193,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             try:
                 # 将接口未替换的参数全部替换
                 request_method = interface['interface_method']
-                to_rephrase_list = [interface['interface_url'],
-                                    interface['interface_header'],
-                                    interface['interface_json_payload']]
-                result_list = []
-                param_define_list = interface['param_define_list']
-                # url参数替换不带双引号
-                i_url = 0
-                for item_to_rephrase in to_rephrase_list:
-                    i_url += 1
-                    param_list = ParameterUtil.search_parameter(item_to_rephrase)
-                    if param_list:
-                        for item in param_list:
-                            param_value = next((param for param in param_define_list
-                                                if param["parameter_name"] == item.split('==')[0]))['parameter_value']
-                            value_to_rephrase = ParameterUtil.search_parameter(param_value)
-                            if value_to_rephrase:
-                                for value_info in value_to_rephrase:
-                                    order = int(value_info.split('|')[0])
-                                    name = value_info.split('|')[1]
-                                    if name == 'status_code':
-                                        temp_string = 'exec_result_list[{0}]["status_code"]'.format(str(order - 1))
-                                    elif name == 'header':
-                                        temp_string = 'exec_result_list[{0}]["header"]'.format(str(order - 1))
-                                    else:
-                                        temp_string = 'exec_result_list[{0}]["json_response"]'.format(str(order - 1))
-                                    param_value = param_value.replace('${{{0}}}'.format(value_info), temp_string)
-                                a = []
-                                exec_string = 'a.append({0})'.format(param_value)
-                                exec(exec_string, locals(), locals())
-                                param_value = a[0]
-                            if i_url <= 1:
-                                item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '{0}'.
-                                                                            format(param_value))
-                            else:
-                                item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '"{0}"'.
-                                                                            format(param_value))
-                    result_list.append(item_to_rephrase)
+
+                result_list = get_item_to_rephrase(interface, exec_result_list)
                 url = result_list[0]
                 header = result_list[1]
                 json_payload = result_list[2]
@@ -306,7 +271,6 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             json_response = dict()
             result = dict()
             request_method = request_method.upper()
-            print(url)
             try:
                 r = session.request(request_method, url, **request_kwargs)
                 r.encoding = 'utf-8'
@@ -578,3 +542,50 @@ def monitor_request(interface_log_dict, json_response, eval_success, server_name
         else:
             ret_code = '0'
     LOGGER.request_log(server_name, server_name, requested_interface, ret_code, str(cost_time))
+
+
+def get_item_to_rephrase(interface, exec_result_list):
+    """
+    替换用例中关联接口的参数
+    :param interface: 接口信息
+    :param exec_result_list: 前置接口运行的结果列表对象
+    :return:
+    """
+    i_url = 0
+    to_rephrase_list = [interface['interface_url'],
+                        interface['interface_header'],
+                        interface['interface_json_payload']]
+    result_list = []
+    param_define_list = interface['param_define_list']
+    for item_to_rephrase in to_rephrase_list:
+        i_url += 1
+        param_list = ParameterUtil.search_parameter(item_to_rephrase)
+        if param_list:
+            for item in param_list:
+                param_value = next((param for param in param_define_list
+                                    if param["parameter_name"] == item.split('==')[0]))['parameter_value']
+                value_to_rephrase = ParameterUtil.search_parameter(param_value)
+                if value_to_rephrase:
+                    for value_info in value_to_rephrase:
+                        order = int(value_info.split('|')[0])
+                        name = value_info.split('|')[1]
+                        if name == 'status_code':
+                            temp_string = 'exec_result_list[{0}]["status_code"]'.format(str(order - 1))
+                        elif name == 'header':
+                            temp_string = 'exec_result_list[{0}]["header"]'.format(str(order - 1))
+                        else:
+                            temp_string = 'exec_result_list[{0}]["json_response"]'.format(str(order - 1))
+                        param_value = param_value.replace('${{{0}}}'.format(value_info), temp_string)
+                    a = []
+                    exec_string = 'a.append({0})'.format(param_value)
+                    exec(exec_string, locals(), locals())
+                    param_value = a[0]
+                if i_url <= 1:
+                    item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '{0}'.
+                                                                format(param_value))
+                else:
+                    item_to_rephrase = item_to_rephrase.replace('${{{0}}}'.format(item), '"{0}"'.
+                                                                format(param_value))
+        result_list.append(item_to_rephrase)
+
+    return result_list
