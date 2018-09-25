@@ -73,7 +73,7 @@ def xian_yu_platform_encryption(url, json_payload):
 
 def boss_login_encryption(json_payload):
     """
-    boss系统加密
+    boss系统登陆账号加密
     :param json_payload:
     :return:
     """
