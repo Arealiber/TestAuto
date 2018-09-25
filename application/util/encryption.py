@@ -72,6 +72,11 @@ def xian_yu_platform_encryption(url, json_payload):
 
 
 def boss_login_encryption(json_payload):
+    """
+    boss系统加密
+    :param json_payload:
+    :return:
+    """
     passwd = json_payload['psw']
     hash = 5381
     for i in range(0, len(passwd)):
