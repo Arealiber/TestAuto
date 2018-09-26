@@ -479,7 +479,12 @@ def get_param_define_list(relation_id=None):
             if 'random' in match_result[0]:
                 param_value = ParameterUtil.random_length_seq(match_result[0])
             elif '${timestamps}' in match_result:
-                param_value = str(int(time.time()))
+                temp_string = str(int(time.time()))
+                param_value = param['parameter_value'].replace('${timestamps}', temp_string)
+                a = []
+                exec_string = 'a.append({0})'.format(param_value)
+                exec(exec_string)
+                param_value = str(a[0])
             else:
                 param_name = match_result[0].split('|')[1].replace('}', '')
                 param_value = ParameterAPI.get_parameter(parameter_name=param_name)[0]['value']
@@ -642,8 +647,6 @@ def get_item_to_rephrase(interface, exec_result_list):
                             temp_string = 'exec_result_list[{0}]["json_response"]'.format(str(order - 1))
                         param_value = param_value.replace('${{{0}}}'.format(value_info), temp_string)
                     a = []
-                    from pprint import pprint
-                    pprint(exec_result_list)
                     exec_string = 'a.append({0})'.format(param_value)
                     exec(exec_string, locals(), locals())
                     param_value = a[0]
