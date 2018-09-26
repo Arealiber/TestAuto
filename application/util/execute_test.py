@@ -276,6 +276,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                         json_response = {}
                 interface_log_dict['interface_stop'] = timeit.default_timer()
                 result = {
+                    'r_request': request_kwargs,
                     'status_code': r.status_code,
                     'header': dict(r.headers),
                     'json_response': json_response,
@@ -635,10 +636,14 @@ def get_item_to_rephrase(interface, exec_result_list):
                             temp_string = 'exec_result_list[{0}]["status_code"]'.format(str(order - 1))
                         elif name == 'header':
                             temp_string = 'exec_result_list[{0}]["header"]'.format(str(order - 1))
+                        elif name == 'r_request':
+                            temp_string = 'exec_result_list[{0}]["r_request"]'.format(str(order - 1))
                         else:
                             temp_string = 'exec_result_list[{0}]["json_response"]'.format(str(order - 1))
                         param_value = param_value.replace('${{{0}}}'.format(value_info), temp_string)
                     a = []
+                    from pprint import pprint
+                    pprint(exec_result_list)
                     exec_string = 'a.append({0})'.format(param_value)
                     exec(exec_string, locals(), locals())
                     param_value = a[0]
