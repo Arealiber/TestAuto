@@ -641,8 +641,6 @@ def get_item_to_rephrase(interface, exec_result_list):
                         temp_string = 'exec_result_list[{0}]["{1}"]'.format(str(int(order)-1), name)
                         param_value = param_value.replace('${{{0}}}'.format(value_info), temp_string)
                     a = []
-                    from pprint import pprint
-                    pprint(param_value)
                     exec_string = 'a.append({0})'.format(param_value)
                     exec(exec_string, locals(), locals())
                     param_value = a[0]
