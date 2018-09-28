@@ -327,7 +327,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                                          batch_start_timer)
             try:
                 # 验证接口返回
-                eval_success = eval_interface_result(result, interface['eval_string'])
+                eval_success = eval_interface_result(result, interface['eval_string'], exec_result_list)
                 result['success'] = eval_success
                 run_pass = run_pass and eval_success
                 exec_result_list.append(result)
@@ -493,11 +493,12 @@ def get_param_define_list(relation_id=None):
     return param_list
 
 
-def eval_interface_result(result, eval_string):
+def eval_interface_result(result, eval_string, exec_result_list):
     """
     验证接口返回
     :param result:
     :param eval_string:
+    :param exec_result_list: 前置接口运行的结果列表对象
     :return:
     """
     LOGGER.info_log(result)
