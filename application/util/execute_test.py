@@ -635,18 +635,14 @@ def get_item_to_rephrase(interface, exec_result_list):
                 value_to_rephrase = ParameterUtil.search_parameter(param_value)
                 if value_to_rephrase:
                     for value_info in value_to_rephrase:
-                        order = int(value_info.split('|')[0])
-                        name = value_info.split('|')[1]
-                        if name == 'status_code':
-                            temp_string = 'exec_result_list[{0}]["status_code"]'.format(str(order - 1))
-                        elif name == 'header':
-                            temp_string = 'exec_result_list[{0}]["header"]'.format(str(order - 1))
-                        elif name == 'r_request':
-                            temp_string = 'exec_result_list[{0}]["r_request"]'.format(str(order - 1))
-                        else:
-                            temp_string = 'exec_result_list[{0}]["json_response"]'.format(str(order - 1))
+                        order, name = value_info.split('|')
+                        name = 'json_response' if name == 'json_payload' else name
+
+                        temp_string = 'exec_result_list[{0}]["{1}"]'.format(str(int(order)-1), name)
                         param_value = param_value.replace('${{{0}}}'.format(value_info), temp_string)
                     a = []
+                    from pprint import pprint
+                    pprint(param_value)
                     exec_string = 'a.append({0})'.format(param_value)
                     exec(exec_string, locals(), locals())
                     param_value = a[0]
