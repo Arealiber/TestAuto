@@ -505,6 +505,14 @@ def eval_interface_result(result, eval_string):
         eval_string = eval_string.replace('${status_code}', 'result["status_code"]') \
             .replace('${header}', 'result["header"]') \
             .replace('${json_payload}', 'result["json_response"]')
+        value_to_rephrase = ParameterUtil.search_parameter(eval_string)
+        if value_to_rephrase:
+            for value_info in value_to_rephrase:
+                order, name = value_info.split('|')
+                name = 'json_response' if name == 'json_payload' else name
+
+                temp_string = 'exec_result_list[{0}]["{1}"]'.format(str(int(order) - 1), name)
+                eval_string = eval_string.replace('${{{0}}}'.format(value_info), temp_string)
         a = []
         exec_string = 'a.append({0})'.format(eval_string)
         exec(exec_string)
