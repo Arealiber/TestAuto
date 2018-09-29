@@ -483,7 +483,7 @@ def get_param_define_list(relation_id=None):
                 param_value = param['parameter_value'].replace('${timestamps}', temp_string)
                 a = []
                 exec_string = 'a.append({0})'.format(param_value)
-                exec(exec_string)
+                exec(exec_string, globals(), locals())
                 param_value = str(a[0])
             else:
                 param_name = match_result[0].split('|')[1].replace('}', '')
@@ -516,7 +516,7 @@ def eval_interface_result(result, eval_string, exec_result_list):
                 eval_string = eval_string.replace('${{{0}}}'.format(value_info), temp_string)
         a = []
         exec_string = 'a.append({0})'.format(eval_string)
-        exec(exec_string)
+        exec(exec_string, locals(), locals())
         return a[0]
     else:
         return True
