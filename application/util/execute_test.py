@@ -180,6 +180,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             ip_address = element['map_ip'].strip()
             url_map_ip[url] = ip_address
         g_DNS.add_new_dns(os.getpid(), url_map_ip)
+        encryption_dict = EncryptionAPI.get_encryption_id_to_name()
 
         for interface in interface_list:
             # 添加延时运行接口
@@ -197,9 +198,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 request_method = interface['interface_method']
 
                 result_list = get_item_to_rephrase(interface, exec_result_list)
-                url = result_list[0]
-                header = result_list[1]
-                json_payload = result_list[2]
+                url, header, json_payload = result_list
             except Exception as e:
                 # 数据处理以及日志记录
                 interface_log_dict['is_pass'] = False
@@ -216,7 +215,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
                 if json_payload:
                     json_payload = json.loads(json_payload)
                     if interface['interface_encryption'] != 0:
-                        encryption_method = EncryptionAPI.get_encryption_method(interface['interface_encryption'])
+                        encryption_method = encryption_dict[interface['interface_encryption']]
                         method = getattr(Encryption, encryption_method)
                         json_payload = method(json_payload)
             except Exception as e:
@@ -238,10 +237,8 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             if header:
                 request_kwargs['headers'] = json.loads(header)
             if json_payload:
-                if interface['body_type'] == 0:
-                    request_kwargs['json'] = json_payload
-                else:
-                    request_kwargs['data'] = json_payload
+                request_kwargs.update({'json': json_payload}) if interface['body_type'] == 0 \
+                    else request_kwargs.update({'data': json_payload})
 
             # 获取域名对应的服务名
             server_name = get_server_name(url)
@@ -257,8 +254,7 @@ def run_use_case(use_case_id, batch_log_id=None, environment_id=None, relation_i
             request_exception = False
             log_report_code = 0
             error_string = ''
-            json_response = dict()
-            result = dict()
+            json_response = result = dict()
             request_method = request_method.upper()
             try:
                 r = session.request(request_method, url, **request_kwargs)

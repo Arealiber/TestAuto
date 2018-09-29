@@ -13,3 +13,12 @@ def get_encryption_method(encryption_id):
     with session_scope() as session:
         query = session.query(Encryption).filter_by(id=encryption_id).one()
         return query.encryption_method_name
+
+
+def get_encryption_id_to_name():
+    with session_scope() as session:
+        query = session.query(Encryption).all()
+        encryption_id_to_name = {}
+        for encryption in query:
+            encryption_id_to_name[encryption.id] = encryption.encryption_name
+        return encryption_id_to_name
